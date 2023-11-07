@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Ergo.Domain\Ergo.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

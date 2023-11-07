@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace Ergo.Domain.Entities
 {
-    public class Task : AuditableEntity
+    public class TaskItem : AuditableEntity
     {
         public enum TaskState
         {
@@ -12,7 +12,7 @@ namespace Ergo.Domain.Entities
             Done = 3
         }
 
-        private Task(string taskName, string description, DateTime deadline, Guid createdById,Guid projectId)
+        private TaskItem(string taskName, string description, DateTime deadline, Guid createdById,Guid projectId)
         {
             TaskId = Guid.NewGuid();
             TaskName = taskName;
@@ -27,7 +27,7 @@ namespace Ergo.Domain.Entities
             Comments = new List<Comment>();
             
         }
-        public Task()
+        public TaskItem()
         {
             
         }
@@ -41,32 +41,32 @@ namespace Ergo.Domain.Entities
         public List<Comment> Comments { get; private set; }
         private TaskState State { get; set; }
 
-        public static Result<Task> Create(string taskName, string description, DateTime deadline, Guid createdById,Guid projectId)
+        public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, Guid createdById,Guid projectId)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
-                return Result<Task>.Failure("Task Name is required.");
+                return Result<TaskItem>.Failure("Task Name is required.");
             }
 
             if (string.IsNullOrWhiteSpace(description))
             {
-                return Result<Task>.Failure("Description is required.");
+                return Result<TaskItem>.Failure("Description is required.");
             }
 
             if (deadline == default)
             {
-                return Result<Task>.Failure("Deadline is required.");
+                return Result<TaskItem>.Failure("Deadline is required.");
             }
             if(createdById == Guid.Empty)
             {
-                return Result<Task>.Failure("The user id who created the project is required.");
+                return Result<TaskItem>.Failure("The user id who created the project is required.");
             }
             if(projectId == Guid.Empty)
             {
-                return Result<Task>.Failure("The project id is required.");
+                return Result<TaskItem>.Failure("The project id is required.");
             }
 
-            return Result<Task>.Success(new Task(taskName, description, deadline, createdById,projectId));
+            return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, createdById,projectId));
         }
 
         public void AssignUser(User user)
