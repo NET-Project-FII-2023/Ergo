@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GlobalBuyTicket.Domain.Common;
+﻿using Ergo.Domain.Entities.Domain.Common;
 
-namespace GlobalBuyTicket.Domain.Entities
+namespace Ergo.Domain.Entities
 {
     public class Task : AuditableEntity
     {
@@ -16,26 +11,27 @@ namespace GlobalBuyTicket.Domain.Entities
             Done = 3
         }
 
-        private Task(string taskName, string description, DateTime deadline, TaskState state, List<User> assignedUser)
+        private Task(string taskName, string description, DateTime deadline)
         {
-            TaskId = Guid.NewGuid();
+            TaskId = System.Guid.NewGuid();
             TaskName = taskName;
             Description = description;
             StartDate = DateTime.Now;
             Deadline = deadline;
             State = TaskState.ToDo;
-            AssignedUser = assignedUser;
+            AssignedTo = new List<Guid>();
         }
 
-        public List<User> AssignedUser { get; private set; }
-        public Guid TaskId { get; private set; }
+        public System.Guid TaskId { get;  private set; }
         public string TaskName { get; private set; }
         public string Description { get; private set; }
-        public DateTime StartDate { get; }
+        public DateTime StartDate { get; private set; }
         public DateTime Deadline { get; private set; }
-        private TaskState State { get; set; }
+        public TaskState State { get; private set; }
+        public ICollection<User> AssignedTo { get; private set; }
 
-        public static Result<Task> Create(string taskName, string description, DateTime deadline, List<User> assignedUsers)
+
+        public static Result<Task> Create(string taskName, string description, DateTime deadline)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
@@ -52,16 +48,19 @@ namespace GlobalBuyTicket.Domain.Entities
                 return Result<Task>.Failure("Deadline is required.");
             }
 
-            return Result<Task>.Success(new Task(taskName, description, deadline, TaskState.ToDo, assignedUsers));
+            return Result<Task>.Success(new Task(taskName, description, deadline));
         }
 
-        public void AssignUser(User user)
+        public void AssignUser(Guid user)
         {
-            if(AssignedUser == null)
+            if(AssignedTo == null)
             {
-                AssignedUser = new List<User>();
+                AssignedTo = new List<Guid>();
             }
-            AssignedUser.Add(user);
+            if(!AssignedTo.Contains(user))
+            {
+                AssignedTo.Add(user);
+            }
         }
 
         public void ChangeState(TaskState state)

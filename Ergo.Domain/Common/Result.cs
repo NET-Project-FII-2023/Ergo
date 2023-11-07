@@ -1,4 +1,4 @@
-﻿namespace GlobalBuyTicket.Domain.Common
+﻿namespace Ergo.Domain.Entities.Domain.Common
 {
     public class Result<T> where T : class
     {

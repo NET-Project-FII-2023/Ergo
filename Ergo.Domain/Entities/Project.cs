@@ -1,11 +1,7 @@
-﻿using GlobalBuyTicket.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ergo.Domain.Entities.Domain.Common;
+using Ergo.Domain.Entities.Domain.Entities;
 
-namespace GlobalBuyTicket.Domain.Entities
+namespace Ergo.Domain.Entities
 {
     public class Project : AuditableEntity
     {
@@ -19,24 +15,25 @@ namespace GlobalBuyTicket.Domain.Entities
             Production,
             Done = 5
         }
-        private Project(string projectName, string description, DateTime deadline, List<User> members)
+        private Project(string projectName, string description, DateTime deadline)
         {
-            ProjectId = Guid.NewGuid();
+            ProjectId = System.Guid.NewGuid();
             ProjectName = projectName;
             Description = description;
             StartDate = DateTime.Now;
             Deadline = deadline;
             State = ProjectState.JustStarted;
-            Members = members;
+            UsersAssigned = new List<Users>();
         }
 
-        public List<User>? Members { get; private set; }
-        public Guid ProjectId { get; }
+       
+        public System.Guid ProjectId { get; set; }
         public string ProjectName { get; private set; }
         public string Description { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime Deadline { get; private set; }
         public ProjectState State { get; private set; }
+        public ICollection<User> UsersAssigned { get; private set; }
 
         public static Result<Project> Create(string projectName, string description, DateTime deadline,
             List<User> members)
@@ -56,14 +53,18 @@ namespace GlobalBuyTicket.Domain.Entities
                 return Result<Project>.Failure("Deadline is required.");
             }
 
-            return Result<Project>.Success(new Project(projectName, description, deadline, members));
+            return Result<Project>.Success(new Project(projectName, description, deadline));
         }
 
-        public void AssignMember(User member)
+        public void AssignMember(User user)
         {
-            if (Members == null)
+            if (UsersAssigned == null)
             {
-                Members = new List<User>();
+                UsersAssigned = new List<User>();
+            }
+            if (!UsersAssigned.Contains(user))
+            {
+                UsersAssigned.Add(user);
             }
         }
     }

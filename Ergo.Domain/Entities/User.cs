@@ -1,11 +1,6 @@
-﻿using GlobalBuyTicket.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ergo.Domain.Entities.Domain.Common;
 
-namespace GlobalBuyTicket.Domain.Entities
+namespace Ergo.Domain.Entities.Domain.Entities
 {
     public class User : AuditableEntity
     {
@@ -21,25 +16,27 @@ namespace GlobalBuyTicket.Domain.Entities
             TeamLead = 8
         }
 
-        private User(string firstName, string lastName, string email, string password, UserRole role, List<Project> projects){
-            UserId = Guid.NewGuid();
+        private User(string firstName, string lastName, string email, string password){
+            UserId = System.Guid.NewGuid();
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             Password = password;
-            Role = role;
-            Projects = projects;
+            Role = UserRole.ProjectManager;
+            UserProjects = new List<UserProject>();
+            UserTasks = new List<UserTask>();
         }
 
-        public Guid UserId { get; }
+        public System.Guid UserId { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
         public string Email { get; private set; }
         public string Password { get; private set; }
-        public UserRole Role { get; }
-        public List<Project>? Projects { get; private set;  }
+        public UserRole Role { get; private set; }
+        public ICollection<UserProject>? UserProjects { get; private set;  }
+        public ICollection<UserTask>? UserTasks { get; private set; }
 
-        public static Result<User> Create(string firstName, string lastName, string email, string password, UserRole role, List<Project> projects)
+        public static Result<User> Create(string firstName, string lastName, string email, string password)
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
@@ -61,24 +58,28 @@ namespace GlobalBuyTicket.Domain.Entities
                 return Result<User>.Failure("Password is required.");
             }
 
-            if (role == default)
-            {
-                return Result<User>.Failure("Role is required.");
-            }
 
 
-            return Result<User>.Success(new User(firstName, lastName, email, password, role, projects));
+            return Result<User>.Success(new User(firstName, lastName, email, password ));
 
         }
 
-        public void AssignProject(Project project)
+        public void AssignProject(UserTask userTask)
         {
-            if(Projects == null)
+            if(UserTasks == null)
             {
-                Projects = new List<Project>();
-            }   
-            Projects.Add(project);
+                UserTasks = new List<UserTask>();
+            }
+            UserTasks.Add(userTask);
         }
 
+        public void AssignTask(UserProject userProject) 
+        { 
+            if (UserProjects == null) 
+            {
+                UserProjects = new List<UserProject>(); 
+            }
+            UserProjects.Add(userProject); 
+        }
     }
 }
