@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Infrastructure;
 
-public class ErgoContext
+public class ErgoContext : DbContext
 {
     
 }
