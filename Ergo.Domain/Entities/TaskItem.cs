@@ -1,5 +1,4 @@
 ﻿using Ergo.Domain.Common;
-using System.Xml.Linq;
 
 namespace Ergo.Domain.Entities
 {
@@ -14,7 +13,7 @@ namespace Ergo.Domain.Entities
 
         private TaskItem(string taskName, string description, DateTime deadline, Guid createdById,Guid projectId)
         {
-            TaskId = Guid.NewGuid();
+            TaskItemId = Guid.NewGuid();
             TaskName = taskName;
             Description = description;
             Deadline = deadline;
@@ -32,7 +31,7 @@ namespace Ergo.Domain.Entities
             
         }
         public List<User>? AssignedUser { get; private set; }
-        public Guid TaskId { get; private set; }
+        public Guid TaskItemId { get; private set; }
         public Guid ProjectId { get; set; }
 
         public string? TaskName { get; private set; }

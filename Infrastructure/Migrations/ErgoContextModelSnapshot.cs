@@ -44,12 +44,12 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("TaskId")
+                    b.Property<Guid>("TaskItemId")
                         .HasColumnType("uuid");
 
                     b.HasKey("CommentId");
 
-                    b.HasIndex("TaskId");
+                    b.HasIndex("TaskItemId");
 
                     b.ToTable("Comments");
                 });
@@ -94,9 +94,9 @@ namespace Infrastructure.Migrations
                     b.ToTable("Projects");
                 });
 
-            modelBuilder.Entity("Ergo.Domain.Entities.Task", b =>
+            modelBuilder.Entity("Ergo.Domain.Entities.TaskItem", b =>
                 {
-                    b.Property<Guid>("TaskId")
+                    b.Property<Guid>("TaskItemId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -124,7 +124,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("TaskName")
                         .HasColumnType("text");
 
-                    b.HasKey("TaskId");
+                    b.HasKey("TaskItemId");
 
                     b.ToTable("Tasks");
                 });
@@ -171,26 +171,26 @@ namespace Infrastructure.Migrations
                     b.ToTable("ProjectUser");
                 });
 
-            modelBuilder.Entity("TaskUser", b =>
+            modelBuilder.Entity("TaskItemUser", b =>
                 {
                     b.Property<Guid>("AssignedUserUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("TasksTaskId")
+                    b.Property<Guid>("TasksTaskItemId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("AssignedUserUserId", "TasksTaskId");
+                    b.HasKey("AssignedUserUserId", "TasksTaskItemId");
 
-                    b.HasIndex("TasksTaskId");
+                    b.HasIndex("TasksTaskItemId");
 
-                    b.ToTable("TaskUser");
+                    b.ToTable("TaskItemUser");
                 });
 
             modelBuilder.Entity("Ergo.Domain.Entities.Comment", b =>
                 {
-                    b.HasOne("Ergo.Domain.Entities.Task", "Task")
+                    b.HasOne("Ergo.Domain.Entities.TaskItem", "Task")
                         .WithMany("Comments")
-                        .HasForeignKey("TaskId")
+                        .HasForeignKey("TaskItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -212,7 +212,7 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TaskUser", b =>
+            modelBuilder.Entity("TaskItemUser", b =>
                 {
                     b.HasOne("Ergo.Domain.Entities.User", null)
                         .WithMany()
@@ -220,14 +220,14 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Ergo.Domain.Entities.Task", null)
+                    b.HasOne("Ergo.Domain.Entities.TaskItem", null)
                         .WithMany()
-                        .HasForeignKey("TasksTaskId")
+                        .HasForeignKey("TasksTaskItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Ergo.Domain.Entities.Task", b =>
+            modelBuilder.Entity("Ergo.Domain.Entities.TaskItem", b =>
                 {
                     b.Navigation("Comments");
                 });

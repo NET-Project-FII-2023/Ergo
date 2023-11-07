@@ -4,7 +4,7 @@ namespace Ergo.Domain.Entities
 {
     public class Comment : AuditableEntity
     {
-        public Comment(Guid createdById, Task task, string text)
+        public Comment(Guid createdById, TaskItem task, string text)
         {
             CommentId = Guid.NewGuid();
             CreatedBy = createdById;
@@ -21,8 +21,8 @@ namespace Ergo.Domain.Entities
         }
         public Guid CommentId { get; private set; }
         public string CommentText { get; private set;}
-        public Task Task { get; private set; }
-        public static Result<Comment> Create(Guid createdById,  Task task, string text)
+        public TaskItem Task { get; private set; }
+        public static Result<Comment> Create(Guid createdById,  TaskItem task, string text)
         {
             if (createdById == Guid.Empty)
             {

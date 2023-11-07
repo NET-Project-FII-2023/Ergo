@@ -35,7 +35,7 @@ namespace Infrastructure.Migrations
                 name: "Tasks",
                 columns: table => new
                 {
-                    TaskId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
                     ProjectId = table.Column<Guid>(type: "uuid", nullable: false),
                     TaskName = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
@@ -47,7 +47,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tasks", x => x.TaskId);
+                    table.PrimaryKey("PK_Tasks", x => x.TaskItemId);
                 });
 
             migrationBuilder.CreateTable(
@@ -71,7 +71,7 @@ namespace Infrastructure.Migrations
                 {
                     CommentId = table.Column<Guid>(type: "uuid", nullable: false),
                     CommentText = table.Column<string>(type: "text", nullable: false),
-                    TaskId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<Guid>(type: "uuid", nullable: true),
@@ -81,10 +81,10 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Comments", x => x.CommentId);
                     table.ForeignKey(
-                        name: "FK_Comments_Tasks_TaskId",
-                        column: x => x.TaskId,
+                        name: "FK_Comments_Tasks_TaskItemId",
+                        column: x => x.TaskItemId,
                         principalTable: "Tasks",
-                        principalColumn: "TaskId",
+                        principalColumn: "TaskItemId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -113,23 +113,23 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TaskUser",
+                name: "TaskItemUser",
                 columns: table => new
                 {
                     AssignedUserUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TasksTaskId = table.Column<Guid>(type: "uuid", nullable: false)
+                    TasksTaskItemId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaskUser", x => new { x.AssignedUserUserId, x.TasksTaskId });
+                    table.PrimaryKey("PK_TaskItemUser", x => new { x.AssignedUserUserId, x.TasksTaskItemId });
                     table.ForeignKey(
-                        name: "FK_TaskUser_Tasks_TasksTaskId",
-                        column: x => x.TasksTaskId,
+                        name: "FK_TaskItemUser_Tasks_TasksTaskItemId",
+                        column: x => x.TasksTaskItemId,
                         principalTable: "Tasks",
-                        principalColumn: "TaskId",
+                        principalColumn: "TaskItemId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TaskUser_Users_AssignedUserUserId",
+                        name: "FK_TaskItemUser_Users_AssignedUserUserId",
                         column: x => x.AssignedUserUserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -137,9 +137,9 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_TaskId",
+                name: "IX_Comments_TaskItemId",
                 table: "Comments",
-                column: "TaskId");
+                column: "TaskItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProjectUser_ProjectsProjectId",
@@ -147,9 +147,9 @@ namespace Infrastructure.Migrations
                 column: "ProjectsProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskUser_TasksTaskId",
-                table: "TaskUser",
-                column: "TasksTaskId");
+                name: "IX_TaskItemUser_TasksTaskItemId",
+                table: "TaskItemUser",
+                column: "TasksTaskItemId");
         }
 
         /// <inheritdoc />
@@ -162,7 +162,7 @@ namespace Infrastructure.Migrations
                 name: "ProjectUser");
 
             migrationBuilder.DropTable(
-                name: "TaskUser");
+                name: "TaskItemUser");
 
             migrationBuilder.DropTable(
                 name: "Projects");

@@ -24,7 +24,7 @@ namespace Ergo.Domain.Entities
             Password = password;
             Role = UserRole.Developer;
             Projects = new List<Project>();
-            Tasks = new List<Task>();
+            Tasks = new List<TaskItem>();
         }
 
         public Guid UserId { get; private set; }
@@ -34,7 +34,7 @@ namespace Ergo.Domain.Entities
         public string Password { get; private set; }
         public UserRole Role { get; }
         public List<Project>? Projects { get; private set;  }
-        public List<Task> Tasks { get; private set; }
+        public List<TaskItem> Tasks { get; private set; }
 
         public static Result<User> Create(string firstName, string lastName, string email, string password)
         {
@@ -71,11 +71,11 @@ namespace Ergo.Domain.Entities
             }   
             Projects.Add(project);
         }
-        public void AssignTask(Task task)
+        public void AssignTask(TaskItem task)
         {
             if (Tasks == null)
             {
-                Tasks = new List<Task>();
+                Tasks = new List<TaskItem>();
             }
             Tasks.Add(task);
         }

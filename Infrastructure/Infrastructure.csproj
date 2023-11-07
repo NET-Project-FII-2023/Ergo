@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Ergo.Application\Ergo.Application.csproj" />
       <ProjectReference Include="..\Ergo.Domain\Ergo.Domain.csproj" />
     </ItemGroup>
 
