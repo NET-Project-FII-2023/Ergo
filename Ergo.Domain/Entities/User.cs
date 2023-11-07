@@ -1,11 +1,6 @@
-﻿using GlobalBuyTicket.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ergo.Domain.Common;
 
-namespace GlobalBuyTicket.Domain.Entities
+namespace Ergo.Domain.Entities
 {
     public class User : AuditableEntity
     {
@@ -21,14 +16,14 @@ namespace GlobalBuyTicket.Domain.Entities
             TeamLead = 8
         }
 
-        private User(string firstName, string lastName, string email, string password, UserRole role, List<Project> projects){
+        private User(string firstName, string lastName, string email, string password){
             UserId = Guid.NewGuid();
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             Password = password;
-            Role = role;
-            Projects = projects;
+            Role = UserRole.Developer;
+            Projects = new List<Project>();
         }
 
         public Guid UserId { get; }
@@ -39,7 +34,7 @@ namespace GlobalBuyTicket.Domain.Entities
         public UserRole Role { get; }
         public List<Project>? Projects { get; private set;  }
 
-        public static Result<User> Create(string firstName, string lastName, string email, string password, UserRole role, List<Project> projects)
+        public static Result<User> Create(string firstName, string lastName, string email, string password)
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
@@ -61,13 +56,8 @@ namespace GlobalBuyTicket.Domain.Entities
                 return Result<User>.Failure("Password is required.");
             }
 
-            if (role == default)
-            {
-                return Result<User>.Failure("Role is required.");
-            }
 
-
-            return Result<User>.Success(new User(firstName, lastName, email, password, role, projects));
+            return Result<User>.Success(new User(firstName, lastName, email, password));
 
         }
 

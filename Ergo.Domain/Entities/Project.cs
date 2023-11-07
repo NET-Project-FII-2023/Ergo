@@ -1,11 +1,6 @@
-﻿using GlobalBuyTicket.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ergo.Domain.Common;
 
-namespace GlobalBuyTicket.Domain.Entities
+namespace Ergo.Domain.Entities
 {
     public class Project : AuditableEntity
     {
@@ -19,7 +14,7 @@ namespace GlobalBuyTicket.Domain.Entities
             Production,
             Done = 5
         }
-        private Project(string projectName, string description, DateTime deadline, List<User> members)
+        private Project(string projectName, string description, DateTime deadline)
         {
             ProjectId = Guid.NewGuid();
             ProjectName = projectName;
@@ -27,7 +22,7 @@ namespace GlobalBuyTicket.Domain.Entities
             StartDate = DateTime.Now;
             Deadline = deadline;
             State = ProjectState.JustStarted;
-            Members = members;
+            Members = new List<User>();
         }
 
         public List<User>? Members { get; private set; }
@@ -56,7 +51,7 @@ namespace GlobalBuyTicket.Domain.Entities
                 return Result<Project>.Failure("Deadline is required.");
             }
 
-            return Result<Project>.Success(new Project(projectName, description, deadline, members));
+            return Result<Project>.Success(new Project(projectName, description, deadline));
         }
 
         public void AssignMember(User member)

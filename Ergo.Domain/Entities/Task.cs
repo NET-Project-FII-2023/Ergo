@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GlobalBuyTicket.Domain.Common;
+﻿using Ergo.Domain.Common;
 
-namespace GlobalBuyTicket.Domain.Entities
+namespace Ergo.Domain.Entities
 {
     public class Task : AuditableEntity
     {
@@ -16,7 +11,7 @@ namespace GlobalBuyTicket.Domain.Entities
             Done = 3
         }
 
-        private Task(string taskName, string description, DateTime deadline, TaskState state, List<User> assignedUser)
+        private Task(string taskName, string description, DateTime deadline)
         {
             TaskId = Guid.NewGuid();
             TaskName = taskName;
@@ -24,7 +19,7 @@ namespace GlobalBuyTicket.Domain.Entities
             StartDate = DateTime.Now;
             Deadline = deadline;
             State = TaskState.ToDo;
-            AssignedUser = assignedUser;
+            AssignedUser = new List<User>();
         }
 
         public List<User> AssignedUser { get; private set; }
@@ -52,7 +47,7 @@ namespace GlobalBuyTicket.Domain.Entities
                 return Result<Task>.Failure("Deadline is required.");
             }
 
-            return Result<Task>.Success(new Task(taskName, description, deadline, TaskState.ToDo, assignedUsers));
+            return Result<Task>.Success(new Task(taskName, description, deadline));
         }
 
         public void AssignUser(User user)
