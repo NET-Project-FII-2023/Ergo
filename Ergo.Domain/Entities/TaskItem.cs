@@ -2,7 +2,7 @@
 
 namespace Ergo.Domain.Entities
 {
-    public class Task : AuditableEntity
+    public class TaskItem : AuditableEntity
     {
         public enum TaskState
         {
@@ -11,7 +11,7 @@ namespace Ergo.Domain.Entities
             Done = 3
         }
 
-        private Task(string taskName, string description, DateTime deadline)
+        private TaskItem(string taskName, string description, DateTime deadline)
         {
             TaskId = Guid.NewGuid();
             TaskName = taskName;
@@ -30,24 +30,24 @@ namespace Ergo.Domain.Entities
         public DateTime Deadline { get; private set; }
         private TaskState State { get; set; }
 
-        public static Result<Task> Create(string taskName, string description, DateTime deadline, List<User> assignedUsers)
+        public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, List<User> assignedUsers)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
-                return Result<Task>.Failure("Task Name is required.");
+                return Result<TaskItem>.Failure("Task Name is required.");
             }
 
             if (string.IsNullOrWhiteSpace(description))
             {
-                return Result<Task>.Failure("Description is required.");
+                return Result<TaskItem>.Failure("Description is required.");
             }
 
             if (deadline == default)
             {
-                return Result<Task>.Failure("Deadline is required.");
+                return Result<TaskItem>.Failure("Deadline is required.");
             }
 
-            return Result<Task>.Success(new Task(taskName, description, deadline));
+            return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline));
         }
 
         public void AssignUser(User user)
