@@ -1,4 +1,5 @@
 ﻿using Ergo.Domain.Common;
+using System.Xml.Linq;
 
 namespace Ergo.Domain.Entities
 {
@@ -11,26 +12,36 @@ namespace Ergo.Domain.Entities
             Done = 3
         }
 
-        private Task(string taskName, string description, DateTime deadline)
+        private Task(string taskName, string description, DateTime deadline, Guid createdById,Guid projectId)
         {
             TaskId = Guid.NewGuid();
             TaskName = taskName;
             Description = description;
-            StartDate = DateTime.Now;
             Deadline = deadline;
             State = TaskState.ToDo;
+            CreatedBy = createdById;
+            CreatedDate = DateTime.Now;
+            LastModifiedBy = createdById;
+            LastModifiedDate = DateTime.Now;
             AssignedUser = new List<User>();
+            Comments = new List<Comment>();
+            
         }
-
-        public List<User> AssignedUser { get; private set; }
+        public Task()
+        {
+            
+        }
+        public List<User>? AssignedUser { get; private set; }
         public Guid TaskId { get; private set; }
-        public string TaskName { get; private set; }
-        public string Description { get; private set; }
-        public DateTime StartDate { get; }
+        public Guid ProjectId { get; set; }
+
+        public string? TaskName { get; private set; }
+        public string? Description { get; private set; }
         public DateTime Deadline { get; private set; }
+        public List<Comment> Comments { get; private set; }
         private TaskState State { get; set; }
 
-        public static Result<Task> Create(string taskName, string description, DateTime deadline, List<User> assignedUsers)
+        public static Result<Task> Create(string taskName, string description, DateTime deadline, Guid createdById,Guid projectId)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
@@ -46,8 +57,16 @@ namespace Ergo.Domain.Entities
             {
                 return Result<Task>.Failure("Deadline is required.");
             }
+            if(createdById == Guid.Empty)
+            {
+                return Result<Task>.Failure("The user id who created the project is required.");
+            }
+            if(projectId == Guid.Empty)
+            {
+                return Result<Task>.Failure("The project id is required.");
+            }
 
-            return Result<Task>.Success(new Task(taskName, description, deadline));
+            return Result<Task>.Success(new Task(taskName, description, deadline, createdById,projectId));
         }
 
         public void AssignUser(User user)
@@ -58,10 +77,15 @@ namespace Ergo.Domain.Entities
             }
             AssignedUser.Add(user);
         }
-
-        public void ChangeState(TaskState state)
+        public void AssignComment(Comment comment)
         {
-            State = state;
+            if (Comments == null)
+            {
+                Comments = new List<Comment>();
+            }
+            Comments.Add(comment);
         }
+
+
     }
 }

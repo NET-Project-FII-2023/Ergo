@@ -2,7 +2,7 @@
 
 namespace Ergo.Domain.Entities
 {
-    public class User : AuditableEntity
+    public class User 
     {
         public enum UserRole
         {
@@ -24,15 +24,17 @@ namespace Ergo.Domain.Entities
             Password = password;
             Role = UserRole.Developer;
             Projects = new List<Project>();
+            Tasks = new List<Task>();
         }
 
-        public Guid UserId { get; }
+        public Guid UserId { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
         public string Email { get; private set; }
         public string Password { get; private set; }
         public UserRole Role { get; }
         public List<Project>? Projects { get; private set;  }
+        public List<Task> Tasks { get; private set; }
 
         public static Result<User> Create(string firstName, string lastName, string email, string password)
         {
@@ -68,6 +70,14 @@ namespace Ergo.Domain.Entities
                 Projects = new List<Project>();
             }   
             Projects.Add(project);
+        }
+        public void AssignTask(Task task)
+        {
+            if (Tasks == null)
+            {
+                Tasks = new List<Task>();
+            }
+            Tasks.Add(task);
         }
 
     }
