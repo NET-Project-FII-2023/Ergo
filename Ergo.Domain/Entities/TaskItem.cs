@@ -19,9 +19,9 @@ namespace Ergo.Domain.Entities
             Deadline = deadline;
             State = TaskState.ToDo;
             CreatedBy = createdById;
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
             LastModifiedBy = createdById;
-            LastModifiedDate = DateTime.Now;
+            LastModifiedDate = DateTime.UtcNow;
             AssignedUser = new List<User>();
             Comments = new List<Comment>();
             

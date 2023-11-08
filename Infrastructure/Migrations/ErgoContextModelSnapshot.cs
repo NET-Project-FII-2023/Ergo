@@ -126,7 +126,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("TaskItemId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("TaskItems");
                 });
 
             modelBuilder.Entity("Ergo.Domain.Entities.User", b =>

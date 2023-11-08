@@ -7,7 +7,7 @@ namespace Infrastructure;
 public class ErgoContext : DbContext
 {
     public DbSet<Project> Projects { get; set; }
-    public DbSet<TaskItem> Tasks { get; set; }
+    public DbSet<TaskItem> TaskItems { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Comment> Comments { get; set; }
 

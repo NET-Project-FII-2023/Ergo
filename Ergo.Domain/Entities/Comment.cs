@@ -8,9 +8,9 @@ namespace Ergo.Domain.Entities
         {
             CommentId = Guid.NewGuid();
             CreatedBy = createdById;
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
             LastModifiedBy = createdById;
-            LastModifiedDate = DateTime.Now;
+            LastModifiedDate = DateTime.UtcNow;
             CommentText = text;
             Task = task;
 

@@ -18,9 +18,9 @@ namespace Ergo.Domain.Entities
             ProjectName = projectName;
             Description = description;
             CreatedBy = createdById;
-            CreatedDate = DateTime.Now;
+            CreatedDate = DateTime.UtcNow;
             LastModifiedBy = createdById;
-            LastModifiedDate = DateTime.Now;
+            LastModifiedDate = DateTime.UtcNow;
             Deadline = deadline;
             State = ProjectState.JustStarted;
             Members = new List<User>();

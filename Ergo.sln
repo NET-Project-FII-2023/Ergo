@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FD6BB6EB-3D35-414A-A62A-962CB2DFC08C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{6F8950D9-1DE3-4775-958D-A25E6AE423B1}"
@@ -14,13 +17,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{166ADE1F-BF76-4D91-966F-9FBBEB0969E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ergo.Domain", "Ergo.Domain\Ergo.Domain.csproj", "{F6838877-4D41-4AA4-B264-E14E8301AA2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ergo.Domain", "Ergo.Domain\Ergo.Domain.csproj", "{F6838877-4D41-4AA4-B264-E14E8301AA2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ergo.Application", "Ergo.Application\Ergo.Application.csproj", "{218144A7-F0F9-40CE-A8D1-4613B61FB89D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ergo.Application", "Ergo.Application\Ergo.Application.csproj", "{218144A7-F0F9-40CE-A8D1-4613B61FB89D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{AB5E3B5C-52AA-4E43-9204-2D2D310F56F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{AB5E3B5C-52AA-4E43-9204-2D2D310F56F7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{20C42C0C-8236-45F8-9007-407B7A5FA818}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{2CF72FA5-FB31-4FA1-A7FF-19DC220E3199}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +45,13 @@ Global
 		{AB5E3B5C-52AA-4E43-9204-2D2D310F56F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB5E3B5C-52AA-4E43-9204-2D2D310F56F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB5E3B5C-52AA-4E43-9204-2D2D310F56F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CF72FA5-FB31-4FA1-A7FF-19DC220E3199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CF72FA5-FB31-4FA1-A7FF-19DC220E3199}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CF72FA5-FB31-4FA1-A7FF-19DC220E3199}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CF72FA5-FB31-4FA1-A7FF-19DC220E3199}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6F8950D9-1DE3-4775-958D-A25E6AE423B1} = {FD6BB6EB-3D35-414A-A62A-962CB2DFC08C}
@@ -51,5 +63,9 @@ Global
 		{F6838877-4D41-4AA4-B264-E14E8301AA2F} = {166ADE1F-BF76-4D91-966F-9FBBEB0969E2}
 		{218144A7-F0F9-40CE-A8D1-4613B61FB89D} = {022E1E72-A73D-4CF9-BC8E-033E13E3D55D}
 		{AB5E3B5C-52AA-4E43-9204-2D2D310F56F7} = {9113E2EF-535A-4FCC-8F55-6F58D7F0B542}
+		{2CF72FA5-FB31-4FA1-A7FF-19DC220E3199} = {20C42C0C-8236-45F8-9007-407B7A5FA818}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FD3D7AA1-AE56-4A4E-95A9-0A79C5D11D8B}
 	EndGlobalSection
 EndGlobal

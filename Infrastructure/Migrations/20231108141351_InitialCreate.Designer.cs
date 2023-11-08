@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ErgoContext))]
-    [Migration("20231107214424_InitialCreate")]
+    [Migration("20231108141351_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -129,7 +129,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("TaskItemId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("TaskItems");
                 });
 
             modelBuilder.Entity("Ergo.Domain.Entities.User", b =>

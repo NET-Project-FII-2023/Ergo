@@ -32,7 +32,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tasks",
+                name: "TaskItems",
                 columns: table => new
                 {
                     TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -47,7 +47,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tasks", x => x.TaskItemId);
+                    table.PrimaryKey("PK_TaskItems", x => x.TaskItemId);
                 });
 
             migrationBuilder.CreateTable(
@@ -81,9 +81,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Comments", x => x.CommentId);
                     table.ForeignKey(
-                        name: "FK_Comments_Tasks_TaskItemId",
+                        name: "FK_Comments_TaskItems_TaskItemId",
                         column: x => x.TaskItemId,
-                        principalTable: "Tasks",
+                        principalTable: "TaskItems",
                         principalColumn: "TaskItemId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -123,9 +123,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_TaskItemUser", x => new { x.AssignedUserUserId, x.TasksTaskItemId });
                     table.ForeignKey(
-                        name: "FK_TaskItemUser_Tasks_TasksTaskItemId",
+                        name: "FK_TaskItemUser_TaskItems_TasksTaskItemId",
                         column: x => x.TasksTaskItemId,
-                        principalTable: "Tasks",
+                        principalTable: "TaskItems",
                         principalColumn: "TaskItemId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -168,7 +168,7 @@ namespace Infrastructure.Migrations
                 name: "Projects");
 
             migrationBuilder.DropTable(
-                name: "Tasks");
+                name: "TaskItems");
 
             migrationBuilder.DropTable(
                 name: "Users");
