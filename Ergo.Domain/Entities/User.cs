@@ -1,21 +1,10 @@
 ﻿using Ergo.Domain.Common;
+using Ergo.Domain.Entities.Enums;
 
 namespace Ergo.Domain.Entities
 {
     public class User 
     {
-        public enum UserRole
-        {
-            ProjectManager = 1,
-            Developer = 2,
-            Tester = 3,
-            DevOps = 4,
-            BusinessAnalyst = 5,
-            ScrumMaster = 6,
-            ProductOwner = 7,
-            TeamLead = 8
-        }
-
         private User(string firstName, string lastName, string email, string password){
             UserId = Guid.NewGuid();
             FirstName = firstName;

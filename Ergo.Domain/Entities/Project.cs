@@ -1,31 +1,25 @@
 ﻿using Ergo.Domain.Common;
+using Ergo.Domain.Entities.Enums;
 
 namespace Ergo.Domain.Entities
 {
     public class Project : AuditableEntity
     {
-        public enum ProjectState
-        {
-            JustStarted = 1,
-            Development = 2,
-            Testing = 3,
-            Production,
-            Done = 5
-        }
-        private Project(string projectName, string description, DateTime deadline, Guid createdById)
+        
+        private Project(string projectName, string description, DateTime deadline, string fullName)
         {
             ProjectId = Guid.NewGuid();
             ProjectName = projectName;
             Description = description;
-            CreatedBy = createdById;
+            CreatedBy = fullName;
             CreatedDate = DateTime.UtcNow;
-            LastModifiedBy = createdById;
+            LastModifiedBy = fullName;
             LastModifiedDate = DateTime.UtcNow;
             Deadline = deadline;
             State = ProjectState.JustStarted;
             Members = new List<User>();
         }
-        public Project()
+        private Project()
         {
             
         }
@@ -37,7 +31,7 @@ namespace Ergo.Domain.Entities
         public DateTime Deadline { get; private set; }
         public ProjectState State { get; private set; }
 
-        public static Result<Project> Create(string projectName, string description, DateTime deadline, Guid createdById)
+        public static Result<Project> Create(string projectName, string description, DateTime deadline, string fullName)
         {
             if (string.IsNullOrWhiteSpace(projectName))
             {
@@ -53,13 +47,13 @@ namespace Ergo.Domain.Entities
             {
                 return Result<Project>.Failure(Constants.DeadlineRequired);
             }
-            if(createdById == Guid.Empty)
+            if(string.IsNullOrWhiteSpace(fullName))
             {
-                return Result<Project>.Failure(Constants.CreatorIdRequired);
+                return Result<Project>.Failure(Constants.CreatorFullNameRequired);
             }
             
 
-            return Result<Project>.Success(new Project(projectName, description, deadline,createdById));
+            return Result<Project>.Success(new Project(projectName, description, deadline, fullName));
         }
 
         public void AssignMember(User member)

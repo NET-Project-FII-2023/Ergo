@@ -1,32 +1,28 @@
 ﻿using Ergo.Domain.Common;
+using Ergo.Domain.Entities.Enums;
 
 namespace Ergo.Domain.Entities
 {
     public class TaskItem : AuditableEntity
     {
-        public enum TaskState
-        {
-            ToDo = 1,
-            InProgress = 2,
-            Done = 3
-        }
+        
 
-        private TaskItem(string taskName, string description, DateTime deadline, Guid createdById,Guid projectId)
+        private TaskItem(string taskName, string description, DateTime deadline, string fullName, Guid projectId)
         {
             TaskItemId = Guid.NewGuid();
             TaskName = taskName;
             Description = description;
             Deadline = deadline;
             State = TaskState.ToDo;
-            CreatedBy = createdById;
+            CreatedBy = fullName;
             CreatedDate = DateTime.UtcNow;
-            LastModifiedBy = createdById;
+            LastModifiedBy = fullName;
             LastModifiedDate = DateTime.UtcNow;
             AssignedUser = new List<User>();
             Comments = new List<Comment>();
             
         }
-        public TaskItem()
+        private TaskItem()
         {
             
         }
@@ -40,7 +36,7 @@ namespace Ergo.Domain.Entities
         public List<Comment> Comments { get; private set; }
         private TaskState State { get; set; }
 
-        public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, Guid createdById,Guid projectId)
+        public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, string fullName, Guid projectId)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
@@ -56,16 +52,16 @@ namespace Ergo.Domain.Entities
             {
                 return Result<TaskItem>.Failure(Constants.DeadlineRequired);
             }
-            if(createdById == Guid.Empty)
+            if(string.IsNullOrWhiteSpace(fullName))
             {
-                return Result<TaskItem>.Failure(Constants.CreatorIdRequired);
+                return Result<TaskItem>.Failure(Constants.CreatorFullNameRequired);
             }
             if(projectId == Guid.Empty)
             {
                 return Result<TaskItem>.Failure(Constants.ProjectIdRequired);
             }
 
-            return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, createdById,projectId));
+            return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, fullName, projectId));
         }
 
         public void AssignUser(User user)

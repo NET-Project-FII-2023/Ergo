@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Ergo.Domain.Common
+﻿namespace Ergo.Domain.Common
 {
     public static class Constants
     {
         public const string CreatorIdRequired = "The user id who created the project is required.";
+        public const string CreatorFullNameRequired = "The user full name who created the project is required.";
         public const string DescriptionRequired = "Description is required.";
         public const string DeadlineRequired = "Deadline is required.";
 

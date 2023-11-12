@@ -3,29 +3,29 @@ namespace Ergo.Domain.Entities
 {
     public class Comment : AuditableEntity
     {
-        public Comment(Guid createdById, TaskItem task, string text)
+        public Comment(string fullName, TaskItem task, string text)
         {
             CommentId = Guid.NewGuid();
-            CreatedBy = createdById;
+            CreatedBy = fullName;
             CreatedDate = DateTime.UtcNow;
-            LastModifiedBy = createdById;
+            LastModifiedBy = fullName;
             LastModifiedDate = DateTime.UtcNow;
             CommentText = text;
             Task = task;
 
         }
-        public Comment()
+        private Comment()
         {
             
         }
         public Guid CommentId { get; private set; }
         public string CommentText { get; private set;}
         public TaskItem Task { get; private set; }
-        public static Result<Comment> Create(Guid createdById,  TaskItem task, string text)
+        public static Result<Comment> Create(string fullName,  TaskItem task, string text)
         {
-            if (createdById == Guid.Empty)
+            if (string.IsNullOrWhiteSpace(fullName))
             {
-                return Result<Comment>.Failure(Constants.CreatorIdRequired);
+                return Result<Comment>.Failure(Constants.CreatorFullNameRequired);
             }
 
             if (task == null)
@@ -38,7 +38,7 @@ namespace Ergo.Domain.Entities
                 return Result<Comment>.Failure(Constants.CommentTextRequired);
             }
 
-            return Result<Comment>.Success(new Comment(createdById, task, text));
+            return Result<Comment>.Success(new Comment(fullName, task, text));
         }
 
     }
