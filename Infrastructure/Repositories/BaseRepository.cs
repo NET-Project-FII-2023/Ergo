@@ -56,4 +56,9 @@ public class BaseRepository<T> : IAsyncRepository<T> where T : class
         var result = await context.Set<T>().Skip(page).Take(size).AsNoTracking().ToListAsync();
         return Result<IReadOnlyList<T>>.Success(result);
     }
+    public virtual async Task<Result<IReadOnlyList<T>>> GetAllAsync()
+    {
+        var result = await context.Set<T>().AsNoTracking().ToListAsync();
+        return Result<IReadOnlyList<T>>.Success(result);
+    }
 }

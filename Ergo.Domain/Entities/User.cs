@@ -5,13 +5,14 @@ namespace Ergo.Domain.Entities
 {
     public class User 
     {
-        private User(string firstName, string lastName, string email, string password){
+        private User(string firstName, string lastName,  string email, string password, UserRole role)
+        {
             UserId = Guid.NewGuid();
             FirstName = firstName;
             LastName = lastName;
             Email = email;
             Password = password;
-            Role = UserRole.Developer;
+            Role = role;
             Projects = new List<Project>();
             Tasks = new List<TaskItem>();
         }
@@ -21,11 +22,11 @@ namespace Ergo.Domain.Entities
         public string LastName { get; private set; }
         public string Email { get; private set; }
         public string Password { get; private set; }
-        public UserRole Role { get; }
+        public UserRole Role { get; private set; }
         public List<Project>? Projects { get; private set;  }
         public List<TaskItem> Tasks { get; private set; }
 
-        public static Result<User> Create(string firstName, string lastName, string email, string password)
+        public static Result<User> Create(string firstName, string lastName, string email, string password, UserRole role)
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
@@ -46,9 +47,13 @@ namespace Ergo.Domain.Entities
             {
                 return Result<User>.Failure(Constants.PasswordRequired);
             }
+            if(role == default)
+            {
+                return Result<User>.Failure(Constants.RoleRequired);
+            }
 
 
-            return Result<User>.Success(new User(firstName, lastName, email, password));
+            return Result<User>.Success(new User(firstName, lastName, email, password,role));
 
         }
 

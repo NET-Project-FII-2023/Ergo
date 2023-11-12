@@ -1,13 +1,14 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Ergo.Domain.Entities;
+using Ergo.Domain.Entities.Enums;
 using Infrastructure;
 using Infrastructure.Repositories;
 
 Console.WriteLine("Hello, World!");
 
 ErgoContext ergoContext = new ErgoContext();
-var user = User.Create( "George", "Rares", "george1@yahoo.com", "1234");
-var user2 = User.Create("Denis", "George", "george@yahoo.com", "1234");
+var user = User.Create( "George", "Rares", "george1@yahoo.com", "1234",UserRole.Developer);
+var user2 = User.Create("Denis", "George", "george@yahoo.com", "1234",UserRole.ProjectManager);
 
 UserRepository userRepository = new UserRepository(ergoContext);
 ProjectRepository projectRepository = new ProjectRepository(ergoContext);

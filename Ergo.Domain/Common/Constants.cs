@@ -11,6 +11,7 @@
         public const string FirstNameRequired = "First Name is required.";
         public const string EmailRequired = "Email is required.";
         public const string PasswordRequired = "Password is required.";
+        public const string RoleRequired = "User role is required.";
 
 
         public const string TaskItemRequired = "Task is required.";
