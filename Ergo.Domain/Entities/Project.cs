@@ -41,21 +41,21 @@ namespace Ergo.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(projectName))
             {
-                return Result<Project>.Failure("Project Name is required.");
+                return Result<Project>.Failure(Constants.ProjectNameRequired);
             }
 
             if (string.IsNullOrWhiteSpace(description))
             {
-                return Result<Project>.Failure("Description is required.");
+                return Result<Project>.Failure(Constants.DescriptionRequired);
             }
 
             if (deadline == default)
             {
-                return Result<Project>.Failure("Deadline is required.");
+                return Result<Project>.Failure(Constants.DeadlineRequired);
             }
             if(createdById == Guid.Empty)
             {
-                return Result<Project>.Failure("User id who created the project is required.");
+                return Result<Project>.Failure(Constants.CreatorIdRequired);
             }
             
 

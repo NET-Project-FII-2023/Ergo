@@ -44,25 +44,25 @@ namespace Ergo.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
-                return Result<TaskItem>.Failure("Task Name is required.");
+                return Result<TaskItem>.Failure(Constants.TaskItemNameRequired);
             }
 
             if (string.IsNullOrWhiteSpace(description))
             {
-                return Result<TaskItem>.Failure("Description is required.");
+                return Result<TaskItem>.Failure(Constants.DescriptionRequired);
             }
 
             if (deadline == default)
             {
-                return Result<TaskItem>.Failure("Deadline is required.");
+                return Result<TaskItem>.Failure(Constants.DeadlineRequired);
             }
             if(createdById == Guid.Empty)
             {
-                return Result<TaskItem>.Failure("The user id who created the project is required.");
+                return Result<TaskItem>.Failure(Constants.CreatorIdRequired);
             }
             if(projectId == Guid.Empty)
             {
-                return Result<TaskItem>.Failure("The project id is required.");
+                return Result<TaskItem>.Failure(Constants.ProjectIdRequired);
             }
 
             return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, createdById,projectId));

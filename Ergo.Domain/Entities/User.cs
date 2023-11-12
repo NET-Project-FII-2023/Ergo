@@ -40,22 +40,22 @@ namespace Ergo.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
-                return Result<User>.Failure("First Name is required.");
+                return Result<User>.Failure(Constants.FirstNameRequired);
             }
 
             if (string.IsNullOrWhiteSpace(lastName))
             {
-                return Result<User>.Failure("Last Name is required.");
+                return Result<User>.Failure(Constants.LastNameRequired);
             }
 
             if (string.IsNullOrWhiteSpace(email))
             {
-                return Result<User>.Failure("Email is required.");
+                return Result<User>.Failure(Constants.EmailRequired);
             }
 
             if (string.IsNullOrWhiteSpace(password))
             {
-                return Result<User>.Failure("Password is required.");
+                return Result<User>.Failure(Constants.PasswordRequired);
             }
 
 
