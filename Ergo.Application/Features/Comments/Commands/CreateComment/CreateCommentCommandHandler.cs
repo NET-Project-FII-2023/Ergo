@@ -45,7 +45,7 @@ namespace Ergo.Application.Features.Comments.Commands.CreateComment
                 Success = true,
                 Comment = new CreateCommentDto
                 {
-                    CommentId = request.CommentId,
+                    
                     CreatedBy = request.CreatedBy,
                     CreatedDate = request.CreatedDate,
                     LastModifiedBy = request.LastModifiedBy,

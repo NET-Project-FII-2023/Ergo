@@ -6,7 +6,6 @@ namespace Ergo.Application.Features.Comments.Commands.CreateComment
 {
     public class CreateCommentCommand : IRequest<CreateCommentCommandResponse>
     {
-        public Guid CommentId { get; set; } ;
         public string CreatedBy { get; set; } = default!;
         public DateTime CreatedDate { get; set; }
         public string LastModifiedBy { get; set; } = default!;
