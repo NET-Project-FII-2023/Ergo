@@ -33,7 +33,7 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
                     ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
                 };
             }
-            var taskItem = TaskItem.Create(request.TaskName, request.Description, request.Deadline, request.FullName, request.ProjectId);
+            var taskItem = TaskItem.Create(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId);
             if (!taskItem.IsSuccess)
             {
                 return new CreateTaskItemCommandResponse
@@ -52,7 +52,7 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
                     Description = taskItem.Value.Description,
                     Deadline = taskItem.Value.Deadline,
                     ProjectId = taskItem.Value.ProjectId,
-                    FullName = taskItem.Value.CreatedBy
+                    CreatedBy = taskItem.Value.CreatedBy
                 }
             };
 

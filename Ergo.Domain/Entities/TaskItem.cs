@@ -7,16 +7,16 @@ namespace Ergo.Domain.Entities
     {
         
 
-        private TaskItem(string taskName, string description, DateTime deadline, string fullName, Guid projectId)
+        private TaskItem(string taskName, string description, DateTime deadline, string createdBy, Guid projectId)
         {
             TaskItemId = Guid.NewGuid();
             TaskName = taskName;
             Description = description;
             Deadline = deadline;
             State = TaskState.ToDo;
-            CreatedBy = fullName;
+            CreatedBy = createdBy;
             CreatedDate = DateTime.UtcNow;
-            LastModifiedBy = fullName;
+            LastModifiedBy = createdBy;
             LastModifiedDate = DateTime.UtcNow;
             AssignedUser = new List<User>();
             Comments = new List<Comment>();
@@ -36,7 +36,7 @@ namespace Ergo.Domain.Entities
         public List<Comment> Comments { get; private set; }
         private TaskState State { get; set; }
 
-        public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, string fullName, Guid projectId)
+        public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, string createdBy, Guid projectId)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
@@ -52,7 +52,7 @@ namespace Ergo.Domain.Entities
             {
                 return Result<TaskItem>.Failure(Constants.DeadlineRequired);
             }
-            if(string.IsNullOrWhiteSpace(fullName))
+            if(string.IsNullOrWhiteSpace(createdBy))
             {
                 return Result<TaskItem>.Failure(Constants.CreatorFullNameRequired);
             }
@@ -61,7 +61,7 @@ namespace Ergo.Domain.Entities
                 return Result<TaskItem>.Failure(Constants.ProjectIdRequired);
             }
 
-            return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, fullName, projectId));
+            return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, createdBy, projectId));
         }
 
         public void AssignUser(User user)

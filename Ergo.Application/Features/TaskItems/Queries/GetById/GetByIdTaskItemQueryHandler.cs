@@ -28,7 +28,7 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetById
                     TaskName = taskItem.Value.TaskName,
                     Description = taskItem.Value.Description,
                     Deadline = taskItem.Value.Deadline, 
-                    FullName = taskItem.Value.CreatedBy,
+                    CreatedBy = taskItem.Value.CreatedBy,
                     ProjectId = taskItem.Value.ProjectId
                 };
             }

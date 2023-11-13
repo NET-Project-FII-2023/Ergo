@@ -13,7 +13,7 @@ public class ErgoContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Host=localhost; Database=Ergo; Username=postgres; Password=1234");
+        optionsBuilder.UseNpgsql("Host=localhost; Database=Ergo; Username=postgres; Password=123");
     }
 
 }

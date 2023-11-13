@@ -27,7 +27,7 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetAll
                     TaskName = t.TaskName,
                     Description = t.Description,
                     Deadline = t.Deadline,
-                    FullName = t.CreatedBy,
+                    CreatedBy = t.CreatedBy,
                     ProjectId = t.ProjectId
                    
                 }).ToList();

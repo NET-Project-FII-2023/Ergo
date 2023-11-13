@@ -11,7 +11,7 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
         public string? TaskName { get; set; }
         public string? Description { get; set; } 
         public DateTime Deadline { get; set; } 
-        public string? FullName { get; set; }
+        public string? CreatedBy { get; set; }
         public Guid ProjectId { get; set; }
     }
 }
