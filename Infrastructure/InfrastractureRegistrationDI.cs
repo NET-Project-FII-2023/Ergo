@@ -16,7 +16,7 @@ namespace Infrastructure
                 options =>
                 options.UseNpgsql(
                     configuration.GetConnectionString
-                    ("GlobalTicketsConnection"),
+                    ("ErgoConnection"),
                     builder =>
                     builder.MigrationsAssembly(
                         typeof(ErgoContext)
