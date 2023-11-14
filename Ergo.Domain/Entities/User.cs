@@ -56,6 +56,14 @@ namespace Ergo.Domain.Entities
             return Result<User>.Success(new User(firstName, lastName, email, password,role));
 
         }
+        public void UpdateData(string firstName, string lastName, string email, string password, UserRole role)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            Password = password;
+            Role = role;
+        }
 
         public void AssignProject(Project project)
         {
@@ -73,6 +81,7 @@ namespace Ergo.Domain.Entities
             }
             Tasks.Add(task);
         }
+
 
     }
 }
