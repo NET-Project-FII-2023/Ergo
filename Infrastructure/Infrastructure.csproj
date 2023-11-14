@@ -25,4 +25,8 @@
       <ProjectReference Include="..\Ergo.Domain\Ergo.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Migrations\" />
+    </ItemGroup>
+
 </Project>

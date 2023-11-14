@@ -6,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure
 {
-    public static class InfrastractureRegistrationDI
+    public static class InfrastructureRegistrationDI
     {
-        public static IServiceCollection AddInfrastrutureToDI(
+        public static IServiceCollection AddInfrastructureToDI(
             this IServiceCollection services,
             IConfiguration configuration)
         {
