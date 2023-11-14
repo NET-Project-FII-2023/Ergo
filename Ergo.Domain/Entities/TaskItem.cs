@@ -18,15 +18,13 @@ namespace Ergo.Domain.Entities
             CreatedDate = DateTime.UtcNow;
             LastModifiedBy = createdBy;
             LastModifiedDate = DateTime.UtcNow;
-            AssignedUser = new List<User>();
             Comments = new List<Comment>();
-            
         }
         private TaskItem()
         {
             
         }
-        public List<User>? AssignedUser { get; private set; }
+        public User AssignedUser { get; private set; }
         public Guid TaskItemId { get; private set; }
         public Guid ProjectId { get; set; }
 
@@ -66,11 +64,7 @@ namespace Ergo.Domain.Entities
 
         public void AssignUser(User user)
         {
-            if(AssignedUser == null)
-            {
-                AssignedUser = new List<User>();
-            }
-            AssignedUser.Add(user);
+            AssignedUser = user;
         }
         public void AssignComment(Comment comment)
         {
