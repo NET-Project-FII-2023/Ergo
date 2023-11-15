@@ -19,6 +19,7 @@ namespace Ergo.Domain.Entities
             LastModifiedBy = createdBy;
             LastModifiedDate = DateTime.UtcNow;
             Comments = new List<Comment>();
+            ProjectId = projectId;
         }
         private TaskItem()
         {
@@ -65,6 +66,16 @@ namespace Ergo.Domain.Entities
         public void AssignUser(User user)
         {
             AssignedUser = user;
+        }
+
+        public void UpdateData(string taskName, string description, DateTime deadline, string createdBy, Guid projectId)
+        {
+            TaskName = taskName;
+            Description = description;
+            Deadline = deadline;
+            LastModifiedBy = createdBy;
+            LastModifiedDate = DateTime.UtcNow;
+            ProjectId = projectId;
         }
         public void AssignComment(Comment comment)
         {

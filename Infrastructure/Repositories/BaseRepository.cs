@@ -6,7 +6,7 @@ namespace Infrastructure.Repositories;
 
 public class BaseRepository<T> : IAsyncRepository<T> where T : class
 {
-    private readonly ErgoContext context;
+    protected readonly ErgoContext context;
 
     public BaseRepository(ErgoContext context)
     {

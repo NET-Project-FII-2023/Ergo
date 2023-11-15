@@ -1,10 +1,9 @@
 ﻿using Ergo.Domain.Entities.Enums;
 
-namespace Ergo.Application.Features.Users.Commands.CreateUser
+namespace Ergo.Application.Features.Users.Commands.UpdateUser
 {
-    public class CreateUserDto
+    public class UpdateUserDto
     {
-        public Guid UserId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }

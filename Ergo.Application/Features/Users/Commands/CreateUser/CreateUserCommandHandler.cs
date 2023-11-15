@@ -19,9 +19,17 @@ namespace Ergo.Application.Features.Users.Commands.CreateUser
         }
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
+            var result = await userRepository.FindUserByEmailAsync(request.Email);
+            if(result.IsSuccess)
+            {
+                return new CreateUserCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { "Email already exists" }
+                };
+            }
             var validator = new CreateUserCommandValidator();
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
             if (!validatorResult.IsValid)
             {
                 return new CreateUserCommandResponse
