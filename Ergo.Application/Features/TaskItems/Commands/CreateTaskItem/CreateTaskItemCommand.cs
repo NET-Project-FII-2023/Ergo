@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ergo.Domain.Entities;
 
 namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
 {
@@ -15,5 +16,6 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
         public DateTime Deadline { get; set; } = default!;
         public string CreatedBy { get; set; } = default!;
         public Guid ProjectId { get; set; }
+        public TaskState State { get; set; } = default!;
     }
 }

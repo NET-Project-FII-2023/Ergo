@@ -100,6 +100,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AssignedUserUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
@@ -121,10 +124,15 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("State")
+                        .HasColumnType("integer");
+
                     b.Property<string>("TaskName")
                         .HasColumnType("text");
 
                     b.HasKey("TaskItemId");
+
+                    b.HasIndex("AssignedUserUserId");
 
                     b.ToTable("TaskItems");
                 });
@@ -174,21 +182,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("ProjectUser");
                 });
 
-            modelBuilder.Entity("TaskItemUser", b =>
-                {
-                    b.Property<Guid>("AssignedUserUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("TasksTaskItemId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("AssignedUserUserId", "TasksTaskItemId");
-
-                    b.HasIndex("TasksTaskItemId");
-
-                    b.ToTable("TaskItemUser");
-                });
-
             modelBuilder.Entity("Ergo.Domain.Entities.Comment", b =>
                 {
                     b.HasOne("Ergo.Domain.Entities.TaskItem", "Task")
@@ -198,6 +191,17 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("Ergo.Domain.Entities.TaskItem", b =>
+                {
+                    b.HasOne("Ergo.Domain.Entities.User", "AssignedUser")
+                        .WithMany("Tasks")
+                        .HasForeignKey("AssignedUserUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AssignedUser");
                 });
 
             modelBuilder.Entity("ProjectUser", b =>
@@ -215,24 +219,14 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TaskItemUser", b =>
-                {
-                    b.HasOne("Ergo.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("AssignedUserUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ergo.Domain.Entities.TaskItem", null)
-                        .WithMany()
-                        .HasForeignKey("TasksTaskItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Ergo.Domain.Entities.TaskItem", b =>
                 {
                     b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("Ergo.Domain.Entities.User", b =>
+                {
+                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

@@ -26,7 +26,7 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
             RuleFor(p => p.Deadline)
                 .NotEmpty()
                 .NotNull()
-                .GreaterThan(DateTime.Now).WithMessage("{PropertyName} must be greater than today's date.");
+                .GreaterThan(DateTime.Now).WithMessage("{PropertyName} must be greater than the current date.");
 
             RuleFor(p => p.CreatedBy)
                 .NotEmpty()
@@ -36,6 +36,10 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
             RuleFor(p => p.ProjectId)
                 .NotEmpty()
                 .NotNull();
+            RuleFor(p => p.State)
+                .NotEmpty()
+                .NotNull();
+
         }
     }
 }

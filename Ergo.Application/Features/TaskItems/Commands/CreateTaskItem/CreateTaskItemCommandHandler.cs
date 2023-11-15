@@ -52,7 +52,8 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
                     Description = taskItem.Value.Description,
                     Deadline = taskItem.Value.Deadline,
                     ProjectId = taskItem.Value.ProjectId,
-                    CreatedBy = taskItem.Value.CreatedBy
+                    CreatedBy = taskItem.Value.CreatedBy,
+                    State = taskItem.Value.State
                 }
             };
 

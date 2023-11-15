@@ -18,15 +18,14 @@ namespace Ergo.Domain.Entities
             CreatedDate = DateTime.UtcNow;
             LastModifiedBy = createdBy;
             LastModifiedDate = DateTime.UtcNow;
-            AssignedUser = new List<User>();
             Comments = new List<Comment>();
-            
+            ProjectId = projectId;
         }
         private TaskItem()
         {
             
         }
-        public List<User>? AssignedUser { get; private set; }
+        public User AssignedUser { get; private set; }
         public Guid TaskItemId { get; private set; }
         public Guid ProjectId { get; set; }
 
@@ -34,7 +33,7 @@ namespace Ergo.Domain.Entities
         public string? Description { get; private set; }
         public DateTime Deadline { get; private set; }
         public List<Comment> Comments { get; private set; }
-        private TaskState State { get; set; }
+        public TaskState State { get; set; }
 
         public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, string createdBy, Guid projectId)
         {
@@ -61,16 +60,25 @@ namespace Ergo.Domain.Entities
                 return Result<TaskItem>.Failure(Constants.ProjectIdRequired);
             }
 
+
+
             return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, createdBy, projectId));
         }
 
         public void AssignUser(User user)
         {
-            if(AssignedUser == null)
-            {
-                AssignedUser = new List<User>();
-            }
-            AssignedUser.Add(user);
+            AssignedUser = user;
+        }
+
+        public void UpdateData(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, TaskState state)
+        {
+            TaskName = taskName;
+            Description = description;
+            Deadline = deadline;
+            LastModifiedBy = createdBy;
+            LastModifiedDate = DateTime.UtcNow;
+            ProjectId = projectId;
+            State = state;
         }
         public void AssignComment(Comment comment)
         {

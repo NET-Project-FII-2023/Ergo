@@ -28,7 +28,8 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetAll
                     Description = t.Description,
                     Deadline = t.Deadline,
                     CreatedBy = t.CreatedBy,
-                    ProjectId = t.ProjectId
+                    ProjectId = t.ProjectId,
+                    State = t.State
                    
                 }).ToList();
             }

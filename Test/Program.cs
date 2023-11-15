@@ -1,4 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
+
+using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
+using Ergo.Application.Features.TaskItems.Queries;
 using Ergo.Application.Features.Users.Commands.CreateUser;
 using Ergo.Application.Features.Users.Commands.UpdateUser;
 using Ergo.Domain.Entities;
@@ -12,23 +15,16 @@ ErgoContext ergoContext = new ErgoContext();
 var user = User.Create( "George", "Rares", "george1@yahoo.com", "1234",UserRole.Developer);
 var user2 = User.Create("Denis", "George", "george@yahoo.com", "1234",UserRole.ProjectManager);
 
+var project = Project.Create("Ergo", "Proiect .NET", DateTime.UtcNow, "George Denis");
 
 
 UserRepository userRepository = new UserRepository(ergoContext);
 ProjectRepository projectRepository = new ProjectRepository(ergoContext);
 TaskItemRepository taskItemRepository = new TaskItemRepository(ergoContext);
 
-var project = Project.Create("Ergo", "Proiect .NET", DateTime.UtcNow, "George Denis");
-//await userRepository.AddAsync(user.Value);
+await userRepository.AddAsync(user.Value);
+await projectRepository.AddAsync(project.Value);
 
-//user2.Value.AssignProject(project.Value);?
-//await userRepository.AddAsync(user2.Value);
-
-
-//await projectRepository.AddAsync(project.Value);
-
-var task = TaskItem.Create("Create Database", "Task introductiv", DateTime.UtcNow, "Tudor Paul", Guid.Parse("162f813d-777a-4116-b790-45a151cbafd5"));
-//await taskItemRepository.AddAsync(task.Value);
 //CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(userRepository);
 //var createUserCommand = new CreateUserCommand
 //{
@@ -38,15 +34,56 @@ var task = TaskItem.Create("Create Database", "Task introductiv", DateTime.UtcNo
 //    Email = "george.duluta@yahoo.com",
 //    Role = UserRole.Developer
 //};
-//var result = await createUserCommandHandler.Handle(createUserCommand, CancellationToken.None);
-//Console.WriteLine(result.Success);
-UpdateUserCommand updateUserCommand = new UpdateUserCommand
+//var res = await createUserCommandHandler.Handle(createUserCommand, CancellationToken.None);
+//Console.WriteLine("Create:" + res.Success);
+//UpdateUserCommand updateUserCommand = new UpdateUserCommand
+//{
+//    UserId = Guid.Parse("0f57cc3f-5003-479b-baac-ed3b16217e8d"),
+//    FirstName = "George1212413",
+//};
+//UpdateUserCommandHandler updateUserCommandHandler = new UpdateUserCommandHandler(userRepository);
+//var result = await updateUserCommandHandler.Handle(updateUserCommand, CancellationToken.None);
+//Console.WriteLine("Update:" + result.Success);
+
+
+
+//user2.Value.AssignProject(project.Value);
+//await userRepository.AddAsync(user2.Value);
+
+
+
+
+
+// --------------------------- Task Item tests --------------------------- //
+
+var task = TaskItem.Create("Task introductiv", "Create Facebook from scratch", DateTime.UtcNow, "Tudor Paul", Guid.Parse("162f813d-777a-4116-b790-45a151cbafd5"));
+
+
+//var taskID = await taskItemRepository.FindByIdAsync(Guid.Parse("e68998a9-1901-4b1a-8877-d18053fcb8bc"));
+//Console.WriteLine("Get by id: " + taskID.Value.TaskName);
+
+//var allTasks = await taskItemRepository.GetAllAsync();
+//foreach (var item in allTasks.Value)
+//{
+//    Console.WriteLine("Get all: " + item.TaskName);
+//}
+
+
+UpdateTaskItemCommand updateTaskItemCommand = new UpdateTaskItemCommand
 {
-    UserId = Guid.Parse("cde7db19-1d1e-4c89-821b-7cdd4a1d0a18"),
-    FirstName = "George123",
-
+    TaskItemId = Guid.Parse("446fb59d-8b2a-4d80-bd7d-bcc3c0c25037"),
+    State = TaskState.Done,
+    Description = "Create Twitter from scratch in Assembly",
+    TaskName = "Task de testare",
 };
-UpdateUserCommandHandler updateUserCommandHandler = new UpdateUserCommandHandler(userRepository);
-var result = await updateUserCommandHandler.Handle(updateUserCommand, CancellationToken.None);
-Console.WriteLine(result.Success);
 
+UpdateTaskItemCommandHandler updateTaskItemCommandHandler = new UpdateTaskItemCommandHandler(taskItemRepository);
+var res = await updateTaskItemCommandHandler.Handle(updateTaskItemCommand, CancellationToken.None);
+Console.WriteLine(res.Success);
+if (res.ValidationsErrors != null)
+{
+    foreach (var item in res.ValidationsErrors)
+    {
+        Console.WriteLine(item);
+    }
+}
