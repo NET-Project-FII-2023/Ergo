@@ -41,5 +41,15 @@ namespace Ergo.Domain.Entities
             return Result<Comment>.Success(new Comment(fullName, task, text));
         }
 
+        public void UpdateData(string fullName, DateTime createdDate, string lastModifiedBy, DateTime lastModifiedDate, string text, TaskItem task)
+        {
+            CreatedBy = fullName;
+            CreatedDate = createdDate;
+            LastModifiedBy = lastModifiedBy;
+            LastModifiedDate = lastModifiedDate;
+            CommentText = text;
+            Task = task;
+        }
+
     }
 }
