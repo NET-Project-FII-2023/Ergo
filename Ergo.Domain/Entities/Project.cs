@@ -56,6 +56,16 @@ namespace Ergo.Domain.Entities
             return Result<Project>.Success(new Project(projectName, description, deadline, fullName));
         }
 
+        public void UpdateData(string projectName, string description, DateTime deadline, ProjectState state, string fullName)
+        {
+            ProjectName = projectName;
+            Description = description;
+            LastModifiedBy = fullName;
+            LastModifiedDate = DateTime.UtcNow;
+            State = state;
+            Deadline = deadline;
+        }
+
         public void AssignMember(User member)
         {
             if (Members == null)
