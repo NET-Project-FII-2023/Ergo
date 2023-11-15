@@ -18,7 +18,7 @@ namespace Ergo.Application.Features.Users.Queries.GetById
         }
         public async Task<UserDto> Handle(GetByIdUserQuery request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FindByIdAsync(request.Id);
+            var user = await userRepository.FindByIdAsync(request.UserId);
             if(user.IsSuccess)
             {
                 return new UserDto

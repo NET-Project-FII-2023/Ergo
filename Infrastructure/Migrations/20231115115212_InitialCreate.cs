@@ -32,25 +32,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TaskItems",
-                columns: table => new
-                {
-                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProjectId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TaskName = table.Column<string>(type: "text", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TaskItems", x => x.TaskItemId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -64,29 +45,6 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Comments",
-                columns: table => new
-                {
-                    CommentId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CommentText = table.Column<string>(type: "text", nullable: false),
-                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comments", x => x.CommentId);
-                    table.ForeignKey(
-                        name: "FK_Comments_TaskItems_TaskItemId",
-                        column: x => x.TaskItemId,
-                        principalTable: "TaskItems",
-                        principalColumn: "TaskItemId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -114,26 +72,51 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TaskItemUser",
+                name: "TaskItems",
                 columns: table => new
                 {
-                    AssignedUserUserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TasksTaskItemId = table.Column<Guid>(type: "uuid", nullable: false)
+                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AssignedUserUserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ProjectId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TaskName = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    State = table.Column<int>(type: "integer", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaskItemUser", x => new { x.AssignedUserUserId, x.TasksTaskItemId });
+                    table.PrimaryKey("PK_TaskItems", x => x.TaskItemId);
                     table.ForeignKey(
-                        name: "FK_TaskItemUser_TaskItems_TasksTaskItemId",
-                        column: x => x.TasksTaskItemId,
-                        principalTable: "TaskItems",
-                        principalColumn: "TaskItemId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TaskItemUser_Users_AssignedUserUserId",
+                        name: "FK_TaskItems_Users_AssignedUserUserId",
                         column: x => x.AssignedUserUserId,
                         principalTable: "Users",
-                        principalColumn: "UserId",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    CommentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CommentText = table.Column<string>(type: "text", nullable: false),
+                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "text", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.CommentId);
+                    table.ForeignKey(
+                        name: "FK_Comments_TaskItems_TaskItemId",
+                        column: x => x.TaskItemId,
+                        principalTable: "TaskItems",
+                        principalColumn: "TaskItemId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -148,9 +131,9 @@ namespace Infrastructure.Migrations
                 column: "ProjectsProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskItemUser_TasksTaskItemId",
-                table: "TaskItemUser",
-                column: "TasksTaskItemId");
+                name: "IX_TaskItems_AssignedUserUserId",
+                table: "TaskItems",
+                column: "AssignedUserUserId");
         }
 
         /// <inheritdoc />
@@ -163,13 +146,10 @@ namespace Infrastructure.Migrations
                 name: "ProjectUser");
 
             migrationBuilder.DropTable(
-                name: "TaskItemUser");
+                name: "TaskItems");
 
             migrationBuilder.DropTable(
                 name: "Projects");
-
-            migrationBuilder.DropTable(
-                name: "TaskItems");
 
             migrationBuilder.DropTable(
                 name: "Users");

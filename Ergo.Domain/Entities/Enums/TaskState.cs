@@ -8,7 +8,7 @@ namespace Ergo.Domain.Entities.Enums
 {
     public enum TaskState
     {
-        ToDo,
+        ToDo = 1,
         InProgress,
         Done
     }

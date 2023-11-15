@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ergo.Application.Persistence;
+﻿using Ergo.Application.Persistence;
+using MediatR;
 
 namespace Ergo.Application.Features.TaskItems.Queries.GetAll
 {
-    public class GetAllTaskItemsQueryHandler
+    public class GetAllTaskItemsQueryHandler : IRequestHandler<GetAllTaskItemsQuery, GetAllTaskItemsResponse>
     {
         private readonly ITaskItemRepository taskItemRepository;
         public GetAllTaskItemsQueryHandler(ITaskItemRepository taskItemRepository)
@@ -24,6 +20,7 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetAll
             {
                 response.TaskItems = result.Value.Select(t => new TaskItemDto
                 {
+                    TaskItemId = t.TaskItemId,
                     TaskName = t.TaskName,
                     Description = t.Description,
                     Deadline = t.Deadline,

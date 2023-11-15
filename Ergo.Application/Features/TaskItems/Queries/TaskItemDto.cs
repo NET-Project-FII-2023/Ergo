@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ergo.Domain.Entities.Enums;
+﻿using Ergo.Domain.Entities.Enums;
 
 namespace Ergo.Application.Features.TaskItems.Queries
 {
     public class TaskItemDto
     {
+        public Guid TaskItemId { get; set; }
         public string? TaskName { get; set; }
         public string? Description { get; set; }
         public DateTime Deadline { get; set; }

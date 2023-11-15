@@ -20,12 +20,13 @@ namespace Ergo.Domain.Entities
             LastModifiedDate = DateTime.UtcNow;
             Comments = new List<Comment>();
             ProjectId = projectId;
+            AssignedUser = null;
         }
         private TaskItem()
         {
             
         }
-        public User AssignedUser { get; private set; }
+        public User? AssignedUser { get; private set; }
         public Guid TaskItemId { get; private set; }
         public Guid ProjectId { get; set; }
 

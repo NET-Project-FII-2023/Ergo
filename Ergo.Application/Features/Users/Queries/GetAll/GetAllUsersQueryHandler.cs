@@ -1,4 +1,5 @@
 ﻿using Ergo.Application.Persistence;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ergo.Application.Features.Users.Queries.GetAll
 {
-    public class GetAllUsersQueryHandler
+    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, GetAllUsersResponse>
     {
         private readonly IUserRepository userRepository;
         public GetAllUsersQueryHandler(IUserRepository userRepository)

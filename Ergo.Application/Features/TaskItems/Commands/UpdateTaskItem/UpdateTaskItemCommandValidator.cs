@@ -24,8 +24,8 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
                     .NotNull()
                     .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
                 RuleFor(p => p.State)
-                    .NotEmpty().WithMessage("{PropertyName} is required.")
-                    .NotNull();
+                    .IsInEnum()
+                    .WithMessage("{PropertyName} must be a valid value between 1-3");
             }
         }
     }

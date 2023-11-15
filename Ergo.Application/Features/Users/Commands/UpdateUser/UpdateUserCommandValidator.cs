@@ -25,8 +25,8 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                         .MinimumLength(8).WithMessage("{PropertyName} must be at least 8 characters")
                         .Matches("[^a-zA-Z0-9]").WithMessage("{PropertyName} must contain at least one symbol");
                 RuleFor(p => p.Role)
-                        .NotEmpty().WithMessage("{PropertyName} is required")
-                        .NotNull();
+                        .IsInEnum()
+                        .WithMessage("{PropertyName} must be a valid value between 1-8");
 
             }
         }

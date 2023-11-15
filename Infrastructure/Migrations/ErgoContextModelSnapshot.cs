@@ -17,7 +17,7 @@ namespace Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -100,7 +100,7 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AssignedUserUserId")
+                    b.Property<Guid?>("AssignedUserUserId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("CreatedBy")
@@ -197,9 +197,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Ergo.Domain.Entities.User", "AssignedUser")
                         .WithMany("Tasks")
-                        .HasForeignKey("AssignedUserUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AssignedUserUserId");
 
                     b.Navigation("AssignedUser");
                 });

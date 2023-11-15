@@ -37,8 +37,8 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
                 .NotEmpty()
                 .NotNull();
             RuleFor(p => p.State)
-                .NotEmpty()
-                .NotNull();
+                    .IsInEnum()
+                    .WithMessage("{PropertyName} must be a valid value between 1-3");
 
         }
     }

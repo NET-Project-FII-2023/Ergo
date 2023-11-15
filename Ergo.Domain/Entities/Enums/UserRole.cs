@@ -8,7 +8,7 @@ namespace Ergo.Domain.Entities.Enums
 {
     public enum UserRole
     {
-        ProjectManager,
+        ProjectManager = 1,
         Developer,
         Tester,
         DevOps,
