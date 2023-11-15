@@ -44,6 +44,10 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
             {
                 request.ProjectId = taskItem.Value.ProjectId;
             }
+            if (request.State == default)
+            {
+                request.State = taskItem.Value.State;
+            }
 
             var validator = new UpdateTaskItemCommandValidator();
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
@@ -56,7 +60,7 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
                 };
             }
 
-            taskItem.Value.UpdateData(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId);
+            taskItem.Value.UpdateData(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId, request.State);
 
             var result = await taskItemRepository.UpdateAsync(taskItem.Value);
             return new UpdateTaskItemCommandResponse
@@ -68,7 +72,8 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
                     Description = result.Value.Description,
                     Deadline = result.Value.Deadline,
                     CreatedBy = result.Value.CreatedBy,
-                    ProjectId = result.Value.ProjectId
+                    ProjectId = result.Value.ProjectId,
+                    State = result.Value.State
                 }
             };
         }

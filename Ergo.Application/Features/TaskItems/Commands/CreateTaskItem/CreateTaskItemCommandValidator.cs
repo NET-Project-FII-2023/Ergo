@@ -36,6 +36,10 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
             RuleFor(p => p.ProjectId)
                 .NotEmpty()
                 .NotNull();
+            RuleFor(p => p.State)
+                .NotEmpty()
+                .NotNull();
+
         }
     }
 }

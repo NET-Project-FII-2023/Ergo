@@ -124,6 +124,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("State")
+                        .HasColumnType("integer");
+
                     b.Property<string>("TaskName")
                         .HasColumnType("text");
 

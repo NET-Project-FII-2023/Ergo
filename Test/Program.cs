@@ -15,13 +15,15 @@ ErgoContext ergoContext = new ErgoContext();
 var user = User.Create( "George", "Rares", "george1@yahoo.com", "1234",UserRole.Developer);
 var user2 = User.Create("Denis", "George", "george@yahoo.com", "1234",UserRole.ProjectManager);
 
-//var project = Project.Create("Ergo", "Proiect .NET", DateTime.UtcNow, "George Denis");
-//await userRepository.AddAsync(user.Value);
-//await projectRepository.AddAsync(project.Value);
+var project = Project.Create("Ergo", "Proiect .NET", DateTime.UtcNow, "George Denis");
+
 
 UserRepository userRepository = new UserRepository(ergoContext);
 ProjectRepository projectRepository = new ProjectRepository(ergoContext);
 TaskItemRepository taskItemRepository = new TaskItemRepository(ergoContext);
+
+await userRepository.AddAsync(user.Value);
+await projectRepository.AddAsync(project.Value);
 
 //CreateUserCommandHandler createUserCommandHandler = new CreateUserCommandHandler(userRepository);
 //var createUserCommand = new CreateUserCommand
@@ -54,9 +56,8 @@ TaskItemRepository taskItemRepository = new TaskItemRepository(ergoContext);
 
 // --------------------------- Task Item tests --------------------------- //
 
-//var task = TaskItem.Create("Task introductiv", "Create Facebook from scratch", DateTime.UtcNow, "Tudor Paul", Guid.Parse("162f813d-777a-4116-b790-45a151cbafd5"));
-//task.Value.AssignUser(user.Value);
-//await taskItemRepository.AddAsync(task.Value);
+var task = TaskItem.Create("Task introductiv", "Create Facebook from scratch", DateTime.UtcNow, "Tudor Paul", Guid.Parse("162f813d-777a-4116-b790-45a151cbafd5"));
+
 
 //var taskID = await taskItemRepository.FindByIdAsync(Guid.Parse("e68998a9-1901-4b1a-8877-d18053fcb8bc"));
 //Console.WriteLine("Get by id: " + taskID.Value.TaskName);
@@ -68,21 +69,21 @@ TaskItemRepository taskItemRepository = new TaskItemRepository(ergoContext);
 //}
 
 
-//UpdateTaskItemCommand updateTaskItemCommand = new UpdateTaskItemCommand
-//{
-//    TaskItemId = Guid.Parse("971ed40f-1571-488f-95ef-0e87b4bef8a1"),
-//    Description = "Descriere modificata",
-//    TaskName = "Nume modificat",
-//    Deadline = DateTime.UtcNow.AddDays(3),
-//};
+UpdateTaskItemCommand updateTaskItemCommand = new UpdateTaskItemCommand
+{
+    TaskItemId = Guid.Parse("446fb59d-8b2a-4d80-bd7d-bcc3c0c25037"),
+    State = TaskState.Done,
+    Description = "Create Twitter from scratch in Assembly",
+    TaskName = "Task de testare",
+};
 
-//UpdateTaskItemCommandHandler updateTaskItemCommandHandler = new UpdateTaskItemCommandHandler(taskItemRepository);
-//var res = await updateTaskItemCommandHandler.Handle(updateTaskItemCommand, CancellationToken.None);
-//Console.WriteLine(res.Success);
-//if (res.ValidationsErrors != null)
-//{
-//    foreach (var item in res.ValidationsErrors)
-//    {
-//        Console.WriteLine(item);
-//    }
-//}
+UpdateTaskItemCommandHandler updateTaskItemCommandHandler = new UpdateTaskItemCommandHandler(taskItemRepository);
+var res = await updateTaskItemCommandHandler.Handle(updateTaskItemCommand, CancellationToken.None);
+Console.WriteLine(res.Success);
+if (res.ValidationsErrors != null)
+{
+    foreach (var item in res.ValidationsErrors)
+    {
+        Console.WriteLine(item);
+    }
+}
