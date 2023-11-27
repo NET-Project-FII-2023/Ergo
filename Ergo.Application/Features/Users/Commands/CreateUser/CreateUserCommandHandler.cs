@@ -1,12 +1,8 @@
 ﻿using Ergo.Application.Persistence;
 using Ergo.Domain.Entities;
-using Ergo.Domain.Entities.Enums;
+
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Ergo.Application.Features.Users.Commands.CreateUser
 {

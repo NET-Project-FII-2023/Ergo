@@ -72,6 +72,7 @@ namespace Ergo.Domain.Entities
             {
                 Members = new List<User>();
             }
+            Members.Add(member);
         }
     }
 }
