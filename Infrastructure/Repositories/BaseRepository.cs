@@ -41,7 +41,7 @@ public class BaseRepository<T> : IAsyncRepository<T> where T : class
     public virtual async Task<Result<T>> DeleteAsync(Guid id)
     {
         var result = await FindByIdAsync(id);
-        if (result != null)
+        if (result.IsSuccess)
         {
             context.Set<T>().Remove(result.Value);
             await context.SaveChangesAsync();
