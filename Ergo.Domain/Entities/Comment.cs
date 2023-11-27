@@ -14,7 +14,7 @@ namespace Ergo.Domain.Entities
             Task = task;
 
         }
-        private Comment()
+        public Comment()
         {
             
         }
