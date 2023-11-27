@@ -59,7 +59,7 @@ public class UsersController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserById(Guid id)
     {
-        var query = new GetByIdUserQuery(id);
+        var query = new GetByIdUserQuery { UserId = id };
         var result = await Mediator.Send(query);
 
         return Ok(result);

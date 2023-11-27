@@ -1,4 +1,5 @@
 ﻿using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ergo.Application.Features.Users.Queries.GetById
 {
-    public class GetByIdUserQueryHandler : IRequestHandler<GetByIdUserQuery, UserDto>
+    public class GetByIdUserQueryHandler : IRequestHandler<GetByIdUserQuery, GetByIdUserQueryResponse>
 
     {
         private readonly IUserRepository userRepository;
@@ -16,22 +17,30 @@ namespace Ergo.Application.Features.Users.Queries.GetById
         {
             this.userRepository = userRepository;
         }
-        public async Task<UserDto> Handle(GetByIdUserQuery request, CancellationToken cancellationToken)
+        public async Task<GetByIdUserQueryResponse> Handle(GetByIdUserQuery request, CancellationToken cancellationToken)
         {
+            GetByIdUserQueryResponse response = new();
             var user = await userRepository.FindByIdAsync(request.UserId);
-            if(user.IsSuccess)
+            if(!user.IsSuccess)
             {
-                return new UserDto
-                {
-                    UserId = user.Value.UserId,
-                    FirstName = user.Value.FirstName,
-                    LastName = user.Value.LastName,
-                    Email = user.Value.Email,
-                    Password = user.Value.Password,
-                    Role = user.Value.Role
-                };
+                response.Success = false;
+                response.ValidationsErrors = new List<string> { user.Error };
+                return response;
             }
-            return new UserDto();
+
+                return new GetByIdUserQueryResponse
+                {
+                    Success = true,
+                    User =  new UserDto
+                    {
+                        UserId = user.Value.UserId,
+                        FirstName = user.Value.FirstName,
+                        LastName = user.Value.LastName,
+                        Email = user.Value.Email,
+                        Role = user.Value.Role
+                    } 
+
+                };
         }
     }
 }

@@ -2,5 +2,8 @@
 
 namespace Ergo.Application.Features.Users.Queries.GetById
 {
-    public record GetByIdUserQuery(Guid UserId) : IRequest<UserDto>;
+    public class GetByIdUserQuery : IRequest<GetByIdUserQueryResponse>
+    {
+        public Guid UserId { get; set; }
+    }
 }
