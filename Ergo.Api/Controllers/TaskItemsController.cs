@@ -2,6 +2,7 @@ using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
 using Ergo.Application.Features.TaskItems.Queries.GetAll;
+using Ergo.Application.Features.TaskItems.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ergo.Api.Controllers;
@@ -65,4 +66,20 @@ public class TaskItemsController : ApiControllerBase
         var result = await Mediator.Send(new GetAllTaskItemsQuery());
         return Ok(result);
     }
+
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTaskItemById(Guid id)
+    {
+        var query = new GetByIdTaskItemQuery { TaskItemId = id };
+        var result = await Mediator.Send(query);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
 }
