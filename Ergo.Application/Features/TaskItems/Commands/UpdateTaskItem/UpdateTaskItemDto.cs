@@ -9,7 +9,6 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
 {
     public class UpdateTaskItemDto
     {
-        public Guid TaskItemId { get; set; }
         public string? TaskName { get; set; }
         public string? Description { get; set; }
         public DateTime Deadline { get; set; }
