@@ -1,6 +1,8 @@
 using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
+using Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
 using Ergo.Application.Features.TaskItems.Queries.GetAll;
+using Ergo.Application.Features.TaskItems.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ergo.Api.Controllers;
@@ -19,10 +21,20 @@ public class TaskItemsController : ApiControllerBase
         }
         return Ok(result);
     }
-    [HttpPut]
+
+    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Update(UpdateTaskItemCommand command)
+    public async Task<IActionResult> Update(Guid id, UpdateTaskItemCommand command)
     {
+
+        if (id != Guid.Empty)
+        {
+           command.TaskItemId = id;
+        }
+        else
+        {
+            return BadRequest("Input has no id!");
+        }
         var result = await Mediator.Send(command);
         if (!result.Success)
         {
@@ -31,6 +43,22 @@ public class TaskItemsController : ApiControllerBase
         return Ok(result);
     }
 
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> DeleteTaskItem(Guid id)
+    {
+        var command = new DeleteTaskItemCommand { TaskItemId = id };
+        var result = await Mediator.Send(command);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
+
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
@@ -38,4 +66,20 @@ public class TaskItemsController : ApiControllerBase
         var result = await Mediator.Send(new GetAllTaskItemsQuery());
         return Ok(result);
     }
+
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTaskItemById(Guid id)
+    {
+        var query = new GetByIdTaskItemQuery { TaskItemId = id };
+        var result = await Mediator.Send(query);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
 }

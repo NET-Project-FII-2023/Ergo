@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
+using System;
 
 namespace Ergo.Application.Features.TaskItems.Queries.GetById
 {
-    public record GetByIdTaskItemQuery(Guid Id) : IRequest<TaskItemDto>;
+    public class GetByIdTaskItemQuery : IRequest<GetByIdTaskItemQueryResponse>
+    {
+        public Guid TaskItemId { get; set; }
+    }
 }
