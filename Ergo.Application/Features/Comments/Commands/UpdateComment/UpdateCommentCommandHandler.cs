@@ -26,7 +26,7 @@ namespace Ergo.Application.Features.Comments.Commands.UpdateComment
             }
             request.CreatedDate = comment.Value.CreatedDate;
             request.CreatedBy ??= comment.Value.CreatedBy;
-            request.LastModifiedDate = DateTime.Now;
+            request.LastModifiedDate = DateTime.UtcNow;
             request.LastModifiedBy = comment.Value.LastModifiedBy;
             request.CommentText ??= comment.Value.CommentText;
             request.TaskId = comment.Value.TaskId;
