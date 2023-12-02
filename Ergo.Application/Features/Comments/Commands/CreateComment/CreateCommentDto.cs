@@ -16,6 +16,6 @@ namespace Ergo.Application.Features.Comments.Commands.CreateComment
 
         public DateTime LastModifiedDate { get; set; }
         public string CommentText { get; set; } = default!;
-        public TaskItem Task { get; set; } = default!;
+       public Guid TaskId { get; set;}
     }
 }

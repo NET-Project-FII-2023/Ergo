@@ -31,7 +31,7 @@ namespace Ergo.Application.Features.Comments.Queries.GetById
                     CreatedBy = comment.Value.CreatedBy,
                     LastModifiedDate = comment.Value.LastModifiedDate,
                     LastModifiedBy = comment.Value.LastModifiedBy,
-                    Task = comment.Value.Task
+                    TaskId = comment.Value.TaskId
                 };
             }
             return new CommentDto();

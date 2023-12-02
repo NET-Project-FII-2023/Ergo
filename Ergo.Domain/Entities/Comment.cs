@@ -3,7 +3,7 @@ namespace Ergo.Domain.Entities
 {
     public class Comment : AuditableEntity
     {
-        public Comment(string fullName, TaskItem task, string text)
+        public Comment(string fullName,Guid taskId, string text)
         {
             CommentId = Guid.NewGuid();
             CreatedBy = fullName;
@@ -11,7 +11,7 @@ namespace Ergo.Domain.Entities
             LastModifiedBy = fullName;
             LastModifiedDate = DateTime.UtcNow;
             CommentText = text;
-            Task = task;
+            TaskId = taskId;
 
         }
         public Comment()
@@ -20,17 +20,17 @@ namespace Ergo.Domain.Entities
         }
         public Guid CommentId { get; private set; }
         public string CommentText { get; private set;}
-        public TaskItem Task { get; private set; }
-        public static Result<Comment> Create(string fullName,  TaskItem task, string text)
+        public Guid TaskId { get; private set; }
+        public static Result<Comment> Create(string fullName,Guid taskId,string text)
         {
             if (string.IsNullOrWhiteSpace(fullName))
             {
                 return Result<Comment>.Failure(Constants.CreatorFullNameRequired);
             }
 
-            if (task == null)
+            if(taskId == Guid.Empty)
             {
-                return Result<Comment>.Failure(Constants.TaskItemRequired);
+                return Result<Comment>.Failure(Constants.TaskIdRequired);
             }
 
             if (string.IsNullOrWhiteSpace(text))
@@ -38,17 +38,18 @@ namespace Ergo.Domain.Entities
                 return Result<Comment>.Failure(Constants.CommentTextRequired);
             }
 
-            return Result<Comment>.Success(new Comment(fullName, task, text));
+            return Result<Comment>.Success(new Comment(fullName,taskId,text));
         }
 
-        public void UpdateData(string fullName, DateTime createdDate, string lastModifiedBy, DateTime lastModifiedDate, string text, TaskItem task)
+        public void UpdateData(string fullName, DateTime createdDate, string lastModifiedBy, DateTime lastModifiedDate, string text,Guid taskId)
         {
             CreatedBy = fullName;
             CreatedDate = createdDate;
             LastModifiedBy = lastModifiedBy;
             LastModifiedDate = lastModifiedDate;
             CommentText = text;
-            Task = task;
+            TaskId = taskId;
+            
         }
 
     }
