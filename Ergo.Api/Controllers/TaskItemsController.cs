@@ -3,12 +3,14 @@ using Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
 using Ergo.Application.Features.TaskItems.Queries.GetAll;
 using Ergo.Application.Features.TaskItems.Queries.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ergo.Api.Controllers;
 
 public class TaskItemsController : ApiControllerBase
 {
+    [Authorize(Roles = "User")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> Create(CreateTaskItemCommand command)
@@ -22,6 +24,7 @@ public class TaskItemsController : ApiControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "User")]
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(Guid id, UpdateTaskItemCommand command)
@@ -43,6 +46,7 @@ public class TaskItemsController : ApiControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "User")]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteTaskItem(Guid id)
@@ -58,7 +62,7 @@ public class TaskItemsController : ApiControllerBase
         return Ok(result);
     }
 
-
+    [Authorize(Roles = "User")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
@@ -67,6 +71,7 @@ public class TaskItemsController : ApiControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "User")]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTaskItemById(Guid id)
