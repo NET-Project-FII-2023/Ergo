@@ -29,7 +29,7 @@ namespace Ergo.Application.Features.Comments.Queries.GetAll
                     LastModifiedBy = u.LastModifiedBy,
                     LastModifiedDate = u.LastModifiedDate,
                     CommentText = u.CommentText,
-                    Task = u.Task
+                    TaskId = u.TaskId
                 }).ToList();
             }
             return response;

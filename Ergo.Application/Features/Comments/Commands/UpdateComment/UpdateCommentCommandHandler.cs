@@ -29,7 +29,7 @@ namespace Ergo.Application.Features.Comments.Commands.UpdateComment
             request.LastModifiedDate = DateTime.Now;
             request.LastModifiedBy = comment.Value.LastModifiedBy;
             request.CommentText ??= comment.Value.CommentText;
-            request.Task ??= comment.Value.Task;
+            request.TaskId = comment.Value.TaskId;
 
             var validator = new UpdateCommentCommandValidator();
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -42,7 +42,7 @@ namespace Ergo.Application.Features.Comments.Commands.UpdateComment
                 };
             }
             
-            comment.Value.UpdateData(request.CreatedBy, request.CreatedDate, request.LastModifiedBy, request.LastModifiedDate, request.CommentText, request.Task);
+            comment.Value.UpdateData(request.CreatedBy, request.CreatedDate, request.LastModifiedBy, request.LastModifiedDate, request.CommentText, request.TaskId);
             
             var result = await commentRepository.UpdateAsync(comment.Value);
             return new UpdateCommentCommandResponse
@@ -55,7 +55,7 @@ namespace Ergo.Application.Features.Comments.Commands.UpdateComment
                     LastModifiedBy = result.Value.LastModifiedBy,
                     LastModifiedDate = result.Value.LastModifiedDate,
                     CommentText = result.Value.CommentText,
-                    Task = result.Value.Task
+                    TaskId = result.Value.TaskId
                 }
             };
         }

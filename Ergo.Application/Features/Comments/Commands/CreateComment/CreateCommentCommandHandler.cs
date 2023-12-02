@@ -30,7 +30,7 @@ namespace Ergo.Application.Features.Comments.Commands.CreateComment
                     ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
                 };
             }
-            var comment = Comment.Create(request.CreatedBy,request.Task,request.CommentText);
+            var comment = Comment.Create(request.CreatedBy,request.TaskId,request.CommentText);
             if (!comment.IsSuccess)
             {
                 return new CreateCommentCommandResponse
@@ -51,7 +51,7 @@ namespace Ergo.Application.Features.Comments.Commands.CreateComment
                     LastModifiedBy = request.LastModifiedBy,
                     LastModifiedDate = request.LastModifiedDate,
                     CommentText = request.CommentText,
-                    Task = request.Task
+                    TaskId = request.TaskId
                 }
             };
         }

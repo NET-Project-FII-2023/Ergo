@@ -21,6 +21,7 @@
 
         public const string ProjectNameRequired = "Project name is required.";
         public const string ProjectIdRequired = "The project id is required.";
+        public const string TaskIdRequired = "The task id is required.";
 
     }
 }

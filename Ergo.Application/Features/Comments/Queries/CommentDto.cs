@@ -16,7 +16,7 @@ namespace Ergo.Application.Features.Comments.Queries
         public string? LastModifiedBy { get; set; }
         public DateTime LastModifiedDate { get; set; }
         public string? CommentText { get; set; }
-        public TaskItem? Task { get; set; }
+        public Guid TaskId { get; set; }
 
     }
 }
