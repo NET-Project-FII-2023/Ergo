@@ -3,6 +3,7 @@ using Ergo.Application.Features.Comments.Commands.DeleteComment;
 using Ergo.Application.Features.Comments.Commands.UpdateComment;
 using Ergo.Application.Features.Comments.Queries.GetAll;
 using Ergo.Application.Features.Comments.Queries.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -10,6 +11,7 @@ namespace Ergo.Api.Controllers
 {
     public class CommentsController : ApiControllerBase
     {
+        [Authorize(Roles = "User")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create(CreateCommentCommand command)
@@ -22,6 +24,7 @@ namespace Ergo.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "User")]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Update(Guid id, UpdateCommentCommand command)
@@ -38,6 +41,7 @@ namespace Ergo.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
@@ -46,6 +50,7 @@ namespace Ergo.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "User")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(Guid id)
@@ -59,6 +64,7 @@ namespace Ergo.Api.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCommentById(Guid id)

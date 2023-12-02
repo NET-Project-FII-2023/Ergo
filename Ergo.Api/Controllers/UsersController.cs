@@ -3,12 +3,14 @@ using Ergo.Application.Features.Users.Commands.DeleteUser;
 using Ergo.Application.Features.Users.Commands.UpdateUser;
 using Ergo.Application.Features.Users.Queries.GetAll;
 using Ergo.Application.Features.Users.Queries.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ergo.Api.Controllers;
 
 public class UsersController : ApiControllerBase
 {
+    [Authorize(Roles = "User")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> Create(CreateUserCommand command)
@@ -20,6 +22,8 @@ public class UsersController : ApiControllerBase
         }
         return Ok(result);
     }
+
+    [Authorize(Roles = "User")]
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(Guid id,UpdateUserCommand command)
@@ -35,6 +39,8 @@ public class UsersController : ApiControllerBase
         }
         return Ok(result);
     }
+
+    [Authorize(Roles = "User")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
@@ -42,6 +48,8 @@ public class UsersController : ApiControllerBase
         var result = await Mediator.Send(new GetAllUsersQuery());
         return Ok(result);
     }
+
+    [Authorize(Roles = "User")]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(Guid id)
@@ -55,6 +63,7 @@ public class UsersController : ApiControllerBase
         return Ok(result);
     }
 
+    [Authorize(Roles = "User")]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserById(Guid id)
