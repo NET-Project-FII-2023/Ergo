@@ -5,7 +5,7 @@ using Ergo.Application.Features.Comments.Queries.GetAll;
 using Ergo.Application.Features.Comments.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
+
 
 namespace Ergo.Api.Controllers
 {

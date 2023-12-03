@@ -1,8 +1,8 @@
 using Ergo.Application.Persistence;
-
+using MediatR;
 namespace Ergo.Application.Features.Projects.Queries.GetById
 {
-    public class GetByIdProjectQueryHandler
+    public class GetByIdProjectQueryHandler : IRequestHandler<GetByIdProjectQuery, ProjectDto>
     {
         private readonly IProjectRepository projectRepository;
 
