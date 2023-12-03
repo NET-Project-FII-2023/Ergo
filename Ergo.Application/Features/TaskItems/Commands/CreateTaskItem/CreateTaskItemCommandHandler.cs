@@ -8,10 +8,12 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
     {
 
         private readonly ITaskItemRepository taskItemRepository;
+        private readonly IProjectRepository projectRepository;
 
-        public CreateTaskItemCommandHandler(ITaskItemRepository taskItemRepository)
+        public CreateTaskItemCommandHandler(ITaskItemRepository taskItemRepository, IProjectRepository projectRepository)
         {
             this.taskItemRepository = taskItemRepository;
+            this.projectRepository = projectRepository;
         }
 
         public async Task<CreateTaskItemCommandResponse> Handle(CreateTaskItemCommand request,
@@ -28,6 +30,16 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
                     ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
                 };
             }
+            var projectExists = await projectRepository.ProjectExists(request.ProjectId);
+            if (!projectExists)
+            {
+                return new CreateTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { "Project with the provided ID does not exist." }
+                };
+            }
+
             var taskItem = TaskItem.Create(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId);
             if (!taskItem.IsSuccess)
             {
