@@ -1,8 +1,8 @@
 using Ergo.Application.Persistence;
-
+using MediatR;
 namespace Ergo.Application.Features.Projects.Queries.GetAll
 {
-    public class GetAllProjectsHandler
+    public class GetAllProjectsHandler : IRequestHandler<GetAllProjectsQuery, GetAllProjectsResponse>
     {
         private readonly IProjectRepository projectRepository;
 
@@ -20,6 +20,7 @@ namespace Ergo.Application.Features.Projects.Queries.GetAll
             {
                 response.Projects = result.Value.Select(project => new ProjectDto
                 {
+                    ProjectId = project.ProjectId,
                     ProjectName = project.ProjectName,
                     Description = project.Description,
                     StartDate = project.StartDate,
