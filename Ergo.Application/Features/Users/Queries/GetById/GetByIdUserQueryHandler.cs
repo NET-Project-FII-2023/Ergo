@@ -12,35 +12,29 @@ namespace Ergo.Application.Features.Users.Queries.GetById
     public class GetByIdUserQueryHandler : IRequestHandler<GetByIdUserQuery, GetByIdUserQueryResponse>
 
     {
-        private readonly IUserRepository userRepository;
-        public GetByIdUserQueryHandler(IUserRepository userRepository)
+        private readonly IUserManager userRepository;
+        public GetByIdUserQueryHandler(IUserManager userRepository)
         {
             this.userRepository = userRepository;
         }
         public async Task<GetByIdUserQueryResponse> Handle(GetByIdUserQuery request, CancellationToken cancellationToken)
         {
-            GetByIdUserQueryResponse response = new();
-            var user = await userRepository.FindByIdAsync(request.UserId);
-            if(!user.IsSuccess)
+            var result = await userRepository.FindByIdAsync(Guid.Parse(request.UserId));
+            if (!result.IsSuccess)
+                return new GetByIdUserQueryResponse { Success = false, Message = result.Error };
+            var userDto = result.Value;
+            return new GetByIdUserQueryResponse
             {
-                response.Success = false;
-                response.ValidationsErrors = new List<string> { user.Error };
-                return response;
-            }
-
-                return new GetByIdUserQueryResponse
+                Success = true,
+                User = new UserDto
                 {
-                    Success = true,
-                    User =  new UserDto
-                    {
-                        UserId = user.Value.UserId,
-                        FirstName = user.Value.FirstName,
-                        LastName = user.Value.LastName,
-                        Email = user.Value.Email,
-                        Role = user.Value.Role
-                    } 
-
-                };
+                    UserId = userDto.UserId,
+                    Name = userDto.Name,
+                    Email = userDto.Email,
+                    Password = userDto.Password,
+                }
+            };
+            
         }
     }
 }

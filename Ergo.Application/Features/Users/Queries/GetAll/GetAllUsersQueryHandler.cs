@@ -10,8 +10,8 @@ namespace Ergo.Application.Features.Users.Queries.GetAll
 {
     public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, GetAllUsersResponse>
     {
-        private readonly IUserRepository userRepository;
-        public GetAllUsersQueryHandler(IUserRepository userRepository)
+        private readonly IUserManager userRepository;
+        public GetAllUsersQueryHandler(IUserManager userRepository)
         {
             this.userRepository = userRepository;
         }
@@ -24,11 +24,9 @@ namespace Ergo.Application.Features.Users.Queries.GetAll
                 response.Users = result.Value.Select(u => new UserDto
                 { 
                     UserId = u.UserId,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
+                    Name = u.Name,
                     Email = u.Email,
                     Password = u.Password,
-                    Role = u.Role
                 }).ToList();
             }
             return response;

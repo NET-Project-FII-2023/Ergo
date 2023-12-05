@@ -1,6 +1,4 @@
-using Ergo.Application.Features.Users.Commands.CreateUser;
 using Ergo.Application.Features.Users.Commands.DeleteUser;
-using Ergo.Application.Features.Users.Commands.UpdateUser;
 using Ergo.Application.Features.Users.Queries.GetAll;
 using Ergo.Application.Features.Users.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
@@ -10,35 +8,35 @@ namespace Ergo.Api.Controllers;
 
 public class UsersController : ApiControllerBase
 {
-    [Authorize(Roles = "User")]
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> Create(CreateUserCommand command)
-    {
-        var result = await Mediator.Send(command);
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
+    //[Authorize(Roles = "User")]
+    //[HttpPost]
+    //[ProducesResponseType(StatusCodes.Status201Created)]
+    //public async Task<IActionResult> Create(CreateUserCommand command)
+    //{
+    //    var result = await Mediator.Send(command);
+    //    if (!result.Success)
+    //    {
+    //        return BadRequest(result);
+    //    }
+    //    return Ok(result);
+    //}
 
-    [Authorize(Roles = "User")]
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Update(Guid id,UpdateUserCommand command)
-    {
-        if (id != command.UserId)
-        {
-            return BadRequest("The ids must be the same!");
-        }
-        var result = await Mediator.Send(command);
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
+    //[Authorize(Roles = "User")]
+    //[HttpPut("{id}")]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //public async Task<IActionResult> Update(Guid id,UpdateUserCommand command)
+    //{
+    //    if (id != command.UserId)
+    //    {
+    //        return BadRequest("The ids must be the same!");
+    //    }
+    //    var result = await Mediator.Send(command);
+    //    if (!result.Success)
+    //    {
+    //        return BadRequest(result);
+    //    }
+    //    return Ok(result);
+    //}
 
     [Authorize(Roles = "User")]
     [HttpGet]
@@ -66,11 +64,14 @@ public class UsersController : ApiControllerBase
     [Authorize(Roles = "User")]
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetUserById(Guid id)
+    public async Task<IActionResult> GetUserById(string id)
     {
         var query = new GetByIdUserQuery { UserId = id };
         var result = await Mediator.Send(query);
-
+        if(!result.Success)
+        {
+            return BadRequest(result);
+        }
         return Ok(result);
     }
 }
