@@ -6,7 +6,10 @@ namespace Ergo.Application.Persistence
     public interface IUserManager
     {
         Task<Result<UserDto>> FindByIdAsync(Guid userId);
+        Task<Result<UserDto>> FindByEmailAsync(string email);
         Task<Result<List<UserDto>>> GetAllAsync();
         Task<Result<UserDto>> DeleteAsync(Guid userId);
+        Task<Result<UserDto>> UpdateAsync(UserDto user);
+
     }
 }

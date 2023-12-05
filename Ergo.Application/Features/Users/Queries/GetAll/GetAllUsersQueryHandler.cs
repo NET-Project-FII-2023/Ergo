@@ -25,6 +25,7 @@ namespace Ergo.Application.Features.Users.Queries.GetAll
                 { 
                     UserId = u.UserId,
                     Name = u.Name,
+                    Username = u.Username,
                     Email = u.Email,
                     Password = u.Password,
                 }).ToList();

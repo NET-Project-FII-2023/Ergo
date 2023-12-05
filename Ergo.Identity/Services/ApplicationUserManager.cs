@@ -25,6 +25,7 @@ namespace Ergo.Identity.Services
             {
                 UserId = user.Id,
                 Name = user.Name,
+                Username = user.UserName,
                 Email = user.Email,
                 Password = user.PasswordHash,
             };
@@ -39,6 +40,7 @@ namespace Ergo.Identity.Services
             {
                 UserId = u.Id,
                 Name = u.Name,
+                Username = u.UserName,
                 Email = u.Email,
                 Password = u.PasswordHash,
             }).ToList();
@@ -57,10 +59,54 @@ namespace Ergo.Identity.Services
             {
                 UserId = user.Id,
                 Name = user.Name,
+                Username = user.UserName,
                 Email = user.Email,
                 Password = user.PasswordHash,
             };
             return Task.FromResult(Result<UserDto>.Success(userDto));
+        }
+
+        public Task<Result<UserDto>> FindByEmailAsync(string email)
+        {
+            var user = userManager.FindByEmailAsync(email).Result;
+            if (user == null)
+                return Task.FromResult(Result<UserDto>.Failure($"User with email {email} not found"));
+            var userDto = new UserDto
+            {
+                UserId = user.Id,
+                Name = user.Name,
+                Username = user.UserName,
+                Email = user.Email,
+                Password = user.PasswordHash,
+            };
+            return Task.FromResult(Result<UserDto>.Success(userDto));
+        }
+
+        public async Task<Result<UserDto>> UpdateAsync(UserDto user)
+        {
+            var userToUpdate = await userManager.FindByIdAsync(user.UserId.ToString());
+            if (userToUpdate == null)
+                return Result<UserDto>.Failure($"User with id {user.UserId} not found");
+            userToUpdate.Name = user.Name;
+            await Console.Out.WriteLineAsync(userToUpdate.Name);
+            userToUpdate.UserName = user.Username;
+            userToUpdate.NormalizedUserName = user.Username.ToUpper();
+            userToUpdate.Email = user.Email;
+            userToUpdate.NormalizedEmail = user.Email.ToUpper();
+            userToUpdate.PasswordHash = user.Password;
+            var result = await userManager.UpdateAsync(userToUpdate);
+            if (!result.Succeeded)
+                return Result<UserDto>.Failure($"User with id {user.UserId} not updated");
+            var userDto = new UserDto
+            {
+                UserId = userToUpdate.Id,
+                Name = userToUpdate.Name,
+                Username = userToUpdate.UserName,
+                Email = userToUpdate.Email,
+                Password = userToUpdate.PasswordHash,
+            };
+            return Result<UserDto>.Success(userDto);
+            
         }
     }
 }

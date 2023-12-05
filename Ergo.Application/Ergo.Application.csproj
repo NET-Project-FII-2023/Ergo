@@ -20,8 +20,4 @@
       <ProjectReference Include="..\Ergo.Domain\Ergo.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Features\Users\Commands\UpdateComment\" />
-    </ItemGroup>
-
 </Project>

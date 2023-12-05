@@ -1,4 +1,5 @@
 using Ergo.Application.Features.Users.Commands.DeleteUser;
+using Ergo.Application.Features.Users.Commands.UpdateUser;
 using Ergo.Application.Features.Users.Queries.GetAll;
 using Ergo.Application.Features.Users.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
@@ -22,21 +23,21 @@ public class UsersController : ApiControllerBase
     //}
 
     //[Authorize(Roles = "User")]
-    //[HttpPut("{id}")]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //public async Task<IActionResult> Update(Guid id,UpdateUserCommand command)
-    //{
-    //    if (id != command.UserId)
-    //    {
-    //        return BadRequest("The ids must be the same!");
-    //    }
-    //    var result = await Mediator.Send(command);
-    //    if (!result.Success)
-    //    {
-    //        return BadRequest(result);
-    //    }
-    //    return Ok(result);
-    //}
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Update(Guid id, UpdateUserCommand command)
+    {
+        if (id != command.Id)
+        {
+            return BadRequest("The ids must be the same!");
+        }
+        var result = await Mediator.Send(command);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
 
     [Authorize(Roles = "User")]
     [HttpGet]

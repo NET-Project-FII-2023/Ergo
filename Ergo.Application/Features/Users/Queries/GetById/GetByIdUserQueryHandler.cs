@@ -30,6 +30,7 @@ namespace Ergo.Application.Features.Users.Queries.GetById
                 {
                     UserId = userDto.UserId,
                     Name = userDto.Name,
+                    Username = userDto.Username,
                     Email = userDto.Email,
                     Password = userDto.Password,
                 }
