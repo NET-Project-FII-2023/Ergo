@@ -1,16 +1,12 @@
 ﻿using Ergo.Application.Persistence;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ergo.Application.Features.Users.Queries.GetAll
 {
     public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, GetAllUsersResponse>
     {
         private readonly IUserManager userRepository;
+
         public GetAllUsersQueryHandler(IUserManager userRepository)
         {
             this.userRepository = userRepository;
@@ -27,7 +23,7 @@ namespace Ergo.Application.Features.Users.Queries.GetAll
                     Name = u.Name,
                     Username = u.Username,
                     Email = u.Email,
-                    Password = u.Password,
+                    Roles = u.Roles
                 }).ToList();
             }
             return response;

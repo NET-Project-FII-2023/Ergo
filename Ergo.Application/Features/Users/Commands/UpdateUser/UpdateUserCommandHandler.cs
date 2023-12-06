@@ -28,7 +28,6 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
             request.Name ??= user.Value.Name;
             request.Username ??= user.Value.Username;
             request.Email ??= user.Value.Email;
-            request.Password ??= user.Value.Password;
             var validator = new UpdateUserCommandValidator();
             var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
@@ -45,7 +44,6 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                 Name = request.Name,
                 Username = request.Username,
                 Email = request.Email,
-                Password = request.Password,
             };
             var result = await userRepository.UpdateAsync(userDto);
             if (!result.IsSuccess)
@@ -64,7 +62,6 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                     Name = result.Value.Name,
                     Username = result.Value.Username,
                     Email = result.Value.Email,
-                    Password = result.Value.Password,
                 }
             };
         }

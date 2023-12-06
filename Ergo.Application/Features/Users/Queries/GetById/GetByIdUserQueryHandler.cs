@@ -32,7 +32,8 @@ namespace Ergo.Application.Features.Users.Queries.GetById
                     Name = userDto.Name,
                     Username = userDto.Username,
                     Email = userDto.Email,
-                    Password = userDto.Password,
+                    Roles = userDto.Roles
+
                 }
             };
             

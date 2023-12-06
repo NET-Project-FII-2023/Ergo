@@ -21,12 +21,6 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required")
                 .NotNull().WithMessage("Email is required");
-
-            RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required")
-                .MinimumLength(7).WithMessage("{PropertyName} must be at least 7 characters")
-                .Matches("[^a-zA-Z0-9]").WithMessage("{PropertyName} must contain at least one")
-                .NotNull().WithMessage("Password is required");
         }
     }
 }

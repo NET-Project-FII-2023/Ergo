@@ -1,4 +1,5 @@
 using Ergo.Application.Features.Users.Commands.DeleteUser;
+using Ergo.Application.Features.Users.Commands.UpdateRole;
 using Ergo.Application.Features.Users.Commands.UpdateUser;
 using Ergo.Application.Features.Users.Queries.GetAll;
 using Ergo.Application.Features.Users.Queries.GetById;
@@ -48,7 +49,7 @@ public class UsersController : ApiControllerBase
         return Ok(result);
     }
 
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Delete(Guid id)
@@ -70,6 +71,22 @@ public class UsersController : ApiControllerBase
         var query = new GetByIdUserQuery { UserId = id };
         var result = await Mediator.Send(query);
         if(!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [Authorize(Roles ="Admin")]
+    [HttpPut("/role/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> UpdateRole(Guid id, UpdateUserRoleCommand command)
+    {
+        if (id != command.UserId)
+        {
+            return BadRequest("The ids must be the same!");
+        }
+        var result = await Mediator.Send(command);
+        if (!result.Success)
         {
             return BadRequest(result);
         }
