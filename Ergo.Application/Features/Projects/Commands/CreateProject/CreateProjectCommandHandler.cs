@@ -26,7 +26,7 @@ namespace Ergo.Application.Features.Projects.Commands.CreateProject
                 };
             }
 
-            var project = Project.Create(request.ProjectName, request.Description, request.Deadline, request.FullName);
+            var project = Project.Create(request.ProjectName, request.Description, request.GitRepository, request.Deadline, request.FullName);
             if (!project.IsSuccess)
             {
                 return new CreateProjectCommandResponse
@@ -46,6 +46,7 @@ namespace Ergo.Application.Features.Projects.Commands.CreateProject
                     ProjectName = project.Value.ProjectName,
                     Deadline = project.Value.Deadline,
                     Description = project.Value.Description,
+                    GitRepository = project.Value.GitRepository,
                     FullName = project.Value.CreatedBy
                 }
             };

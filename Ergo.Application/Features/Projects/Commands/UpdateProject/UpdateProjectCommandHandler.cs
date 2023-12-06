@@ -26,6 +26,7 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
 
             request.ProjectName ??= project.Value.ProjectName;
             request.Description ??= project.Value.Description;
+            request.GitRepository ??= project.Value.GitRepository;
             if (request.Deadline == default)
             {
                 request.Deadline = project.Value.Deadline;
@@ -46,7 +47,7 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
                 };
             }
 
-            project.Value.UpdateData(request.ProjectName, request.Description, request.Deadline, request.State, request.ModifiedBy);
+            project.Value.UpdateData(request.ProjectName, request.Description, request.GitRepository, request.Deadline, request.State, request.ModifiedBy);
 
             var result = await projectRepository.UpdateAsync(project.Value);
 
@@ -58,6 +59,7 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
                     ProjectId = result.Value.ProjectId,
                     ProjectName = result.Value.ProjectName,
                     Description = result.Value.Description,
+                    GitRepository = result.Value.GitRepository,
                     LastModifiedBy = result.Value.LastModifiedBy,
                     LastModifiedDate = result.Value.LastModifiedDate,
                     Deadline = result.Value.Deadline,

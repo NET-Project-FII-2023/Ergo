@@ -1,10 +1,5 @@
 ﻿using Ergo.Application.Persistence;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Ergo.Application.Features.TaskItems.Queries.GetById
 {
@@ -36,6 +31,7 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetById
                 {
                     TaskItemId = taskItem.Value.TaskItemId,
                     ProjectId = taskItem.Value.ProjectId,
+                    BranchId = taskItem.Value.BranchId,
                     TaskName = taskItem.Value.TaskName,
                     Description = taskItem.Value.Description,
                     Deadline = taskItem.Value.Deadline,

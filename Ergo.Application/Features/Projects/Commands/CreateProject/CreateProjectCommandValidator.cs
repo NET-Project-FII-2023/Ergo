@@ -16,6 +16,9 @@ namespace Ergo.Application.Features.Projects.Commands.CreateProject
                 .NotNull()
                 .MaximumLength(5000).WithMessage("{PropertyName} must not exceed 5000 characters.");
 
+            RuleFor(p => p.GitRepository)
+                .MaximumLength(1000).WithMessage("{PropertyName} must not exceed 1000 characters.");
+
             RuleFor(p => p.Deadline)
                 .NotEmpty().WithMessage("{Deadline} is required.")
                 .NotNull();

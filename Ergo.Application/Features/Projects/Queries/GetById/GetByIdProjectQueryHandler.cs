@@ -22,6 +22,7 @@ namespace Ergo.Application.Features.Projects.Queries.GetById
                     ProjectId = project.Value.ProjectId,
                     ProjectName = project.Value.ProjectName,
                     Description = project.Value.Description,
+                    GitRepository = project.Value.GitRepository,
                     StartDate = project.Value.StartDate,
                     Deadline = project.Value.Deadline,
                     State = project.Value.State,

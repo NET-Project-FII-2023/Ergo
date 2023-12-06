@@ -8,6 +8,7 @@ namespace Ergo.Application.Features.Projects.Queries
         public Guid ProjectId { get; set; }
         public string? ProjectName { get; set; }
         public string? Description { get; set; }
+        public string? GitRepository { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime Deadline { get; set; }
         public ProjectState State { get; set; }
