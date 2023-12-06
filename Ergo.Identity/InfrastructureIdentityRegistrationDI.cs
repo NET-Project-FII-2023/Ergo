@@ -1,4 +1,5 @@
 ﻿using Ergo.Application.Contracts.Identity;
+using Ergo.Application.Persistence;
 using Ergo.Identity.Models;
 using Ergo.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -54,6 +55,7 @@ namespace Ergo.Identity
                                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
                             };
                         });
+            services.AddScoped<IUserManager, ApplicationUserManager>();
             services.AddScoped
                <IAuthService, AuthService>();
             return services;

@@ -8,6 +8,6 @@ namespace Ergo.Application.Features.Users.Queries.GetAll
 {
     public class GetAllUsersResponse
     {
-        public List<UserDto> Users { get; set; }
+        public List<UserDto>? Users { get; set; }
     }
 }

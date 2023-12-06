@@ -1,4 +1,5 @@
-﻿namespace Ergo.Domain.Common
+﻿
+namespace Ergo.Domain.Common
 {
     public class Result<T> where T : class
     {
@@ -21,5 +22,7 @@
         {
             return new Result<T>(false, null!, error);
         }
+
+
     }
 }

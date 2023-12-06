@@ -1,6 +1,4 @@
-﻿using Ergo.Domain.Entities;
-using Ergo.Domain.Entities.Enums;
-using MediatR;
+﻿using MediatR;
 
 namespace Ergo.Application.Features.Comments.Commands.CreateComment
 {

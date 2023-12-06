@@ -1,21 +1,23 @@
-﻿using Ergo.Application.Persistence;
-using Ergo.Domain.Entities;
+﻿using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Persistence;
 using MediatR;
 
 namespace Ergo.Application.Features.Users.Commands.UpdateUser
 {
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UpdateUserCommandResponse>
     {
-        private readonly IUserRepository userRepository;
+        private readonly IUserManager userRepository;
 
-        public UpdateUserCommandHandler(IUserRepository userRepository)
+        public UpdateUserCommandHandler(IUserManager userRepository)
         {
             this.userRepository = userRepository;
         }
         public async Task<UpdateUserCommandResponse> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.FindByIdAsync(request.UserId);
-            if (!user.IsSuccess)
+            var response = new UpdateUserCommandResponse();
+
+            var user = await userRepository.FindByIdAsync(request.Id);
+            if(!user.IsSuccess)
             {
                 return new UpdateUserCommandResponse
                 {
@@ -23,39 +25,45 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                     ValidationsErrors = new List<string> { "User with id this does not exists" }
                 };
             }
-            request.FirstName ??= user.Value.FirstName;
-            request.LastName ??= user.Value.LastName;
+            request.Name ??= user.Value.Name;
+            request.Username ??= user.Value.Username;
             request.Email ??= user.Value.Email;
-            request.Password ??= user.Value.Password;
-            request.Role ??= user.Value.Role;
-
             var validator = new UpdateUserCommandValidator();
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
+            var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
-            { 
+            {
                 return new UpdateUserCommandResponse
                 {
                     Success = false,
                     ValidationsErrors = validationResult.Errors.Select(x => x.ErrorMessage).ToList()
                 };
             }
-            user.Value.UpdateData(request.FirstName, request.LastName, request.Email, request.Password, request.Role.Value);
-
-
-            var result = await userRepository.UpdateAsync(user.Value);
+            UserDto userDto = new()
+            {
+                UserId = user.Value.UserId,
+                Name = request.Name,
+                Username = request.Username,
+                Email = request.Email,
+            };
+            var result = await userRepository.UpdateAsync(userDto);
+            if (!result.IsSuccess)
+            {
+                return new UpdateUserCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { result.Error }
+                };
+            }
             return new UpdateUserCommandResponse
             {
                 Success = true,
                 User = new UpdateUserDto
                 {
-                    FirstName = result.Value.FirstName,
-                    LastName = result.Value.LastName,
+                    Name = result.Value.Name,
+                    Username = result.Value.Username,
                     Email = result.Value.Email,
-                    Password = result.Value.Password,
-                    Role = result.Value.Role
                 }
             };
-
         }
     }
 }

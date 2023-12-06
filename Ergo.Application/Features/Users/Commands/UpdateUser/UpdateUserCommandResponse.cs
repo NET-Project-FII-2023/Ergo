@@ -7,6 +7,7 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
         public UpdateUserCommandResponse() : base()
         {
         }
+
         public UpdateUserDto User { get; set; }
     }
 }
