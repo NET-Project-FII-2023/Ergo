@@ -6,11 +6,12 @@ namespace Ergo.Domain.Entities
     public class Project : AuditableEntity
     {
         
-        private Project(string projectName, string description, DateTime deadline, string fullName)
+        private Project(string projectName, string description, string? gitRepository, DateTime deadline, string fullName)
         {
             ProjectId = Guid.NewGuid();
             ProjectName = projectName;
             Description = description;
+            GitRepository = gitRepository;
             CreatedBy = fullName;
             CreatedDate = DateTime.UtcNow;
             LastModifiedBy = fullName;
@@ -27,11 +28,12 @@ namespace Ergo.Domain.Entities
         public Guid ProjectId { get; private set; }
         public string ProjectName { get; private set; }
         public string Description { get; private set; }
+        public string? GitRepository { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime Deadline { get; private set; }
         public ProjectState State { get; private set; }
 
-        public static Result<Project> Create(string projectName, string description, DateTime deadline, string fullName)
+        public static Result<Project> Create(string projectName, string description, string? gitRepository, DateTime deadline, string fullName)
         {
             if (string.IsNullOrWhiteSpace(projectName))
             {
@@ -53,13 +55,14 @@ namespace Ergo.Domain.Entities
             }
             
 
-            return Result<Project>.Success(new Project(projectName, description, deadline, fullName));
+            return Result<Project>.Success(new Project(projectName, description, gitRepository, deadline, fullName));
         }
 
-        public void UpdateData(string projectName, string description, DateTime deadline, ProjectState state, string fullName)
+        public void UpdateData(string projectName, string description, string? gitRepository, DateTime deadline, ProjectState state, string fullName)
         {
             ProjectName = projectName;
             Description = description;
+            GitRepository = gitRepository;
             LastModifiedBy = fullName;
             LastModifiedDate = DateTime.UtcNow;
             State = state;

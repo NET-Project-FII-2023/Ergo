@@ -11,6 +11,7 @@ namespace Ergo.Domain.Entities
         {
             TaskItemId = Guid.NewGuid();
             TaskName = taskName;
+            BranchId = Utils.GenerateBranchId();
             Description = description;
             Deadline = deadline;
             State = TaskState.ToDo;
@@ -29,7 +30,7 @@ namespace Ergo.Domain.Entities
         public User? AssignedUser { get; private set; }
         public Guid TaskItemId { get; private set; }
         public Guid ProjectId { get; set; }
-
+        public string BranchId { get; set; }
         public string? TaskName { get; private set; }
         public string? Description { get; private set; }
         public DateTime Deadline { get; private set; }

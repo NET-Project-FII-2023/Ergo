@@ -22,6 +22,7 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetAll
                 {
                     TaskItemId = t.TaskItemId,
                     TaskName = t.TaskName,
+                    BranchId = t.BranchId,
                     Description = t.Description,
                     Deadline = t.Deadline,
                     CreatedBy = t.CreatedBy,
