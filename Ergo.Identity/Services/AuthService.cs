@@ -14,13 +14,14 @@ namespace Ergo.Identity.Services
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
         private readonly IConfiguration configuration;
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, SignInManager<ApplicationUser> signInManager)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.configuration = configuration;
-
+            this.signInManager = signInManager;
         }
         public async Task<(int, string)> Registeration(RegistrationModel model, string role)
         {
@@ -70,7 +71,11 @@ namespace Ergo.Identity.Services
             string token = GenerateToken(authClaims);
             return (1, token);
         }
-
+        public async Task<(int, string)> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return (1, "User logged out successfully!");
+        }
 
         private string GenerateToken(IEnumerable<Claim> claims)
         {

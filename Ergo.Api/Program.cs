@@ -2,8 +2,6 @@ using Ergo.Application.Contracts.Interfaces;
 using Ergo.Application.Models;
 using Ergo.API.Utility;
 using Ergo.Application;
-using Ergo.Application.Contracts.Interfaces;
-using Ergo.Application.Models;
 using Infrastructure;
 using Ergo.Identity;
 using Microsoft.OpenApi.Models;
@@ -11,6 +9,10 @@ using WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 // Add services to the container.
@@ -73,7 +75,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("Open");
 app.UseAuthorization();
 
 app.MapControllers();

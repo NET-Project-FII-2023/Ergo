@@ -1,0 +1,59 @@
+﻿@page "/register"
+@using Ergo.App.Auth
+@using Ergo.App.ViewModels
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authStateProvider
+
+<h1 class="h2 font-weight-normal login-title">
+    Login
+</h1>
+
+<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerRequest">
+    <DataAnnotationsValidator />
+
+    <label for="inputUsername" class="sr-only">Username</label>
+    <InputText id="inputUsername" class="form-control" @bind-Value="registerRequest.Username" autofocus placeholder="Username" />
+    <ValidationMessage For="@(() => registerRequest.Username)" />
+
+    <label for="inputUsername" class="sr-only">Name</label>
+    <InputText id="inputName" class="form-control" @bind-Value="registerRequest.Name" autofocus placeholder="Name" />
+    <ValidationMessage For="@(() => registerRequest.Name)" />
+
+    <label for="inputEmail" class="sr-only">Email</label>
+    <InputText type="email" id="inputEmail" class="form-control" placeholder="Email" @bind-Value="registerRequest.Email" />
+    <ValidationMessage For="@(() => registerRequest.Email)" />
+
+
+    <label for="inputPassword" class="sr-only">Password</label>
+    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="registerRequest.Password" />
+    <ValidationMessage For="@(() => registerRequest.Password)" />
+
+    <br />
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="OnClickHandler">Sign up</button>
+
+    <label class="text-danger">@error</label>
+
+    <NavLink href="login">
+        <h6 class="font-weight-normal text-center">Sign in</h6>
+    </NavLink>
+</EditForm>
+
+@code {
+    RegisterViewModel registerRequest { get; set; } = new RegisterViewModel();
+    string error { get; set; }
+
+    async Task OnSubmit()
+    {
+        error = null;
+        try 
+        {
+            await authStateProvider.Register(registerRequest);
+            navigationManager.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

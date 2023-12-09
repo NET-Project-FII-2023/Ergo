@@ -1,0 +1,45 @@
+﻿@page "/"
+@using Ergo.App.Contracts
+@using Microsoft.AspNetCore.Components.Authorization
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<br />
+<CascadingAuthenticationState>
+    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+        <Authorized>
+            <button class="btn btn-lg btn-primary btn-block" @onclick="Logout">Logout</button>
+        </Authorized>
+        <NotAuthorized>
+            <button class="btn btn-lg btn-primary btn-block" @onclick="NavigateToLogin">Click here to log in</button>
+            <br />
+            <button class="btn btn-lg btn-primary btn-block" @onclick="NavigateToRegister">Click here to register</button>
+        </NotAuthorized>
+    </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+</CascadingAuthenticationState>
+@functions {
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    public IAuthenticationService AuthenticationService { get; set; }
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private void NavigateToRegister()
+    {
+        NavigationManager.NavigateTo("/register");
+    }
+
+    private async Task Logout()
+    {
+        await AuthenticationService.Logout();
+        NavigationManager.NavigateTo("/login");
+    }
+}
