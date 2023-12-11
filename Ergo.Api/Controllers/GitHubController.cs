@@ -12,7 +12,7 @@ namespace YourNamespace.Controllers
         public GitHubController()
         {
             gitHubClient = new GitHubClient(new ProductHeaderValue("Ergo"));
-            gitHubClient.Credentials = new Credentials("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");
+            gitHubClient.Credentials = new Credentials("-----");
         }
 
         [HttpGet("commits")]

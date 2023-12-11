@@ -46,8 +46,8 @@
     <div class="row mb-3 ms-2">
         <label for="projectid" class="col-sm-3 form-label">Project ID:</label>
         <div class="col-sm-5">
-            <InputText id="projectid" class="form-control" @bind-Value="@TaskViewModel.ProjectId" placeholder="Project ID..."></InputText>
-            <ValidationMessage For="@(() => TaskViewModel.ProjectId)" />
+            <InputText id="projectid" class="form-control" @bind-Value="@ProjectIdInput" placeholder="Project ID..."></InputText>
+            <ValidationMessage For="@(() => ProjectIdInput)" />
         </div>
     </div>
 
@@ -80,13 +80,30 @@
 
     public string Message { get; set; }
 
+    public string ProjectIdInput { get; set; }
+
     protected override void OnInitialized()
     {
-        TaskViewModel.Deadline = DateTime.Today;
+        TaskViewModel.Deadline = DateTime.UtcNow.Date;
     }
 
     private async Task HandleValidSubmit()
     {
+
+        // Convert string ProjectIdInput to Guid and assign it to TaskViewModel.ProjectId
+        TaskViewModel.ProjectId = Guid.Parse(ProjectIdInput);
+
+        if (DateTime.TryParse(TaskViewModel.Deadline.ToString(), out DateTime inputDate))
+        {
+            TaskViewModel.Deadline = inputDate.ToUniversalTime();
+        }
+        else
+        {
+            // Parsing failed, set a default value or display an error message
+            Message = "Invalid date format. Please enter a valid date.";
+            return; // Exit the method without processing further
+        }
+
         var result = await TaskDataService.CreateTaskAsync(TaskViewModel);
         if (result.IsSuccess)
         {

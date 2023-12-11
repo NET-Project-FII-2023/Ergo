@@ -8,7 +8,7 @@ namespace Ergo.App.ViewModels
         public string? Description { get; set; }
         public DateTime Deadline { get; set; }
         public string? CreatedBy { get; set; }
-        public string? ProjectId { get; set; }
+        public Guid ProjectId { get; set; }
         public TaskState State { get; set; }
 
     }

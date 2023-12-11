@@ -23,7 +23,7 @@ namespace Ergo.App.ViewModels
         public string? CreatedBy { get; set; }
 
         [Required(ErrorMessage = "Project ID is required.")]
-        public string? ProjectId { get; set; }
+        public Guid ProjectId { get; set; }
 
         [Required(ErrorMessage = "Task state is required.")]
         public TaskState State { get; set; }

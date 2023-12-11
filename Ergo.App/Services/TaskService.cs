@@ -9,7 +9,7 @@ namespace Ergo.App.Services
 {
     public class TaskDataService : ITaskDataService
     {
-        private const string RequestUri = "api/v1/tasks";
+        private const string RequestUri = "api/v1/TaskItems";
         private readonly HttpClient httpClient;
         private readonly ITokenService tokenService;
 
