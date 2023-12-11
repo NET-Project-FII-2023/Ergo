@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Octokit;
 
 namespace YourNamespace.Controllers
@@ -15,7 +12,7 @@ namespace YourNamespace.Controllers
         public GitHubController()
         {
             gitHubClient = new GitHubClient(new ProductHeaderValue("Ergo"));
-            gitHubClient.Credentials = new Credentials("va-faceti-un-token-de-github-si-il-bagati-aici");
+            gitHubClient.Credentials = new Credentials("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");
         }
 
         [HttpGet("commits")]

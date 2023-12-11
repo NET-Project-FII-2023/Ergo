@@ -1,0 +1,110 @@
+﻿@page "/addtask"
+@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
+@using Ergo.Domain.Entities.Enums;
+
+
+<h3>New Task</h3>
+
+<EditForm Model="@TaskViewModel" OnValidSubmit="@HandleValidSubmit">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary></ValidationSummary>
+
+    <div class="row mb-3 ms-2">
+        <label for="taskname" class="col-sm-3 form-label">Task name:</label>
+        <div class="col-sm-5">
+            <InputText id="taskname" class="form-control" @bind-Value="@TaskViewModel.TaskName" placeholder="Task name..."></InputText>
+            <ValidationMessage For="@(() => TaskViewModel.TaskName)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="taskdescription" class="col-sm-3 form-label">Task description:</label>
+        <div class="col-sm-5">
+            <InputText id="taskdescription" class="form-control" @bind-Value="@TaskViewModel.Description" placeholder="Task description..."></InputText>
+            <ValidationMessage For="@(() => TaskViewModel.Description)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="deadline" class="col-sm-3 form-label">Deadline:</label>
+        <div class="col-sm-5">
+            <InputDate id="deadline" class="form-control" @bind-Value="@TaskViewModel.Deadline" />
+            <ValidationMessage For="@(() => TaskViewModel.Deadline)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="createdby" class="col-sm-3 form-label">Created by:</label>
+        <div class="col-sm-5">
+            <InputText id="createdby" class="form-control" @bind-Value="@TaskViewModel.CreatedBy" placeholder="Created by..."></InputText>
+            <ValidationMessage For="@(() => TaskViewModel.CreatedBy)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="projectid" class="col-sm-3 form-label">Project ID:</label>
+        <div class="col-sm-5">
+            <InputText id="projectid" class="form-control" @bind-Value="@TaskViewModel.ProjectId" placeholder="Project ID..."></InputText>
+            <ValidationMessage For="@(() => TaskViewModel.ProjectId)" />
+        </div>
+    </div>
+
+
+    <div class="row mb-3 ms-2">
+        <label for="state" class="col-sm-3 form-label">State:</label>
+        <div class="col-sm-5">
+            <InputSelect id="state" class="form-control" @bind-Value="@TaskViewModel.State">
+                @foreach (var stateOption in Enum.GetValues(typeof(TaskState)))
+                {
+                    <option value="@stateOption">@stateOption</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => TaskViewModel.State)" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save task</button>
+    <button class="btn btn-primary" @onclick="Cancel">Cancel</button>
+</EditForm>
+
+@code {
+    [Inject]
+    public ITaskDataService TaskDataService { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
+
+    public string Message { get; set; }
+
+    protected override void OnInitialized()
+    {
+        TaskViewModel.Deadline = DateTime.Today;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var result = await TaskDataService.CreateTaskAsync(TaskViewModel);
+        if (result.IsSuccess)
+        {
+            Message = "Task created successfully";
+            NavigationManager.NavigateTo("/taskoverview");
+        }
+        else
+        {
+            Message = result.Message;
+            if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+            {
+                Message += result.ValidationErrors;
+            }
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/taskoverview");
+    }
+}
