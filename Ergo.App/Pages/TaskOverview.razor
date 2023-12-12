@@ -1,6 +1,75 @@
 ﻿@page "/taskoverview"
 @using Ergo.App.Contracts
 @using Ergo.App.ViewModels
+@using Ergo.Domain.Entities.Enums;
+
+<style>
+    body {
+        background-color: #1f1f1f; 
+        color: #e0e0e0; 
+    }
+
+    .col-md-3 {
+        background-color: #333; 
+        border-radius: 8px; 
+        padding: 20px; 
+        margin-bottom: 20px;
+        margin-right: 20px;
+    }
+
+    .card {
+        background-color: #444; 
+        color: #ccc; 
+        border: none;
+        margin-bottom: 20px; 
+        padding: 10px; 
+    }
+
+    h4 {
+        color: #fff;
+        position: relative;
+    }
+
+    .col-md-3:nth-child(1) h4:after {
+        content: "";
+        display: block;
+        height: 3px;
+        margin-top: 8px;
+        border-radius: 2px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -5px;
+        background-color: #ffc107;
+    }
+
+    .col-md-3:nth-child(2) h4:after {
+        content: "";
+        display: block;
+        height: 3px;
+        margin-top: 8px;
+        border-radius: 2px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -5px;
+        background-color: #2196f3;
+    }
+
+    .col-md-3:nth-child(3) h4:after {
+        content: "";
+        display: block;
+        height: 3px;
+        margin-top: 8px;
+        border-radius: 2px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -5px;
+        background-color: #4caf50
+    }
+</style>
+
 
 <h3>Task Overview</h3>
 <br />
@@ -11,27 +80,49 @@
 }
 else
 {
-    <table>
-        <thead>
-            <tr>
-                <th>Task name</th>
-                <th>Description</th>
-                <th>Deadline</th>
-                <th>State</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var taskItem in Tasks)
+    <div class="row">
+        <div class="col-md-3">
+            <h4>To Do</h4>
+            @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.ToDo))
             {
-                <tr>
-                    <td>@taskItem.TaskName</td>
-                    <td>@taskItem.Description</td>
-                    <td>@taskItem.Deadline</td>
-                    <td>@taskItem.State</td>
-                </tr>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@taskItem.TaskName</h5>
+                        <p class="card-text">@taskItem.Description</p>
+                        <p class="card-text"><strong>Deadline:</strong> @taskItem.Deadline.ToShortDateString()</p
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
+        </div>
+
+        <div class="col-md-3">
+            <h4>In Progress</h4>
+            @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.InProgress))
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@taskItem.TaskName</h5>
+                        <p class="card-text">@taskItem.Description</p>
+                        <p class="card-text"><strong>Deadline:</strong> @taskItem.Deadline.ToShortDateString()</p
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-3">
+            <h4>Done</h4>
+            @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.Done))
+            {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@taskItem.TaskName</h5>
+                        <p class="card-text">@taskItem.Description</p>
+                        <p class="card-text"><strong>Deadline:</strong> @taskItem.Deadline.ToShortDateString()</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 }
 
 @code {
@@ -60,5 +151,4 @@ else
             }
         }
     }
-
 }
