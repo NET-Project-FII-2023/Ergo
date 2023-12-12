@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Ergo.App.Auth
+@inject CustomStateProvider authStateProvider
+<div class="top-row ps-3 navbar navbar-dark" style="background-color: var(--light-dark);">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Ergo</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -7,7 +9,7 @@
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+<div class="@NavMenuCssClass nav-scrollable my-navbar-color" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState>
         <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
@@ -23,7 +25,11 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Add Task
             </NavLink>
         </div>
-
+            <Authorized>
+                <div class="nav-item px-3">
+                            <button class="btn btn-lg btn-primary btn-block" @onclick="Logout">Logout</button>
+                </div>
+            </Authorized>
             </Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
         </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
         </Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState>
@@ -31,6 +37,9 @@
 </div>
 
 @code {
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -38,5 +47,10 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+    private async Task Logout()
+    {
+        await authStateProvider.Logout();
+        NavigationManager.NavigateTo("/login");
     }
 }

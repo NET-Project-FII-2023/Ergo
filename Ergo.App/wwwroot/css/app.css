@@ -1,3 +1,10 @@
+:root {
+    --dark: #2C3333;
+    --light-dark: #183D3D;
+    --green: #5C8374;
+    --light-green: #93B1A6;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -7,17 +14,40 @@ h1:focus {
 }
 
 a, .btn-link {
-    color: #0071c1;
+    color: var(--light-green);
+}
+.my-navbar-title{
+    background-color: var(--dark);
+}
+.my-navbar-color {
+    background-color: #245953;
+}
+.navigation-link {
+    outline: none;
+}
+.navigation-link:hover {
+    color: var(--green);
 }
 
 .btn-primary {
     color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    background-color: var(--light-dark);
+    border-color: var(--light-dark);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.btn:focus, .btn:hover, .btn:active:focus, .btn-link.nav-link:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem white;
+    background-color: var(--green);
+    border-color: var(--light-dark);
+}
+.form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem white;
+    border-color: var(--light-dark);
+}
+
+.logout-button {
+    display: block; 
+    margin: 0 auto; 
 }
 
 .content {
@@ -75,14 +105,14 @@ a, .btn-link {
 
     .loading-progress circle {
         fill: none;
-        stroke: #e0e0e0;
+        stroke: var(--light-green);
         stroke-width: 0.6rem;
         transform-origin: 50% 50%;
         transform: rotate(-90deg);
     }
 
         .loading-progress circle:last-child {
-            stroke: #1b6ec2;
+            stroke: #245953;
             stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
             transition: stroke-dasharray 0.05s ease-in-out;
         }

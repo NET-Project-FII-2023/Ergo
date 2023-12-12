@@ -4,31 +4,39 @@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
 
-<h1 class="h2 font-weight-normal login-title">
-    Login
-</h1>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
 
-<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
-    <DataAnnotationsValidator />
+            <h1 class="h2 font-weight-normal login-title text-center">
+                Login
+            </h1>
 
-    <label for="inputUsername" class="sr-only">Username</label>
-    <InputText id="inputUsername" class="form-control" @bind-Value="loginRequest.Username" autofocus placeholder="Username" />
-    <ValidationMessage For="@(() => loginRequest.Username)" />
+            <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
+                <DataAnnotationsValidator />
 
-    <label for="inputPassword" class="sr-only">Password</label>
-    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginRequest.Password" />
-    <ValidationMessage For="@(() => loginRequest.Password)" />
+                <label for="inputUsername" class="sr-only">Username</label>
+                <InputText id="inputUsername" class="form-control" @bind-Value="loginRequest.Username" autofocus placeholder="Username" />
+                <ValidationMessage For="@(() => loginRequest.Username)" />
 
-    <br />
+                <label for="inputPassword" class="sr-only">Password</label>
+                <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="loginRequest.Password" />
+                <ValidationMessage For="@(() => loginRequest.Password)" />
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="OnClickHandler">Sign in</button>
+                <br />
+                <div class="text-center">
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                </div>
+                <label class="text-danger">@error</label>
 
-    <label class="text-danger">@error</label>
+                <NavLink href="register" class="navigation-link">
+                    <h6 class="font-weight-normal text-center navigation-link">Create account</h6>
+                </NavLink>
+            </EditForm>
 
-    <NavLink href="register">
-        <h6 class="font-weight-normal text-center">Create account</h6>
-    </NavLink>
-</EditForm>
+        </div>
+    </div>
+</div>
 
 @code {
     LoginViewModel loginRequest { get; set; } = new LoginViewModel();
