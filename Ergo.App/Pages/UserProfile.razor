@@ -1,33 +1,67 @@
 ﻿@page "/userprofile"
 @using Ergo.App.Contracts
 @using Ergo.App.ViewModels
+
 <h3>UserProfile</h3>
 
-<button class="btn btn-primary" @onclick="OnSubmit">Get Profile</button>
+@if (User != null)
+{
+    <div class="container">
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Username:</label>
+            <div class="col-sm-10">
+                <input class="form-control" @bind="User.Username" />
+            </div>
+        </div>
 
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Name:</label>
+            <div class="col-sm-10">
+                <input class="form-control" @bind="User.Name" />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-sm-2 col-form-label">Email:</label>
+            <div class="col-sm-10">
+                <input class="form-control" @bind="User.Email" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-10 offset-sm-2">
+                <button class="btn btn-primary" @onclick="UpdateProfile">Update Profile</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Loading...</p>
+}
 
 @code {
     [Inject]
     public IUserDataService UserDataService { get; set; }
     [Inject]
-    public NavigationManager NavigationManager { get; set; }
-    [Inject]
     public ITokenService TokenService { get; set; }
+
     public UserViewModel User { get; set; }
     private string email;
 
-    async Task OnSubmit()
+    protected override async Task OnInitializedAsync()
     {
         var token = await TokenService.GetTokenAsync();
         email = await TokenService.DecodeEmailFromTokenAsync(token);
-        Console.WriteLine($"EMAIIIIL:{email}");
+
         if (!string.IsNullOrEmpty(email))
         {
             User = await UserDataService.GetUserByEmailAsync(email);
-            Console.WriteLine($"USERRRRRRRRRR{User.Name}");
-            Console.WriteLine(User.UserId);
         }
+    }
 
-
+    async Task UpdateProfile()
+    {
+        // Implementation to update the user profile
     }
 }

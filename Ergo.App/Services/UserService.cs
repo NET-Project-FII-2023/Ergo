@@ -25,17 +25,18 @@ namespace Ergo.App.Services
                 var result = await httpClient.GetAsync($"{RequestUri}/ByEmail/{email}", HttpCompletionOption.ResponseHeadersRead);
                 result.EnsureSuccessStatusCode();
                 var content = await result.Content.ReadAsStringAsync();
-                if (!result.IsSuccessStatusCode)
-                {
-                    throw new ApplicationException(content);
-                }
-                var user = JsonSerializer.Deserialize<UserViewModel>(content, new JsonSerializerOptions
+
+                using var doc = JsonDocument.Parse(content);
+                var userElement = doc.RootElement.GetProperty("user");
+
+                var user = JsonSerializer.Deserialize<UserViewModel>(userElement.GetRawText(), new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
-                await Console.Out.WriteLineAsync($"User{user.Username}");
+
                 return user;
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"Exception during deserialization: {ex}");
                 throw;
