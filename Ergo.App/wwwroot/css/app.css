@@ -1,8 +1,10 @@
 :root {
     --dark: #2C3333;
-    --light-dark: #183D3D;
-    --green: #5C8374;
-    --light-green: #93B1A6;
+    --light-dark: #333;
+    --green: #1f1f1f;
+    --light-green: #333;
+    --navbar-bg: #333;
+    --navbar-text: #ccc;
 }
 
 html, body {
@@ -16,9 +18,12 @@ h1:focus {
 a, .btn-link {
     color: var(--light-green);
 }
-.my-navbar-title{
+.my-navbar-title {
     background-color: var(--dark);
+    background-color: var(--navbar-bg);
+    color: var(--navbar-text);
 }
+
 .my-navbar-color {
     background-color: #245953;
 }
