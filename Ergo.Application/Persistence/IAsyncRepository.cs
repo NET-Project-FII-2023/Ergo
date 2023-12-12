@@ -11,4 +11,6 @@ public interface IAsyncRepository<T> where T : class
     Task<Result<IReadOnlyList<T>>> GetPagedResponseAsync(int page, int size);
     Task<Result<IReadOnlyList<T>>> GetAllAsync();
 
+    Task<Result<IReadOnlyList<T>>> GetTasksByProjectIdAsync(Guid projectId);
+
 }
