@@ -32,15 +32,39 @@ namespace Ergo.App.Services
 
         public async Task<List<TaskViewModel>> GetTasksAsync()
         {
-            var result = await httpClient.GetAsync(RequestUri, HttpCompletionOption.ResponseHeadersRead);
-            result.EnsureSuccessStatusCode();
-            var content = await result.Content.ReadAsStringAsync();
-            if (!result.IsSuccessStatusCode)
+            try
             {
-                throw new ApplicationException(content);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                var result = await httpClient.GetAsync(RequestUri, HttpCompletionOption.ResponseHeadersRead);
+                result.EnsureSuccessStatusCode();
+                var content = await result.Content.ReadAsStringAsync();
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    throw new ApplicationException(content);
+                }
+
+                Console.WriteLine($"Raw JSON content: {content}");
+
+                var tasks = JsonSerializer.Deserialize<TaskItemsResponse>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return tasks?.TaskItems ?? new List<TaskViewModel>();
             }
-            var tasks = JsonSerializer.Deserialize<List<TaskViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return tasks!;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during deserialization: {ex}");
+                throw;
+            }
         }
+
+        public class TaskItemsResponse
+        {
+            public List<TaskViewModel> TaskItems { get; set; }
+        }
+
+
     }
 }
