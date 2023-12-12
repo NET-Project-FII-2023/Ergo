@@ -90,7 +90,6 @@
     private async Task HandleValidSubmit()
     {
 
-        // Convert string ProjectIdInput to Guid and assign it to TaskViewModel.ProjectId
         TaskViewModel.ProjectId = Guid.Parse(ProjectIdInput);
 
         if (DateTime.TryParse(TaskViewModel.Deadline.ToString(), out DateTime inputDate))
@@ -99,16 +98,16 @@
         }
         else
         {
-            // Parsing failed, set a default value or display an error message
             Message = "Invalid date format. Please enter a valid date.";
-            return; // Exit the method without processing further
+            return;
         }
 
         var result = await TaskDataService.CreateTaskAsync(TaskViewModel);
         if (result.IsSuccess)
         {
             Message = "Task created successfully";
-            NavigationManager.NavigateTo("/taskoverview");
+            NavigationManager.NavigateTo($"/taskoverview?projectId={TaskViewModel.ProjectId}");
+
         }
         else
         {

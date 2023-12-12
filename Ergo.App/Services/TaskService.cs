@@ -60,6 +60,35 @@ namespace Ergo.App.Services
             }
         }
 
+        public async Task<List<TaskViewModel>> GetTasksByProjectIdAsync(Guid projectId)
+        {
+            try
+            {
+                var uri = $"{RequestUri}?projectId={projectId}"; // Update the URI to include projectId in the query string
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                var result = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
+                result.EnsureSuccessStatusCode();
+                var content = await result.Content.ReadAsStringAsync();
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    throw new ApplicationException(content);
+                }
+
+                var tasks = JsonSerializer.Deserialize<TaskItemsResponse>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return tasks?.TaskItems ?? new List<TaskViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during deserialization: {ex}");
+                throw;
+            }
+        }
+
         public class TaskItemsResponse
         {
             public List<TaskViewModel> TaskItems { get; set; }

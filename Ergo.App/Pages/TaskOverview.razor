@@ -45,6 +45,20 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Tasks = await TaskDataService.GetTasksAsync();
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = uri.Query;
+
+        if (!string.IsNullOrEmpty(query))
+        {
+            var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+            var projectId = queryParams.Get("projectId");
+
+            if (!string.IsNullOrEmpty(projectId))
+            {
+                Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
+                Console.WriteLine("ProjectId: " + projectId);
+            }
+        }
     }
+
 }
