@@ -1,5 +1,6 @@
 using Ergo.Application.Persistence;
 using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
@@ -61,4 +62,26 @@ public class BaseRepository<T> : IAsyncRepository<T> where T : class
         var result = await context.Set<T>().AsNoTracking().ToListAsync();
         return Result<IReadOnlyList<T>>.Success(result);
     }
+
+
+    public virtual async Task<Result<IReadOnlyList<T>>> GetTasksByProjectIdAsync(Guid projectId)
+    {
+        try
+        {
+            var tasks = await context.Set<T>()
+                .OfType<TaskItem>() // Assuming TaskItem is the entity that has ProjectId
+                .Where(t => t.ProjectId == projectId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            IReadOnlyList<T> readOnlyTasks = tasks.Cast<T>().ToList();
+
+            return Result<IReadOnlyList<T>>.Success(readOnlyTasks);
+        }
+        catch (Exception ex)
+        {
+            return Result<IReadOnlyList<T>>.Failure($"An error occurred while fetching tasks: {ex.Message}");
+        }
+    }
+
 }

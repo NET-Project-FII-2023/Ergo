@@ -3,6 +3,7 @@ using Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
 using Ergo.Application.Features.TaskItems.Queries.GetAll;
 using Ergo.Application.Features.TaskItems.Queries.GetById;
+using Ergo.Application.Features.TaskItems.Queries.GetByProjectId;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -77,6 +78,22 @@ public class TaskItemsController : ApiControllerBase
     public async Task<IActionResult> GetTaskItemById(Guid id)
     {
         var query = new GetByIdTaskItemQuery { TaskItemId = id };
+        var result = await Mediator.Send(query);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "User")]
+    [HttpGet("{projectId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTasksByProjectId(Guid projectId)
+    {
+        var query = new GetTasksByProjectIdQuery { ProjectId = projectId };
         var result = await Mediator.Send(query);
 
         if (!result.Success)
