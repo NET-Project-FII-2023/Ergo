@@ -1,8 +1,5 @@
 ﻿using Ergo.App.Services.Responses;
 using Ergo.App.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Ergo.App.Contracts
 {
