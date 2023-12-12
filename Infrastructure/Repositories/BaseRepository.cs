@@ -84,4 +84,24 @@ public class BaseRepository<T> : IAsyncRepository<T> where T : class
         }
     }
 
+    public virtual async Task<Result<IReadOnlyList<T>>> GetCommentByTaskIdAsync(Guid taskId)
+    {
+		try
+        {
+			var comments = await context.Set<T>()
+				.OfType<Comment>() // Assuming Comment is the entity that has TaskId
+				.Where(c => c.TaskId == taskId)
+				.AsNoTracking()
+				.ToListAsync();
+
+			IReadOnlyList<T> readOnlyComments = comments.Cast<T>().ToList();
+
+			return Result<IReadOnlyList<T>>.Success(readOnlyComments);
+		}
+		catch (Exception ex)
+        {
+			return Result<IReadOnlyList<T>>.Failure($"An error occurred while fetching comments: {ex.Message}");
+		}
+	}
+
 }

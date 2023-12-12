@@ -3,6 +3,7 @@ using Ergo.Application.Features.Comments.Commands.DeleteComment;
 using Ergo.Application.Features.Comments.Commands.UpdateComment;
 using Ergo.Application.Features.Comments.Queries.GetAll;
 using Ergo.Application.Features.Comments.Queries.GetById;
+using Ergo.Application.Features.Comments.Queries.GetByTaskId;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -73,5 +74,19 @@ namespace Ergo.Api.Controllers
             var result = await Mediator.Send(query);
             return Ok(result);
         }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("ByTaskId/{taskId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCommentByTaskId(Guid taskId)
+        {
+			var query = new GetCommentByTaskIdQuery { TaskId = taskId };
+			var result = await Mediator.Send(query);
+			if(!result.Success)
+            {
+				return BadRequest(result);
+			}
+            return Ok(result);
+		}
     }
 }

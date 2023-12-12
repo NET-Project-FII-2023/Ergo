@@ -13,4 +13,5 @@ public interface IAsyncRepository<T> where T : class
 
     Task<Result<IReadOnlyList<T>>> GetTasksByProjectIdAsync(Guid projectId);
 
+    Task<Result<IReadOnlyList<T>>> GetCommentByTaskIdAsync(Guid taskId);
 }
