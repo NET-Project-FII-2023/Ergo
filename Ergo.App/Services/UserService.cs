@@ -1,6 +1,8 @@
 ﻿using Ergo.App.Contracts;
+using Ergo.App.Services.Responses;
 using Ergo.App.ViewModels;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace Ergo.App.Services
@@ -41,6 +43,17 @@ namespace Ergo.App.Services
                 Console.WriteLine($"Exception during deserialization: {ex}");
                 throw;
             }
+        }
+
+        public async Task<ApiResponse<UpdateUserDto>> UpdateUserAsync(string id, UpdateUserDto updateUserDto)
+        {
+            httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.PostAsJsonAsync($"{RequestUri}/{id}", updateUserDto);
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<UpdateUserDto>>();
+            response!.IsSuccess = result.IsSuccessStatusCode;
+            return response!;
         }
     }
 }
