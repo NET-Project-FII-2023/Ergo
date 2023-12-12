@@ -1,6 +1,6 @@
 ﻿@using Ergo.App.Auth
 @inject CustomStateProvider authStateProvider
-<div class="top-row ps-3 navbar navbar-dark" style="background-color: var(--light-dark);">
+<div class="top-row ps-3 navbar navbar-dark" style="background-color: #60a88b">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Ergo</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable my-navbar-color" @onclick="ToggleNavMenu">
+<div class="@NavMenuCssClass nav-scrollable" style=" background-color: #333" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState>
         <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
