@@ -9,6 +9,8 @@
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #1f1f1f;
+    color: #e0e0e0;
 }
 
 h1:focus {
@@ -27,6 +29,7 @@ a, .btn-link {
 .my-navbar-color {
     background-color: #245953;
 }
+
 .navigation-link {
     outline: none;
 }
@@ -57,6 +60,7 @@ a, .btn-link {
 
 .content {
     padding-top: 1.1rem;
+    margin-top: 0;
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -135,4 +139,10 @@ a, .btn-link {
 
 code {
     color: #c02d76;
+}
+
+@media (min-width: 641px) {
+    .content {
+        margin-top: 58px;
+    }
 }
