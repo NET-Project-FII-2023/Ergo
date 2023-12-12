@@ -2,6 +2,7 @@ using Ergo.Application.Features.Users.Commands.DeleteUser;
 using Ergo.Application.Features.Users.Commands.UpdateRole;
 using Ergo.Application.Features.Users.Commands.UpdateUser;
 using Ergo.Application.Features.Users.Queries.GetAll;
+using Ergo.Application.Features.Users.Queries.GetByEmail;
 using Ergo.Application.Features.Users.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -64,13 +65,26 @@ public class UsersController : ApiControllerBase
     }
 
     [Authorize(Roles = "User")]
-    [HttpGet("{id}")]
+    [HttpGet("ById/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserById(string id)
     {
         var query = new GetByIdUserQuery { UserId = id };
         var result = await Mediator.Send(query);
         if(!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [Authorize(Roles = "User")]
+    [HttpGet("ByEmail/{email}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserByEmail(string email)
+    {
+        var query = new GetByEmailUserQuery { Email = email };
+        var result = await Mediator.Send(query);
+        if (!result.Success)
         {
             return BadRequest(result);
         }

@@ -34,8 +34,10 @@ namespace Ergo.Identity.Services
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
                 return Result<UserDto>.Failure($"User with email {email} not found");
-
-            return Result<UserDto>.Success(MapToUserDto(user));
+            var userDtos = MapToUserDto(user);
+            var roles = await userManager.GetRolesAsync(user);
+            userDtos.Roles = roles.ToList();
+            return Result<UserDto>.Success(userDtos);
         }
 
 

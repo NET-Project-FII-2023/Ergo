@@ -1,0 +1,33 @@
+﻿@page "/userprofile"
+@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
+<h3>UserProfile</h3>
+
+<button class="btn btn-primary" @onclick="OnSubmit">Get Profile</button>
+
+
+@code {
+    [Inject]
+    public IUserDataService UserDataService { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    public ITokenService TokenService { get; set; }
+    public UserViewModel User { get; set; }
+    private string email;
+
+    async Task OnSubmit()
+    {
+        var token = await TokenService.GetTokenAsync();
+        email = await TokenService.DecodeEmailFromTokenAsync(token);
+        Console.WriteLine($"EMAIIIIL:{email}");
+        if (!string.IsNullOrEmpty(email))
+        {
+            User = await UserDataService.GetUserByEmailAsync(email);
+            Console.WriteLine($"USERRRRRRRRRR{User.Name}");
+            Console.WriteLine(User.UserId);
+        }
+
+
+    }
+}
