@@ -32,6 +32,11 @@ builder.Services.AddHttpClient<ITaskDataService, TaskDataService>(client =>
     client.BaseAddress = new Uri("https://localhost:7248/");
 });
 
+builder.Services.AddHttpClient<ICommentDataService, CommentDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7248/");
+});
+
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>(client =>
 {

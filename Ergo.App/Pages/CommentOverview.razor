@@ -1,0 +1,50 @@
+﻿@page "/commentoverview"
+@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
+
+<h3>Task Overview</h3>
+<br />
+
+@if (Tasks == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Task name</th>
+                <th>Description</th>
+                <th>Deadline</th>
+                <th>State</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var taskItem in Tasks)
+            {
+                <tr>
+                    <td>@taskItem.TaskName</td>
+                    <td>@taskItem.Description</td>
+                    <td>@taskItem.Deadline</td>
+                    <td>@taskItem.State</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Inject]
+    public ITaskDataService TaskDataService { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    public List<TaskViewModel> Tasks { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Tasks = await TaskDataService.GetTasksAsync();
+    }
+}
