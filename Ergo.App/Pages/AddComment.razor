@@ -1,0 +1,102 @@
+﻿@page "/addcomment"
+@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
+@using Ergo.Domain.Entities.Enums;
+
+<h3>AddComment</h3>
+<EditForm Model="@CommentViewModel" OnValidSubmit="@HandleValidSubmit">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<div class="row mb-3 ms-2">
+		<label for="createdby" class="col-sm-3 form-label">Created by:</label>
+		<div class="col-sm-5">
+			<InputText id="createdby" class="form-control" @bind-Value="@CommentViewModel.CreatedBy" placeholder="Created by..."></InputText>
+			<ValidationMessage For="@(() => CommentViewModel.CreatedBy)" />
+		</div>
+	</div>
+
+	<div class="row mb-3 ms-2">
+		<label for="commenttext" class="col-sm-3 form-label">Comment Text:</label>
+		<div class="col-sm-5">
+			<InputText id="commenttext" class="form-control" @bind-Value="@CommentViewModel.CommentText" placeholder="Comment..."></InputText>
+			<ValidationMessage For="@(() => CommentViewModel.CommentText)" />
+		</div>
+	</div>
+
+    <div class="row mb-3 ms-2">
+        <label for="createddate" class="col-sm-3 form-label">Created Date:</label>
+        <div class="col-sm-5">
+            <InputDate id="createddate" class="form-control" @bind-Value="@CommentViewModel.CreatedDate"></InputDate>
+            <ValidationMessage For="@(() => CommentViewModel.CreatedDate)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="lastmodifiedby" class="col-sm-3 form-label">Last Modified By:</label>
+        <div class="col-sm-5">
+            <InputText id="lastmodifiedby" class="form-control" @bind-Value="@CommentViewModel.LastModifiedBy" placeholder="Last Modified By..."></InputText>
+            <ValidationMessage For="@(() => CommentViewModel.LastModifiedBy)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="lastmodifieddate" class="col-sm-3 form-label">Last Modified Date:</label>
+        <div class="col-sm-5">
+            <InputDate id="lastmodifieddate" class="form-control" @bind-Value="@CommentViewModel.LastModifiedDate"></InputDate>
+            <ValidationMessage For="@(() => CommentViewModel.LastModifiedDate)" />
+        </div>
+
+    </div>
+
+	<div class="row mb-3 ms-2">
+		<label for="taskid" class="col-sm-3 form-label">Task ID:</label>
+		<div class="col-sm-5">
+			<InputText id="taskid" class="form-control" @bind-Value="@TaskIdInput" placeholder="Task ID..."></InputText>
+			<ValidationMessage For="@(() => TaskIdInput)" />
+		</div>
+	</div>
+
+	<button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+
+@code {
+	[Inject]
+	ICommentDataService CommentDataService { get; set; }
+
+	[Inject]
+	NavigationManager NavigationManager { get; set; }
+
+	public CommentViewModel CommentViewModel { get; set; } = new CommentViewModel();
+
+	public string Message { get; set; }
+
+	public string TaskIdInput { get; set; }
+
+	protected override void OnInitialized()
+	{
+		CommentViewModel.CreatedDate = DateTime.Now;
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		CommentViewModel.TaskId = Guid.Parse(TaskIdInput);
+
+		var result = await CommentDataService.CreateCommentAsync(CommentViewModel);
+		if (result.IsSuccess)
+		{
+			Message = "Comment created successfully";
+			//$"/taskoverview?taskId={CommentViewModel.TaskId}"
+			NavigationManager.NavigateTo($"/commentoverview");
+		}
+		else
+		{
+			Message = result.Message;
+			if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+			{
+				Message += result.ValidationErrors;
+			}
+		}
+	}
+}
