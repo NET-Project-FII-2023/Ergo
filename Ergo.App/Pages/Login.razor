@@ -1,16 +1,14 @@
 ﻿@page "/login"
 @using Ergo.App.Auth
 @using Ergo.App.ViewModels
+@using System.Text.Json
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
 
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-4">
-
-            <h1 class="h2 font-weight-normal login-title text-center">
-                Login
-            </h1>
+            <h1 class="h2 font-weight-normal login-title text-center">Login</h1>
 
             <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="loginRequest">
                 <DataAnnotationsValidator />
@@ -27,22 +25,34 @@
                 <div class="text-center">
                     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
                 </div>
-                <label class="text-danger">@error</label>
-
                 <NavLink href="register" class="navigation-link">
                     <h6 class="font-weight-normal text-center navigation-link">Create account</h6>
                 </NavLink>
             </EditForm>
 
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">Login Error</strong>
+                            <button type="button" class="btn-close" @onclick="DismissError" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body" style="color:red">
+                            @error
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>
 
 @code {
-    LoginViewModel loginRequest { get; set; } = new LoginViewModel();
-    string error { get; set; }
+    private LoginViewModel loginRequest { get; set; } = new LoginViewModel();
+    private string error { get; set; }
 
-    async Task OnSubmit()
+    private async Task OnSubmit()
     {
         error = null;
         try
@@ -52,7 +62,11 @@
         }
         catch (Exception ex)
         {
-            error = ex.Message;
+            error = "Invalid credentials";
         }
+    }
+    private void DismissError()
+    {
+        error = null;
     }
 }

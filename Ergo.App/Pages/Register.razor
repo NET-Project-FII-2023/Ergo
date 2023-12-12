@@ -1,6 +1,7 @@
 ﻿@page "/register"
 @using Ergo.App.Auth
 @using Ergo.App.ViewModels
+@using System.Text.Json
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
 
@@ -35,7 +36,6 @@
                 <div class="text-center">
                     <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="OnClickHandler">Sign up</button>
                 </div>
-                <label class="text-danger">@error</label>
 
                 <NavLink href="login">
                     <h6 class="font-weight-normal navigation-link text-center">Sign in</h6>
@@ -43,6 +43,20 @@
             </EditForm>
         </div>
     </div>
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Login Error</strong>
+                    <button type="button" class="btn-close" @onclick="DismissError" aria-label="Close"></button>
+                </div>
+                <div class="toast-body" style="color:red">
+                    @error
+                </div>
+            </div>
+        </div>
+    }
 </div>
 @code {
     RegisterViewModel registerRequest { get; set; } = new RegisterViewModel();
@@ -58,7 +72,31 @@
         }
         catch (Exception ex)
         {
-            error = ex.Message;
+            error = ParseErrorResponse(ex.Message);
         }
+    }
+    private string ParseErrorResponse(string jsonError)
+    {
+
+        try
+        {
+            var errorResponse = JsonSerializer.Deserialize<ValidationErrorResponse>(jsonError);
+            if (errorResponse?.Errors != null)
+            {
+                return string.Join(", ", errorResponse.Errors
+                    .SelectMany(pair => pair.Value)
+                    .ToArray());
+            }
+        }
+        catch (JsonException)
+        {
+            // Optional: handle JSON parsing errors if necessary
+        }
+        return jsonError;
+    }
+
+    private void DismissError()
+    {
+        error = null;
     }
 }

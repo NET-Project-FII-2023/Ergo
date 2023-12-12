@@ -31,7 +31,8 @@ namespace Ergo.Identity.Services
             var userExistsByEmail = await userManager.FindByEmailAsync(model.Email);
             if (userExistsByEmail != null)
                 return (0, "User with this email already exists");
-
+            if (!IsPasswordValid(model.Password))
+                return (0, "Password is not valid! The password must have at least 7 characters and needs to include a capital letter, a symbol, a digit.");
             ApplicationUser user = new ApplicationUser()
             {
                 Email = model.Email,
@@ -40,8 +41,11 @@ namespace Ergo.Identity.Services
                 Name = model.Name
             };
             var createUserResult = await userManager.CreateAsync(user, model.Password);
+            
             if (!createUserResult.Succeeded)
+            { 
                 return (0, "User creation failed! Please check user details and try again.");
+            }
 
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole(role));
@@ -97,6 +101,12 @@ namespace Ergo.Identity.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+        private bool IsPasswordValid(string password)
+        {
+            var passwordValidator = new PasswordValidator<ApplicationUser>();
+            var result = passwordValidator.ValidateAsync(userManager, null, password);
+            return result.Result.Succeeded;
         }
     }
 }
