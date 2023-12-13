@@ -89,7 +89,7 @@ public class TaskItemsController : ApiControllerBase
     }
 
     [Authorize(Roles = "User")]
-    [HttpGet("{projectId}")]
+    [HttpGet("ByProject/{projectId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTasksByProjectId(Guid projectId)
     {

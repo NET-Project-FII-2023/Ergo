@@ -2,10 +2,10 @@
 @using Ergo.App.Contracts
 @using Ergo.App.ViewModels
 
-<h3>Task Overview</h3>
+<h3>Comment Overview</h3>
 <br />
 
-@if (Tasks == null)
+@if (Comments == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -14,20 +14,14 @@ else
     <table>
         <thead>
             <tr>
-                <th>Task name</th>
-                <th>Description</th>
-                <th>Deadline</th>
-                <th>State</th>
+                <th>Comment</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var taskItem in Tasks)
+            @foreach (var comment in Comments)
             {
                 <tr>
-                    <td>@taskItem.TaskName</td>
-                    <td>@taskItem.Description</td>
-                    <td>@taskItem.Deadline</td>
-                    <td>@taskItem.State</td>
+                    <td>@comment.CommentText</td>
                 </tr>
             }
         </tbody>
@@ -36,15 +30,28 @@ else
 
 @code {
     [Inject]
-    public ITaskDataService TaskDataService { get; set; }
+    public ICommentDataService CommentDataService { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
-    public List<TaskViewModel> Tasks { get; set; }
+    public List<CommentViewModel> Comments { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Tasks = await TaskDataService.GetTasksAsync();
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = uri.Query;
+
+        if (!string.IsNullOrEmpty(query))
+        {
+            var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+            var taskId = queryParams.Get("taskId");
+
+            if (!string.IsNullOrEmpty(taskId))
+            {
+                Comments = await CommentDataService.GetCommentsByTaskIdAsync(Guid.Parse(taskId));
+                Console.WriteLine("TaskId: " + taskId);
+            }
+        }
     }
 }

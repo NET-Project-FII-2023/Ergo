@@ -64,7 +64,7 @@ namespace Ergo.App.Services
         {
             try
             {
-                var uri = $"{RequestUri}?projectId={projectId}"; // Update the URI to include projectId in the query string
+                var uri = $"{RequestUri}/ByProject/{projectId}";
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
                 var result = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
                 result.EnsureSuccessStatusCode();
