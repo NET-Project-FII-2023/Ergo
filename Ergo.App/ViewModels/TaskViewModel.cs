@@ -26,6 +26,6 @@ namespace Ergo.App.ViewModels
         public Guid ProjectId { get; set; }
 
         [Required(ErrorMessage = "Task state is required.")]
-        public TaskState State { get; set; }
+        public TaskState? State { get; set; } = TaskState.ToDo;
     }
 }
