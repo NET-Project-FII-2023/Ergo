@@ -1,4 +1,5 @@
 ﻿using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Models;
 using Ergo.Application.Persistence;
 using Ergo.Domain.Common;
 using Ergo.Identity.Models;
@@ -39,6 +40,18 @@ namespace Ergo.Identity.Services
             userDtos.Roles = roles.ToList();
             return Result<UserDto>.Success(userDtos);
         }
+        public async Task<Result<UserDto>> FindByUsernameAsync(string username)
+        {
+
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+                return Result<UserDto>.Failure($"User with username {username} not found");
+            var userDtos = MapToUserDto(user);
+            var roles = await userManager.GetRolesAsync(user);
+            userDtos.Roles = roles.ToList();
+            return Result<UserDto>.Success(userDtos);
+        }
+
 
 
         public async Task<Result<List<UserDto>>> GetAllAsync()
@@ -120,5 +133,7 @@ namespace Ergo.Identity.Services
                 Email = user.Email
             };
         }
+
+        
     }
 }

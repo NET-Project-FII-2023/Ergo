@@ -38,6 +38,26 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                     ValidationsErrors = validationResult.Errors.Select(x => x.ErrorMessage).ToList()
                 };
             }
+            var userByEmail = await userRepository.FindByEmailAsync(request.Email);
+            if (userByEmail.IsSuccess && userByEmail.Value.UserId != user.Value.UserId)
+            {
+                Console.WriteLine("Email" + request.Email);
+
+                return new UpdateUserCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { "Email already exists" }
+                };
+            }
+            var userByUsername = await userRepository.FindByUsernameAsync(request.Username);
+            if (userByUsername.IsSuccess && userByUsername.Value.UserId != user.Value.UserId)
+            {
+                return new UpdateUserCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { "Username already exists" }
+                };
+            }
             UserDto userDto = new()
             {
                 UserId = user.Value.UserId,

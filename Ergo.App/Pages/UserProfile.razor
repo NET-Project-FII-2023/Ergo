@@ -45,7 +45,7 @@
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
             <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
-                    <strong class="me-auto">Login Error</strong>
+                    <strong class="me-auto">Update Profile Error</strong>
                     <button type="button" class="btn-close" @onclick="DismissError" aria-label="Close"></button>
                 </div>
                 <div class="toast-body" style="color:red">
@@ -56,10 +56,11 @@
     }
     @if (!string.IsNullOrEmpty(Message))
     {
+        
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
             <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
-                    <strong class="me-auto">Login Error</strong>
+                    <strong class="me-auto">Update Profile</strong>
                     <button type="button" class="btn-close" @onclick="DismissMessage" aria-label="Close"></button>
                 </div>
                 <div class="toast-body" style="color:green">
@@ -100,31 +101,36 @@ else
 
     private async Task UpdateProfile()
     {
-        UpdateUserDto updateUserDto = new UpdateUserDto
-            {
-                UserId = User.UserId,
-                Username = User.Username,
-                Name = User.Name,
-                Email = User.Email
-            };
-        var result = await UserDataService.UpdateUserAsync(User.UserId, updateUserDto);
-        if (result.IsSuccess)
+
+        try
         {
-            Console.WriteLine("User updated successfully");
-            Message = "Profile updated successfully";
-            NavigationManager.NavigateTo($"/userprofile");
-        }
-        else
-        {
-            Console.WriteLine("User update failed");
-            if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+            UpdateUserDto updateUserDto = new UpdateUserDto
+                {
+                    Id = User.UserId,
+                    Username = User.Username,
+                    Name = User.Name,
+                    Email = User.Email
+                };
+            Console.WriteLine("Updating user profile");
+
+            var result = await UserDataService.UpdateUserAsync(User.UserId, updateUserDto);
+
+            if (result.IsSuccess)
             {
-                error += result.ValidationErrors;
+                Message = "Profile updated successfully";
+                NavigationManager.NavigateTo($"/userprofile");
+                await authStateProvider.Logout();
+                NavigationManager.NavigateTo("/login");
             }
 
         }
-
+        catch (Exception ex)
+        {
+            error = "Something went wrong updating the profile";
+        }
     }
+
+
 }
 
 @functions
