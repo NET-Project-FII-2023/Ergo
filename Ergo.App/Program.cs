@@ -23,7 +23,7 @@ builder.Services.AddBlazoredLocalStorage(config =>
     config.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
     config.JsonSerializerOptions.WriteIndented = false;
 });
-builder.Services.AddScoped<ITokenService, TokenService>();
+
 
 builder.Services.AddScoped<CustomStateProvider>();
 
@@ -45,6 +45,7 @@ builder.Services.AddHttpClient<IProjectDataService, ProjectDataService>(client =
 {
     client.BaseAddress = new Uri("https://localhost:7248/");
 });
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>(client =>

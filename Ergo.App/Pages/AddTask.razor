@@ -2,7 +2,7 @@
 @using Ergo.App.Contracts
 @using Ergo.App.ViewModels
 @using Ergo.Domain.Entities.Enums;
-
+@using Ergo.App.Services
 
 <h3>New Task</h3>
 
@@ -36,34 +36,12 @@
     </div>
 
     <div class="row mb-3 ms-2">
-        <label for="createdby" class="col-sm-3 form-label">Created by:</label>
-        <div class="col-sm-5">
-            <InputText id="createdby" class="form-control" @bind-Value="@TaskViewModel.CreatedBy" placeholder="Created by..."></InputText>
-            <ValidationMessage For="@(() => TaskViewModel.CreatedBy)" />
-        </div>
-    </div>
-
-    <div class="row mb-3 ms-2">
         <label for="projectid" class="col-sm-3 form-label">Project ID:</label>
         <div class="col-sm-5">
             <InputText id="projectid" class="form-control" @bind-Value="@ProjectIdInput" placeholder="Project ID..."></InputText>
             <ValidationMessage For="@(() => ProjectIdInput)" />
         </div>
     </div>
-
-
-@*     <div class="row mb-3 ms-2">
-        <label for="state" class="col-sm-3 form-label">State:</label>
-        <div class="col-sm-5">
-            <InputSelect id="state" class="form-control" @bind-Value="@TaskViewModel.State">
-                @foreach (var stateOption in Enum.GetValues(typeof(TaskState)))
-                {
-                    <option value="@stateOption">@stateOption</option>
-                }
-            </InputSelect>
-            <ValidationMessage For="@(() => TaskViewModel.State)" />
-        </div>
-    </div> *@
 
     <button type="submit" class="btn btn-primary">Save task</button>
     <button class="btn btn-primary" @onclick="Cancel">Cancel</button>
@@ -76,7 +54,8 @@
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
-    public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
+
+    public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();   
 
     public string Message { get; set; }
 
@@ -89,7 +68,6 @@
 
     private async Task HandleValidSubmit()
     {
-
         TaskViewModel.ProjectId = Guid.Parse(ProjectIdInput);
 
         if (DateTime.TryParse(TaskViewModel.Deadline.ToString(), out DateTime inputDate))
@@ -102,20 +80,38 @@
             return;
         }
 
-        var result = await TaskDataService.CreateTaskAsync(TaskViewModel);
-        if (result.IsSuccess)
+        try
         {
-            Message = "Task created successfully";
-            NavigationManager.NavigateTo($"taskoverview?projectId={TaskViewModel.ProjectId}");
+            // Get email from token service inside TaskDataService
+            var username = await TaskDataService.GetUsernameFromTokenAsync();
 
-        }
-        else
-        {
-            Message = result.Message;
-            if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+            if (string.IsNullOrEmpty(username))
             {
-                Message += result.ValidationErrors;
+                Message = "Unable to retrieve user email from token.";
+                return;
             }
+
+            // Assign the email to CreatedBy
+            TaskViewModel.CreatedBy = username;
+
+            var result = await TaskDataService.CreateTaskAsync(TaskViewModel);
+            if (result.IsSuccess)
+            {
+                Message = "Task created successfully";
+                NavigationManager.NavigateTo($"taskoverview?projectId={TaskViewModel.ProjectId}");
+            }
+            else
+            {
+                Message = result.Message;
+                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+                {
+                    Message += result.ValidationErrors;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error creating task: {ex.Message}";
         }
     }
 

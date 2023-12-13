@@ -18,14 +18,14 @@ namespace Ergo.App.ViewModels
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime Deadline { get; set; }
 
-        [Required(ErrorMessage = "Created by is required.")]
-        [StringLength(50, ErrorMessage = "Created by must be 50 characters or less.")]
+        //[Required(ErrorMessage = "Created by is required.")]
+        //[StringLength(50, ErrorMessage = "Created by must be 50 characters or less.")]
         public string? CreatedBy { get; set; }
 
         [Required(ErrorMessage = "Project ID is required.")]
         public Guid ProjectId { get; set; }
 
-        [Required(ErrorMessage = "Task state is required.")]
+        //[Required(ErrorMessage = "Task state is required.")]
         public TaskState? State { get; set; } = TaskState.ToDo;
     }
 }
