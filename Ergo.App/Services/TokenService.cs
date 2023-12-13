@@ -20,6 +20,13 @@ namespace Ergo.App.Services
             var email = jsonToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
             return Task.FromResult(email);
         }
+        public Task<string> DecodeUsernameFromTokenAsync(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadJwtToken(token);
+            var username = jsonToken.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value;
+            return Task.FromResult(username);
+        }
 
         public async Task<string> GetTokenAsync()
         {
