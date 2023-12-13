@@ -1,0 +1,101 @@
+@page "/addproject"
+@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
+
+<h3>New Project</h3>
+
+<EditForm Model="@ProjectViewModel" OnValidSubmit="@HandleValidSubmit">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+      <div class="row mb-3 ms-2">
+            <label for="projectname" class="col-sm-3 form-label">Project name:</label>
+            <div class="col-sm-5">
+                <InputText id="projectname" class="form-control" @bind-Value="@ProjectViewModel.ProjectName" placeholder="Project name..."></InputText>
+                <ValidationMessage For="@(() => ProjectViewModel.ProjectName)" />
+            </div>
+        </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="taskdescription" class="col-sm-3 form-label">Project description:</label>
+        <div class="col-sm-5">
+            <InputText id="taskdescription" class="form-control" @bind-Value="@ProjectViewModel.Description" placeholder="Project description..."></InputText>
+            <ValidationMessage For="@(() => ProjectViewModel.Description)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="deadline" class="col-sm-3 form-label">Deadline:</label>
+        <div class="col-sm-5">
+            <InputDate id="deadline" class="form-control" @bind-Value="@ProjectViewModel.Deadline" />
+            <ValidationMessage For="@(() => ProjectViewModel.Deadline)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="gitrepository" class="col-sm-3 form-label">Git Repository<label class="text-muted">(optional)</label>:</label>
+        <div class="col-sm-5">
+            <InputText id="gitrepository" class="form-control" @bind-Value="@ProjectViewModel.GitRepository" placeholder="Git repository..."></InputText>
+            <ValidationMessage For="@(() => ProjectViewModel.GitRepository)" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save project</button>
+    <button class="btn btn-primary" @onclick="Cancel">Cancel</button>
+
+</EditForm>
+
+@code {
+    [Inject]
+    public IProjectDataService ProjectDataService { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    public ProjectViewModel ProjectViewModel { get; set; } = new ProjectViewModel();
+
+    public string Message { get; set; }
+}
+
+@functions {
+    protected override void OnInitialized()
+    {
+        ProjectViewModel.Deadline = DateTime.UtcNow.Date;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (DateTime.TryParse(ProjectViewModel.Deadline.ToString(), out DateTime inputDate))
+        {
+            ProjectViewModel.Deadline = inputDate.ToUniversalTime();
+        }
+        else
+        {
+            Message = "Invalid date format. Please enter a valid date.";
+            return;
+        }
+
+        var result = await ProjectDataService.CreateProjectAsync(ProjectViewModel);
+        if (result.IsSuccess)
+        {
+            Message = "Project created successfully";
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            Message = result.Message;
+            if(!string.IsNullOrEmpty(result.ValidationErrors))
+            {
+                Message += result.ValidationErrors;
+            }
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}
+
+
