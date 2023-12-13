@@ -103,6 +103,19 @@ namespace Ergo.App.Services
                 throw;
             }
         }
+        
+        public async Task<ApiResponse<UpdateCommentDto>> UpdateCommentAsync(UpdateCommentDto updateCommentDto)
+        {
+            httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            //debug print request uri
+            Console.WriteLine($"Request URI: {RequestUri}/{updateCommentDto.CommentId}");
+            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/{updateCommentDto.CommentId}", updateCommentDto);
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<UpdateCommentDto>>();
+            response!.IsSuccess = result.IsSuccessStatusCode;
+            return response!;
+        }
 
         public class CommentsResponse
         {

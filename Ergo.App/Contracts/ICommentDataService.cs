@@ -7,5 +7,6 @@ namespace Ergo.App.Contracts
         Task<List<CommentViewModel>> GetCommentsAsync();
         Task<List<CommentViewModel>> GetCommentsByTaskIdAsync(Guid taskId);
         Task<ApiResponse<CommentDto>> CreateCommentAsync(CommentViewModel commentViewModel);
+        Task<ApiResponse<UpdateCommentDto>> UpdateCommentAsync(UpdateCommentDto updateCommentDto);
     }
 }
