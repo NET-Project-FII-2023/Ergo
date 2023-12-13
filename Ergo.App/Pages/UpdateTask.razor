@@ -1,0 +1,130 @@
+@page "/updatetask"
+
+@using Ergo.App.Contracts
+@using Ergo.App.Services
+@using Ergo.App.ViewModels
+@using Ergo.Domain.Entities.Enums
+
+<h3>Update Task</h3>
+
+<EditForm Model="@UpdateTaskViewModel"  OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    
+    <div class="row mb-3 ms-2">
+        <label for="taskid" class="col-sm-3 form-label">Task ID:</label>
+        <div class="col-sm-5">
+            <InputText id="taskid" class="form-control" @bind-Value="@TaskIdInput" placeholder="Task ID..."></InputText>
+            <ValidationMessage For="@(() => TaskIdInput)" />
+        </div>
+    </div>
+    
+    <div class="row mb-3 ms-2">
+        <label for="taskname" class="col-sm-3 form-label">Task name:</label>
+        <div class="col-sm-5">
+            <InputText id="taskname" class="form-control" @bind-Value="@UpdateTaskViewModel.TaskName" placeholder="Task name..."></InputText>
+            <ValidationMessage For="@(() => UpdateTaskViewModel.TaskName)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="taskdescription" class="col-sm-3 form-label">Task description:</label>
+        <div class="col-sm-5">
+            <InputText id="taskdescription" class="form-control" @bind-Value="@UpdateTaskViewModel.Description" placeholder="Task description..."></InputText>
+            <ValidationMessage For="@(() => UpdateTaskViewModel.Description)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="deadline" class="col-sm-3 form-label">Deadline:</label>
+        <div class="col-sm-5">
+            <InputDate id="deadline" class="form-control" @bind-Value="@UpdateTaskViewModel.Deadline" />
+            <ValidationMessage For="@(() => UpdateTaskViewModel.Deadline)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="createdby" class="col-sm-3 form-label">Created by:</label>
+        <div class="col-sm-5">
+            <InputText id="createdby" class="form-control" @bind-Value="@UpdateTaskViewModel.CreatedBy" placeholder="Created by..."></InputText>
+            <ValidationMessage For="@(() => UpdateTaskViewModel.CreatedBy)" />
+        </div>
+    </div>
+
+    <div class="row mb-3 ms-2">
+        <label for="projectid" class="col-sm-3 form-label">Project ID:</label>
+        <div class="col-sm-5">
+            <InputText id="projectid" class="form-control" @bind-Value="@ProjectIdInput" placeholder="Project ID..."></InputText>
+            <ValidationMessage For="@(() => ProjectIdInput)" />
+        </div>
+    </div>
+
+    
+    <div class="row mb-3 ms-2">
+        <label for="state" class="col-sm-3 form-label">State:</label>
+        <div class="col-sm-5">
+            <InputSelect id="state" class="form-control" @bind-Value="@UpdateTaskViewModel.State">
+                @foreach (var stateOption in Enum.GetValues(typeof(TaskState)))
+                {
+                    <option value="@stateOption">@stateOption</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => UpdateTaskViewModel.State)" />
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+    
+</EditForm>
+
+@code{
+
+    [Inject]
+    public ITaskDataService TaskDataService { get; set; }
+    
+    [Inject]
+    NavigationManager NavigationManager { get; set; }
+    
+    public UpdateTaskViewModel UpdateTaskViewModel { get; set; } = new UpdateTaskViewModel();
+
+    public string Message { get; set; } = "";
+
+    public string ProjectIdInput { get; set; } = "";
+    public string TaskIdInput { get; set; } = "";
+    
+    
+    
+    private async Task HandleValidSubmit()
+    {
+        UpdateTaskDto updateTaskDto = new UpdateTaskDto()
+        {
+            TaskId = UpdateTaskViewModel.TaskId,
+            TaskName = UpdateTaskViewModel.TaskName,
+            Description = UpdateTaskViewModel.Description,
+            Deadline = UpdateTaskViewModel.Deadline,
+            CreatedBy = UpdateTaskViewModel.CreatedBy,
+            ProjectId = UpdateTaskViewModel.ProjectId,
+            State = UpdateTaskViewModel.State
+        };
+        
+        updateTaskDto.TaskId = Guid.Parse(TaskIdInput);
+        updateTaskDto.ProjectId = Guid.Parse(ProjectIdInput);
+        
+        var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
+        if (result.IsSuccess)
+        {
+            Message = "Task updated successfully";
+            NavigationManager.NavigateTo($"taskoverview?projectId={updateTaskDto.ProjectId}");
+
+        }
+        else
+        {
+            Message = result.Message;
+            if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+            {
+                Message += result.ValidationErrors;
+            }
+        }
+    }
+
+}

@@ -88,6 +88,17 @@ namespace Ergo.App.Services
                 throw;
             }
         }
+        
+        public async Task<ApiResponse<UpdateTaskDto>> UpdateTaskAsync(UpdateTaskDto updateTaskDto)
+        {
+            httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/{updateTaskDto.TaskId}", updateTaskDto);
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<UpdateTaskDto>>();
+            response!.IsSuccess = result.IsSuccessStatusCode;
+            return response!;
+        }
 
         public class TaskItemsResponse
         {
