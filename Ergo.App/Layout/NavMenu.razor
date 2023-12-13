@@ -1,5 +1,5 @@
-﻿@using Ergo.App.Auth
-@inject CustomStateProvider authStateProvider
+﻿@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
 <div class="top-row ps-3 navbar navbar-dark vw-100" style="background-color: #183D3D">
     <div class="container-fluid">
             <a class="d-flex align-items-center justify-content-center gap-2 navbar-brand" href="">
@@ -33,9 +33,10 @@
 
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                            <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                            <span class="bi bi-home bi-home-hover" aria-hidden="true"></span> Home
                         </NavLink>
                     </div>
+
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="addtask">
                             <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Add Task
@@ -55,16 +56,23 @@
                     </div>
 
                     <div class="nav-item px-3">
+                        My Projects
+                    </div>
+                    @foreach (var project in projects)
+                    {
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="@($"project/{project.ProjectId}")">
+                                <span class="bi bi-project bi-project-hover" aria-hidden="true"></span> @project.ProjectName
+                            </NavLink>
+                        </div>
+                    }
+
+                    <div class="nav-item px-3">
                         <NavLink class="nav-link" href="addproject">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Add Project
+                            <span class="bi bi-add" aria-hidden="true"></span> Add Project
                         </NavLink>
                     </div>
 
-                    <Authorized>
-                        <div class="nav-item px-3">
-                            <button class="btn btn-lg btn-primary btn-block" @onclick="Logout">Logout</button>
-                        </div>
-                    </Authorized>
                 </Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
             </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
         </Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState>
@@ -73,19 +81,27 @@
 
 @code {
     [Inject]
+    public IProjectDataService ProjectDataService { get; set; }
+
+    [Inject]
     public NavigationManager NavigationManager { get; set; }
+
+    public List<ProjectViewModel> projects { get; set; } = new List<ProjectViewModel>();
 
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+}
 
+@functions
+{
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
-    private async Task Logout()
+
+    protected override async Task OnInitializedAsync()
     {
-        await authStateProvider.Logout();
-        NavigationManager.NavigateTo("/login");
+        projects = await ProjectDataService.GetProjectsAsync();
     }
 }

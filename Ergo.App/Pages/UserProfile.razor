@@ -1,6 +1,8 @@
 ﻿@page "/userprofile"
 @using Ergo.App.Contracts
 @using Ergo.App.ViewModels
+@using Ergo.App.Auth
+@inject CustomStateProvider authStateProvider
 
 <h3>UserProfile</h3>
 
@@ -31,6 +33,10 @@
         <div class="row">
             <div class="col-sm-10 offset-sm-2">
                 <button class="btn btn-primary" @onclick="UpdateProfile">Update Profile</button>
+            </div>
+
+            <div class="nav-item px-3">
+                <button class="btn btn-lg btn-primary btn-block" @onclick="Logout">Logout</button>
             </div>
         </div>
     </div>
@@ -119,12 +125,23 @@ else
         }
 
     }
+}
+
+@functions
+{
     private void DismissError()
     {
         error = null;
     }
+
     private void DismissMessage()
     {
         Message = null;
+    }
+
+    private async Task Logout()
+    {
+        await authStateProvider.Logout();
+        NavigationManager.NavigateTo("/login");
     }
 }

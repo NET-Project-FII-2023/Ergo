@@ -4,6 +4,8 @@ namespace Ergo.App.ViewModels
 {
     public class ProjectViewModel
     {
+        public Guid ProjectId { get; set; }
+
         [Required(ErrorMessage = "Project name is required")]
         public string ProjectName { get; set; } = string.Empty;
 
