@@ -10,6 +10,6 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
         public DateTime Deadline { get; set; } = default!;
         public string CreatedBy { get; set; } = default!;
         public Guid ProjectId { get; set; }
-        public TaskState State { get; set; } = default!;
+        public TaskState? State { get; set; } = TaskState.ToDo;
     }
 }

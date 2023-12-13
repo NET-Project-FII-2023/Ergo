@@ -6,5 +6,6 @@
         Task RemoveTokenAsync();
         Task SetTokenAsync(string token);
         Task<string> DecodeEmailFromTokenAsync(string token);
+        Task<string> DecodeUsernameFromTokenAsync(string token);
     }
 }

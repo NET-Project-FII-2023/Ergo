@@ -19,6 +19,20 @@ namespace Ergo.App.Services
             this.tokenService = tokenService;
         }
 
+        public async Task<string> GetUsernameFromTokenAsync()
+        {
+            try
+            {
+                var token = await tokenService.GetTokenAsync();
+                return await tokenService.DecodeUsernameFromTokenAsync(token);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception while fetching email from token: {ex}");
+                throw;
+            }
+        }
+
         public async Task<ApiResponse<TaskDto>> CreateTaskAsync(TaskViewModel taskViewModel)
         {
             httpClient.DefaultRequestHeaders.Authorization
