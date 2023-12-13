@@ -19,6 +19,20 @@ namespace Ergo.App.Services
             this.tokenService = tokenService;
         }
 
+        public async Task<string> GetUsernameFromTokenAsync()
+        {
+            try
+            {
+                var token = await tokenService.GetTokenAsync();
+                return await tokenService.DecodeUsernameFromTokenAsync(token);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception while fetching email from token: {ex}");
+                throw;
+            }
+        }
+
         public async Task<ApiResponse<TaskDto>> CreateTaskAsync(TaskViewModel taskViewModel)
         {
             httpClient.DefaultRequestHeaders.Authorization
@@ -64,7 +78,7 @@ namespace Ergo.App.Services
         {
             try
             {
-                var uri = $"{RequestUri}?projectId={projectId}"; // Update the URI to include projectId in the query string
+                var uri = $"{RequestUri}/ByProject/{projectId}";
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
                 var result = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
                 result.EnsureSuccessStatusCode();
@@ -87,6 +101,17 @@ namespace Ergo.App.Services
                 Console.WriteLine($"Exception during deserialization: {ex}");
                 throw;
             }
+        }
+        
+        public async Task<ApiResponse<UpdateTaskDto>> UpdateTaskAsync(UpdateTaskDto updateTaskDto)
+        {
+            httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/{updateTaskDto.TaskId}", updateTaskDto);
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<UpdateTaskDto>>();
+            response!.IsSuccess = result.IsSuccessStatusCode;
+            return response!;
         }
 
         public class TaskItemsResponse

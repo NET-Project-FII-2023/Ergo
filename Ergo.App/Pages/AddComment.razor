@@ -87,8 +87,7 @@
 		if (result.IsSuccess)
 		{
 			Message = "Comment created successfully";
-			//$"/taskoverview?taskId={CommentViewModel.TaskId}"
-			NavigationManager.NavigateTo($"/commentoverview");
+			NavigationManager.NavigateTo($"commentoverview?taskId={CommentViewModel.TaskId}");
 		}
 		else
 		{
