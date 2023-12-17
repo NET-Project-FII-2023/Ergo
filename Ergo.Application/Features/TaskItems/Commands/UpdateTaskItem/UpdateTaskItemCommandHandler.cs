@@ -60,7 +60,16 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
                 };
             }
 
-            taskItem.Value.UpdateData(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId, request.State);
+            var updateResult = taskItem.Value.UpdateData(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId, request.State);
+
+            if (!updateResult.IsSuccess)
+            {
+                return new UpdateTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { updateResult.Error }
+                };
+            }
 
             var result = await taskItemRepository.UpdateAsync(taskItem.Value);
             return new UpdateTaskItemCommandResponse

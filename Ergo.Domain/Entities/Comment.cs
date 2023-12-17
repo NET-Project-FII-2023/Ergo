@@ -41,14 +41,27 @@ namespace Ergo.Domain.Entities
             return Result<Comment>.Success(new Comment(fullName,taskId,text));
         }
 
-        public void UpdateData(string fullName, DateTime createdDate, string lastModifiedBy, DateTime lastModifiedDate, string text,Guid taskId)
+        public Result<Comment> UpdateData(string fullName, DateTime createdDate, string lastModifiedBy, DateTime lastModifiedDate, string text,Guid taskId)
         {
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                return Result<Comment>.Failure(Constants.CreatorFullNameRequired);
+            }
+            if (taskId == Guid.Empty)
+            {
+                   return Result<Comment>.Failure(Constants.TaskIdRequired);
+            }
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return Result<Comment>.Failure(Constants.CommentTextRequired);
+            }
             CreatedBy = fullName;
             CreatedDate = createdDate;
             LastModifiedBy = lastModifiedBy;
             LastModifiedDate = lastModifiedDate;
             CommentText = text;
             TaskId = taskId;
+            return Result<Comment>.Success(this);
             
         }
 
