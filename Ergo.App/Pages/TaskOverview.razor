@@ -83,7 +83,7 @@ else
 {
     <Modal @ref="modal" Title="Assign a task to this project:">
         <BodyTemplate>
-            <EditForm Model="@TaskViewModel" OnValidSubmit="@HandleValidSubmit">
+            <EditForm Model="@TaskViewModel">
 
                 <DataAnnotationsValidator />
                 <ValidationSummary></ValidationSummary>
@@ -123,13 +123,27 @@ else
 
                 <div class="d-flex justify-content-end">
                     <button class="btn btn-primary" @onclick="OnHideModalClick">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1">Save task</button>
+                    <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidSubmit">Save task</button>
                 </div>
 
             </EditForm>
         </BodyTemplate>
     </Modal>
 
+    @if (Message != null)
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Success</strong>
+                    <button type="button" class="btn-close" @onclick="DismissSuccess" aria-label="Close"></button>
+                </div>
+                <div class="toast-body" style="color:green">
+                    @Message
+                </div>
+            </div>
+        </div>
+    }
 
     <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Task</Button>
     <div class="row mt-2">
@@ -232,6 +246,31 @@ else
             }
         }
     }
+
+    private async Task FetchAllTasks()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = uri.Query;
+
+        TaskViewModel.Deadline = DateTime.UtcNow.Date;
+
+        if (!string.IsNullOrEmpty(query))
+        {
+            var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+            var projectId = queryParams.Get("projectId");
+
+            if (!string.IsNullOrEmpty(projectId))
+            {
+                Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
+                Console.WriteLine("ProjectId: " + projectId);
+            }
+        }
+    }
+
+    private void DismissSuccess()
+    {
+        Message = null;
+    }
     private async Task HandleValidSubmit()
     {
 
@@ -276,7 +315,9 @@ else
             if (result.IsSuccess)
             {
                 Message = "Task created successfully";
-                NavigationManager.NavigateTo($"taskoverview?projectId={TaskViewModel.ProjectId}");
+                await modal.HideAsync();
+                await FetchAllTasks();
+                // NavigationManager.NavigateTo($"taskoverview?projectId={TaskViewModel.ProjectId}");
             }
             else
             {
