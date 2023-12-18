@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class UserUpdateProjectAndTask : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,6 +18,7 @@ namespace Infrastructure.Migrations
                     ProjectId = table.Column<Guid>(type: "uuid", nullable: false),
                     ProjectName = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
+                    GitRepository = table.Column<string>(type: "text", nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     State = table.Column<int>(type: "integer", nullable: false),
@@ -35,12 +36,7 @@ namespace Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,6 +74,7 @@ namespace Infrastructure.Migrations
                     TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
                     AssignedUserUserId = table.Column<Guid>(type: "uuid", nullable: true),
                     ProjectId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BranchId = table.Column<string>(type: "text", nullable: false),
                     TaskName = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -103,7 +100,8 @@ namespace Infrastructure.Migrations
                 {
                     CommentId = table.Column<Guid>(type: "uuid", nullable: false),
                     CommentText = table.Column<string>(type: "text", nullable: false),
-                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TaskId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "text", nullable: true),
@@ -116,8 +114,7 @@ namespace Infrastructure.Migrations
                         name: "FK_Comments_TaskItems_TaskItemId",
                         column: x => x.TaskItemId,
                         principalTable: "TaskItems",
-                        principalColumn: "TaskItemId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "TaskItemId");
                 });
 
             migrationBuilder.CreateIndex(

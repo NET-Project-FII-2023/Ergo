@@ -5,5 +5,4 @@ namespace Ergo.Application.Persistence;
 
 public interface IUserRepository : IAsyncRepository<User>
 {
-    Task<Result<User>> FindUserByEmailAsync(string email);
 }

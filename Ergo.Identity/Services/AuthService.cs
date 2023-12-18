@@ -1,5 +1,7 @@
 ﻿using Ergo.Application.Contracts.Identity;
 using Ergo.Application.Models.Identity;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
 using Ergo.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -13,15 +15,17 @@ namespace Ergo.Identity.Services
     public class AuthService : IAuthService
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly IUserRepository userRepository;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly IConfiguration configuration;
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, SignInManager<ApplicationUser> signInManager)
+        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, SignInManager<ApplicationUser> signInManager, IUserRepository userRepository)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.configuration = configuration;
             this.signInManager = signInManager;
+            this.userRepository = userRepository;
         }
         public async Task<(int, string)> Registeration(RegistrationModel model, string role)
         {
@@ -42,6 +46,7 @@ namespace Ergo.Identity.Services
             };
             var createUserResult = await userManager.CreateAsync(user, model.Password);
             
+            
             if (!createUserResult.Succeeded)
             { 
                 return (0, "User creation failed! Please check user details and try again.");
@@ -52,7 +57,8 @@ namespace Ergo.Identity.Services
 
             if (await roleManager.RoleExistsAsync(UserRoles.User))
                 await userManager.AddToRoleAsync(user, role);
-
+            var userDomain = User.Create(Guid.Parse(user.Id));
+            await userRepository.AddAsync(userDomain.Value);
             return (1, "User created successfully!");
         }
 

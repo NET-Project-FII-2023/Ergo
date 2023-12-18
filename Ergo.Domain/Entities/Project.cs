@@ -69,7 +69,7 @@ namespace Ergo.Domain.Entities
             Deadline = deadline;
         }
 
-        public void AssignMember(User member)
+        public void AssignUser(User member)
         {
             if (Members == null)
             {

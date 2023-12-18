@@ -12,14 +12,5 @@ public class UserRepository : BaseRepository<User>, IUserRepository
 
     }
 
-    public async Task<Result<User>> FindUserByEmailAsync(string email)
-    {
-        var result = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        if (result == null)
-        {
-            return Result<User>.Failure($"User with email {email} not found");
-        }
 
-        return Result<User>.Success(result);
-    }
 }

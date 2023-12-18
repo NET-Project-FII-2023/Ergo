@@ -5,6 +5,8 @@ using Ergo.Application.Features.Projects.Queries.GetAll;
 using Ergo.Application.Features.Projects.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Ergo.Application.Features.Projects.Commands.AssignUserToProject;
+using Ergo.Application.Features.Projects.Queries.GetProjectsByUserId;
 
 namespace Ergo.Api.Controllers;
 
@@ -66,6 +68,27 @@ public class ProjectsController : ApiControllerBase
         {
             return BadRequest(result);
         }
+        return Ok(result);
+    }
+    [HttpPost]
+    [Route("AssignUserToProject")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<IActionResult> AssignUserToProject(AssignUserToProjectCommand command)
+    {
+        var result = await Mediator.Send(command);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [HttpGet]
+    [Route("GetProjectsByUserId/{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetProjectsByUserId(string userId)
+    {
+        var query = new GetProjectsByUserIdQuery { UserId = userId};
+        var result = await Mediator.Send(query);
         return Ok(result);
     }
 }

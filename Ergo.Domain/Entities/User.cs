@@ -3,74 +3,34 @@ using Ergo.Domain.Entities.Enums;
 
 namespace Ergo.Domain.Entities
 {
-    public class User 
+    public class User
     {
-        private User(string firstName, string lastName,  string email, string password, UserRole role)
+        private User(Guid userId)
         {
-            UserId = Guid.NewGuid();
-            FirstName = firstName;
-            LastName = lastName;
-            Email = email;
-            Password = password;
-            Role = role;
+            UserId = userId;
             Projects = new List<Project>();
             Tasks = new List<TaskItem>();
         }
 
         public Guid UserId { get; private set; }
-        public string FirstName { get; private set; }
-        public string LastName { get; private set; }
-        public string Email { get; private set; }
-        public string Password { get; private set; }
-        public UserRole Role { get; private set; }
-        public List<Project>? Projects { get; private set;  }
+        public List<Project>? Projects { get; private set; }
         public List<TaskItem> Tasks { get; private set; }
 
-        public static Result<User> Create(string firstName, string lastName, string email, string password, UserRole role)
+        public static Result<User> Create(Guid userId)
         {
-            if (string.IsNullOrWhiteSpace(firstName))
+            if (userId == Guid.Empty)
             {
-                return Result<User>.Failure(Constants.FirstNameRequired);
+                return Result<User>.Failure("UserId cannot be empty");
             }
 
-            if (string.IsNullOrWhiteSpace(lastName))
-            {
-                return Result<User>.Failure(Constants.LastNameRequired);
-            }
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return Result<User>.Failure(Constants.EmailRequired);
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                return Result<User>.Failure(Constants.PasswordRequired);
-            }
-            if(role == default)
-            {
-                return Result<User>.Failure(Constants.RoleRequired);
-            }
-
-
-            return Result<User>.Success(new User(firstName, lastName, email, password,role));
-
+            return Result<User>.Success(new User(userId));
         }
-        public void UpdateData(string firstName, string lastName, string email, string password, UserRole role)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-            Email = email;
-            Password = password;
-            Role = role;
-        }
-
         public void AssignProject(Project project)
         {
-            if(Projects == null)
+            if (Projects == null)
             {
                 Projects = new List<Project>();
-            }   
+            }
             Projects.Add(project);
         }
         public void AssignTask(TaskItem task)
@@ -81,7 +41,5 @@ namespace Ergo.Domain.Entities
             }
             Tasks.Add(task);
         }
-
-
     }
 }
