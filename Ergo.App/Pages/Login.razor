@@ -58,7 +58,7 @@
         try
         {
             await authStateProvider.Login(loginRequest);
-            navigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/", forceLoad: true);
         }
         catch (Exception ex)
         {
