@@ -80,7 +80,7 @@
         if (result.IsSuccess)
         {
             Message = "Project created successfully";
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo(result.Data != null ? $"/taskoverview?projectId={result.Data.ProjectId}" : "/", forceLoad: true);
         }
         else
         {

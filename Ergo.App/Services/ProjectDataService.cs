@@ -45,6 +45,10 @@ namespace Ergo.App.Services
 
                 return projects?.Projects ?? new List<ProjectViewModel>();
             }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access.");
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e);
@@ -62,10 +66,10 @@ namespace Ergo.App.Services
             httpClient.DefaultRequestHeaders.Authorization
                 = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
 
-            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            if (authState.User.Identity.IsAuthenticated)
+            var username = await tokenService.DecodeUsernameFromTokenAsync(await tokenService.GetTokenAsync());
+            if (username != null)
             {
-                projectViewModel.FullName = authState.User.Identity.Name;
+                projectViewModel.FullName = username;
             }
 
             var result = await httpClient.PostAsJsonAsync(RequestUri, projectViewModel);

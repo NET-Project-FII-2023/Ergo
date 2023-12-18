@@ -2,7 +2,8 @@ namespace Ergo.App.ViewModels
 {
     public class ProjectDto
     {
-        public string ProjectName { get; set; }
+        public Guid ProjectId { get; set; }
+        public string? ProjectName { get; set; }
         public string? Description { get; set; }
         public string? FullName { get; set; }
         public string? GitRepository { get; set; }
