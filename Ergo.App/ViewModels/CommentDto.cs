@@ -11,5 +11,6 @@ namespace Ergo.App.ViewModels
         public string CommentText { get; set; } = default!;
         public Guid TaskId { get; set; }
 
+        public Guid CommentId { get; set; }
     }
 }

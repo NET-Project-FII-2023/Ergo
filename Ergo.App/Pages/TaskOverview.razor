@@ -45,6 +45,40 @@
         border-bottom: 3px solid #60a88b;
         border-radius: 2px;
     }
+
+    .bg-dark {
+        background-color: #333 !important; /* Suprascrieți dacă este necesar */
+    }
+
+    .text-light {
+        color: #ccc !important; /* Suprascrieți dacă este necesar */
+    }
+
+    .bg-secondary {
+        background-color: #444 !important; /* Suprascrieți dacă este necesar */
+    }
+
+    /* Ajustați dimensiunea și culoarea iconiței de editare */
+    .fa-pencil {
+        color: #d1c04d;
+        font-size: 1rem; /* sau dimensiunea pe care o preferați */
+    }
+
+    /* Ajustați stilurile pentru butoane, dacă este necesar */
+    .btn-success {
+        color: #fff;
+        background-color: #28a745; /* sau culoarea pe care o preferați */
+        border-color: #28a745; /* sau culoarea pe care o preferați */
+    }
+
+    .btn-warning {
+        color: #212529;
+        background-color: #ffc107; /* sau culoarea pe care o preferați */
+        border-color: #ffc107; /* sau culoarea pe care o preferați */
+    }
+   
+
+
 </style>
 
 
@@ -134,6 +168,8 @@ else
                         <p class="card-text">@taskItem.Description</p>
                         <p class="card-text"><strong>Deadline:</strong> @taskItem.Deadline.ToShortDateString()</p>
                         <button class="btn btn-secondary" @onclick="() => ShowCommentModal(taskItem.TaskItemId)">Add Comment</button>
+                        <Button class="btn btn-secondary" @onclick="() => ShowDetailsModal(taskItem.TaskItemId)">Details</Button>
+
 
                     </div>
                 </div>
@@ -188,6 +224,48 @@ else
         </BodyTemplate>
     </Modal>
 
+    <Modal @ref="detailsModal" Title="Task Details">
+        <BodyTemplate>
+            <div class="modal-body bg-dark text-light">
+                <h5>@selectedTask?.TaskName</h5>
+                <p>@selectedTask?.Description</p>
+
+                <h6>Comments:</h6>
+                <ul class="list-unstyled">
+                    @foreach (var comment in commentsList)
+                    {
+                        <li class="mb-2" title="Last modified: @comment.LastModifiedDate.ToString()">
+                            @if (commentBeingEdited != null && commentBeingEdited.CommentId == comment.CommentId)
+                            {
+                                <textarea class="form-control bg-secondary text-light" @bind="commentBeingEdited.CommentText"></textarea>
+                                <div class="mt-2">
+                                    <button class="btn btn-success btn-sm" @onclick="SaveCommentEdit">Save</button>
+                                    <button class="btn btn-warning btn-sm" @onclick="CancelCommentEdit">Cancel</button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex justify-content-between align-items-center bg-secondary p-2 rounded">
+                                    <div>
+                                        <strong>@comment.CreatedBy:</strong> @comment.CommentText
+                                    </div>
+                                    @if (comment.CanEdit)
+                                    {
+                                        <button class="btn btn-outline-info btn-sm" @onclick="() => BeginEditComment(comment)">Edit</button>
+                                    }
+                                </div>
+                            }
+                        </li>
+                    }
+                </ul>
+            </div>
+        </BodyTemplate>
+    </Modal>
+
+
+
+
+
 }
 
 @code {
@@ -201,9 +279,16 @@ else
 
     public List<TaskViewModel> Tasks { get; set; }
 
+    private List<CommentViewModel> commentsList = new List<CommentViewModel>();
+
+
     public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
 
+    private TaskViewModel? selectedTask;
+
     public CommentViewModel CommentViewModel { get; set; } = new CommentViewModel();
+
+    private CommentViewModel? commentBeingEdited;
 
     public string Message { get; set; }
 
@@ -214,7 +299,98 @@ else
     private Guid selectedTaskId;
 
     private Modal commentModal = default!;
+
+    private Modal detailsModal = default!;
+
+
     private Guid selectedTaskForComment;
+
+
+    private void BeginEditComment(CommentViewModel comment)
+    {
+
+        commentBeingEdited = comment;
+    }
+
+    private async Task SaveCommentEdit()
+    {
+        var username = await TaskDataService.GetUsernameFromTokenAsync();
+        if(string.IsNullOrEmpty(username))
+        {
+            Message = "Unable to retrieve user email from token.";
+            return;
+        }
+
+        if (commentBeingEdited != null)
+        {
+
+            var updateCommentDto = new UpdateCommentDto
+                {
+                    CommentId = commentBeingEdited.CommentId,
+                    CreatedBy = username,
+                    CommentText = commentBeingEdited.CommentText,
+                    LastModifiedBy = username, 
+                    LastModifiedDate = DateTime.UtcNow,
+                    TaskId= commentBeingEdited.TaskId
+
+                };
+            
+            var response = await CommentDataService.UpdateCommentAsync(updateCommentDto);
+
+            if (response.IsSuccess)
+            {
+                Message = "Comment updated successfully";
+                
+                await detailsModal.HideAsync();
+            }
+            else
+            {
+                Message = response.Message;
+                if (!string.IsNullOrWhiteSpace(response.ValidationErrors))
+                {
+                    Message += response.ValidationErrors;
+                }
+
+            }
+
+            commentBeingEdited = null; 
+        }
+    }
+
+
+    private void CancelCommentEdit()
+    {
+        commentBeingEdited = null; 
+    }
+
+
+
+    private async Task ShowDetailsModal(Guid taskId)
+    {
+        selectedTask = Tasks.FirstOrDefault(t => t.TaskItemId == taskId);
+
+        var comments = await CommentDataService.GetCommentsByTaskIdAsync(taskId);
+        
+        var currentUser = await TaskDataService.GetUsernameFromTokenAsync();
+
+
+        commentsList = comments.Select(comment => new CommentViewModel
+            {
+                CommentText = comment.CommentText,
+                CreatedBy = comment.CreatedBy,
+                LastModifiedDate = comment.LastModifiedDate,
+                CanEdit = ShouldAllowEdit(comment, currentUser)
+            }).ToList();
+
+        await detailsModal.ShowAsync();
+    }
+
+
+    private bool ShouldAllowEdit(CommentViewModel comment, string currentUser)
+    {
+        return comment.CreatedBy == currentUser;
+    }
+
 
     private void DisplayTaskId(Guid taskId)
     {
@@ -231,38 +407,38 @@ else
     private async Task SaveComment()
     {
         try
-		{
-			var username = await TaskDataService.GetUsernameFromTokenAsync();
+        {
+            var username = await TaskDataService.GetUsernameFromTokenAsync();
 
-			if (string.IsNullOrEmpty(username))
-			{
-				Message = "Unable to retrieve user email from token.";
-				return;
-			}
+            if (string.IsNullOrEmpty(username))
+            {
+                Message = "Unable to retrieve user email from token.";
+                return;
+            }
 
-			CommentViewModel.CreatedBy = username;
+            CommentViewModel.CreatedBy = username;
             CommentViewModel.LastModifiedBy = username;
-			CommentViewModel.TaskId = selectedTaskId;
-			var result = await CommentDataService.CreateCommentAsync(CommentViewModel);
-			if (result.IsSuccess)
-			{
-				Message = "Comment created successfully";
-				await commentModal.HideAsync();
-				
-			}
-			else
-			{
-				Message = result.Message;
-				if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
-				{
-					Message += result.ValidationErrors;
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			Message = $"Error creating comment: {ex.Message}";
-		}
+            CommentViewModel.TaskId = selectedTaskId;
+            var result = await CommentDataService.CreateCommentAsync(CommentViewModel);
+            if (result.IsSuccess)
+            {
+                Message = "Comment created successfully";
+                await commentModal.HideAsync();
+
+            }
+            else
+            {
+                Message = result.Message;
+                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+                {
+                    Message += result.ValidationErrors;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error creating comment: {ex.Message}";
+        }
     }
 
     private async Task ShowCommentModal(Guid taskId)
@@ -332,6 +508,8 @@ else
         }
     }
 
+
+
     private void DismissSuccess()
     {
         Message = null;
@@ -397,9 +575,6 @@ else
         {
             Message = $"Error creating task: {ex.Message}";
         }
-
-
-
 
 }
 

@@ -29,5 +29,9 @@ namespace Ergo.App.ViewModels
         [Required(ErrorMessage = "Task ID is required.")]
         public Guid TaskId { get; set; }
 
+        public Guid CommentId { get; set; }
+
+        public bool CanEdit { get; set; }
+
     }
 }
