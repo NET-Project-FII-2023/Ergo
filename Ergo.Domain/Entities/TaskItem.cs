@@ -67,10 +67,7 @@ namespace Ergo.Domain.Entities
             return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, createdBy, projectId));
         }
 
-        public void AssignUser(User user)
-        {
-            AssignedUser = user;
-        }
+        
 
         public Result<TaskItem> UpdateData(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, TaskState state)
         {
@@ -106,6 +103,15 @@ namespace Ergo.Domain.Entities
             LastModifiedDate = DateTime.UtcNow;
             ProjectId = projectId;
             State = state;
+            return Result<TaskItem>.Success(this);
+        }
+        public Result<TaskItem> AssignUser(User user)
+        {
+            if (user == null)
+            {
+                return Result<TaskItem>.Failure("User is required");
+            }
+            AssignedUser = user;
             return Result<TaskItem>.Success(this);
         }
         public Result<TaskItem> AssignComment(Comment comment)

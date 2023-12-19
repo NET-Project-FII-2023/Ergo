@@ -1,11 +1,7 @@
 ﻿using Ergo.Domain.Entities.Enums;
 using Ergo.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
+using System.Reflection;
 
 namespace Ergo.Domain.Tests
 {
@@ -148,13 +144,12 @@ namespace Ergo.Domain.Tests
             //Assert
             updateResult.IsSuccess.Should().BeFalse();
         }
-
         [Fact]
         public void When_UpdateProjectIsCalled_And_ProjectStateIsValid_Then_SuccessIsReturned()
         {
             //Arrange && Act
-            var result = Project.Create("Test", "Test", "Test", DateTime.UtcNow, "Test");
-            var updateResult = result.Value.UpdateData("Test", "Test", "Test", DateTime.UtcNow, ProjectState.Production, "Test");
+            var result = Project.Create("Test", "Test", null, DateTime.UtcNow, "Test");
+            var updateResult = result.Value.UpdateData("Test", "Test", null, DateTime.UtcNow, ProjectState.Production, "Test");
             //Assert
             updateResult.IsSuccess.Should().BeTrue();
         }
@@ -163,9 +158,52 @@ namespace Ergo.Domain.Tests
         {
             //Arrange && Act
             var result = Project.Create("Test", "Test", null, DateTime.UtcNow, "Test");
-            var updateResult = result.Value.UpdateData("Test", "Test", null, DateTime.UtcNow, default, null);
+            var updateResult = result.Value.UpdateData("Test", "Test", null, DateTime.UtcNow, default, "Test");
             //Assert
             updateResult.IsSuccess.Should().BeFalse();
         }
+
+        [Fact]
+        public void When_AssignUserToProjectIsCalled_And_UserIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange && Act
+            var result = Project.Create("Test", "Test", "Test", DateTime.UtcNow, "Test");
+            var userResult = User.Create(Guid.NewGuid());
+            var assignedResult = result.Value.AssignUser(userResult.Value);
+            //Assert
+            assignedResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_AssignUserToProjectIsCalled_And_UserIsNull_Then_FailureIsReturned()
+        {
+            //Arrange && Act
+            var result = Project.Create("Test", "Test", "Test", DateTime.UtcNow, "Test");
+            var assignedResult = result.Value.AssignUser(null);
+            //Assert
+            assignedResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void PrivateConstructorTest()
+        {
+            //Arrange && Act
+            var constructor = typeof(Project).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[0], null);
+            var instance = constructor.Invoke(null);
+            //Assert
+            Assert.NotNull(instance);
+        }
+        [Fact]
+        public void StartDateIsSetCorrectly()
+        {
+            //Arrange && Act
+            var result = Project.Create("Test", "Test", null, DateTime.UtcNow, "Test");
+            var project = result.Value;
+
+            var startDateField = project.GetType().GetProperty("StartDate", BindingFlags.Instance | BindingFlags.Public);
+            var startDateValue = (DateTime)startDateField.GetValue(project);
+            //Assert
+            startDateValue.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        }
+
+
     }
 }

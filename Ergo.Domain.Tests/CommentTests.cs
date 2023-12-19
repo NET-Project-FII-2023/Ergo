@@ -1,5 +1,6 @@
 using Ergo.Domain.Entities;
 using FluentAssertions;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace Ergo.Domain.Tests
@@ -109,5 +110,15 @@ namespace Ergo.Domain.Tests
             //Assert
             updateResult.IsSuccess.Should().BeFalse();
         }
+        [Fact]
+        public void PrivateConstructorTest()
+        {
+            //Arrange && Act
+            var constructor = typeof(Comment).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[0], null);
+            var instance = constructor.Invoke(null);
+            //Assert
+            Assert.NotNull(instance);
+        }
+
     }
 }

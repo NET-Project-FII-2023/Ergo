@@ -3,7 +3,7 @@ namespace Ergo.Domain.Entities
 {
     public class Comment : AuditableEntity
     {
-        public Comment(string fullName,Guid taskId, string text)
+        private Comment(string fullName,Guid taskId, string text)
         {
             CommentId = Guid.NewGuid();
             CreatedBy = fullName;
@@ -14,7 +14,7 @@ namespace Ergo.Domain.Entities
             TaskId = taskId;
 
         }
-        public Comment()
+        private Comment()
         {
             
         }

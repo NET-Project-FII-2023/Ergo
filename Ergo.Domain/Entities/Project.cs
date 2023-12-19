@@ -1,5 +1,6 @@
 ﻿using Ergo.Domain.Common;
 using Ergo.Domain.Entities.Enums;
+using System.Xml.Linq;
 
 namespace Ergo.Domain.Entities
 {
@@ -16,6 +17,7 @@ namespace Ergo.Domain.Entities
             CreatedDate = DateTime.UtcNow;
             LastModifiedBy = fullName;
             LastModifiedDate = DateTime.UtcNow;
+            StartDate = DateTime.UtcNow;
             Deadline = deadline;
             State = ProjectState.JustStarted;
             Members = new List<User>();
@@ -92,13 +94,15 @@ namespace Ergo.Domain.Entities
         }
 
 
-        public void AssignUser(User member)
+        public Result<Project> AssignUser(User member)
         {
-            if (Members == null)
+            if(member == null)
             {
-                Members = new List<User>();
+                return Result<Project>.Failure("User is required");
             }
+
             Members.Add(member);
+            return Result<Project>.Success(this);
         }
     }
 }

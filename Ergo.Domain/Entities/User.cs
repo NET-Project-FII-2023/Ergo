@@ -25,21 +25,24 @@ namespace Ergo.Domain.Entities
 
             return Result<User>.Success(new User(userId));
         }
-        public void AssignProject(Project project)
+        public Result<User> AssignProject(Project project)
         {
-            if (Projects == null)
+            if(project == null)
             {
-                Projects = new List<Project>();
+                return Result<User>.Failure("Project cannot be null");
             }
             Projects.Add(project);
+            return Result<User>.Success(this);
+           
         }
-        public void AssignTask(TaskItem task)
+        public Result<User> AssignTask(TaskItem task)
         {
-            if (Tasks == null)
+            if (task == null)
             {
-                Tasks = new List<TaskItem>();
+                return Result<User>.Failure("Task cannot be null");
             }
             Tasks.Add(task);
+            return Result<User>.Success(this);
         }
     }
 }

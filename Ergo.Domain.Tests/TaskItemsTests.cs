@@ -1,6 +1,7 @@
 ﻿using Ergo.Domain.Entities.Enums;
 using Ergo.Domain.Entities;
 using FluentAssertions;
+using System.Reflection;
 
 namespace Ergo.Domain.Tests
 {
@@ -215,6 +216,32 @@ namespace Ergo.Domain.Tests
             var assignResult = result.Value.AssignComment(null);
             //Assert
             assignResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_AssignUserIsCalled_And_UserIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange && Act
+            var result = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid());
+            var userResult = User.Create(Guid.NewGuid());
+            var assignResult = result.Value.AssignUser(userResult.Value);
+            //Assert
+            assignResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_AssignUserIsCalled_And_UserIsNull_Then_FailureIsReturned()
+        {
+            //Arrange && Act
+            var result = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid());
+            var assignResult = result.Value.AssignUser(null);
+            //Assert
+            assignResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void PrivateConstructorTest()
+        {
+            var constructor = typeof(TaskItem).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[0], null);
+            var instance = constructor.Invoke(null);
+            Assert.NotNull(instance);
         }
 
     }
