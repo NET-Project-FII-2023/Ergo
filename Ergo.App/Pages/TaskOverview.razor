@@ -3,6 +3,7 @@
 @using Ergo.App.ViewModels
 @using Ergo.Domain.Entities.Enums;
 @using BlazorBootstrap
+@using Ergo.App.Components
 
 <style>
     body {
@@ -47,34 +48,33 @@
     }
 
     .bg-dark {
-        background-color: #333 !important; /* Suprascrieți dacă este necesar */
+        background-color: #333 !important; 
     }
 
     .text-light {
-        color: #ccc !important; /* Suprascrieți dacă este necesar */
+        color: #ccc !important; 
     }
 
     .bg-secondary {
-        background-color: #444 !important; /* Suprascrieți dacă este necesar */
+        background-color: #444 !important;
     }
 
-    /* Ajustați dimensiunea și culoarea iconiței de editare */
     .fa-pencil {
         color: #d1c04d;
-        font-size: 1rem; /* sau dimensiunea pe care o preferați */
+        font-size: 1rem; 
     }
 
-    /* Ajustați stilurile pentru butoane, dacă este necesar */
+
     .btn-success {
         color: #fff;
-        background-color: #28a745; /* sau culoarea pe care o preferați */
-        border-color: #28a745; /* sau culoarea pe care o preferați */
+        background-color: #28a745;
+        border-color: #28a745; 
     }
 
     .btn-warning {
         color: #212529;
-        background-color: #ffc107; /* sau culoarea pe care o preferați */
-        border-color: #ffc107; /* sau culoarea pe care o preferați */
+        background-color: #ffc107;
+        border-color: #ffc107;
     }
    
 
@@ -91,56 +91,7 @@
 }
 else
 {
-    <Modal @ref="modal" Title
-    ="Assign a task to this project:">
-        <BodyTemplate>
-            <EditForm Model="@TaskViewModel">
-
-                <DataAnnotationsValidator />
-                <ValidationSummary></ValidationSummary>
-
-                <div class="row mb-3 ms-2">
-                    <label for="taskname" class="col-sm-3 form-label" style="color:black;">Task name:</label>
-                    <div class="col-sm-7">
-                        <InputText id="taskname" class="form-control" @bind-Value="@TaskViewModel.TaskName" placeholder="Task name..."></InputText>
-                        <ValidationMessage For="@(() => TaskViewModel.TaskName)" />
-                    </div>
-                </div>
-
-                <div class="row mb-3 ms-2">
-                    <label for="taskdescription" class="col-sm-3 form-label" style="color:black;">Task description:</label>
-                    <div class="col-sm-7">
-                        <InputTextArea @bind-Value="@TaskViewModel.Description" class="form-control" rows="5" placeholder="Task description..."
-                        @oninput="UpdateCharacterCount"></InputTextArea>
-                        <div style="position: relative;">
-                            @if (TaskViewModel != null && TaskViewModel.Description != null)
-                            {
-                                <span style="position: absolute; bottom: 8px; right: 8px; color: gray;">
-                                    @TaskViewModel.Description.Length/@maxCharacters
-                                </span>
-                            }
-                        </div>
-                        <ValidationMessage For="@(() => TaskViewModel.Description)" />
-                    </div>
-                </div>
-
-                <div class="row mb-3 ms-2">
-                    <label for="deadline" class="col-sm-3 form-label" style="color:black;">Deadline:</label>
-                    <div class="col-sm-7">
-                        <InputDate id="deadline" class="form-control" @bind-Value="@TaskViewModel.Deadline" />
-                        <ValidationMessage For="@(() => TaskViewModel.Deadline)" />
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-end">
-                    <button class="btn btn-primary" @onclick="OnHideModalClick">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidSubmit">Save task</button>
-                </div>
-
-            </EditForm>
-        </BodyTemplate>
-    </Modal>
-
+    <TaskAssignmentModal OnTaskCreated="HandleTaskCreated"></TaskAssignmentModal>
     @if (Message != null)
     {
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -155,8 +106,6 @@ else
             </div>
         </div>
     }
-
-    <Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Task</Button>
     <div class="row mt-2">
         <div class="col-md-3">
             <h4>To Do</h4>
@@ -281,7 +230,6 @@ else
 
     private List<CommentViewModel> commentsList = new List<CommentViewModel>();
 
-
     public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
 
     private TaskViewModel? selectedTask;
@@ -294,8 +242,6 @@ else
 
     private Modal modal = default!;
 
-    private int maxCharacters = 500;
-
     private Guid selectedTaskId;
 
     private Modal commentModal = default!;
@@ -303,8 +249,25 @@ else
     private Modal detailsModal = default!;
 
 
-    private Guid selectedTaskForComment;
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = uri.Query;
 
+        TaskViewModel.Deadline = DateTime.UtcNow.Date;
+
+        if (!string.IsNullOrEmpty(query))
+        {
+            var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+            var projectId = queryParams.Get("projectId");
+
+            if (!string.IsNullOrEmpty(projectId))
+            {
+                Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
+                Console.WriteLine("ProjectId: " + projectId);
+            }
+        }
+    }
 
     private void BeginEditComment(CommentViewModel comment)
     {
@@ -441,6 +404,11 @@ else
         }
     }
 
+    private async Task HandleTaskCreated()
+    {
+        await FetchAllTasks();
+    }
+
     private async Task ShowCommentModal(Guid taskId)
     {
         CommentViewModel.TaskId = taskId;
@@ -459,34 +427,7 @@ else
         await modal.HideAsync();
     }
 
-    private void UpdateCharacterCount(ChangeEventArgs e)
-    {
-        TaskViewModel.Description = e.Value.ToString();
-
-        if (TaskViewModel.Description.Length > maxCharacters)
-        {
-            TaskViewModel.Description = TaskViewModel.Description.Substring(0, maxCharacters);
-        }
-    }
-    protected override async Task OnInitializedAsync()
-    {
-        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-        var query = uri.Query;
-
-        TaskViewModel.Deadline = DateTime.UtcNow.Date;
-
-        if (!string.IsNullOrEmpty(query))
-        {
-            var queryParams = System.Web.HttpUtility.ParseQueryString(query);
-            var projectId = queryParams.Get("projectId");
-
-            if (!string.IsNullOrEmpty(projectId))
-            {
-                Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
-                Console.WriteLine("ProjectId: " + projectId);
-            }
-        }
-    }
+   
 
     private async Task FetchAllTasks()
     {
@@ -514,68 +455,4 @@ else
     {
         Message = null;
     }
-    private async Task HandleValidSubmit()
-    {
-
-        if (DateTime.TryParse(TaskViewModel.Deadline.ToString(), out DateTime inputDate))
-        {
-            TaskViewModel.Deadline = inputDate.ToUniversalTime();
-        }
-        else
-        {
-            Message = "Invalid date format. Please enter a valid date.";
-            return;
-        }
-
-        try
-        {
-            var username = await TaskDataService.GetUsernameFromTokenAsync();
-
-            if (string.IsNullOrEmpty(username))
-            {
-                Message = "Unable to retrieve user email from token.";
-                return;
-            }
-
-
-            TaskViewModel.CreatedBy = username;
-            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-            var query = uri.Query;
-            if (!string.IsNullOrEmpty(query))
-            {
-                var queryParams = System.Web.HttpUtility.ParseQueryString(query);
-                var projectId = queryParams.Get("projectId");
-
-                if (!string.IsNullOrEmpty(projectId))
-                {
-                    Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
-                    Console.WriteLine("ProjectId: " + projectId);
-                }
-                TaskViewModel.ProjectId= Guid.Parse(projectId);
-            }
-
-            var result = await TaskDataService.CreateTaskAsync(TaskViewModel);
-            if (result.IsSuccess)
-            {
-                Message = "Task created successfully";
-                await modal.HideAsync();
-                await FetchAllTasks();
-                // NavigationManager.NavigateTo($"taskoverview?projectId={TaskViewModel.ProjectId}");
-            }
-            else
-            {
-                Message = result.Message;
-                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
-                {
-                    Message += result.ValidationErrors;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Message = $"Error creating task: {ex.Message}";
-        }
-
-}
-
 }

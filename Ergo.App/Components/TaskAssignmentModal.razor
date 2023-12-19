@@ -1,0 +1,178 @@
+﻿@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
+@using Ergo.Domain.Entities.Enums;
+@using BlazorBootstrap
+@using Ergo.App.Components
+
+<Modal @ref="modal" Title="Assign a task to this project:">
+    <BodyTemplate>
+        <EditForm Model="@TaskViewModel">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary></ValidationSummary>
+
+            <div class="row mb-3 ms-2">
+                <label for="taskname" class="col-sm-3 form-label" style="color:black;">Task name:</label>
+                <div class="col-sm-7">
+                    <InputText id="taskname" class="form-control" @bind-Value="@TaskViewModel.TaskName" placeholder="Task name..."></InputText>
+                    <ValidationMessage For="@(() => TaskViewModel.TaskName)" />
+                </div>
+            </div>
+
+            <div class="row mb-3 ms-2">
+                <label for="taskdescription" class="col-sm-3 form-label" style="color:black;">Task description:</label>
+                <div class="col-sm-7">
+                    <InputTextArea @bind-Value="@TaskViewModel.Description" class="form-control" rows="5" placeholder="Task description..."
+                                   @oninput="UpdateCharacterCount"></InputTextArea>
+                    <div style="position: relative;">
+                        @if (TaskViewModel != null && TaskViewModel.Description != null)
+                        {
+                            <span style="position: absolute; bottom: 8px; right: 8px; color: gray;">
+                                @TaskViewModel.Description.Length/@maxCharacters
+                            </span>
+                        }
+                    </div>
+                    <ValidationMessage For="@(() => TaskViewModel.Description)" />
+                </div>
+            </div>
+
+            <div class="row mb-3 ms-2">
+                <label for="deadline" class="col-sm-3 form-label" style="color:black;">Deadline:</label>
+                <div class="col-sm-7">
+                    <InputDate id="deadline" class="form-control" @bind-Value="@TaskViewModel.Deadline" />
+                    <ValidationMessage For="@(() => TaskViewModel.Deadline)" />
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary" @onclick="OnHideModalClick">Cancel</button>
+                <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidSubmit">Save task</button>
+            </div>
+
+        </EditForm>
+    </BodyTemplate>
+</Modal>
+
+<Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Task</Button>
+
+@code{
+
+    [Parameter]
+    public EventCallback OnTaskCreated { get; set; }
+
+    [Inject]
+    public ITaskDataService TaskDataService { get; set; }
+
+    [Inject] ICommentDataService CommentDataService { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    private Modal modal = default!;
+
+    public List<TaskViewModel> Tasks { get; set; }
+
+    public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
+
+    public CommentViewModel CommentViewModel { get; set; } = new CommentViewModel();
+
+    public string Message { get; set; }
+
+    private int maxCharacters = 500;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TaskViewModel.Deadline == DateTime.MinValue)
+        {
+            TaskViewModel.Deadline = DateTime.UtcNow.Date;
+        }
+    }
+
+    private async Task OnShowModalClick()
+    {
+        await modal.ShowAsync();
+        
+    }
+
+
+    
+    private async Task OnHideModalClick()
+    {
+        await modal.HideAsync();
+
+    }
+
+    private async Task HandleValidSubmit()
+    {
+
+        if (DateTime.TryParse(TaskViewModel.Deadline.ToString(), out DateTime inputDate))
+        {
+            TaskViewModel.Deadline = inputDate.ToUniversalTime();
+        }
+        else
+        {
+            Message = "Invalid date format. Please enter a valid date.";
+            return;
+        }
+
+        try
+        {
+            var username = await TaskDataService.GetUsernameFromTokenAsync();
+
+            if (string.IsNullOrEmpty(username))
+            {
+                Message = "Unable to retrieve user email from token.";
+                return;
+            }
+
+
+            TaskViewModel.CreatedBy = username;
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            var query = uri.Query;
+            if (!string.IsNullOrEmpty(query))
+            {
+                var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+                var projectId = queryParams.Get("projectId");
+
+                if (!string.IsNullOrEmpty(projectId))
+                {
+                    Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
+                    Console.WriteLine("ProjectId: " + projectId);
+                }
+                TaskViewModel.ProjectId = Guid.Parse(projectId);
+            }
+
+            var result = await TaskDataService.CreateTaskAsync(TaskViewModel);
+            if (result.IsSuccess)
+            {
+                Message = "Task created successfully";
+                await OnTaskCreated.InvokeAsync();
+                await modal.HideAsync();
+               
+            }
+            else
+            {
+                Message = result.Message;
+                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+                {
+                    Message += result.ValidationErrors;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error creating task: {ex.Message}";
+        }
+    }
+
+    private void UpdateCharacterCount(ChangeEventArgs e)
+    {
+        TaskViewModel.Description = e.Value.ToString();
+
+        if (TaskViewModel.Description.Length > maxCharacters)
+        {
+            TaskViewModel.Description = TaskViewModel.Description.Substring(0, maxCharacters);
+        }
+    }
+}
