@@ -6,6 +6,7 @@ namespace Ergo.App.ViewModels
 {
     public class TaskViewModel
     {
+        public Guid TaskItemId { get; set; }
         [Required(ErrorMessage = "Task name is required.")]
         [StringLength(100, ErrorMessage = "Task name must be 100 characters or less.")]
         public string? TaskName { get; set; }

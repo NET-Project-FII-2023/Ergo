@@ -127,7 +127,7 @@ else
             <h4>To Do</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.ToDo))
             {
-                <div class="card mb-3">
+                <div class="card mb-3" @onclick="() => DisplayTaskId(taskItem.TaskItemId)">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -141,7 +141,7 @@ else
             <h4>In Progress</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.InProgress))
             {
-                <div class="card mb-3">
+                <div class="card mb-3" @onclick="() => DisplayTaskId(taskItem.TaskItemId)">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -155,7 +155,7 @@ else
             <h4>Done</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.Done))
             {
-                <div class="card mb-3">
+                <div class="card mb-3" @onclick="() => DisplayTaskId(taskItem.TaskItemId)">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -183,6 +183,14 @@ else
     private Modal modal = default!;
 
     private int maxCharacters = 500;
+
+    private Guid selectedTaskId;
+
+    private void DisplayTaskId(Guid taskId)
+    {
+        selectedTaskId = taskId;
+        Console.WriteLine("Selected Task ID: " + selectedTaskId);
+    }
 
     private async Task OnShowModalClick()
     {
