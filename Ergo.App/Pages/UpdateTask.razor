@@ -98,7 +98,7 @@
     {
         UpdateTaskDto updateTaskDto = new UpdateTaskDto()
         {
-            TaskId = UpdateTaskViewModel.TaskId,
+            TaskItemId = UpdateTaskViewModel.TaskItemId,
             TaskName = UpdateTaskViewModel.TaskName,
             Description = UpdateTaskViewModel.Description,
             Deadline = UpdateTaskViewModel.Deadline,
@@ -107,8 +107,9 @@
             State = UpdateTaskViewModel.State
         };
         
-        updateTaskDto.TaskId = Guid.Parse(TaskIdInput);
+        updateTaskDto.TaskItemId = Guid.Parse(TaskIdInput);
         updateTaskDto.ProjectId = Guid.Parse(ProjectIdInput);
+        updateTaskDto.Deadline = UpdateTaskViewModel.Deadline.ToUniversalTime();
         
         var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
         if (result.IsSuccess)

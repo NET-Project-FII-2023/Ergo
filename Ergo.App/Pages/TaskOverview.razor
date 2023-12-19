@@ -51,6 +51,10 @@
         background-color: #333 !important; 
     }
 
+    .bg-secondary-light{
+        background-color: #ededed !important;
+    }
+
     .text-light {
         color: #ccc !important; 
     }
@@ -65,12 +69,16 @@
     }
 
 
-    .btn-success {
+    .btn-edit {
         color: #fff;
-        background-color: #28a745;
-        border-color: #28a745; 
+        background-color: #333;
+        border-color: #444
     }
-
+    .btn-edit:hover{
+        color: #fff;
+		background-color: #444;
+		border-color: #444
+    }
     .btn-warning {
         color: #212529;
         background-color: #ffc107;
@@ -118,8 +126,6 @@ else
                         <p class="card-text"><strong>Deadline:</strong> @taskItem.Deadline.ToShortDateString()</p>
                         <button class="btn btn-secondary" @onclick="() => ShowCommentModal(taskItem.TaskItemId)">Add Comment</button>
                         <Button class="btn btn-secondary" @onclick="() => ShowDetailsModal(taskItem.TaskItemId)">Details</Button>
-
-
                     </div>
                 </div>
             }
@@ -175,9 +181,21 @@ else
 
     <Modal @ref="detailsModal" Title="Task Details">
         <BodyTemplate>
-            <div class="modal-body bg-dark text-light">
+            <div class="modal-body text-dark">
                 <h5>@selectedTask?.TaskName</h5>
-                <p>@selectedTask?.Description</p>
+                @if (selectedTask != null && !selectedTask.DescriptionEditMode)
+                {
+                    <p>@selectedTask.Description</p>
+                    <button class="btn btn-edit" @onclick="ToggleDescriptionEditMode">Edit Description</button>
+                }
+                else
+                {
+                    <textarea class="form-control text-dark" @bind="selectedTask.Description"></textarea>
+                    <div class="mt-2">
+                        <button class="btn btn-edit btn-sm" @onclick="SaveDescriptionEdit">Save</button>
+                        <button class="btn btn-edit btn-sm" @onclick="CancelDescriptionEdit">Cancel</button>
+                    </div>
+                }
 
                 <h6>Comments:</h6>
                 <ul class="list-unstyled">
@@ -186,15 +204,15 @@ else
                         <li class="mb-2" title="Last modified: @comment.LastModifiedDate.ToString()">
                             @if (commentBeingEdited != null && commentBeingEdited.CommentId == comment.CommentId)
                             {
-                                <textarea class="form-control bg-secondary text-light" @bind="commentBeingEdited.CommentText"></textarea>
+                                <textarea class="form-control text-dark" @bind="commentBeingEdited.CommentText"></textarea>
                                 <div class="mt-2">
-                                    <button class="btn btn-success btn-sm" @onclick="SaveCommentEdit">Save</button>
-                                    <button class="btn btn-warning btn-sm" @onclick="CancelCommentEdit">Cancel</button>
+                                    <button class="btn btn-edit btn-sm" @onclick="SaveCommentEdit">Save</button>
+                                    <button class="btn btn-edit btn-sm" @onclick="CancelCommentEdit">Cancel</button>
                                 </div>
                             }
                             else
                             {
-                                <div class="d-flex justify-content-between align-items-center bg-secondary p-2 rounded">
+                                <div class="d-flex justify-content-between align-items-center bg-secondary-light text-dark p-2 rounded">
                                     <div>
                                         <strong>@comment.CreatedBy:</strong> @comment.CommentText
                                     </div>
@@ -229,6 +247,7 @@ else
     public List<TaskViewModel> Tasks { get; set; }
 
     private List<CommentViewModel> commentsList = new List<CommentViewModel>();
+    public UpdateTaskViewModel UpdateTaskViewModel { get; set; } = new UpdateTaskViewModel();
 
     public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
 
@@ -248,6 +267,47 @@ else
 
     private Modal detailsModal = default!;
 
+
+    private void ToggleDescriptionEditMode()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.DescriptionEditMode = true;
+        }
+    }
+    private async Task SaveDescriptionEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.DescriptionEditMode = false;
+
+            var updateTaskDto = new UpdateTaskDto
+                {
+                    TaskItemId = selectedTask.TaskItemId,
+                    Description = selectedTask.Description 
+                };
+
+            var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
+
+            if (result.IsSuccess)
+            {
+                Message = "Description updated successfully";
+            }
+            else
+            {
+                Message = "Failed to update description";
+            }
+        }
+    }
+
+
+    private void CancelDescriptionEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.DescriptionEditMode = false;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {

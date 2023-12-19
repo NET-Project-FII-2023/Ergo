@@ -1,0 +1,137 @@
+﻿@using Ergo.App.ViewModels
+@using Ergo.Domain.Entities.Enums
+@using Ergo.App.Contracts
+@using BlazorBootstrap
+
+<Modal @ref="detailsModal" Title="Task Details">
+    <BodyTemplate>
+        <div class="modal-body bg-dark text-light">
+            <h5>@selectedTask?.TaskName</h5>
+            <p>@selectedTask?.Description</p>
+
+            <h6>Comments:</h6>
+            <ul class="list-unstyled">
+                @foreach (var comment in commentsList)
+                {
+                    <li class="mb-2" title="Last modified: @comment.LastModifiedDate.ToString()">
+                        @if (commentBeingEdited != null && commentBeingEdited.CommentId == comment.CommentId)
+                        {
+                            <textarea class="form-control bg-secondary text-light" @bind="commentBeingEdited.CommentText"></textarea>
+                            <div class="mt-2">
+                                <button class="btn btn-success btn-sm" @onclick="SaveCommentEdit">Save</button>
+                                <button class="btn btn-warning btn-sm" @onclick="CancelCommentEdit">Cancel</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex justify-content-between align-items-center bg-secondary p-2 rounded">
+                                <div>
+                                    <strong>@comment.CreatedBy:</strong> @comment.CommentText
+                                </div>
+                                @if (comment.CanEdit)
+                                {
+                                    <button class="btn btn-outline-info btn-sm" @onclick="() => BeginEditComment(comment)">Edit</button>
+                                }
+                            </div>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </BodyTemplate>
+</Modal>
+
+<Button class="btn btn-secondary" @onclick="ShowDetails">Details</Button>
+
+
+
+
+@code {
+    [Parameter]
+    public Guid TaskItemId { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> ShowDetailsModal { get; set; }
+
+    [Inject]
+    public ITaskDataService TaskDataService { get; set; }
+
+    [Inject]
+    public ICommentDataService CommentDataService { get; set; }
+
+    public List<TaskViewModel> Tasks { get; set; }
+
+    private List<CommentViewModel> commentsList = new List<CommentViewModel>();
+
+    private Modal detailsModal = default!;
+
+    private TaskViewModel selectedTask;
+
+    private CommentViewModel? commentBeingEdited;
+
+    public string Message { get; set; }
+
+    
+    private async Task ShowDetails()
+    {
+        await ShowDetailsModal.InvokeAsync(TaskItemId);
+    }
+
+    private async Task SaveCommentEdit()
+    {
+        var username = await TaskDataService.GetUsernameFromTokenAsync();
+        if (string.IsNullOrEmpty(username))
+        {
+            Message = "Unable to retrieve user email from token.";
+            return;
+        }
+
+        if (commentBeingEdited != null)
+        {
+
+            var updateCommentDto = new UpdateCommentDto
+                {
+                    CommentId = commentBeingEdited.CommentId,
+                    CreatedBy = username,
+                    CommentText = commentBeingEdited.CommentText,
+                    LastModifiedBy = username,
+                    LastModifiedDate = DateTime.UtcNow,
+                    TaskId = commentBeingEdited.TaskId
+
+                };
+
+            var response = await CommentDataService.UpdateCommentAsync(updateCommentDto);
+
+            if (response.IsSuccess)
+            {
+                Message = "Comment updated successfully";
+
+                await detailsModal.HideAsync();
+            }
+            else
+            {
+                Message = response.Message;
+                if (!string.IsNullOrWhiteSpace(response.ValidationErrors))
+                {
+                    Message += response.ValidationErrors;
+                }
+
+            }
+
+            commentBeingEdited = null;
+        }
+    }
+
+
+    private void BeginEditComment(CommentViewModel comment)
+    {
+
+        commentBeingEdited = comment;
+    }
+
+    private void CancelCommentEdit()
+    {
+        commentBeingEdited = null;
+    }
+
+}
