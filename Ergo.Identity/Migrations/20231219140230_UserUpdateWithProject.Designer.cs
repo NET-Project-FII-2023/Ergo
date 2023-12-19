@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Ergo.Identity.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231205200420_UserUpdate")]
-    partial class UserUpdate
+    [Migration("20231219140230_UserUpdateWithProject")]
+    partial class UserUpdateWithProject
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,164 +24,6 @@ namespace Ergo.Identity.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Ergo.Domain.Entities.Comment", b =>
-                {
-                    b.Property<Guid>("CommentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CommentText")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("TaskId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("TaskItemId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("CommentId");
-
-                    b.HasIndex("TaskItemId");
-
-                    b.ToTable("Comment");
-                });
-
-            modelBuilder.Entity("Ergo.Domain.Entities.Project", b =>
-                {
-                    b.Property<Guid>("ProjectId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("Deadline")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ProjectName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("State")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ProjectId");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("Project");
-                });
-
-            modelBuilder.Entity("Ergo.Domain.Entities.TaskItem", b =>
-                {
-                    b.Property<Guid>("TaskItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("AssignedUserUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("Deadline")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("State")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TaskName")
-                        .HasColumnType("text");
-
-                    b.HasKey("TaskItemId");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("AssignedUserUserId");
-
-                    b.ToTable("TaskItem");
-                });
-
-            modelBuilder.Entity("Ergo.Domain.Entities.User", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("integer");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("User");
-                });
 
             modelBuilder.Entity("Ergo.Identity.Models.ApplicationUser", b =>
                 {
@@ -382,48 +224,6 @@ namespace Ergo.Identity.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ProjectUser", b =>
-                {
-                    b.Property<Guid>("MembersUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ProjectsProjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("MembersUserId", "ProjectsProjectId");
-
-                    b.HasIndex("ProjectsProjectId");
-
-                    b.ToTable("ProjectUser");
-                });
-
-            modelBuilder.Entity("Ergo.Domain.Entities.Comment", b =>
-                {
-                    b.HasOne("Ergo.Domain.Entities.TaskItem", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("TaskItemId");
-                });
-
-            modelBuilder.Entity("Ergo.Domain.Entities.Project", b =>
-                {
-                    b.HasOne("Ergo.Identity.Models.ApplicationUser", null)
-                        .WithMany("Projects")
-                        .HasForeignKey("ApplicationUserId");
-                });
-
-            modelBuilder.Entity("Ergo.Domain.Entities.TaskItem", b =>
-                {
-                    b.HasOne("Ergo.Identity.Models.ApplicationUser", null)
-                        .WithMany("Tasks")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("Ergo.Domain.Entities.User", "AssignedUser")
-                        .WithMany("Tasks")
-                        .HasForeignKey("AssignedUserUserId");
-
-                    b.Navigation("AssignedUser");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -473,38 +273,6 @@ namespace Ergo.Identity.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("ProjectUser", b =>
-                {
-                    b.HasOne("Ergo.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("MembersUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ergo.Domain.Entities.Project", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectsProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Ergo.Domain.Entities.TaskItem", b =>
-                {
-                    b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("Ergo.Domain.Entities.User", b =>
-                {
-                    b.Navigation("Tasks");
-                });
-
-            modelBuilder.Entity("Ergo.Identity.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Projects");
-
-                    b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618
         }

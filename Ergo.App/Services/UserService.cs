@@ -45,9 +45,22 @@ namespace Ergo.App.Services
             }
         }
 
+        public async Task<string> GetUserIdByEmailAsync(string email)
+        {
+            try
+            {
+                var user = await GetUserByEmailAsync(email);
+                return user.UserId;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during deserialization: {ex}");
+                throw;
+            }
+        }
+
         public async Task<ApiResponse<UpdateUserDto>> UpdateUserAsync(string id, UpdateUserDto updateUserDto)
         {
-            Console.WriteLine($"{RequestUri}/{id}");
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
             var result = await httpClient.PutAsJsonAsync($"{RequestUri}/{id}", updateUserDto);
 

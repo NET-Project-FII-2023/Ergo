@@ -72,8 +72,33 @@ namespace Ergo.Domain.Entities
             AssignedUser = user;
         }
 
-        public void UpdateData(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, TaskState state)
+        public Result<TaskItem> UpdateData(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, TaskState state)
         {
+            if (string.IsNullOrWhiteSpace(taskName))
+            {
+                return Result<TaskItem>.Failure(Constants.TaskItemNameRequired);
+            }
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                return Result<TaskItem>.Failure(Constants.DescriptionRequired);
+            }
+            if (deadline == default)
+            {
+                return Result<TaskItem>.Failure(Constants.DeadlineRequired);
+            }
+            if (string.IsNullOrWhiteSpace(createdBy))
+            {
+                return Result<TaskItem>.Failure(Constants.CreatorFullNameRequired);
+            }
+            if (projectId == Guid.Empty)
+            {
+                return Result<TaskItem>.Failure(Constants.ProjectIdRequired);
+            }
+            if (state == default)
+            {
+                return Result<TaskItem>.Failure("A valid task state is required");
+            }
+
             TaskName = taskName;
             Description = description;
             Deadline = deadline;
@@ -81,14 +106,17 @@ namespace Ergo.Domain.Entities
             LastModifiedDate = DateTime.UtcNow;
             ProjectId = projectId;
             State = state;
+            return Result<TaskItem>.Success(this);
         }
-        public void AssignComment(Comment comment)
+        public Result<TaskItem> AssignComment(Comment comment)
         {
-            if (Comments == null)
+            if (comment == null)
             {
-                Comments = new List<Comment>();
+                return Result<TaskItem>.Failure("Comment is required");
             }
             Comments.Add(comment);
+            return Result<TaskItem>.Success(this);
+
         }
 
 

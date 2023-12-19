@@ -58,8 +58,29 @@ namespace Ergo.Domain.Entities
             return Result<Project>.Success(new Project(projectName, description, gitRepository, deadline, fullName));
         }
 
-        public void UpdateData(string projectName, string description, string? gitRepository, DateTime deadline, ProjectState state, string fullName)
+        public Result<Project> UpdateData(string projectName, string description, string? gitRepository, DateTime deadline, ProjectState state, string fullName)
         {
+            if (string.IsNullOrWhiteSpace(projectName))
+            {
+                return Result<Project>.Failure(Constants.ProjectNameRequired);
+            }
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                return Result<Project>.Failure(Constants.DescriptionRequired);
+            }
+            if (deadline == default)
+            {
+                return Result<Project>.Failure(Constants.DeadlineRequired);
+            }
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                return Result<Project>.Failure(Constants.CreatorFullNameRequired);
+            }
+            if (state == default)
+            {
+                return Result<Project>.Failure("A valid project state is required");
+            }
+
             ProjectName = projectName;
             Description = description;
             GitRepository = gitRepository;
@@ -67,7 +88,9 @@ namespace Ergo.Domain.Entities
             LastModifiedDate = DateTime.UtcNow;
             State = state;
             Deadline = deadline;
+            return Result<Project>.Success(this);
         }
+
 
         public void AssignUser(User member)
         {

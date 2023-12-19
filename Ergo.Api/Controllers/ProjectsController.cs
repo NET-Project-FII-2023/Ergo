@@ -70,6 +70,7 @@ public class ProjectsController : ApiControllerBase
         }
         return Ok(result);
     }
+    [Authorize(Roles = "User")]
     [HttpPost]
     [Route("AssignUserToProject")]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -82,6 +83,7 @@ public class ProjectsController : ApiControllerBase
         }
         return Ok(result);
     }
+    [Authorize(Roles = "User")]
     [HttpGet]
     [Route("GetProjectsByUserId/{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]

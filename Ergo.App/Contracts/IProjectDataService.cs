@@ -8,5 +8,9 @@ namespace Ergo.App.Contracts
         Task<List<ProjectViewModel>> GetProjectsAsync();
 
         Task<ApiResponse<ProjectDto>> CreateProjectAsync(ProjectViewModel projectViewModel);
+        Task<List<ProjectViewModel>> GetProjectsByUserIdFromTokenAsync();
+        Task<List<ProjectViewModel>> GetProjectsByUserIdAsync(string userId);
+
+        Task<ApiResponse<ProjectDto>> AssignUserToProjectAsync(ProjectAssignUserViewModel projectAssignUserViewModel);
     }
 }

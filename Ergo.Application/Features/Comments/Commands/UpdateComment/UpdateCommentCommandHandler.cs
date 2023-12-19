@@ -41,9 +41,16 @@ namespace Ergo.Application.Features.Comments.Commands.UpdateComment
                     ValidationsErrors = validationResult.Errors.Select(x => x.ErrorMessage).ToList()
                 };
             }
-            
-            comment.Value.UpdateData(request.CreatedBy, request.CreatedDate, request.LastModifiedBy, request.LastModifiedDate, request.CommentText, request.TaskId);
-            
+
+            var updateResult = comment.Value.UpdateData(request.CreatedBy, request.CreatedDate, request.LastModifiedBy, request.LastModifiedDate, request.CommentText, request.TaskId);
+            if (!updateResult.IsSuccess)
+            {
+                return new UpdateCommentCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { updateResult.Error }
+                };
+            }
             var result = await commentRepository.UpdateAsync(comment.Value);
             return new UpdateCommentCommandResponse
             {

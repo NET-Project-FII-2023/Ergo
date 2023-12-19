@@ -7,6 +7,7 @@ namespace Ergo.App.Contracts
     {
         Task<UserViewModel> GetUserByEmailAsync(string email);
         Task<ApiResponse<UpdateUserDto>> UpdateUserAsync(string id, UpdateUserDto updateUserDto);
+        Task<string> GetUserIdByEmailAsync(string email);
 
     }
 }
