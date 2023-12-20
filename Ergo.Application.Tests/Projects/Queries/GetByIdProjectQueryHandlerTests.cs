@@ -6,7 +6,7 @@ using Ergo.Domain.Entities;
 using FluentAssertions;
 using NSubstitute;
 
-namespace Ergo.Application.Tests.Queries
+namespace Ergo.Application.Tests.Projects.Queries
 {
     public class GetByIdProjectQueryHandlerTests : IDisposable
     {
@@ -43,7 +43,7 @@ namespace Ergo.Application.Tests.Queries
             var query = new GetByIdProjectQuery(nonExistingProjectId);
 
             _mockProjectRepository.FindByIdAsync(nonExistingProjectId)
-                .Returns(Task.FromResult<Result<Project>>(Result<Project>.Failure("Not found")));
+                .Returns(Task.FromResult(Result<Project>.Failure("Not found")));
 
             // Act
             var result = await _handler.Handle(query, CancellationToken.None);

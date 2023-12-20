@@ -34,7 +34,7 @@ namespace Ergo.Domain.Entities
         public string? TaskName { get; private set; }
         public string? Description { get; private set; }
         public DateTime Deadline { get; private set; }
-        public List<Comment> Comments { get; private set; }
+        public List<Comment> Comments { get;  set; }
         public TaskState State { get; set; }
 
         public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, string createdBy, Guid projectId)
@@ -116,13 +116,16 @@ namespace Ergo.Domain.Entities
         }
         public Result<TaskItem> AssignComment(Comment comment)
         {
+            if(Comments == null)
+            {
+                Comments = new List<Comment>();
+            }
             if (comment == null)
             {
                 return Result<TaskItem>.Failure("Comment is required");
             }
             Comments.Add(comment);
             return Result<TaskItem>.Success(this);
-
         }
 
 

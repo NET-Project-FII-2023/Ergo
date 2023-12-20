@@ -183,6 +183,26 @@ namespace Ergo.Domain.Tests
             assignedResult.IsSuccess.Should().BeFalse();
         }
         [Fact]
+        public void When_AssignUserToProjectIsCalled_And_MembersIsNull_Then_MembersIsInitializedAndUserIsAdded()
+        {
+            // Arrange
+            var result = Project.Create("Test", "Test", "Test", DateTime.UtcNow, "Test");
+
+            result.Value.Members = null;
+
+            var userResult = User.Create(Guid.NewGuid());
+
+            // Act
+            var assignedResult = result.Value.AssignUser(userResult.Value);
+
+            // Assert
+            assignedResult.IsSuccess.Should().BeTrue();
+            result.Value.Members.Should().NotBeNull();
+            result.Value.Members.Should().Contain(userResult.Value);
+        }
+
+
+        [Fact]
         public void PrivateConstructorTest()
         {
             //Arrange && Act

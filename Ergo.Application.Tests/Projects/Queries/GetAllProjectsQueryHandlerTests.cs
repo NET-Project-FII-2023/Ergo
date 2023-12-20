@@ -6,7 +6,7 @@ using Ergo.Domain.Entities;
 using FluentAssertions;
 using NSubstitute;
 
-namespace Ergo.Application.Tests.Queries
+namespace Ergo.Application.Tests.Projects.Queries
 {
     public class GetAllProjectsQueryHandlerTests : IDisposable
     {
