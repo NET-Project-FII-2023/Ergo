@@ -23,14 +23,14 @@
         background-color: #444;
         color: #ccc;
         border: none;
-        margin-bottom: 20px; 
+        margin-bottom: 20px;
         position: static;
     }
 
-    .card-body:hover{
-		background-color: #555;
-        border-radius:8px;
-		cursor: pointer;
+    .card-body:hover {
+        background-color: #555;
+        border-radius: 8px;
+        cursor: pointer;
     }
 
     h4 {
@@ -53,15 +53,15 @@
     }
 
     .bg-dark {
-        background-color: #333 !important; 
+        background-color: #333 !important;
     }
 
-    .bg-secondary-light{
+    .bg-secondary-light {
         background-color: #ededed !important;
     }
 
     .text-light {
-        color: #ccc !important; 
+        color: #ccc !important;
     }
 
     .bg-secondary {
@@ -70,7 +70,7 @@
 
     .fa-pencil {
         color: #d1c04d;
-        font-size: 1rem; 
+        font-size: 1rem;
     }
 
 
@@ -79,26 +79,28 @@
         background-color: #333;
         border-color: #444
     }
-    .btn-edit:hover{
-        color: #fff;
-		background-color: #444;
-		border-color: #444
-    }
+
+        .btn-edit:hover {
+            color: #fff;
+            background-color: #444;
+            border-color: #444
+        }
+
     .btn-warning {
         color: #212529;
         background-color: #ffc107;
         border-color: #ffc107;
     }
-   
+
     .edit-icon {
         width: 20px;
         transition: opacity 0.3s ease;
     }
-    .edit-icon:hover {
-        opacity: 0.7;
-        cursor: pointer;
-    }
 
+        .edit-icon:hover {
+            opacity: 0.7;
+            cursor: pointer;
+        }
 
 </style>
 
@@ -112,32 +114,9 @@
 }
 else
 {
+    <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick">Add User</Button>
+
     <TaskAssignmentModal OnTaskCreated="HandleTaskCreated"></TaskAssignmentModal>
-
-    <Modal @ref="userModal" Title="Add a user to this project:">
-        <BodyTemplate>
-            <EditForm Model="@ProjectAssignUserViewModel">
-
-                <DataAnnotationsValidator />
-                <ValidationSummary></ValidationSummary>
-
-                <div class="row mb-3 ms-2">
-                    <label for="taskname" class="col-sm-3 form-label" style="color:black;">User email:</label>
-                    <div class="col-sm-7">
-                        <InputText id="username" class="form-control" @bind-Value="@ProjectAssignUserViewModel.Email" placeholder="User email..."></InputText>
-                        <ValidationMessage For="@(() => ProjectAssignUserViewModel.Email)" />
-                    </div>
-                </div>
-
-
-                <div class="d-flex justify-content-end">
-                    <button class="btn btn-primary" @onclick="OnHideUserModalClick">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidUserSubmit">Add user</button>
-                </div>
-
-            </EditForm>
-        </BodyTemplate>
-    </Modal>
     @if (Message != null)
     {
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -152,23 +131,6 @@ else
             </div>
         </div>
     }
-    @if (Error != null)
-    {
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <strong class="me-auto">Error</strong>
-                    <button type="button" class="btn-close" @onclick="DismissError" aria-label="Close"></button>
-                </div>
-                <div class="toast-body" style="color:red">
-                    @Error
-                </div>
-            </div>
-        </div>
-    }
-
-    <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick">Add User</Button>
-
     <div class="row mt-2">
         <div class="col-md-3">
             <h4>To Do</h4>
@@ -252,7 +214,7 @@ else
                 {
                     <h5 class="card-title mt-4 mb-2">Description</h5>
                     <p>@selectedTask.Description</p>
-                    <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="ToggleDescriptionEditMode"/>
+                    <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="ToggleDescriptionEditMode" />
                 }
                 else
                 {
@@ -265,7 +227,7 @@ else
 
                 <h5 class="mt-4">Comments:</h5>
 
-               
+
 
                 <ul class="list-unstyled">
                     @foreach (var comment in commentsList)
@@ -273,7 +235,7 @@ else
                         <li class="mb-2" title="Last modified: @comment.LastModifiedDate.ToString()">
                             @if (commentBeingEdited != null && commentBeingEdited.CommentId == comment.CommentId)
                             {
-                            <textarea class="form-control text-dark" @bind="commentBeingEdited.CommentText"></textarea>
+                                <textarea class="form-control text-dark" @bind="commentBeingEdited.CommentText"></textarea>
                                 <div class="mt-2">
                                     <button class="btn btn-outline-primary btn-sm" @onclick="SaveCommentEdit">Save</button>
                                     <button class="btn btn-outline-secondary btn-sm" @onclick="CancelCommentEdit">Cancel</button>
@@ -288,7 +250,7 @@ else
                                     </div>
                                     @if (comment.CanEdit)
                                     {
-                                        <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => {DisplayCommentId(comment.CommentId);BeginEditComment(comment);}"/>
+                                        <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => {DisplayCommentId(comment.CommentId);BeginEditComment(comment);}" />
                                     }
                                 </div>
                             }
@@ -306,20 +268,70 @@ else
             </div>
         </BodyTemplate>
     </Modal>
+
+    @* ------------ USER -------------- *@
+
+
+
+
+    <Modal @ref="userModal" Title="Add a user to this project:">
+        <BodyTemplate>
+            <EditForm Model="@ProjectAssignUserViewModel">
+
+                <DataAnnotationsValidator />
+                <ValidationSummary></ValidationSummary>
+
+                <div class="row mb-3 ms-2">
+                    <label for="taskname" class="col-sm-3 form-label" style="color:black;">User email:</label>
+                    <div class="col-sm-7">
+                        <InputText id="username" class="form-control" @bind-Value="@ProjectAssignUserViewModel.Email" placeholder="User email..."></InputText>
+                        <ValidationMessage For="@(() => ProjectAssignUserViewModel.Email)" />
+                    </div>
+                </div>
+
+
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary" @onclick="OnHideUserModalClick">Cancel</button>
+                    <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidUserSubmit">Add user</button>
+                </div>
+
+            </EditForm>
+        </BodyTemplate>
+    </Modal>
+
+    @if (Error != null)
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Error</strong>
+                    <button type="button" class="btn-close" @onclick="DismissError" aria-label="Close"></button>
+                </div>
+                <div class="toast-body" style="color:red">
+                    @Error
+                </div>
+            </div>
+        </div>
+    }
 }
 
 @code {
-    [Inject]
-    public ITaskDataService TaskDataService { get; set; }
+
     [Inject]
     public IUserDataService UserDataService { get; set; }
+
     [Inject]
-    public IProjectDataService ProjectDataService { get; set; }
+    public ITaskDataService TaskDataService { get; set; }
 
     [Inject] ICommentDataService CommentDataService { get; set; }
 
+    [Inject] IProjectDataService ProjectDataService { get; set; }
+
     [Inject]
     public NavigationManager NavigationManager { get; set; }
+
+    public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
+    public string Error { get; set; }
 
     public List<TaskViewModel> Tasks { get; set; }
 
@@ -327,7 +339,6 @@ else
     public UpdateTaskViewModel UpdateTaskViewModel { get; set; } = new UpdateTaskViewModel();
 
     public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
-    public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
 
     private TaskViewModel? selectedTask;
 
@@ -336,12 +347,8 @@ else
     private CommentViewModel? commentBeingEdited;
 
     public string Message { get; set; }
-    public string Error { get; set;}
 
-    private Modal taskModal = default!;
-    private Modal userModal = default!;
-
-    private string projectId = default!;
+    private Modal modal = default!;
 
     private Guid selectedTaskId;
     private Guid selectedCommentId;
@@ -349,6 +356,11 @@ else
     private Modal commentModal = default!;
 
     private Modal detailsModal = default!;
+
+    private Modal userModal = default!;
+
+    private string projectId = default!;
+
 
 
     private void ToggleDescriptionEditMode()
@@ -386,15 +398,6 @@ else
                 Message = "Failed to update description";
             }
         }
-
-
-    private async Task OnShowUserModalClick()
-    {
-        await userModal.ShowAsync();
-    }
-    private async Task OnHideUserModalClick()
-    {
-        await userModal.HideAsync();
     }
 
 
@@ -416,7 +419,7 @@ else
         if (!string.IsNullOrEmpty(query))
         {
             var queryParams = System.Web.HttpUtility.ParseQueryString(query);
-            projectId = queryParams.Get("projectId");
+             projectId = queryParams.Get("projectId");
 
             if (!string.IsNullOrEmpty(projectId))
             {
@@ -429,13 +432,13 @@ else
     private void BeginEditComment(CommentViewModel comment)
     {
 
-            commentBeingEdited = comment;
+        commentBeingEdited = comment;
     }
 
     private async Task SaveCommentEdit()
     {
         var username = await TaskDataService.GetUsernameFromTokenAsync();
-        if(string.IsNullOrEmpty(username))
+        if (string.IsNullOrEmpty(username))
         {
             Message = "Unable to retrieve user email from token.";
             return;
@@ -457,7 +460,7 @@ else
                     CommentText = commentBeingEdited.CommentText,
                     LastModifiedBy = commentBeingEdited.LastModifiedBy,
                     LastModifiedDate = commentBeingEdited.LastModifiedDate,
-                    TaskId= commentBeingEdited.TaskId
+                    TaskId = commentBeingEdited.TaskId
 
                 };
 
@@ -479,22 +482,19 @@ else
 
             }
 
-            commentBeingEdited = null; 
+            commentBeingEdited = null;
         }
     }
 
 
     private void CancelCommentEdit()
     {
-        commentBeingEdited = null; 
+        commentBeingEdited = null;
     }
 
+
+
     private async Task ShowDetailsModal(Guid taskId)
-    private void DismissError()
-    {
-        Error = null;
-    }
-    private async Task HandleValidTaskSubmit()
     {
         selectedTask = Tasks.FirstOrDefault(t => t.TaskItemId == taskId);
 
@@ -540,41 +540,41 @@ else
     }
 
     private async Task SaveComment()
-{
-    try
     {
-        var username = await TaskDataService.GetUsernameFromTokenAsync();
-
-        if (string.IsNullOrEmpty(username))
+        try
         {
-            Message = "Unable to retrieve user email from token.";
-            return;
-        }
+            var username = await TaskDataService.GetUsernameFromTokenAsync();
 
-        CommentViewModel.CreatedBy = username;
-        CommentViewModel.LastModifiedBy = username;
-        CommentViewModel.TaskId = selectedTaskId;
-        var result = await CommentDataService.CreateCommentAsync(CommentViewModel);
-        if (result.IsSuccess)
-        {
-            Message = "Comment created successfully";
-            await FetchCommentsForSelectedTask(selectedTaskId);
-
-        }
-        else
-        {
-            Message = result.Message;
-            if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+            if (string.IsNullOrEmpty(username))
             {
-                Message += result.ValidationErrors;
+                Message = "Unable to retrieve user email from token.";
+                return;
+            }
+
+            CommentViewModel.CreatedBy = username;
+            CommentViewModel.LastModifiedBy = username;
+            CommentViewModel.TaskId = selectedTaskId;
+            var result = await CommentDataService.CreateCommentAsync(CommentViewModel);
+            if (result.IsSuccess)
+            {
+                Message = "Comment created successfully";
+                await FetchCommentsForSelectedTask(selectedTaskId);
+
+            }
+            else
+            {
+                Message = result.Message;
+                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+                {
+                    Message += result.ValidationErrors;
+                }
             }
         }
+        catch (Exception ex)
+        {
+            Message = $"Error creating comment: {ex.Message}";
+        }
     }
-    catch (Exception ex)
-    {
-        Message = $"Error creating comment: {ex.Message}";
-    }
-}
 
     private async Task HandleTaskCreated()
     {
@@ -599,7 +599,7 @@ else
         await modal.HideAsync();
     }
 
-   
+
 
     private async Task FetchAllTasks()
     {
@@ -687,7 +687,20 @@ else
                 CanEdit = ShouldAllowEdit(comment, currentUser)
             }).ToList();
     }
-}
+
+    private async Task OnShowUserModalClick()
+    {
+        await userModal.ShowAsync();
+    }
+    private async Task OnHideUserModalClick()
+    {
+        await userModal.HideAsync();
+    }
+
+    private void DismissError()
+    {
+        Error = null;
+    }
     private async Task HandleValidUserSubmit()
     {
         try
@@ -695,20 +708,22 @@ else
             var email = ProjectAssignUserViewModel.Email;
             var userId = await UserDataService.GetUserIdByEmailAsync(email);
 
-        if (userId == null)
-        {
-            Error = "User not found.";
-            return;
-        }
+            if (userId == null)
+            {
+                Error = "User not found.";
+                Message = null;
+                return;
+            }
             ProjectAssignUserViewModel.ProjectId = projectId;
             ProjectAssignUserViewModel.UserId = userId;
 
             var projects = await ProjectDataService.GetProjectsByUserIdAsync(userId);
             foreach (var project in projects)
             {
-                if (project.ProjectId == Guid.Parse(projectId))
+                if (project.ProjectId ==  Guid.Parse(projectId))
                 {
                     Error = "User is already assigned to this project.";
+                    Message = null;
                     return;
                 }
             }
@@ -717,6 +732,7 @@ else
             if (result.IsSuccess)
             {
                 Message = "User assigned successfully";
+                Error = null;
                 await userModal.HideAsync();
             }
             else
@@ -732,6 +748,7 @@ else
         catch (Exception ex)
         {
             Error = "User not found";
+            Message = null;
         }
     }
 }
