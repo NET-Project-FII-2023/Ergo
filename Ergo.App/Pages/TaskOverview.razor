@@ -240,8 +240,9 @@ else
                             else
                             {
                                 <div class="d-flex justify-content-between align-items-center bg-secondary-light text-dark p-2 rounded">
-                                    <div>
+                                    <div class="justify-content-center align-items-center">
                                         <strong>@comment.CreatedBy:</strong> @comment.CommentText
+                                        <p>@comment.LastModifiedDate.ToString()</p>
                                     </div>
                                     @if (comment.CanEdit)
                                     {
