@@ -113,10 +113,15 @@ namespace Ergo.Domain.Tests
         [Fact]
         public void PrivateConstructorTest()
         {
-            //Arrange && Act
-            var constructor = typeof(Comment).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[0], null);
-            var instance = constructor.Invoke(null);
-            //Assert
+            // Arrange
+            var paramTypes = new Type[] { typeof(string), typeof(Guid), typeof(string) }; // Tipurile parametrilor constructorului privat
+            var constructor = typeof(Comment).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, paramTypes, null);
+            var parameters = new object[] { "Test Name", Guid.NewGuid(), "Test Comment" }; // Valorile parametrilor constructorului privat
+
+            // Act
+            var instance = constructor.Invoke(parameters);
+
+            // Assert
             Assert.NotNull(instance);
         }
 
