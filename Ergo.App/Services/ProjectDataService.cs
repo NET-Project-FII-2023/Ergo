@@ -105,6 +105,10 @@ namespace Ergo.App.Services
                 });
                 return projects?.Projects ?? new List<ProjectViewModel>();
             }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access.");
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception during deserialization: {ex}");
