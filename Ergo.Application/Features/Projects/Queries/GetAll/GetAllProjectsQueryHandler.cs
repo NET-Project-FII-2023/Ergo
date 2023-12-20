@@ -2,11 +2,11 @@ using Ergo.Application.Persistence;
 using MediatR;
 namespace Ergo.Application.Features.Projects.Queries.GetAll
 {
-    public class GetAllProjectsHandler : IRequestHandler<GetAllProjectsQuery, GetAllProjectsResponse>
+    public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, GetAllProjectsResponse>
     {
         private readonly IProjectRepository projectRepository;
 
-        public GetAllProjectsHandler(IProjectRepository projectRepository)
+        public GetAllProjectsQueryHandler(IProjectRepository projectRepository)
         {
             this.projectRepository = projectRepository;
         }
