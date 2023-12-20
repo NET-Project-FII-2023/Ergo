@@ -24,8 +24,13 @@
         color: #ccc; 
         border: none;
         margin-bottom: 20px; 
-        padding: 10px;
         position: static;
+    }
+
+    .card-body:hover{
+		background-color: #555;
+        border-radius:8px;
+		cursor: pointer;
     }
 
     h4 {
@@ -127,13 +132,11 @@ else
             <h4>To Do</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.ToDo))
             {
-                <div class="card mb-3" @onclick="() => DisplayTaskId(taskItem.TaskItemId)">
+                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
                         <p class="card-text"><strong>Deadline:</strong> @taskItem.Deadline.ToShortDateString()</p>
-                        <button class="btn btn-secondary" @onclick="() => ShowCommentModal(taskItem.TaskItemId)">Add Comment</button>
-                        <Button class="btn btn-secondary" @onclick="() => ShowDetailsModal(taskItem.TaskItemId)">Details</Button>
                     </div>
                 </div>
             }
@@ -143,7 +146,7 @@ else
             <h4>In Progress</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.InProgress))
             {
-                <div class="card mb-3" @onclick="() => DisplayTaskId(taskItem.TaskItemId)">
+                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -157,7 +160,7 @@ else
             <h4>Done</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.Done))
             {
-                <div class="card mb-3" @onclick="() => DisplayTaskId(taskItem.TaskItemId)">
+                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -205,7 +208,7 @@ else
                 }
                 @if (selectedTask != null && !selectedTask.DescriptionEditMode)
                 {
-                    <h5 class="card-title mt-4">Description</h5>
+                    <h5 class="card-title mt-4 mb-2">Description</h5>
                     <p>@selectedTask.Description</p>
                     <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="ToggleDescriptionEditMode"/>
                 }
