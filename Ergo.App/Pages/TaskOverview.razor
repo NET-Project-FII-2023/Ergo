@@ -228,21 +228,16 @@ else
             </div>
         </BodyTemplate>
     </Modal>
-
-
-
-
-
 }
 
 @code {
-    [Inject]
-    public ITaskDataService TaskDataService { get; set; }
+        [Inject]
+        public ITaskDataService TaskDataService { get; set; }
 
-    [Inject] ICommentDataService CommentDataService { get; set; }
+        [Inject] ICommentDataService CommentDataService { get; set; }
 
-    [Inject]
-    public NavigationManager NavigationManager { get; set; }
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
     public List<TaskViewModel> Tasks { get; set; }
 
@@ -284,7 +279,12 @@ else
             var updateTaskDto = new UpdateTaskDto
                 {
                     TaskItemId = selectedTask.TaskItemId,
-                    Description = selectedTask.Description 
+                    TaskName = selectedTask.TaskName,
+                    Description = selectedTask.Description,
+                    CreatedBy = selectedTask.CreatedBy,
+                    Deadline = selectedTask.Deadline,
+                    State = selectedTask.State
+
                 };
 
             var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
