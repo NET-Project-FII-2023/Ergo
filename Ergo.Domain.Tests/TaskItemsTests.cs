@@ -218,6 +218,24 @@ namespace Ergo.Domain.Tests
             assignResult.IsSuccess.Should().BeFalse();
         }
         [Fact]
+        public void When_AssignCommentToTaskItemIsCalled_And_CommentsIsNull_Then_CommentsIsInitializedAndCommentIsAdded()
+        {
+            // Arrange
+            var taskItemResult = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid());
+            taskItemResult.Value.Comments = null; 
+
+            var comment =  Comment.Create("Test Comment", Guid.NewGuid(),"Test"); 
+
+            // Act
+            var assignedResult = taskItemResult.Value.AssignComment(comment.Value);
+
+            // Assert
+            assignedResult.IsSuccess.Should().BeTrue();
+            taskItemResult.Value.Comments.Should().NotBeNull();
+            taskItemResult.Value.Comments.Should().Contain(comment.Value);
+        }
+
+        [Fact]
         public void When_AssignUserIsCalled_And_UserIsValid_Then_SuccessIsReturned()
         {
             //Arrange && Act

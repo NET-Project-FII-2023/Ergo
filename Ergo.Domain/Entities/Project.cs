@@ -26,7 +26,7 @@ namespace Ergo.Domain.Entities
         {
             
         }
-        public List<User>? Members { get; private set; }
+        public List<User>? Members { get;  set; }
         public Guid ProjectId { get; private set; }
         public string ProjectName { get; private set; }
         public string Description { get; private set; }
@@ -96,6 +96,10 @@ namespace Ergo.Domain.Entities
 
         public Result<Project> AssignUser(User member)
         {
+            if(Members == null)
+            {
+                Members = new List<User>();
+            }
             if(member == null)
             {
                 return Result<Project>.Failure("User is required");
