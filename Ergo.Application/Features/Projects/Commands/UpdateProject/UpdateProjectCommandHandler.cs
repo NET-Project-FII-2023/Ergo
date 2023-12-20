@@ -47,8 +47,15 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
                 };
             }
 
-            project.Value.UpdateData(request.ProjectName, request.Description, request.GitRepository, request.Deadline, request.State, request.ModifiedBy);
-
+            var updateResult = project.Value.UpdateData(request.ProjectName, request.Description, request.GitRepository, request.Deadline, request.State, request.ModifiedBy);
+            if (!updateResult.IsSuccess)
+            {
+                return new UpdateProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { updateResult.Error }
+                };
+            }
             var result = await projectRepository.UpdateAsync(project.Value);
 
             return new UpdateProjectCommandResponse

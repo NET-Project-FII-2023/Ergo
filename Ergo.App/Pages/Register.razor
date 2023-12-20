@@ -31,6 +31,9 @@
                 <label for="inputPassword" class="sr-only">Password</label>
                 <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="registerRequest.Password" />
                 <ValidationMessage For="@(() => registerRequest.Password)" />
+                <label for="inputConfirmPassword" class="sr-only">Confirm Password</label>
+                <InputText type="password" id="inputConfirmPassword" class="form-control" placeholder="Confirm password" @bind-Value="registerRequest.ConfirmPassword" />
+                <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
 
                 <br />
                 <div class="text-center">

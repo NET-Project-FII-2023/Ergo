@@ -1,5 +1,6 @@
 ﻿using Ergo.Domain.Common;
 using Ergo.Domain.Entities.Enums;
+using System.Xml.Linq;
 
 namespace Ergo.Domain.Entities
 {
@@ -16,6 +17,7 @@ namespace Ergo.Domain.Entities
             CreatedDate = DateTime.UtcNow;
             LastModifiedBy = fullName;
             LastModifiedDate = DateTime.UtcNow;
+            StartDate = DateTime.UtcNow;
             Deadline = deadline;
             State = ProjectState.JustStarted;
             Members = new List<User>();
@@ -24,7 +26,7 @@ namespace Ergo.Domain.Entities
         {
             
         }
-        public List<User>? Members { get; private set; }
+        public List<User>? Members { get;  set; }
         public Guid ProjectId { get; private set; }
         public string ProjectName { get; private set; }
         public string Description { get; private set; }
@@ -58,8 +60,29 @@ namespace Ergo.Domain.Entities
             return Result<Project>.Success(new Project(projectName, description, gitRepository, deadline, fullName));
         }
 
-        public void UpdateData(string projectName, string description, string? gitRepository, DateTime deadline, ProjectState state, string fullName)
+        public Result<Project> UpdateData(string projectName, string description, string? gitRepository, DateTime deadline, ProjectState state, string fullName)
         {
+            if (string.IsNullOrWhiteSpace(projectName))
+            {
+                return Result<Project>.Failure(Constants.ProjectNameRequired);
+            }
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                return Result<Project>.Failure(Constants.DescriptionRequired);
+            }
+            if (deadline == default)
+            {
+                return Result<Project>.Failure(Constants.DeadlineRequired);
+            }
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                return Result<Project>.Failure(Constants.CreatorFullNameRequired);
+            }
+            if (state == default)
+            {
+                return Result<Project>.Failure("A valid project state is required");
+            }
+
             ProjectName = projectName;
             Description = description;
             GitRepository = gitRepository;
@@ -67,15 +90,23 @@ namespace Ergo.Domain.Entities
             LastModifiedDate = DateTime.UtcNow;
             State = state;
             Deadline = deadline;
+            return Result<Project>.Success(this);
         }
 
-        public void AssignUser(User member)
+
+        public Result<Project> AssignUser(User member)
         {
-            if (Members == null)
+            if(Members == null)
             {
                 Members = new List<User>();
             }
+            if(member == null)
+            {
+                return Result<Project>.Failure("User is required");
+            }
+
             Members.Add(member);
+            return Result<Project>.Success(this);
         }
     }
 }

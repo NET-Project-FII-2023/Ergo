@@ -73,6 +73,7 @@
                     <div class="nav-item px-3">
                         My Projects
                     </div>
+                    @if(projects != null)
                     @foreach (var project in projects)
                     {
                         <div class="nav-item px-3">
@@ -123,7 +124,8 @@
         {
             try
             {
-                projects = await ProjectDataService.GetProjectsAsync();
+                projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
+
             }
             catch (UnauthorizedAccessException)
             {

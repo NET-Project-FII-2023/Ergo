@@ -7,21 +7,21 @@
 
 <style>
     body {
-        background-color: #1f1f1f; 
-        color: #e0e0e0; 
+        background-color: #1f1f1f;
+        color: #e0e0e0;
     }
 
     .col-md-3 {
-        background-color: #333; 
-        border-radius: 8px; 
-        padding: 20px; 
+        background-color: #333;
+        border-radius: 8px;
+        padding: 20px;
         margin-bottom: 20px;
         margin-right: 20px;
     }
 
     .card {
-        background-color: #444; 
-        color: #ccc; 
+        background-color: #444;
+        color: #ccc;
         border: none;
         margin-bottom: 20px; 
         position: static;
@@ -113,6 +113,31 @@
 else
 {
     <TaskAssignmentModal OnTaskCreated="HandleTaskCreated"></TaskAssignmentModal>
+
+    <Modal @ref="userModal" Title="Add a user to this project:">
+        <BodyTemplate>
+            <EditForm Model="@ProjectAssignUserViewModel">
+
+                <DataAnnotationsValidator />
+                <ValidationSummary></ValidationSummary>
+
+                <div class="row mb-3 ms-2">
+                    <label for="taskname" class="col-sm-3 form-label" style="color:black;">User email:</label>
+                    <div class="col-sm-7">
+                        <InputText id="username" class="form-control" @bind-Value="@ProjectAssignUserViewModel.Email" placeholder="User email..."></InputText>
+                        <ValidationMessage For="@(() => ProjectAssignUserViewModel.Email)" />
+                    </div>
+                </div>
+
+
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary" @onclick="OnHideUserModalClick">Cancel</button>
+                    <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidUserSubmit">Add user</button>
+                </div>
+
+            </EditForm>
+        </BodyTemplate>
+    </Modal>
     @if (Message != null)
     {
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -127,6 +152,23 @@ else
             </div>
         </div>
     }
+    @if (Error != null)
+    {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Error</strong>
+                    <button type="button" class="btn-close" @onclick="DismissError" aria-label="Close"></button>
+                </div>
+                <div class="toast-body" style="color:red">
+                    @Error
+                </div>
+            </div>
+        </div>
+    }
+
+    <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick">Add User</Button>
+
     <div class="row mt-2">
         <div class="col-md-3">
             <h4>To Do</h4>
@@ -269,6 +311,10 @@ else
 @code {
     [Inject]
     public ITaskDataService TaskDataService { get; set; }
+    [Inject]
+    public IUserDataService UserDataService { get; set; }
+    [Inject]
+    public IProjectDataService ProjectDataService { get; set; }
 
     [Inject] ICommentDataService CommentDataService { get; set; }
 
@@ -281,6 +327,7 @@ else
     public UpdateTaskViewModel UpdateTaskViewModel { get; set; } = new UpdateTaskViewModel();
 
     public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
+    public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
 
     private TaskViewModel? selectedTask;
 
@@ -289,8 +336,12 @@ else
     private CommentViewModel? commentBeingEdited;
 
     public string Message { get; set; }
+    public string Error { get; set;}
 
-    private Modal modal = default!;
+    private Modal taskModal = default!;
+    private Modal userModal = default!;
+
+    private string projectId = default!;
 
     private Guid selectedTaskId;
     private Guid selectedCommentId;
@@ -335,6 +386,15 @@ else
                 Message = "Failed to update description";
             }
         }
+
+
+    private async Task OnShowUserModalClick()
+    {
+        await userModal.ShowAsync();
+    }
+    private async Task OnHideUserModalClick()
+    {
+        await userModal.HideAsync();
     }
 
 
@@ -356,7 +416,7 @@ else
         if (!string.IsNullOrEmpty(query))
         {
             var queryParams = System.Web.HttpUtility.ParseQueryString(query);
-            var projectId = queryParams.Get("projectId");
+            projectId = queryParams.Get("projectId");
 
             if (!string.IsNullOrEmpty(projectId))
             {
@@ -429,9 +489,12 @@ else
         commentBeingEdited = null; 
     }
 
-
-
     private async Task ShowDetailsModal(Guid taskId)
+    private void DismissError()
+    {
+        Error = null;
+    }
+    private async Task HandleValidTaskSubmit()
     {
         selectedTask = Tasks.FirstOrDefault(t => t.TaskItemId == taskId);
 
@@ -477,41 +540,41 @@ else
     }
 
     private async Task SaveComment()
+{
+    try
     {
-        try
+        var username = await TaskDataService.GetUsernameFromTokenAsync();
+
+        if (string.IsNullOrEmpty(username))
         {
-            var username = await TaskDataService.GetUsernameFromTokenAsync();
-
-            if (string.IsNullOrEmpty(username))
-            {
-                Message = "Unable to retrieve user email from token.";
-                return;
-            }
-
-            CommentViewModel.CreatedBy = username;
-            CommentViewModel.LastModifiedBy = username;
-            CommentViewModel.TaskId = selectedTaskId;
-            var result = await CommentDataService.CreateCommentAsync(CommentViewModel);
-            if (result.IsSuccess)
-            {
-                Message = "Comment created successfully";
-                await FetchCommentsForSelectedTask(selectedTaskId);
-
-            }
-            else
-            {
-                Message = result.Message;
-                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
-                {
-                    Message += result.ValidationErrors;
-                }
-            }
+            Message = "Unable to retrieve user email from token.";
+            return;
         }
-        catch (Exception ex)
+
+        CommentViewModel.CreatedBy = username;
+        CommentViewModel.LastModifiedBy = username;
+        CommentViewModel.TaskId = selectedTaskId;
+        var result = await CommentDataService.CreateCommentAsync(CommentViewModel);
+        if (result.IsSuccess)
         {
-            Message = $"Error creating comment: {ex.Message}";
+            Message = "Comment created successfully";
+            await FetchCommentsForSelectedTask(selectedTaskId);
+
+        }
+        else
+        {
+            Message = result.Message;
+            if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+            {
+                Message += result.ValidationErrors;
+            }
         }
     }
+    catch (Exception ex)
+    {
+        Message = $"Error creating comment: {ex.Message}";
+    }
+}
 
     private async Task HandleTaskCreated()
     {
@@ -623,5 +686,52 @@ else
                 LastModifiedDate = comment.LastModifiedDate,
                 CanEdit = ShouldAllowEdit(comment, currentUser)
             }).ToList();
+    }
+}
+    private async Task HandleValidUserSubmit()
+    {
+        try
+        {
+            var email = ProjectAssignUserViewModel.Email;
+            var userId = await UserDataService.GetUserIdByEmailAsync(email);
+
+        if (userId == null)
+        {
+            Error = "User not found.";
+            return;
+        }
+            ProjectAssignUserViewModel.ProjectId = projectId;
+            ProjectAssignUserViewModel.UserId = userId;
+
+            var projects = await ProjectDataService.GetProjectsByUserIdAsync(userId);
+            foreach (var project in projects)
+            {
+                if (project.ProjectId == Guid.Parse(projectId))
+                {
+                    Error = "User is already assigned to this project.";
+                    return;
+                }
+            }
+
+            var result = await ProjectDataService.AssignUserToProjectAsync(ProjectAssignUserViewModel);
+            if (result.IsSuccess)
+            {
+                Message = "User assigned successfully";
+                await userModal.HideAsync();
+            }
+            else
+            {
+                Message = result.Message;
+                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+                {
+                    Error += result.ValidationErrors;
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Error = "User not found";
+        }
     }
 }

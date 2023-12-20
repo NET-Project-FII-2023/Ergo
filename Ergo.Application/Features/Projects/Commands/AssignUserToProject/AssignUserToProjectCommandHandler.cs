@@ -34,7 +34,15 @@ namespace Ergo.Application.Features.Projects.Commands.AssignUserToProject
                     ValidationsErrors = new List<string> { user.Error }
                 };
             }
-            project.Value.AssignUser(user.Value);
+            var assignResult = project.Value.AssignUser(user.Value);
+            if (!assignResult.IsSuccess)
+            {
+                return new AssignUserToProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { assignResult.Error }
+                };
+            }
             var result = await projectRepository.UpdateAsync(project.Value);
             return new AssignUserToProjectCommandResponse
             {
