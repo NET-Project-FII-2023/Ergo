@@ -107,7 +107,7 @@ namespace Ergo.App.Services
         {
             httpClient.DefaultRequestHeaders.Authorization
                 = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
-            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/{updateTaskDto.TaskId}", updateTaskDto);
+            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/{updateTaskDto.TaskItemId}", updateTaskDto);
             result.EnsureSuccessStatusCode();
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<UpdateTaskDto>>();
             response!.IsSuccess = result.IsSuccessStatusCode;

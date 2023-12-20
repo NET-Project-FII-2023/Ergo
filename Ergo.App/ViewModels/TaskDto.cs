@@ -4,6 +4,7 @@ namespace Ergo.App.ViewModels
 {
     public class TaskDto
     {
+        public Guid TaskItemId { get; set; }
         public string? TaskName { get; set; }
         public string? Description { get; set; }
         public DateTime Deadline { get; set; }

@@ -3,6 +3,7 @@
 @using Ergo.App.ViewModels
 @using Ergo.Domain.Entities.Enums;
 @using BlazorBootstrap
+@using Ergo.App.Components
 
 <style>
     body {
@@ -22,9 +23,14 @@
         background-color: #444;
         color: #ccc;
         border: none;
-        margin-bottom: 20px;
-        padding: 10px;
+        margin-bottom: 20px; 
         position: static;
+    }
+
+    .card-body:hover{
+		background-color: #555;
+        border-radius:8px;
+		cursor: pointer;
     }
 
     h4 {
@@ -45,6 +51,55 @@
         border-bottom: 3px solid #60a88b;
         border-radius: 2px;
     }
+
+    .bg-dark {
+        background-color: #333 !important; 
+    }
+
+    .bg-secondary-light{
+        background-color: #ededed !important;
+    }
+
+    .text-light {
+        color: #ccc !important; 
+    }
+
+    .bg-secondary {
+        background-color: #444 !important;
+    }
+
+    .fa-pencil {
+        color: #d1c04d;
+        font-size: 1rem; 
+    }
+
+
+    .btn-edit {
+        color: #fff;
+        background-color: #333;
+        border-color: #444
+    }
+    .btn-edit:hover{
+        color: #fff;
+		background-color: #444;
+		border-color: #444
+    }
+    .btn-warning {
+        color: #212529;
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+   
+    .edit-icon {
+        width: 20px;
+        transition: opacity 0.3s ease;
+    }
+    .edit-icon:hover {
+        opacity: 0.7;
+        cursor: pointer;
+    }
+
+
 </style>
 
 
@@ -57,54 +112,8 @@
 }
 else
 {
-    <Modal @ref="taskModal" Title="Assign a task to this project:">
-        <BodyTemplate>
-            <EditForm Model="@TaskViewModel">
+    <TaskAssignmentModal OnTaskCreated="HandleTaskCreated"></TaskAssignmentModal>
 
-                <DataAnnotationsValidator />
-                <ValidationSummary></ValidationSummary>
-
-                <div class="row mb-3 ms-2">
-                    <label for="taskname" class="col-sm-3 form-label" style="color:black;">Task name:</label>
-                    <div class="col-sm-7">
-                        <InputText id="taskname" class="form-control" @bind-Value="@TaskViewModel.TaskName" placeholder="Task name..."></InputText>
-                        <ValidationMessage For="@(() => TaskViewModel.TaskName)" />
-                    </div>
-                </div>
-
-                <div class="row mb-3 ms-2">
-                    <label for="taskdescription" class="col-sm-3 form-label" style="color:black;">Task description:</label>
-                    <div class="col-sm-7">
-                        <InputTextArea @bind-Value="@TaskViewModel.Description" class="form-control" rows="5" placeholder="Task description..."
-                                       @oninput="UpdateCharacterCount"></InputTextArea>
-                        <div style="position: relative;">
-                            @if (TaskViewModel != null && TaskViewModel.Description != null)
-                            {
-                                <span style="position: absolute; bottom: 8px; right: 8px; color: gray;">
-                                    @TaskViewModel.Description.Length/@maxCharacters
-                                </span>
-                            }
-                        </div>
-                        <ValidationMessage For="@(() => TaskViewModel.Description)" />
-                    </div>
-                </div>
-
-                <div class="row mb-3 ms-2">
-                    <label for="deadline" class="col-sm-3 form-label" style="color:black;">Deadline:</label>
-                    <div class="col-sm-7">
-                        <InputDate id="deadline" class="form-control" @bind-Value="@TaskViewModel.Deadline" />
-                        <ValidationMessage For="@(() => TaskViewModel.Deadline)" />
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-end">
-                    <button class="btn btn-primary" @onclick="OnHideTaskModalClick">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidTaskSubmit">Save task</button>
-                </div>
-
-            </EditForm>
-        </BodyTemplate>
-    </Modal>
     <Modal @ref="userModal" Title="Add a user to this project:">
         <BodyTemplate>
             <EditForm Model="@ProjectAssignUserViewModel">
@@ -129,7 +138,6 @@ else
             </EditForm>
         </BodyTemplate>
     </Modal>
-
     @if (Message != null)
     {
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -159,7 +167,6 @@ else
         </div>
     }
 
-    <Button Color="ButtonColor.Primary" @onclick="OnShowTaskModalClick">Add Task</Button>
     <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick">Add User</Button>
 
     <div class="row mt-2">
@@ -167,7 +174,7 @@ else
             <h4>To Do</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.ToDo))
             {
-                <div class="card mb-3">
+                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -181,7 +188,7 @@ else
             <h4>In Progress</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.InProgress))
             {
-                <div class="card mb-3">
+                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -195,7 +202,7 @@ else
             <h4>Done</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.Done))
             {
-                <div class="card mb-3">
+                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -205,6 +212,100 @@ else
             }
         </div>
     </div>
+
+
+    <Modal @ref="commentModal" Title="Add a comment:">
+        <BodyTemplate>
+            <EditForm Model="@CommentViewModel">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <InputTextArea @bind-Value="@CommentViewModel.CommentText" class="form-control" rows="3" placeholder="Your comment..."></InputTextArea>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary" @onclick="HideCommentModal">Cancel</button>
+                    <button type="submit" class="btn btn-primary mx-1" @onclick="SaveComment">Save Comment</button>
+                </div>
+            </EditForm>
+        </BodyTemplate>
+    </Modal>
+
+    <Modal @ref="detailsModal" Title="Task Details">
+        <BodyTemplate>
+            <div class="modal-body text-dark">
+                @if (selectedTask != null && !selectedTask.IsTitleEditMode)
+                {
+                    <h2 class="card-title">@selectedTask.TaskName</h2>
+                    <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="ToggleTitleEditMode" />
+                }
+                else
+                {
+                    <input class="form-control text-dark" @bind="selectedTask.TaskName" />
+                    <div class="mt-2">
+                        <button class="btn btn-outline-primary btn-sm" @onclick="SaveTitleEdit">Save</button>
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="CancelTitleEdit">Cancel</button>
+                    </div>
+                }
+                @if (selectedTask != null && !selectedTask.DescriptionEditMode)
+                {
+                    <h5 class="card-title mt-4 mb-2">Description</h5>
+                    <p>@selectedTask.Description</p>
+                    <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="ToggleDescriptionEditMode"/>
+                }
+                else
+                {
+                    <textarea class="form-control text-dark mt-4" @bind="selectedTask.Description"></textarea>
+                    <div class="mt-4">
+                        <button class="btn btn-outline-primary btn-sm" @onclick="SaveDescriptionEdit">Save</button>
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="CancelDescriptionEdit">Cancel</button>
+                    </div>
+                }
+
+                <h5 class="mt-4">Comments:</h5>
+
+               
+
+                <ul class="list-unstyled">
+                    @foreach (var comment in commentsList)
+                    {
+                        <li class="mb-2" title="Last modified: @comment.LastModifiedDate.ToString()">
+                            @if (commentBeingEdited != null && commentBeingEdited.CommentId == comment.CommentId)
+                            {
+                            <textarea class="form-control text-dark" @bind="commentBeingEdited.CommentText"></textarea>
+                                <div class="mt-2">
+                                    <button class="btn btn-outline-primary btn-sm" @onclick="SaveCommentEdit">Save</button>
+                                    <button class="btn btn-outline-secondary btn-sm" @onclick="CancelCommentEdit">Cancel</button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex justify-content-between align-items-center bg-secondary-light text-dark p-2 rounded">
+                                    <div class="justify-content-center align-items-center">
+                                        <strong>@comment.CreatedBy:</strong> @comment.CommentText
+                                        <p>@comment.LastModifiedDate.ToString()</p>
+                                    </div>
+                                    @if (comment.CanEdit)
+                                    {
+                                        <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => {DisplayCommentId(comment.CommentId);BeginEditComment(comment);}"/>
+                                    }
+                                </div>
+                            }
+                        </li>
+                    }
+                </ul>
+
+                <div class="mb-2">
+                    <InputText @bind-Value="@CommentViewModel.CommentText" class="form-control" placeholder="Your comment..."></InputText>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-outline-primary btn-sm mb-4" @onclick="SaveComment">Submit</button>
+                </div>
+            </div>
+        </BodyTemplate>
+    </Modal>
 }
 
 @code {
@@ -215,13 +316,24 @@ else
     [Inject]
     public IProjectDataService ProjectDataService { get; set; }
 
+    [Inject] ICommentDataService CommentDataService { get; set; }
+
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
     public List<TaskViewModel> Tasks { get; set; }
 
+    private List<CommentViewModel> commentsList = new List<CommentViewModel>();
+    public UpdateTaskViewModel UpdateTaskViewModel { get; set; } = new UpdateTaskViewModel();
+
     public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
     public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
+
+    private TaskViewModel? selectedTask;
+
+    public CommentViewModel CommentViewModel { get; set; } = new CommentViewModel();
+
+    private CommentViewModel? commentBeingEdited;
 
     public string Message { get; set; }
     public string Error { get; set;}
@@ -231,35 +343,69 @@ else
 
     private string projectId = default!;
 
-    private int maxCharacters = 500;
+    private Guid selectedTaskId;
+    private Guid selectedCommentId;
 
-    private async Task OnShowTaskModalClick()
+    private Modal commentModal = default!;
+
+    private Modal detailsModal = default!;
+
+
+    private void ToggleDescriptionEditMode()
     {
-        await taskModal.ShowAsync();
+        if (selectedTask != null)
+        {
+            selectedTask.DescriptionEditMode = true;
+        }
     }
+    private async Task SaveDescriptionEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.DescriptionEditMode = false;
+
+            var updateTaskDto = new UpdateTaskDto
+                {
+                    TaskItemId = selectedTask.TaskItemId,
+                    TaskName = selectedTask.TaskName,
+                    Description = selectedTask.Description,
+                    CreatedBy = selectedTask.CreatedBy,
+                    Deadline = selectedTask.Deadline,
+                    State = selectedTask.State
+
+                };
+
+            var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
+
+            if (result.IsSuccess)
+            {
+                Message = "Description updated successfully";
+            }
+            else
+            {
+                Message = "Failed to update description";
+            }
+        }
+
+
     private async Task OnShowUserModalClick()
     {
         await userModal.ShowAsync();
-    }
-
-    private async Task OnHideTaskModalClick()
-    {
-        await taskModal.HideAsync();
     }
     private async Task OnHideUserModalClick()
     {
         await userModal.HideAsync();
     }
 
-    private void UpdateCharacterCount(ChangeEventArgs e)
-    {
-        TaskViewModel.Description = e.Value.ToString();
 
-        if (TaskViewModel.Description.Length > maxCharacters)
+    private void CancelDescriptionEdit()
+    {
+        if (selectedTask != null)
         {
-            TaskViewModel.Description = TaskViewModel.Description.Substring(0, maxCharacters);
+            selectedTask.DescriptionEditMode = false;
         }
     }
+
     protected override async Task OnInitializedAsync()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -279,6 +425,181 @@ else
             }
         }
     }
+
+    private void BeginEditComment(CommentViewModel comment)
+    {
+
+            commentBeingEdited = comment;
+    }
+
+    private async Task SaveCommentEdit()
+    {
+        var username = await TaskDataService.GetUsernameFromTokenAsync();
+        if(string.IsNullOrEmpty(username))
+        {
+            Message = "Unable to retrieve user email from token.";
+            return;
+        }
+
+        if (commentBeingEdited != null)
+        {
+            commentBeingEdited.CommentId = selectedCommentId;
+            commentBeingEdited.CreatedBy = username;
+            commentBeingEdited.LastModifiedBy = username;
+            commentBeingEdited.LastModifiedDate = DateTime.UtcNow;
+            commentBeingEdited.TaskId = selectedTaskId;
+
+
+            var updateCommentDto = new UpdateCommentDto
+                {
+                    CommentId = commentBeingEdited.CommentId,
+                    CreatedBy = commentBeingEdited.CreatedBy,
+                    CommentText = commentBeingEdited.CommentText,
+                    LastModifiedBy = commentBeingEdited.LastModifiedBy,
+                    LastModifiedDate = commentBeingEdited.LastModifiedDate,
+                    TaskId= commentBeingEdited.TaskId
+
+                };
+
+
+            var response = await CommentDataService.UpdateCommentAsync(updateCommentDto);
+
+            if (response.IsSuccess)
+            {
+                Message = "Comment updated successfully";
+                await FetchCommentsForSelectedTask(selectedTaskId);
+            }
+            else
+            {
+                Message = response.Message;
+                if (!string.IsNullOrWhiteSpace(response.ValidationErrors))
+                {
+                    Message += response.ValidationErrors;
+                }
+
+            }
+
+            commentBeingEdited = null; 
+        }
+    }
+
+
+    private void CancelCommentEdit()
+    {
+        commentBeingEdited = null; 
+    }
+
+    private async Task ShowDetailsModal(Guid taskId)
+    private void DismissError()
+    {
+        Error = null;
+    }
+    private async Task HandleValidTaskSubmit()
+    {
+        selectedTask = Tasks.FirstOrDefault(t => t.TaskItemId == taskId);
+
+        var comments = await CommentDataService.GetCommentsByTaskIdAsync(taskId);
+
+        var currentUser = await TaskDataService.GetUsernameFromTokenAsync();
+
+
+        commentsList = comments.Select(comment => new CommentViewModel
+            {
+                CommentId = comment.CommentId,
+                CommentText = comment.CommentText,
+                CreatedBy = comment.CreatedBy,
+                LastModifiedDate = comment.LastModifiedDate,
+                CanEdit = ShouldAllowEdit(comment, currentUser)
+            }).ToList();
+
+        await detailsModal.ShowAsync();
+    }
+
+
+    private bool ShouldAllowEdit(CommentViewModel comment, string currentUser)
+    {
+        return comment.CreatedBy == currentUser;
+    }
+
+
+    private void DisplayTaskId(Guid taskId)
+    {
+        selectedTaskId = taskId;
+
+    }
+
+    private void DisplayCommentId(Guid commentId)
+    {
+        selectedCommentId = commentId;
+        Console.WriteLine("Selected Comment ID: " + selectedCommentId);
+    }
+    private async Task HideCommentModal()
+    {
+        await commentModal.HideAsync();
+        Console.WriteLine("A mers sa se inchida");
+    }
+
+    private async Task SaveComment()
+{
+    try
+    {
+        var username = await TaskDataService.GetUsernameFromTokenAsync();
+
+        if (string.IsNullOrEmpty(username))
+        {
+            Message = "Unable to retrieve user email from token.";
+            return;
+        }
+
+        CommentViewModel.CreatedBy = username;
+        CommentViewModel.LastModifiedBy = username;
+        CommentViewModel.TaskId = selectedTaskId;
+        var result = await CommentDataService.CreateCommentAsync(CommentViewModel);
+        if (result.IsSuccess)
+        {
+            Message = "Comment created successfully";
+            await FetchCommentsForSelectedTask(selectedTaskId);
+
+        }
+        else
+        {
+            Message = result.Message;
+            if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+            {
+                Message += result.ValidationErrors;
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Message = $"Error creating comment: {ex.Message}";
+    }
+}
+
+    private async Task HandleTaskCreated()
+    {
+        await FetchAllTasks();
+    }
+
+    private async Task ShowCommentModal(Guid taskId)
+    {
+        CommentViewModel.TaskId = taskId;
+        Console.WriteLine(CommentViewModel.TaskId);
+        await commentModal.ShowAsync();
+    }
+
+
+    private async Task OnShowModalClick()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await modal.HideAsync();
+    }
+
+   
 
     private async Task FetchAllTasks()
     {
@@ -300,76 +621,73 @@ else
         }
     }
 
+
+    private void ToggleTitleEditMode()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.IsTitleEditMode = true;
+        }
+    }
+
+    private async Task SaveTitleEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.IsTitleEditMode = false;
+
+            var updateTaskDto = new UpdateTaskDto
+                {
+                    TaskItemId = selectedTask.TaskItemId,
+                    TaskName = selectedTask.TaskName,
+                    Description = selectedTask.Description,
+                    CreatedBy = selectedTask.CreatedBy,
+                    Deadline = selectedTask.Deadline,
+                    State = selectedTask.State
+                };
+
+            var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
+
+            if (result.IsSuccess)
+            {
+                Message = "Title updated successfully";
+            }
+            else
+            {
+                Message = "Failed to update title";
+            }
+        }
+    }
+
+    private void CancelTitleEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.IsTitleEditMode = false;
+        }
+    }
+
     private void DismissSuccess()
     {
         Message = null;
     }
-    private void DismissError()
+
+    private async Task FetchCommentsForSelectedTask(Guid taskId)
     {
-        Error = null;
+        var comments = await CommentDataService.GetCommentsByTaskIdAsync(taskId);
+
+        var currentUser = await TaskDataService.GetUsernameFromTokenAsync();
+
+        commentsList = comments.Select(comment => new CommentViewModel
+            {
+                CommentId = comment.CommentId,
+                CommentText = comment.CommentText,
+                CreatedBy = comment.CreatedBy,
+                LastModifiedDate = comment.LastModifiedDate,
+                CanEdit = ShouldAllowEdit(comment, currentUser)
+            }).ToList();
     }
-    private async Task HandleValidTaskSubmit()
-    {
-
-        if (DateTime.TryParse(TaskViewModel.Deadline.ToString(), out DateTime inputDate))
-        {
-            TaskViewModel.Deadline = inputDate.ToUniversalTime();
-        }
-        else
-        {
-            Message = "Invalid date format. Please enter a valid date.";
-            return;
-        }
-
-        try
-        {
-            var username = await TaskDataService.GetUsernameFromTokenAsync();
-
-            if (string.IsNullOrEmpty(username))
-            {
-                Message = "Unable to retrieve user email from token.";
-                return;
-            }
-
-
-            TaskViewModel.CreatedBy = username;
-            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-            var query = uri.Query;
-            if (!string.IsNullOrEmpty(query))
-            {
-                var queryParams = System.Web.HttpUtility.ParseQueryString(query);
-                var projectId = queryParams.Get("projectId");
-
-                if (!string.IsNullOrEmpty(projectId))
-                {
-                    Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
-                    Console.WriteLine("ProjectId: " + projectId);
-                }
-                TaskViewModel.ProjectId = Guid.Parse(projectId);
-            }
-
-            var result = await TaskDataService.CreateTaskAsync(TaskViewModel);
-            if (result.IsSuccess)
-            {
-                Message = "Task created successfully";
-                await taskModal.HideAsync();
-                await FetchAllTasks();
-                // NavigationManager.NavigateTo($"taskoverview?projectId={TaskViewModel.ProjectId}");
-            }
-            else
-            {
-                Message = result.Message;
-                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
-                {
-                    Message += result.ValidationErrors;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Message = $"Error creating task: {ex.Message}";
-        }
-    }
+}
     private async Task HandleValidUserSubmit()
     {
         try

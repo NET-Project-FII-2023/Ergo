@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ergo.App.ViewModels;
 
-public class UpdateCommentViewModel
+public class UpdateCommentViewModel : CommentViewModel
 {
     [Required(ErrorMessage = "Comment ID is required.")]
     public Guid CommentId { get; set; }
