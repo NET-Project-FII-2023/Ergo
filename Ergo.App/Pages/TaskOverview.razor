@@ -85,6 +85,14 @@
         border-color: #ffc107;
     }
    
+    .edit-icon {
+        width: 20px;
+        transition: opacity 0.3s ease;
+    }
+    .edit-icon:hover {
+        opacity: 0.7;
+        cursor: pointer;
+    }
 
 
 </style>
@@ -185,7 +193,7 @@ else
                 @if (selectedTask != null && !selectedTask.IsTitleEditMode)
                 {
                     <h2 class="card-title">@selectedTask.TaskName</h2>
-                    <button class="btn btn-outline-primary btn-sm" @onclick="ToggleTitleEditMode">Edit</button>
+                    <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="ToggleTitleEditMode" />
                 }
                 else
                 {
@@ -199,7 +207,7 @@ else
                 {
                     <h5 class="card-title mt-4">Description</h5>
                     <p>@selectedTask.Description</p>
-                    <button class="btn btn-outline-primary btn-sm" @onclick="ToggleDescriptionEditMode">Edit</button>
+                    <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="ToggleDescriptionEditMode"/>
                 }
                 else
                 {
@@ -234,7 +242,7 @@ else
                                     </div>
                                     @if (comment.CanEdit)
                                     {
-                                        <button class="btn btn-outline-primary btn-sm" @onclick="() => BeginEditComment(comment)">Edit</button>
+                                        <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => BeginEditComment(comment)"/>
                                     }
                                 </div>
                             }
