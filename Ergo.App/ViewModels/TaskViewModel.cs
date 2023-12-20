@@ -27,5 +27,7 @@ namespace Ergo.App.ViewModels
         public TaskState? State { get; set; } = TaskState.ToDo;
 
         public bool DescriptionEditMode { get; set; }
+
+        public bool IsTitleEditMode { get; set; }
     }
 }

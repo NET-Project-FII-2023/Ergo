@@ -182,7 +182,19 @@ else
     <Modal @ref="detailsModal" Title="Task Details">
         <BodyTemplate>
             <div class="modal-body text-dark">
-                <h5>@selectedTask?.TaskName</h5>
+                @if (selectedTask != null && !selectedTask.IsTitleEditMode)
+                {
+                    <h5 class="card-title">@selectedTask.TaskName</h5>
+                    <button class="btn btn-edit" @onclick="ToggleTitleEditMode">Edit Title</button>
+                }
+                else
+                {
+                    <input class="form-control text-dark" @bind="selectedTask.TaskName" />
+                    <div class="mt-2">
+                        <button class="btn btn-edit btn-sm" @onclick="SaveTitleEdit">Save</button>
+                        <button class="btn btn-edit btn-sm" @onclick="CancelTitleEdit">Cancel</button>
+                    </div>
+                }
                 @if (selectedTask != null && !selectedTask.DescriptionEditMode)
                 {
                     <p>@selectedTask.Description</p>
@@ -509,7 +521,50 @@ else
         }
     }
 
+    private void ToggleTitleEditMode()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.IsTitleEditMode = true;
+        }
+    }
 
+    private async Task SaveTitleEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.IsTitleEditMode = false;
+
+            var updateTaskDto = new UpdateTaskDto
+                {
+                    TaskItemId = selectedTask.TaskItemId,
+                    TaskName = selectedTask.TaskName,
+                    Description = selectedTask.Description,
+                    CreatedBy = selectedTask.CreatedBy,
+                    Deadline = selectedTask.Deadline,
+                    State = selectedTask.State
+                };
+
+            var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
+
+            if (result.IsSuccess)
+            {
+                Message = "Title updated successfully";
+            }
+            else
+            {
+                Message = "Failed to update title";
+            }
+        }
+    }
+
+    private void CancelTitleEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.IsTitleEditMode = false;
+        }
+    }
 
     private void DismissSuccess()
     {
