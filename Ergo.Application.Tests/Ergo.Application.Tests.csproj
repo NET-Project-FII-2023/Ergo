@@ -30,7 +30,11 @@
 
   <ItemGroup>
     <Folder Include="Commands\" />
+
     <Folder Include="Comments\Queries\" />
+
+    <Folder Include="TaskItems\Commands\" />
+
   </ItemGroup>
 
 </Project>
