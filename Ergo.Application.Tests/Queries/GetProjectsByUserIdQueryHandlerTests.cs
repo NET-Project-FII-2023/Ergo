@@ -4,20 +4,21 @@ using Ergo.Application.Tests.RepositoryMocks;
 using Ergo.Domain.Common;
 using Ergo.Domain.Entities;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
+
 namespace Ergo.Application.Tests.Queries
 {
     public class GetProjectsByUserIdQueryHandlerTests : IDisposable
     {
-        private readonly Mock<IProjectRepository> _mockProjectRepository;
-        private readonly Mock<IUserRepository> _mockUserRepository;
+        private readonly IProjectRepository _mockProjectRepository;
+        private readonly IUserRepository _mockUserRepository;
         private readonly GetProjectsByUserIdQueryHandler _handler;
 
         public GetProjectsByUserIdQueryHandlerTests()
         {
             _mockProjectRepository = ProjectRepositoryMocks.GetProjectRepository();
             _mockUserRepository = UserRepositoryMocks.GetUserRepository();
-            _handler = new GetProjectsByUserIdQueryHandler(_mockProjectRepository.Object, _mockUserRepository.Object);
+            _handler = new GetProjectsByUserIdQueryHandler(_mockProjectRepository, _mockUserRepository);
         }
 
         [Fact]
@@ -26,8 +27,9 @@ namespace Ergo.Application.Tests.Queries
             // Arrange
             var nonExistingUserId = Guid.NewGuid();
             var query = new GetProjectsByUserIdQuery { UserId = nonExistingUserId.ToString() };
-            _mockUserRepository.Setup(repo => repo.FindByIdAsync(nonExistingUserId))
-                .ReturnsAsync(Result<User>.Failure("Not found"));
+
+            _mockUserRepository.FindByIdAsync(nonExistingUserId)
+                .Returns(Task.FromResult(Result<User>.Failure("Not found")));
 
             // Act
             var response = await _handler.Handle(query, CancellationToken.None);
@@ -40,8 +42,7 @@ namespace Ergo.Application.Tests.Queries
 
         public void Dispose()
         {
-            _mockProjectRepository.Reset();
-            _mockUserRepository.Reset();
+
         }
     }
 }

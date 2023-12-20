@@ -4,18 +4,19 @@ using Ergo.Application.Tests.RepositoryMocks;
 using Ergo.Domain.Common;
 using Ergo.Domain.Entities;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
+
 namespace Ergo.Application.Tests.Queries
 {
     public class GetAllProjectsQueryHandlerTests : IDisposable
     {
-        private readonly Mock<IProjectRepository> _mockProjectRepository;
+        private readonly IProjectRepository _mockProjectRepository;
         private readonly GetAllProjectsQueryHandler _handler;
 
         public GetAllProjectsQueryHandlerTests()
         {
             _mockProjectRepository = ProjectRepositoryMocks.GetProjectRepository();
-            _handler = new GetAllProjectsQueryHandler(_mockProjectRepository.Object);
+            _handler = new GetAllProjectsQueryHandler(_mockProjectRepository);
         }
 
         [Fact]
@@ -39,7 +40,7 @@ namespace Ergo.Application.Tests.Queries
         public async Task GetAllProjectsQueryHandler_ReturnsEmptyList_WhenNoProjectsExist()
         {
             // Arrange
-            _mockProjectRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(Result<IReadOnlyList<Project>>.Success(new List<Project>()));
+            _mockProjectRepository.GetAllAsync().Returns(Result<IReadOnlyList<Project>>.Success(new List<Project>()));
 
             // Act
             var result = await _handler.Handle(new GetAllProjectsQuery(), CancellationToken.None);
@@ -52,7 +53,7 @@ namespace Ergo.Application.Tests.Queries
         public async Task GetAllProjectsQueryHandler_ThrowsException_WhenRepositoryFails()
         {
             // Arrange
-            _mockProjectRepository.Setup(repo => repo.GetAllAsync()).ThrowsAsync(new Exception("Repository failure"));
+            _mockProjectRepository.GetAllAsync().Returns(Task.FromException<Result<IReadOnlyList<Project>>>(new Exception("Repository failure")));
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _handler.Handle(new GetAllProjectsQuery(), CancellationToken.None));
@@ -60,7 +61,6 @@ namespace Ergo.Application.Tests.Queries
 
         public void Dispose()
         {
-            _mockProjectRepository.Reset();
         }
     }
 }
