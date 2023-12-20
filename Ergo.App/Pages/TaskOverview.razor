@@ -211,6 +211,9 @@ else
                 }
 
                 <h5 class="mt-4">Comments:</h5>
+
+               
+
                 <ul class="list-unstyled">
                     @foreach (var comment in commentsList)
                     {
@@ -238,6 +241,14 @@ else
                         </li>
                     }
                 </ul>
+
+                <div class="mb-2">
+                    <InputText @bind-Value="@CommentViewModel.CommentText" class="form-control" placeholder="Your comment..."></InputText>
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-outline-primary btn-sm mb-4" @onclick="SaveComment">Submit</button>
+                </div>
             </div>
         </BodyTemplate>
     </Modal>
@@ -459,7 +470,7 @@ else
             if (result.IsSuccess)
             {
                 Message = "Comment created successfully";
-                await commentModal.HideAsync();
+                await FetchCommentsForSelectedTask(selectedTaskId);
 
             }
             else
@@ -522,6 +533,7 @@ else
         }
     }
 
+
     private void ToggleTitleEditMode()
     {
         if (selectedTask != null)
@@ -570,5 +582,20 @@ else
     private void DismissSuccess()
     {
         Message = null;
+    }
+
+    private async Task FetchCommentsForSelectedTask(Guid taskId)
+    {
+        var comments = await CommentDataService.GetCommentsByTaskIdAsync(taskId);
+
+        var currentUser = await TaskDataService.GetUsernameFromTokenAsync();
+
+        commentsList = comments.Select(comment => new CommentViewModel
+            {
+                CommentText = comment.CommentText,
+                CreatedBy = comment.CreatedBy,
+                LastModifiedDate = comment.LastModifiedDate,
+                CanEdit = ShouldAllowEdit(comment, currentUser)
+            }).ToList();
     }
 }
