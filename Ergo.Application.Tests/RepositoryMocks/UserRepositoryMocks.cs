@@ -1,7 +1,8 @@
 using Ergo.Application.Persistence;
 using Ergo.Domain.Common;
 using Ergo.Domain.Entities;
-using Moq;
+using NSubstitute;
+
 namespace Ergo.Application.Tests.RepositoryMocks
 {
     public static class UserRepositoryMocks
@@ -12,14 +13,14 @@ namespace Ergo.Application.Tests.RepositoryMocks
             User.Create(new Guid()).Value
         ];
 
-        public static Mock<IUserRepository> GetUserRepository()
+        public static IUserRepository GetUserRepository()
         {
-            var mockUserRepository = new Mock<IUserRepository>();
+            var mockUserRepository = Substitute.For<IUserRepository>();
 
-            mockUserRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(Result<IReadOnlyList<User>>.Success(Users));
+            mockUserRepository.GetAllAsync().Returns(Result<IReadOnlyList<User>>.Success(Users));
 
-            mockUserRepository.Setup(repo => repo.FindByIdAsync(It.Is<Guid>(id => id != Users[0].UserId && id != Users[1].UserId)))
-                .ReturnsAsync(Result<User>.Failure("Not found"));
+            mockUserRepository.FindByIdAsync(Arg.Is<Guid>(id => id != Users[0].UserId && id != Users[1].UserId))
+                .Returns(Result<User>.Failure("Not found"));
 
             return mockUserRepository;
         }
