@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Folder Include="Commands\" />
+    <Folder Include="TaskItems\Commands\" />
   </ItemGroup>
 
 </Project>
