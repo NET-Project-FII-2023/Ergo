@@ -86,7 +86,7 @@ namespace Ergo.App.Services
                     Console.WriteLine($"Received {comments.Comments.Count} comments");
                     foreach (var comment in comments.Comments)
 					{
-						Console.WriteLine($"Received Comment: {comment.CommentText}");
+						Console.WriteLine($"Received Comment: {comment.CommentId}");
 					}
 				}
                 else

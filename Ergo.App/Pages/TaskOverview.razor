@@ -231,7 +231,8 @@ else
                         <li class="mb-2" title="Last modified: @comment.LastModifiedDate.ToString()">
                             @if (commentBeingEdited != null && commentBeingEdited.CommentId == comment.CommentId)
                             {
-                                <textarea class="form-control text-dark" @bind="commentBeingEdited.CommentText"></textarea>
+                                <p>Selected Comment ID: @comment.CommentId</p>
+                            <textarea class="form-control text-dark" @bind="commentBeingEdited.CommentText"></textarea>
                                 <div class="mt-2">
                                     <button class="btn btn-outline-primary btn-sm" @onclick="SaveCommentEdit">Save</button>
                                     <button class="btn btn-outline-secondary btn-sm" @onclick="CancelCommentEdit">Cancel</button>
@@ -242,10 +243,11 @@ else
                                 <div class="d-flex justify-content-between align-items-center bg-secondary-light text-dark p-2 rounded">
                                     <div>
                                         <strong>@comment.CreatedBy:</strong> @comment.CommentText
+                                        <p>Comment ID: @comment.CommentId</p>
                                     </div>
                                     @if (comment.CanEdit)
                                     {
-                                        <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => BeginEditComment(comment)"/>
+                                        <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => {DisplayCommentId(comment.CommentId);BeginEditComment(comment);}"/>
                                     }
                                 </div>
                             }
@@ -266,13 +268,13 @@ else
 }
 
 @code {
-        [Inject]
-        public ITaskDataService TaskDataService { get; set; }
+    [Inject]
+    public ITaskDataService TaskDataService { get; set; }
 
-        [Inject] ICommentDataService CommentDataService { get; set; }
+    [Inject] ICommentDataService CommentDataService { get; set; }
 
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
 
     public List<TaskViewModel> Tasks { get; set; }
 
@@ -292,6 +294,7 @@ else
     private Modal modal = default!;
 
     private Guid selectedTaskId;
+    private Guid selectedCommentId;
 
     private Modal commentModal = default!;
 
@@ -367,7 +370,7 @@ else
     private void BeginEditComment(CommentViewModel comment)
     {
 
-        commentBeingEdited = comment;
+            commentBeingEdited = comment;
     }
 
     private async Task SaveCommentEdit()
@@ -381,24 +384,37 @@ else
 
         if (commentBeingEdited != null)
         {
+            commentBeingEdited.CommentId = selectedCommentId;
+            commentBeingEdited.CreatedBy = username;
+            commentBeingEdited.LastModifiedBy = username;
+            commentBeingEdited.LastModifiedDate = DateTime.UtcNow;
+            commentBeingEdited.TaskId = selectedTaskId;
+
 
             var updateCommentDto = new UpdateCommentDto
                 {
                     CommentId = commentBeingEdited.CommentId,
-                    CreatedBy = username,
+                    CreatedBy = commentBeingEdited.CreatedBy,
                     CommentText = commentBeingEdited.CommentText,
-                    LastModifiedBy = username, 
-                    LastModifiedDate = DateTime.UtcNow,
+                    LastModifiedBy = commentBeingEdited.LastModifiedBy,
+                    LastModifiedDate = commentBeingEdited.LastModifiedDate,
                     TaskId= commentBeingEdited.TaskId
 
                 };
-            
+
+            Console.WriteLine("CommentId: " + commentBeingEdited.CommentId +
+            "CreatedBy: " + commentBeingEdited.CreatedBy + 
+            "CommentText: " + commentBeingEdited.CommentText + 
+            "LastModifiedBy: " + commentBeingEdited.LastModifiedBy +
+            "LastModifiedDate: " + commentBeingEdited.LastModifiedDate +
+            "TaskId: " + commentBeingEdited.TaskId);
+
             var response = await CommentDataService.UpdateCommentAsync(updateCommentDto);
 
             if (response.IsSuccess)
             {
                 Message = "Comment updated successfully";
-                
+
                 await detailsModal.HideAsync();
             }
             else
@@ -428,12 +444,13 @@ else
         selectedTask = Tasks.FirstOrDefault(t => t.TaskItemId == taskId);
 
         var comments = await CommentDataService.GetCommentsByTaskIdAsync(taskId);
-        
+
         var currentUser = await TaskDataService.GetUsernameFromTokenAsync();
 
 
         commentsList = comments.Select(comment => new CommentViewModel
             {
+                CommentId = comment.CommentId,
                 CommentText = comment.CommentText,
                 CreatedBy = comment.CreatedBy,
                 LastModifiedDate = comment.LastModifiedDate,
@@ -456,6 +473,11 @@ else
 
     }
 
+    private void DisplayCommentId(Guid commentId)
+    {
+        selectedCommentId = commentId;
+        Console.WriteLine("Selected Comment ID: " + selectedCommentId);
+    }
     private async Task HideCommentModal()
     {
         await commentModal.HideAsync();

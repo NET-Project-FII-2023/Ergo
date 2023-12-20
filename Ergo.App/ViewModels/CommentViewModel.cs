@@ -4,6 +4,9 @@ namespace Ergo.App.ViewModels
 {
     public class CommentViewModel
     {
+
+       
+        public Guid CommentId { get; set; }
         [Required(ErrorMessage = "Created by is required.")]
         [StringLength(50, ErrorMessage = "Created by must be 50 characters or less.")]
         public string CreatedBy { get; set; } = default!;
@@ -28,8 +31,6 @@ namespace Ergo.App.ViewModels
 
         [Required(ErrorMessage = "Task ID is required.")]
         public Guid TaskId { get; set; }
-
-        public Guid CommentId { get; set; }
 
         public bool CanEdit { get; set; }
 
