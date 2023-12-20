@@ -184,32 +184,33 @@ else
             <div class="modal-body text-dark">
                 @if (selectedTask != null && !selectedTask.IsTitleEditMode)
                 {
-                    <h5 class="card-title">@selectedTask.TaskName</h5>
-                    <button class="btn btn-edit" @onclick="ToggleTitleEditMode">Edit Title</button>
+                    <h2 class="card-title">@selectedTask.TaskName</h2>
+                    <button class="btn btn-outline-primary btn-sm" @onclick="ToggleTitleEditMode">Edit</button>
                 }
                 else
                 {
                     <input class="form-control text-dark" @bind="selectedTask.TaskName" />
                     <div class="mt-2">
-                        <button class="btn btn-edit btn-sm" @onclick="SaveTitleEdit">Save</button>
-                        <button class="btn btn-edit btn-sm" @onclick="CancelTitleEdit">Cancel</button>
+                        <button class="btn btn-outline-primary btn-sm" @onclick="SaveTitleEdit">Save</button>
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="CancelTitleEdit">Cancel</button>
                     </div>
                 }
                 @if (selectedTask != null && !selectedTask.DescriptionEditMode)
                 {
+                    <h5 class="card-title mt-4">Description</h5>
                     <p>@selectedTask.Description</p>
-                    <button class="btn btn-edit" @onclick="ToggleDescriptionEditMode">Edit Description</button>
+                    <button class="btn btn-outline-primary btn-sm" @onclick="ToggleDescriptionEditMode">Edit</button>
                 }
                 else
                 {
-                    <textarea class="form-control text-dark" @bind="selectedTask.Description"></textarea>
-                    <div class="mt-2">
-                        <button class="btn btn-edit btn-sm" @onclick="SaveDescriptionEdit">Save</button>
-                        <button class="btn btn-edit btn-sm" @onclick="CancelDescriptionEdit">Cancel</button>
+                    <textarea class="form-control text-dark mt-4" @bind="selectedTask.Description"></textarea>
+                    <div class="mt-4">
+                        <button class="btn btn-outline-primary btn-sm" @onclick="SaveDescriptionEdit">Save</button>
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="CancelDescriptionEdit">Cancel</button>
                     </div>
                 }
 
-                <h6>Comments:</h6>
+                <h5 class="mt-4">Comments:</h5>
                 <ul class="list-unstyled">
                     @foreach (var comment in commentsList)
                     {
@@ -218,8 +219,8 @@ else
                             {
                                 <textarea class="form-control text-dark" @bind="commentBeingEdited.CommentText"></textarea>
                                 <div class="mt-2">
-                                    <button class="btn btn-edit btn-sm" @onclick="SaveCommentEdit">Save</button>
-                                    <button class="btn btn-edit btn-sm" @onclick="CancelCommentEdit">Cancel</button>
+                                    <button class="btn btn-outline-primary btn-sm" @onclick="SaveCommentEdit">Save</button>
+                                    <button class="btn btn-outline-secondary btn-sm" @onclick="CancelCommentEdit">Cancel</button>
                                 </div>
                             }
                             else
@@ -230,7 +231,7 @@ else
                                     </div>
                                     @if (comment.CanEdit)
                                     {
-                                        <button class="btn btn-outline-info btn-sm" @onclick="() => BeginEditComment(comment)">Edit</button>
+                                        <button class="btn btn-outline-primary btn-sm" @onclick="() => BeginEditComment(comment)">Edit</button>
                                     }
                                 </div>
                             }
