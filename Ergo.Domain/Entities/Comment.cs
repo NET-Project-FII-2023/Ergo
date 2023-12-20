@@ -14,7 +14,7 @@ namespace Ergo.Domain.Entities
             TaskId = taskId;
 
         }
-        private Comment()
+        public Comment()
         {
             
         }
