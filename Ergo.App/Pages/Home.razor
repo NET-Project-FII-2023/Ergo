@@ -1,11 +1,48 @@
 ﻿@page "/"
 @using Ergo.App.Contracts
 @using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
+
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, Ergo!</h1>
+<style>
+    .stars-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        pointer-events: none;
+    }
 
-Welcome to your new app!.
+    .star {
+        position: absolute;
+        background-color: #fff;
+        border-radius: 50%;
+        animation: moveStar linear infinite;
+    }
+    body{
+        overflow:hidden;
+        margin:0;
+    }
+
+   
+</style>
+
+<div class="stars-container">
+    @for (int i = 0; i < 250; i++)
+    {
+        var size = Random.Next(1, 3); 
+        var darkness = Random.Next(75, 85); 
+        <div class="star" style="width: @(size)px; height: @(size)px; top: @(Random.Next(10, 100))vh; left: @(Random.Next(15, 100))vw; animation-duration: @(Random.Next(5, 33))s; opacity: 0.@darkness;"></div>
+    }
+</div>
+
+<div class="d-flex justify-content-center align-items-center flex-column" style="width: 80vw; height: 85vh; overflow-y:hidden;">
+    <h1>Ergo</h1>
+    <h5>Created for work, so you can work to create</h5>
+</div>
 
 <br />
 <CascadingAuthenticationState>
@@ -17,7 +54,8 @@ Welcome to your new app!.
         </NotAuthorized>
     </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
 </CascadingAuthenticationState>
-@functions {
+
+@code {
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
@@ -30,4 +68,6 @@ Welcome to your new app!.
     {
         NavigationManager.NavigateTo("/register");
     }
+
+    private Random Random = new Random();
 }
