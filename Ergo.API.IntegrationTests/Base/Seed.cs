@@ -14,6 +14,15 @@ namespace Ergo.API.IntegrationTests.Base
                 Project.Create("Github", "Angular", null, DateTime.UtcNow, "John").Value,
                 Project.Create("LFAC", "C", null, DateTime.UtcNow, "Josh").Value,
             };
+            var tasks = new List<TaskItem>
+            {
+                TaskItem.Create("Ergo", "Create project", DateTime.UtcNow,"John",Guid.NewGuid()).Value,
+                TaskItem.Create("Labs", "Create project", DateTime.UtcNow,"George",Guid.NewGuid()).Value,
+                TaskItem.Create("Github", "Create project", DateTime.UtcNow,"John",Guid.NewGuid()).Value,
+                TaskItem.Create("LFAC", "Create project", DateTime.UtcNow,"Josh",Guid.NewGuid()).Value,
+
+            };
+            context.TaskItems.AddRange(tasks);
             context.Projects.AddRange(projects);
             context.SaveChanges();
         }
