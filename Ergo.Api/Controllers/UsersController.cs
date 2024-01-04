@@ -4,6 +4,7 @@ using Ergo.Application.Features.Users.Commands.UpdateUser;
 using Ergo.Application.Features.Users.Queries.GetAll;
 using Ergo.Application.Features.Users.Queries.GetByEmail;
 using Ergo.Application.Features.Users.Queries.GetById;
+using Ergo.Application.Features.Users.Queries.GetByProjectId;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -100,6 +101,19 @@ public class UsersController : ApiControllerBase
             return BadRequest("The ids must be the same!");
         }
         var result = await Mediator.Send(command);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [Authorize(Roles = "User")]
+    [HttpGet("ByProjectId/{projectId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUsersByProjectId(string projectId)
+    {
+        var query = new GetUsersByProjectIdQuery { ProjectId = projectId };
+        var result = await Mediator.Send(query);
         if (!result.Success)
         {
             return BadRequest(result);

@@ -1,5 +1,9 @@
-﻿using Infrastructure;
+﻿using Ergo.Application.Persistence;
+using Ergo.Identity;
+using Ergo.Identity.Models;
+using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +43,11 @@ namespace Ergo.API.IntegrationTests.Base
                             options.Configuration.SigningKeys.Add(JwtTokenProvider.SecurityKey);
                         }
                     );
+                    services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
+                    services.AddDbContext<ApplicationDbContext>(options =>
+                    {
+                        options.UseInMemoryDatabase("ErgoUserDbForTesting");
+                    });
                     var sp = services.BuildServiceProvider();
                     using (var scope = sp.CreateScope())
                     {
@@ -48,6 +57,13 @@ namespace Ergo.API.IntegrationTests.Base
                         db.Database.EnsureCreated();
 
                         Seed.InitializeDbForTests(db);
+                        var ergoUserDb = scopedServices.GetRequiredService<ApplicationDbContext>();
+                        ergoUserDb.Database.EnsureCreated();
+                        var userManager = scopedServices.GetRequiredService<UserManager<ApplicationUser>>();
+                        var roleManager = scopedServices.GetRequiredService<RoleManager<IdentityRole>>();
+                        var userRepository = scopedServices.GetRequiredService<IUserRepository>();
+                        Seed.InitializeUserDbForTests(userManager, roleManager, userRepository);
+
                     }
                 });
             });

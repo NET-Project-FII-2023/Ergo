@@ -8,12 +8,19 @@ namespace Ergo.Application.Tests.Projects.Commands
     public class CreateProjectCommandHandlerTests : IDisposable
     {
         private readonly IProjectRepository _mockProjectRepository;
+        private readonly IUserManager _mockUserManager;
+        private readonly IUserRepository _mockUserRepository;
+
         private readonly CreateProjectCommandHandler _handler;
+
 
         public CreateProjectCommandHandlerTests()
         {
             _mockProjectRepository = Substitute.For<IProjectRepository>();
-            _handler = new CreateProjectCommandHandler(_mockProjectRepository);
+            _mockUserManager = Substitute.For<IUserManager>();
+            _mockUserRepository = Substitute.For<IUserRepository>();
+
+            _handler = new CreateProjectCommandHandler(_mockProjectRepository,_mockUserManager,_mockUserRepository);
         }
 
         [Fact]
@@ -22,7 +29,7 @@ namespace Ergo.Application.Tests.Projects.Commands
             // Arrange
             var command = new CreateProjectCommand
             {
-                ProjectName = "New Project",
+                ProjectName = "New Project", 
                 Description = "Description",
                 GitRepository = "https://example.com/repo.git",
                 FullName = "John Doe",
@@ -42,18 +49,23 @@ namespace Ergo.Application.Tests.Projects.Commands
         public async Task Handle_ValidationFailure()
         {
             // Arrange
-            var invalidCommand = new CreateProjectCommand
+            var command = new CreateProjectCommand
             {
-                // Missing required fields
+                ProjectName = "New Project",
+                Description = "Description",
+                GitRepository = "https://example.com/repo.git",
+                FullName = "John Doe",
+                Deadline = DateTime.Now.AddDays(-10)
             };
 
             // Act
-            var result = await _handler.Handle(invalidCommand, CancellationToken.None);
+            var result = await _handler.Handle(command, CancellationToken.None);
 
             // Assert
             result.Should().NotBeNull();
             result.Success.Should().BeFalse();
             result.ValidationsErrors.Should().NotBeEmpty();
+            
         }
 
         public void Dispose()

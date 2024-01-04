@@ -1,5 +1,12 @@
-﻿using Ergo.Domain.Entities;
+﻿using Ergo.Application.Models.Identity;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+using Ergo.Identity;
+using Ergo.Identity.Models;
+using Ergo.Identity.Services;
 using Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace Ergo.API.IntegrationTests.Base
 {
@@ -25,6 +32,27 @@ namespace Ergo.API.IntegrationTests.Base
             context.TaskItems.AddRange(tasks);
             context.Projects.AddRange(projects);
             context.SaveChanges();
+        }
+        public static async Task InitializeUserDbForTests(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IUserRepository userRepository)
+        {
+            var configuration = new ConfigurationBuilder().Build(); 
+            var authService = new AuthService(userManager, roleManager, configuration, null, userRepository); 
+
+            var registrationModels = new List<RegistrationModel>
+        {
+            new RegistrationModel{ Username = "john_doe", Email = "john.doe@example.com", Name = "John Doe", Password = "ComplexPass1!"},
+            new RegistrationModel{ Username = "jane_doe", Email = "jane_doe@example.com", Name = "Jane Doe", Password = "ComplexPass1!"},
+
+        };
+
+            foreach (var model in registrationModels)
+            {
+                var (status, message) = await authService.Registeration(model, UserRoles.User);
+                if (status == 0)
+                {
+                    Console.WriteLine($"Failed to create user: {message}");
+                }
+            }
         }
     }
 }

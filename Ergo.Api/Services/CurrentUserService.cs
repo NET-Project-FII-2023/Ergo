@@ -26,7 +26,7 @@ namespace WebAPI.Services
 
         public string GetCurrentUserId()
         {
-            return GetCurrentClaimsPrincipal()?.GetObjectId()!;
+            return GetCurrentClaimsPrincipal()?.GetDisplayName()!;
         }
     }
 }

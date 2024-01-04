@@ -1,3 +1,4 @@
+using Ergo.Application.Features.Projects.Commands.AssignUserToProject;
 using Ergo.Application.Persistence;
 using Ergo.Domain.Entities;
 using MediatR;
@@ -6,10 +7,14 @@ namespace Ergo.Application.Features.Projects.Commands.CreateProject
     public class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, CreateProjectCommandResponse>
     {
         private readonly IProjectRepository projectRepository;
+        private readonly IUserManager userManager;
+        private readonly IUserRepository userRepository;
 
-        public CreateProjectCommandHandler(IProjectRepository projectRepository)
+        public CreateProjectCommandHandler(IProjectRepository projectRepository, IUserManager userManager, IUserRepository userRepository)
         {
             this.projectRepository = projectRepository;
+            this.userManager = userManager;
+            this.userRepository = userRepository;
         }
 
         public async Task<CreateProjectCommandResponse> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
@@ -25,7 +30,24 @@ namespace Ergo.Application.Features.Projects.Commands.CreateProject
                     ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
                 };
             }
-
+            var userByUsername = await userManager.FindByUsernameAsync(request.FullName);
+            if (!userByUsername.IsSuccess)
+            {
+                return new CreateProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { userByUsername.Error }
+                };
+            }
+            var user = await userRepository.FindByIdAsync(Guid.Parse(userByUsername.Value.UserId));
+            if (!user.IsSuccess)
+            {
+                return new CreateProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { user.Error }
+                };
+            }
             var project = Project.Create(request.ProjectName, request.Description, request.GitRepository, request.Deadline, request.FullName);
             if (!project.IsSuccess)
             {
@@ -37,6 +59,17 @@ namespace Ergo.Application.Features.Projects.Commands.CreateProject
             }
 
             await projectRepository.AddAsync(project.Value);
+            var assignResult = project.Value.AssignUser(user.Value);
+            if (!assignResult.IsSuccess)
+            {
+                return new CreateProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { assignResult.Error }
+                };
+            }
+            var result = await projectRepository.UpdateAsync(project.Value);
+
             return new CreateProjectCommandResponse
             {
                 Success = true,
@@ -52,4 +85,5 @@ namespace Ergo.Application.Features.Projects.Commands.CreateProject
             };
         }
     }
+
 }
