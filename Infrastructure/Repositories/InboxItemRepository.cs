@@ -13,5 +13,11 @@ namespace Infrastructure.Repositories
         public InboxItemRepository(ErgoContext context) : base(context)
         { 
         }
+
+        public Task<List<InboxItem>> GetByUserIdAsync(Guid userId)
+        {
+            return Task.FromResult(context.InboxItems.Where(i => i.UserId == userId).ToList());
+            
+        }
     }
 }

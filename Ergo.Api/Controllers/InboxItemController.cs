@@ -1,4 +1,5 @@
 ﻿using Ergo.Application.Features.InboxItems.Commands;
+using Ergo.Application.Features.InboxItems.Queries.GetByUserId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +16,18 @@ namespace Ergo.Api.Controllers
         public async Task<IActionResult> Create(CreateInboxItemCommand command)
         {
             var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [Authorize(Roles = "User")]
+        [HttpGet("{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetByUserId(Guid userId)
+        {
+            var result = await Mediator.Send(new GetByUserIdQuery { UserId = userId });
             if (!result.Success)
             {
                 return BadRequest(result);

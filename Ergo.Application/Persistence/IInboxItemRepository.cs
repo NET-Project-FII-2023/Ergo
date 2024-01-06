@@ -9,5 +9,6 @@ namespace Ergo.Application.Persistence
 {
     public interface IInboxItemRepository : IAsyncRepository<InboxItem>
     {
+        Task<List<InboxItem>> GetByUserIdAsync(Guid userId);
     }
 }
