@@ -1,4 +1,4 @@
-﻿using Ergo.Application.Features.InboxItems.Commands;
+﻿using Ergo.Application.Features.InboxItems.Commands.CreateInboxItem;
 using Ergo.Application.Responses;
 
 namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
@@ -9,6 +9,6 @@ namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
         {
 
         }
-        public List<CreateInboxItemDto> InboxItems { get; set;}
+        public List<GetByUserIdDto> InboxItems { get; set;}
     }
 }

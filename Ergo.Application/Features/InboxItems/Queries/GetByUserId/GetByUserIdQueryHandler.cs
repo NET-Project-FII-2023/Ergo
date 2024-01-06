@@ -1,4 +1,4 @@
-﻿using Ergo.Application.Features.InboxItems.Commands;
+﻿using Ergo.Application.Features.InboxItems.Commands.CreateInboxItem;
 using Ergo.Application.Persistence;
 using MediatR;
 
@@ -30,14 +30,17 @@ namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
             return new GetByUserIdQueryResponse
             {
                 Success = true,
-                InboxItems = inboxItems.Select(i => new CreateInboxItemDto
+                InboxItems = inboxItems.Select(x => new GetByUserIdDto
                 {
-                    Message = i.Message,
-                    UserId = i.UserId,
-                    CreatedDate = i.CreatedDate,
-                    IsRead = i.IsRead
+                   InboxId = x.InboxItemId,
+                   UserId = x.UserId,
+                   Message = x.Message,
+                   CreatedDate = x.CreatedDate,
+                   IsRead = x.IsRead,
+
                 }).ToList()
             };
+               
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Ergo.Application.Features.InboxItems.Commands
+namespace Ergo.Application.Features.InboxItems.Commands.CreateInboxItem
 {
     public class CreateInboxItemCommandValidator : AbstractValidator<CreateInboxItemCommand>
     {

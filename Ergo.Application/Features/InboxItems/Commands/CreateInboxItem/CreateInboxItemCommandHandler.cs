@@ -2,7 +2,7 @@
 using Ergo.Domain.Entities;
 using MediatR;
 
-namespace Ergo.Application.Features.InboxItems.Commands
+namespace Ergo.Application.Features.InboxItems.Commands.CreateInboxItem
 {
     public class CreateInboxItemCommandHandler : IRequestHandler<CreateInboxItemCommand, CreateInboxItemCommandResponse>
     {
@@ -19,7 +19,7 @@ namespace Ergo.Application.Features.InboxItems.Commands
         {
             var validator = new CreateInboxItemCommandValidator();
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-            if(!validatorResult.IsValid)
+            if (!validatorResult.IsValid)
             {
                 return new CreateInboxItemCommandResponse
                 {
@@ -28,7 +28,7 @@ namespace Ergo.Application.Features.InboxItems.Commands
                 };
             }
             var userExists = await userRepository.FindByIdAsync(request.UserId);
-            if(!userExists.IsSuccess)
+            if (!userExists.IsSuccess)
             {
                 return new CreateInboxItemCommandResponse
                 {
@@ -37,7 +37,7 @@ namespace Ergo.Application.Features.InboxItems.Commands
                 };
             }
             var inboxItem = InboxItem.Create(request.UserId, request.Message);
-            if(!inboxItem.IsSuccess)
+            if (!inboxItem.IsSuccess)
             {
                 return new CreateInboxItemCommandResponse
                 {

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Ergo.Application.Features.InboxItems.Commands
+namespace Ergo.Application.Features.InboxItems.Commands.CreateInboxItem
 {
     public class CreateInboxItemCommand : IRequest<CreateInboxItemCommandResponse>
     {

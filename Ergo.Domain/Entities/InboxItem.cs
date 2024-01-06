@@ -1,5 +1,4 @@
 ﻿using Ergo.Domain.Common;
-using System.ComponentModel;
 
 namespace Ergo.Domain.Entities
 {
@@ -33,6 +32,11 @@ namespace Ergo.Domain.Entities
                 return Result<InboxItem>.Failure(Constants.MessageRequired);
             }
             return Result<InboxItem>.Success(new InboxItem(userId, message));
+        }
+        public Result<InboxItem> UpdateIsRead(bool isRead)
+        {
+            IsRead = isRead;
+            return Result<InboxItem>.Success(this);
         }
 
     }
