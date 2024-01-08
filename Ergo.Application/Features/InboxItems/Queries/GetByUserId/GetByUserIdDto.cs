@@ -8,7 +8,7 @@ namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
 {
     public class GetByUserIdDto
     {
-        public Guid InboxId { get; set; }
+        public Guid InboxItemId { get; set; }
         public Guid UserId { get; set; }
         public string Message { get; set; }
         public DateTime CreatedDate { get; set; }

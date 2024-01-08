@@ -1,17 +1,33 @@
 ﻿@using Ergo.App.Contracts
 @using Ergo.App.ViewModels
 @using Blazored.LocalStorage
+@using Ergo.App.Components
 @inject ILocalStorageService LocalStorageService
 
 <div class="top-row ps-3 navbar navbar-dark vw-100" style="background-color: #181818">
-    <div class="container-fluid">
-            <a class="d-flex align-items-center justify-content-center gap-2 navbar-brand" href="">
-                <img src="/images/logo.png" alt="logo" width="35px" height="35px"/>
-                <span class="h3 mb-0 ml-1">Ergo</span>
-            </a>
+    <div class="container-fluid justify-start">
+        <a class="d-flex align-items-center justify-content-center gap-2 navbar-brand" href="">
+            <img src="/images/logo.png" alt="logo" width="35px" height="35px"/>
+            <span class="h3 mb-0 ml-1">Ergo</span>
+        </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
+        
+        <div class="notification-btn">
+            <Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState>
+                <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+                    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
+
+                        <a href="#" class="d-flex" @onclick:preventDefault="true" @onclick="ToggleNotificationsPanel">
+                            <i class="bi bi-notifications"></i>
+                        </a>
+
+                    </Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
+                </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+            </Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState>
+        </div>
+        
         <div>
             <Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState>
                 <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
@@ -26,6 +42,45 @@
             </Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState>
         </div>
     </div>
+    @if (showNotificationsPanel)
+    {
+        <div id="notificationPanel" class="notification-panel">
+            <button class="close-button" @onclick:preventDefault="true" @onclick="CloseNotificationsPanel">
+                &times;
+            </button>
+            <nav class="flex-column">
+                <div class="nav-item px-3 mt-3" style="border-bottom: 1px solid #ccc;">
+                    <h2>Notifications</h2>
+                </div>
+                
+                @if (inboxItems != null)
+                {
+                    @foreach (var inboxItem in inboxItems)
+                    {
+                        <div class="nav-item px-3" style="border-bottom: 1px solid #ccc; padding: 10px 0;">
+                            <div class="d-flex justify-content-between">
+                                <p style="font-size: 0.9rem; padding-top: 2px">@inboxItem.CreatedDate.ToString("yyyy-MM-dd HH:mm")</p>
+                                <div>
+                                    @if (inboxItem.IsRead)
+                                    {
+                                        <span class="badge bg-success">Read</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success" style="cursor: pointer" @onclick="() => MarkAsRead(inboxItem)">
+                                            Mark as Read
+                                        </span>
+                                        <span class="badge bg-warning text-dark">Unread</span>
+                                    }
+                                </div>
+                            </div>
+                            <p style="font-size: 1.2rem">@inboxItem.Message</p>
+                        </div>
+                    }
+                }
+            </nav>
+        </div>
+    }
 </div>
 
 <div class="@NavMenuCssClass nav-scrollable" style=" background-color: #333" @onclick="ToggleNavMenu">
@@ -98,15 +153,22 @@
 @code {
     [Inject]
     public IProjectDataService ProjectDataService { get; set; }
+    
+    [Inject]
+    public IInboxItemDataService InboxItemDataService { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
     public List<ProjectViewModel> projects { get; set; } = new List<ProjectViewModel>();
+    
+    public List<InboxItemViewModel> inboxItems { get; set; } = new List<InboxItemViewModel>();
 
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    
+    private bool showNotificationsPanel = false;
 }
 
 @functions
@@ -125,6 +187,9 @@
             try
             {
                 projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
+                inboxItems = await InboxItemDataService.GetInboxItemsByUserIdFromTokenAsync();
+                //sort inbox items by date
+                inboxItems = inboxItems.OrderByDescending(i => i.CreatedDate).ToList();
 
             }
             catch (UnauthorizedAccessException)
@@ -134,4 +199,44 @@
             }
         }
     }
+    
+    private void ToggleNotificationsPanel()
+    {
+        showNotificationsPanel = !showNotificationsPanel;
+    }
+    
+    private void CloseNotificationsPanel()
+    {
+        showNotificationsPanel = false;
+    }
+    
+    private async Task MarkAsRead(InboxItemViewModel inboxItem)
+    {
+        try
+        {
+            InboxItemViewModel newInboxItem = new InboxItemViewModel
+            {
+                InboxItemId = inboxItem.InboxItemId,
+                Message = inboxItem.Message,
+                IsRead = true,
+                CreatedDate = inboxItem.CreatedDate,
+                UserId = inboxItem.UserId
+            };
+            await InboxItemDataService.UpdateInboxItemAsync(newInboxItem);
+            
+            var index = inboxItems.FindIndex(i => i.InboxItemId == inboxItem.InboxItemId);
+            if (index != -1)
+            {
+                inboxItems[index] = newInboxItem;
+            }
+            
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
 }
