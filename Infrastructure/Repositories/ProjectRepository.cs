@@ -1,4 +1,5 @@
 using Ergo.Application.Features.Projects.Queries;
+using Ergo.Application.Features.Users.Queries;
 using Ergo.Application.Persistence;
 using Ergo.Domain.Common;
 using Ergo.Domain.Entities;
@@ -34,6 +35,20 @@ public class ProjectRepository : BaseRepository<Project>, IProjectRepository
         .ToListAsync();
 
         return Result<List<ProjectDto>>.Success(userWithProjects);
+
+    }
+
+    public async Task<Result<List<UserProjectDto>>> GetUsersByProjectId(Guid projectId)
+    {
+        var projectWithUsers = await context.Projects
+            .Where(p => p.ProjectId == projectId)
+            .SelectMany(p => p.Members)
+            .Select(u => new UserProjectDto
+            {
+                UserId = u.UserId,
+            })
+            .ToListAsync();
+        return Result<List<UserProjectDto>>.Success(projectWithUsers);
 
     }
 }

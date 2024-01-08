@@ -223,7 +223,5 @@ namespace Ergo.Domain.Tests
             //Assert
             startDateValue.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
         }
-
-
     }
 }

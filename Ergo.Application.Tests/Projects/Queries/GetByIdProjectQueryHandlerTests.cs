@@ -39,7 +39,7 @@ namespace Ergo.Application.Tests.Projects.Queries
         public async Task GetByIdProjectQueryHandler_ReturnsEmptyProject_WhenProjectDoesNotExist()
         {
             // Arrange
-            var nonExistingProjectId = Guid.NewGuid();
+            var nonExistingProjectId = new Guid("5d11bab1-5e48-48e4-bbd4-66231af60474");
             var query = new GetByIdProjectQuery(nonExistingProjectId);
 
             _mockProjectRepository.FindByIdAsync(nonExistingProjectId)
@@ -58,7 +58,7 @@ namespace Ergo.Application.Tests.Projects.Queries
         public async Task GetByIdProjectQueryHandler_ThrowsException_WhenRepositoryFails()
         {
             // Arrange
-            var projectId = Guid.NewGuid();
+            var projectId = new Guid("5d11bab1-5e48-48e4-bbd4-66231af60474");
             var query = new GetByIdProjectQuery(projectId);
 
             _mockProjectRepository.FindByIdAsync(projectId)

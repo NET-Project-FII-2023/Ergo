@@ -1,0 +1,67 @@
+﻿using Ergo.Application.Models.Identity;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+using Ergo.Identity;
+using Ergo.Identity.Models;
+using Ergo.Identity.Services;
+using Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+
+namespace Ergo.API.IntegrationTests.Base
+{
+    public class Seed
+    {
+        public static void InitializeDbForTests(ErgoContext context)
+        {
+            var projects = new List<Project>
+            {
+                Project.Create("Ergo", ".NET", null, DateTime.UtcNow, "John").Value,
+                Project.Create("Labs", ".NET", null, DateTime.UtcNow, "George").Value,
+                Project.Create("Github", "Angular", null, DateTime.UtcNow, "John").Value,
+                Project.Create("LFAC", "C", null, DateTime.UtcNow, "Josh").Value,
+            };
+            var tasks = new List<TaskItem>
+            {
+                TaskItem.Create("Ergo", "Create project", DateTime.UtcNow,"John",Guid.NewGuid()).Value,
+                TaskItem.Create("Labs", "Create project", DateTime.UtcNow,"George",Guid.NewGuid()).Value,
+                TaskItem.Create("Github", "Create project", DateTime.UtcNow,"John",Guid.NewGuid()).Value,
+                TaskItem.Create("LFAC", "Create project", DateTime.UtcNow,"Josh",Guid.NewGuid()).Value,
+
+            };
+            var users = new List<User>
+            {
+                User.Create(Guid.NewGuid()).Value,
+                User.Create(Guid.NewGuid()).Value,
+                User.Create(Guid.NewGuid()).Value,
+                User.Create(Guid.NewGuid()).Value,
+            };
+            context.TaskItems.AddRange(tasks);
+            context.Projects.AddRange(projects);
+            context.Users.AddRange(users);
+            context.SaveChanges();
+
+        }
+        public static async Task InitializeUserDbForTests(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IUserRepository userRepository)
+        {
+            var configuration = new ConfigurationBuilder().Build(); 
+            var authService = new AuthService(userManager, roleManager, configuration, null, userRepository); 
+
+            var registrationModels = new List<RegistrationModel>
+        {
+            new RegistrationModel{ Username = "john_doe", Email = "john.doe@example.com", Name = "John Doe", Password = "ComplexPass1!"},
+            new RegistrationModel{ Username = "jane_doe", Email = "jane_doe@example.com", Name = "Jane Doe", Password = "ComplexPass1!"},
+
+        };
+
+            foreach (var model in registrationModels)
+            {
+                var (status, message) = await authService.Registeration(model, UserRoles.User);
+                if (status == 0)
+                {
+                    Console.WriteLine($"Failed to create user: {message}");
+                }
+            }
+        }
+    }
+}

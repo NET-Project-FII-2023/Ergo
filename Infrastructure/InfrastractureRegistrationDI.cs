@@ -32,6 +32,7 @@ namespace Infrastructure
                 ITaskItemRepository, TaskItemRepository>();
             services.AddScoped<
                 IProjectRepository, ProjectRepository>();
+            services.AddScoped<IInboxItemRepository, InboxItemRepository>();
             return services;
         }
     }
