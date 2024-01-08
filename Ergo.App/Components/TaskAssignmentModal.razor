@@ -4,6 +4,19 @@
 @using BlazorBootstrap
 @using Ergo.App.Components
 
+<style>
+    .cool-button-2:hover {
+        border-radius: 3px;
+        border: 1px solid rgba(105, 228, 150, 0.7);
+        box-shadow: 0 0 5px green;
+    }
+
+    .cool-button-2 {
+        background: #282828;
+        border-radius:3px;
+    }
+</style>
+
 <Modal @ref="modal" Title="Assign a task to this project:">
     <BodyTemplate>
         <EditForm Model="@TaskViewModel">
@@ -53,7 +66,7 @@
     </BodyTemplate>
 </Modal>
 
-<Button Color="ButtonColor.Primary" @onclick="OnShowModalClick">Add Task</Button>
+<Button Color="ButtonColor.Primary" @onclick="OnShowModalClick" class="cool-button-2">Add Task</Button>
 
 @code{
 
