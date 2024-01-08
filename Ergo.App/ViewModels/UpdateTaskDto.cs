@@ -11,4 +11,5 @@ public class UpdateTaskDto
     public string? CreatedBy { get; set; }
     public Guid ProjectId { get; set; }
     public TaskState? State { get; set; }
+
 }

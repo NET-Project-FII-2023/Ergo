@@ -4,71 +4,112 @@
 @using Ergo.App.Auth
 @inject CustomStateProvider authStateProvider
 
-<h3>UserProfile</h3>
+<style>
+    .cool-input {
+        height: 3rem;
+        border-radius: 3px;
+        color: #d4d4d4;
+        border: 2px solid #1f1f1f;
+        background: #282828;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .cool-input:focus, .cool-input:active {
+        border: 1px solid rgba(105, 228, 150, 0.7);
+        color: #d4d4d4;
+        background: #282828;
+        outline: none;
+        box-shadow: 0 0 5px green;
+    }
+
+    .cool-button {
+        text-align:center;
+        height:2.5rem;
+        margin-top: 1rem;
+        border-radius: 3px;
+        background: rgba(105, 228, 150, 0.7);
+    }
+
+    .cool-button:hover {
+        border: 1px solid rgba(105, 228, 150, 0.7);
+        box-shadow: 0 0 5px green;
+    }
+
+    .cool-label {
+        color: #d4d4d4;
+        font-size: 15px;
+    }
+
+    .cool-form {
+        background: #282828;
+        border-radius: 4px;
+        padding: 45px 100px;
+        margin-top: 25px;
+    }
+
+</style>
+
+
+
 
 @if (User != null)
 {
     <div class="container">
-        <div class="row mb-3">
-            <label class="col-sm-2 col-form-label">Username:</label>
-            <div class="col-sm-10">
-                <input class="form-control" @bind="User.Username" />
-            </div>
-        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-5 cool-form">
+                <h3>Profile</h3>
+                <div class="mb-3">
+                    <label class="form-label cool-label">Username:</label>
+                    <input class="form-control cool-input" @bind="User.Username" />
+                </div>
 
-        <div class="row mb-3">
-            <label class="col-sm-2 col-form-label">Name:</label>
-            <div class="col-sm-10">
-                <input class="form-control" @bind="User.Name" />
-            </div>
-        </div>
+                <div class="mb-3">
+                    <label class="form-label cool-label">Name:</label>
+                    <input class="form-control cool-input" @bind="User.Name" />
+                </div>
 
-        <div class="row mb-3">
-            <label class="col-sm-2 col-form-label">Email:</label>
-            <div class="col-sm-10">
-                <input class="form-control" @bind="User.Email" />
-            </div>
-        </div>
+                <div class="mb-3">
+                    <label class="form-label cool-label">Email:</label>
+                    <input class="form-control cool-input" @bind="User.Email" />
+                </div>
+                <div class="column">
+                    <button class="btn btn-primary cool-button" @onclick="UpdateProfile">Update Profile</button>
+                    <button class="btn btn-primary cool-button" @onclick="Logout">Logout</button>
+                </div>
+      
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header">
+                                <strong class="me-auto">Update Profile Error</strong>
+                                <button type="button" class="btn-close" @onclick="DismissError" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body" style="color:red">
+                                @error
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Message))
+                {
 
-        <div class="row">
-            <div class="col-sm-10 offset-sm-2">
-                <button class="btn btn-primary" @onclick="UpdateProfile">Update Profile</button>
-            </div>
-
-            <div class="nav-item px-3">
-                <button class="btn btn-lg btn-primary btn-block" @onclick="Logout">Logout</button>
+                    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header">
+                                <strong class="me-auto">Update Profile</strong>
+                                <button type="button" class="btn-close" @onclick="DismissMessage" aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body" style="color:green">
+                                @Message
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
     </div>
-    @if (!string.IsNullOrEmpty(error))
-    {
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <strong class="me-auto">Update Profile Error</strong>
-                    <button type="button" class="btn-close" @onclick="DismissError" aria-label="Close"></button>
-                </div>
-                <div class="toast-body" style="color:red">
-                    @error
-                </div>
-            </div>
-        </div>
-    }
-    @if (!string.IsNullOrEmpty(Message))
-    {
-        
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <strong class="me-auto">Update Profile</strong>
-                    <button type="button" class="btn-close" @onclick="DismissMessage" aria-label="Close"></button>
-                </div>
-                <div class="toast-body" style="color:green">
-                    @Message
-                </div>
-            </div>
-        </div>
-    }
 }
 else
 {

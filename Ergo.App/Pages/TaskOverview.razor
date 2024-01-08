@@ -4,6 +4,8 @@
 @using Ergo.Domain.Entities.Enums;
 @using BlazorBootstrap
 @using Ergo.App.Components
+@inject IJSRuntime JSRuntime
+
 
 <style>
     body {
@@ -132,11 +134,11 @@ else
         </div>
     }
     <div class="row mt-2">
-        <div class="col-md-3">
+        <div class="col-md-3" ondragover="allowDrop(event)" ondrop="drop(event, 'ToDo')">
             <h4>To Do</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.ToDo))
             {
-                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -146,11 +148,11 @@ else
             }
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3" ondragover="allowDrop(event)" ondrop="drop(event, 'InProgress')">
             <h4>In Progress</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.InProgress))
             {
-                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3"  @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -160,7 +162,7 @@ else
             }
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-3" ondragover="allowDrop(event)" ondrop="drop(event, 'Done')">
             <h4>Done</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.Done))
             {
@@ -330,6 +332,7 @@ else
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
+
     public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
     public string Error { get; set; }
 
@@ -361,6 +364,11 @@ else
 
     private string projectId = default!;
 
+
+    private async Task DragStart(dynamic e, Guid taskId)
+    {
+        await JSRuntime.InvokeAsync<object>("dragStart", taskId);
+    }
 
 
     private void ToggleDescriptionEditMode()
@@ -752,3 +760,18 @@ else
         }
     }
 }
+<script>
+    window.dragStart = (taskId) => {
+        localStorage.setItem('draggedTaskId', taskId);
+    }
+
+    window.allowDrop = (e) => {
+        e.preventDefault();
+    }
+
+    window.drop = (e, column) => {
+        e.preventDefault();
+        const taskId = localStorage.getItem('draggedTaskId');
+        DotNet.invokeMethodAsync('ErgoProject', 'InProgress', taskId, column);
+    }
+</script>

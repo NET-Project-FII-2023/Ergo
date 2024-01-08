@@ -34,7 +34,7 @@
     @for (int i = 0; i < 250; i++)
     {
         var size = Random.Next(1, 3); 
-        var darkness = Random.Next(75, 85); 
+        var darkness = Random.Next(30, 40); 
         <div class="star" style="width: @(size)px; height: @(size)px; top: @(Random.Next(10, 100))vh; left: @(Random.Next(15, 100))vw; animation-duration: @(Random.Next(5, 33))s; opacity: 0.@darkness;"></div>
     }
 </div>
