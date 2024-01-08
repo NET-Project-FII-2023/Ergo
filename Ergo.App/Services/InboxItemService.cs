@@ -82,4 +82,22 @@ public class InboxItemService : IInboxItemDataService
             throw;
         }
     }
+    
+    public async Task<ApiResponse<InboxItemViewModel>> CreateInboxItemAsync(InboxItemViewModel inboxItemViewModel)
+    {
+        try
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.PostAsJsonAsync($"{RequestUri}", inboxItemViewModel);
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<InboxItemViewModel>>();
+            response!.IsSuccess = result.IsSuccessStatusCode;
+            return response!;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception during deserialization: {ex}");
+            throw;
+        }
+    }
 }

@@ -326,6 +326,9 @@ else
     [Inject] ICommentDataService CommentDataService { get; set; }
 
     [Inject] IProjectDataService ProjectDataService { get; set; }
+    
+    [Inject]
+    IInboxItemDataService InboxItemDataService { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
@@ -743,6 +746,17 @@ else
                     Error += result.ValidationErrors;
                 }
             }
+            
+            //send notification to user
+            var inboxItem = new InboxItemViewModel
+            {
+                UserId = userId,
+                Message = "You have been assigned to a new project.",
+                CreatedDate = DateTime.UtcNow,
+                IsRead = false
+            };
+            
+            await InboxItemDataService.CreateInboxItemAsync(inboxItem);
 
         }
         catch (Exception ex)

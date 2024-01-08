@@ -7,4 +7,5 @@ public interface IInboxItemDataService
 {
     Task<List<InboxItemViewModel>> GetInboxItemsByUserIdFromTokenAsync();
     Task<InboxItemViewModel> UpdateInboxItemAsync(InboxItemViewModel inboxItemViewModel);
+    Task<ApiResponse<InboxItemViewModel>> CreateInboxItemAsync(InboxItemViewModel inboxItemViewModel);
 }

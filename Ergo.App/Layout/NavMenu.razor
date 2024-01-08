@@ -19,7 +19,7 @@
                 <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
                     <Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
 
-                        <a href="" class="d-flex" @onclick="ToggleNotificationsPanel">
+                        <a href="#" class="d-flex" @onclick="ToggleNotificationsPanel">
                             <i class="bi bi-notifications"></i>
                         </a>
 
@@ -188,6 +188,8 @@
             {
                 projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
                 inboxItems = await InboxItemDataService.GetInboxItemsByUserIdFromTokenAsync();
+                //sort inbox items by date
+                inboxItems = inboxItems.OrderByDescending(i => i.CreatedDate).ToList();
 
             }
             catch (UnauthorizedAccessException)
