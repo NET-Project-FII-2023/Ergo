@@ -19,7 +19,7 @@
                 <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
                     <Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
 
-                        <a href="#" class="d-flex" @onclick="ToggleNotificationsPanel">
+                        <a href="#" class="d-flex" @onclick:preventDefault="true" @onclick="ToggleNotificationsPanel">
                             <i class="bi bi-notifications"></i>
                         </a>
 
@@ -45,7 +45,7 @@
     @if (showNotificationsPanel)
     {
         <div id="notificationPanel" class="notification-panel">
-            <button class="close-button" @onclick="CloseNotificationsPanel">
+            <button class="close-button" @onclick:preventDefault="true" @onclick="CloseNotificationsPanel">
                 &times;
             </button>
             <nav class="flex-column">
