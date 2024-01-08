@@ -1,6 +1,8 @@
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
 using Ergo.App.Contracts;
+using Ergo.App.Services.Responses;
 using Ergo.App.ViewModels;
 
 namespace Ergo.App.Services;
@@ -46,6 +48,33 @@ public class InboxItemService : IInboxItemDataService
             });
             
             return inboxItems?.InboxItems ?? new List<InboxItemViewModel>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception during deserialization: {ex}");
+            throw;
+        }
+    }
+    
+    public async Task<InboxItemViewModel> UpdateInboxItemAsync(InboxItemViewModel inboxItemViewModel)
+    {
+        try
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/{inboxItemViewModel.InboxItemId}", inboxItemViewModel);
+            result.EnsureSuccessStatusCode();
+            var content = await result.Content.ReadAsStringAsync();
+            
+            if (!result.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+            var inboxItem = JsonSerializer.Deserialize<InboxItemViewModel>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+            
+            return inboxItem!;
         }
         catch (Exception ex)
         {

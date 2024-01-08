@@ -32,7 +32,7 @@ namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
                 Success = true,
                 InboxItems = inboxItems.Select(x => new GetByUserIdDto
                 {
-                   InboxId = x.InboxItemId,
+                   InboxItemId = x.InboxItemId,
                    UserId = x.UserId,
                    Message = x.Message,
                    CreatedDate = x.CreatedDate,

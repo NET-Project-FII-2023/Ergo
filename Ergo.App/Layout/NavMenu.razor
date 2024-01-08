@@ -67,7 +67,7 @@
                                     }
                                     else
                                     {
-                                        <span class="badge bg-success" style="cursor: pointer" @onclick="() => { }">
+                                        <span class="badge bg-success" style="cursor: pointer" @onclick="() => MarkAsRead(inboxItem)">
                                             Mark as Read
                                         </span>
                                         <span class="badge bg-warning text-dark">Unread</span>
@@ -206,6 +206,35 @@
     private void CloseNotificationsPanel()
     {
         showNotificationsPanel = false;
+    }
+    
+    private async Task MarkAsRead(InboxItemViewModel inboxItem)
+    {
+        try
+        {
+            InboxItemViewModel newInboxItem = new InboxItemViewModel
+            {
+                InboxItemId = inboxItem.InboxItemId,
+                Message = inboxItem.Message,
+                IsRead = true,
+                CreatedDate = inboxItem.CreatedDate,
+                UserId = inboxItem.UserId
+            };
+            await InboxItemDataService.UpdateInboxItemAsync(newInboxItem);
+            
+            var index = inboxItems.FindIndex(i => i.InboxItemId == inboxItem.InboxItemId);
+            if (index != -1)
+            {
+                inboxItems[index] = newInboxItem;
+            }
+            
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
     
 }

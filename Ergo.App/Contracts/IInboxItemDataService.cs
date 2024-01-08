@@ -6,4 +6,5 @@ namespace Ergo.App.Contracts;
 public interface IInboxItemDataService
 {
     Task<List<InboxItemViewModel>> GetInboxItemsByUserIdFromTokenAsync();
+    Task<InboxItemViewModel> UpdateInboxItemAsync(InboxItemViewModel inboxItemViewModel);
 }
