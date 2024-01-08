@@ -29,9 +29,18 @@ namespace Ergo.API.IntegrationTests.Base
                 TaskItem.Create("LFAC", "Create project", DateTime.UtcNow,"Josh",Guid.NewGuid()).Value,
 
             };
+            var users = new List<User>
+            {
+                User.Create(Guid.NewGuid()).Value,
+                User.Create(Guid.NewGuid()).Value,
+                User.Create(Guid.NewGuid()).Value,
+                User.Create(Guid.NewGuid()).Value,
+            };
             context.TaskItems.AddRange(tasks);
             context.Projects.AddRange(projects);
+            context.Users.AddRange(users);
             context.SaveChanges();
+
         }
         public static async Task InitializeUserDbForTests(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IUserRepository userRepository)
         {

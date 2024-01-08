@@ -62,6 +62,7 @@ namespace Ergo.API.IntegrationTests.Base
                         var userManager = scopedServices.GetRequiredService<UserManager<ApplicationUser>>();
                         var roleManager = scopedServices.GetRequiredService<RoleManager<IdentityRole>>();
                         var userRepository = scopedServices.GetRequiredService<IUserRepository>();
+                        db.Database.EnsureCreated();
                         Seed.InitializeUserDbForTests(userManager, roleManager, userRepository);
 
                     }

@@ -1,6 +1,7 @@
 ﻿using Ergo.API.IntegrationTests.Base;
 using Ergo.API.IntegrationTests.Dto;
 using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
+using Ergo.Application.Features.TaskItems.Queries;
 using Ergo.Domain.Entities.Enums;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -27,6 +28,44 @@ namespace Ergo.API.IntegrationTests.Controllers
             var result = JsonConvert.DeserializeObject<TasksContainer>(responseString);
             // Assert
             result.TaskItems?.Count.Should().Be(4);
+        }
+        [Fact]
+        public async Task When_GetTaskByIdQueryHandlerIsCalledWithRightId_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await Client.GetAsync($"{RequestUri}");
+            var responseString = await response.Content.ReadAsStringAsync();
+            var tasks = JsonConvert.DeserializeObject<TasksContainer>(responseString);
+            var taskId = tasks.TaskItems.First().TaskItemId;
+            //Act
+            var getResponse = await Client.GetAsync($"{RequestUri}/{taskId}");
+            getResponse.EnsureSuccessStatusCode();
+            responseString = await getResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<TaskItemResponse>(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result.TaskItem.TaskItemId.Should().Be(taskId);
+        }
+        [Fact]
+        public async Task When_DeleteTaskQueryHandlerIsCalledWithRightId_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await Client.GetAsync($"{RequestUri}");
+            var responseString = await response.Content.ReadAsStringAsync();
+            var tasks = JsonConvert.DeserializeObject<TasksContainer>(responseString);
+            var taskId = tasks.TaskItems.First().TaskItemId;
+            //Act
+            var deleteResponse = await Client.DeleteAsync($"{RequestUri}/{taskId}");
+            deleteResponse.EnsureSuccessStatusCode();
+            responseString = await deleteResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<TaskDeleteResponse>(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result.Success.Should().BeTrue();
         }
         
         private static string CreateToken()

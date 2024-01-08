@@ -31,17 +31,17 @@ namespace Ergo.API.IntegrationTests.Controllers
 
         }
         [Fact]
-        public async Task When_PostProjectCommandHandlerIsCalledWithRightParameters_Then_TheEntityCreatedShouldBeReturned()
+        public async Task When_PostProjectCommandHandlerIsCalledWithRightParameters_Then_Success()
         {
             //Arrange
             string token = CreateToken();
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var project = new CreateProjectCommand
             {
-                ProjectName = "TestProject",
+                ProjectName = "TestProject2",
                 Description = "TestDescription",
                 GitRepository = "TestGitRepository",
-                FullName = "TestFullName",
+                FullName = "john_doe",
                 Deadline = DateTime.Now.AddDays(1)
             };
             //Act
@@ -54,6 +54,44 @@ namespace Ergo.API.IntegrationTests.Controllers
             result?.Should().NotBeNull();
             result?.Project.ProjectName.Should().Be(project.ProjectName);
 
+        }
+        [Fact]
+        public async Task When_GetProjectByIdQueryHandlerIsCalledWithRightId_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await Client.GetAsync(RequestUri);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var projects = JsonConvert.DeserializeObject<ProjectsContainer>(responseString);
+            var projectId = projects.Projects.First().ProjectId;
+            //Act
+            var getResponse = await Client.GetAsync($"{RequestUri}/{projectId}");
+            getResponse.EnsureSuccessStatusCode();
+            responseString = await getResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<ProjectDto>(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result.ProjectId.Should().Be(projectId);
+        }
+        [Fact]
+        public async Task When_DeleteProjectQueryHandlerIsCalledWithRightId_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await Client.GetAsync(RequestUri);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var projects = JsonConvert.DeserializeObject<ProjectsContainer>(responseString);
+            var projectId = projects.Projects.First().ProjectId;
+            //Act
+            response = await Client.DeleteAsync($"{RequestUri}/{projectId}");
+            response.EnsureSuccessStatusCode();
+            responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<ProjectDeleteResponse>(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result?.Success.Should().Be(true);
         }
         private static string CreateToken()
         {
