@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ergo.Application.Features.Projects.Commands.AssignUserToProject;
 using Ergo.Application.Features.Projects.Queries.GetProjectsByUserId;
+using Ergo.Application.Features.Projects.Commands.DeleteUserFromProject;
 
 namespace Ergo.Api.Controllers;
 
@@ -83,6 +84,20 @@ public class ProjectsController : ApiControllerBase
         }
         return Ok(result);
     }
+    [Authorize(Roles ="User")]
+    [HttpDelete]
+    [Route("DeleteUserFromProject")]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> DeleteUserFromProject(DeleteUserFromProjectCommand command)
+    {
+        var result = await Mediator.Send(command);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+
     [Authorize(Roles = "User")]
     [HttpGet]
     [Route("GetProjectsByUserId/{userId}")]

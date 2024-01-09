@@ -51,4 +51,22 @@ public class ProjectRepository : BaseRepository<Project>, IProjectRepository
         return Result<List<UserProjectDto>>.Success(projectWithUsers);
 
     }
+
+    public  Task<bool> DeleteUserFromProjectAsync(Guid projectId, Guid userId)
+    {
+        var project = context.Projects
+            .Include(p => p.Members)
+            .FirstOrDefault(p => p.ProjectId == projectId);
+        var user = context.Users
+            .Include(u => u.Projects)
+            .FirstOrDefault(u => u.UserId == userId);
+        if (project is null || user is null)
+        {
+            return Task.FromResult(false);
+        }
+        project.Members.Remove(user);
+        user.Projects.Remove(project);
+        context.SaveChanges();
+        return Task.FromResult(true);
+    }
 }
