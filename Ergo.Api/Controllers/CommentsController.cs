@@ -70,7 +70,7 @@ namespace Ergo.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCommentById(Guid id)
         {
-            var query = new GetByIdCommentQuery(id);
+            var query = new GetByIdCommentQuery { CommentId = id };
             var result = await Mediator.Send(query);
             return Ok(result);
         }

@@ -36,9 +36,28 @@ namespace Ergo.API.IntegrationTests.Base
                 User.Create(Guid.NewGuid()).Value,
                 User.Create(Guid.NewGuid()).Value,
             };
+            var comments = new List<Comment>
+            {
+                Comment.Create("Mihai",Guid.NewGuid(),"comment").Value,
+                Comment.Create("Mihai2",Guid.NewGuid(),"comment2").Value,
+                Comment.Create("Mihai3",Guid.NewGuid(),"comment3").Value,
+                Comment.Create("Mihai4",Guid.NewGuid(),"comment4").Value,
+
+            };
+            var inboxItem = new List<InboxItem>
+            {
+                InboxItem.Create(Guid.NewGuid(),"mesaj").Value,
+                InboxItem.Create(Guid.NewGuid(),"mesaj2").Value,
+                InboxItem.Create(Guid.NewGuid(),"mesaj3").Value,
+                InboxItem.Create(Guid.NewGuid(),"mesaj4").Value,
+                
+
+            };
+
             context.TaskItems.AddRange(tasks);
             context.Projects.AddRange(projects);
             context.Users.AddRange(users);
+            context.Comments.AddRange(comments);
             context.SaveChanges();
 
         }

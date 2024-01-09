@@ -1,14 +1,10 @@
 ﻿using Ergo.Application.Persistence;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Ergo.Application.Features.Comments.Queries.GetById
 {
-    public class GetByIdCommentQueryHandler : IRequestHandler <GetByIdCommentQuery,CommentDto>
+    public class GetByIdCommentQueryHandler : IRequestHandler <GetByIdCommentQuery,GetByIdCommentQueryResponse>
     {
         private readonly ICommentRepository commentRepository;
         
@@ -17,24 +13,34 @@ namespace Ergo.Application.Features.Comments.Queries.GetById
             this.commentRepository = commentRepository;
         }
 
-        public async Task<CommentDto> Handle(GetByIdCommentQuery request, CancellationToken cancellationToken)
+        public async Task<GetByIdCommentQueryResponse> Handle(GetByIdCommentQuery request, CancellationToken cancellationToken)
         {
+            GetByIdCommentQueryResponse response = new();
             var comment = await commentRepository.FindByIdAsync(request.CommentId);
 
-            if(comment.IsSuccess)
+            if(!comment.IsSuccess)
             {
-                return new CommentDto
+                response.Success = false;
+                response.ValidationsErrors = new List<string> { comment.Error };
+                return response;
+            }
+            return new GetByIdCommentQueryResponse
+            {
+                Success = true,
+                Comment = new CommentDto
                 {
                     CommentId = comment.Value.CommentId,
                     CommentText = comment.Value.CommentText,
-                    CreatedDate = comment.Value.CreatedDate,
                     CreatedBy = comment.Value.CreatedBy,
-                    LastModifiedDate = comment.Value.LastModifiedDate,
+                    CreatedDate = comment.Value.CreatedDate,
                     LastModifiedBy = comment.Value.LastModifiedBy,
+                    LastModifiedDate = comment.Value.LastModifiedDate,
                     TaskId = comment.Value.TaskId
-                };
-            }
-            return new CommentDto();
+                   
+
+                }
+            };
+           
         }
     }
 }
