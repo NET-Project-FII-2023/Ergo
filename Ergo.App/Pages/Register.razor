@@ -7,41 +7,44 @@
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-4">
+        <div class="col-md-4 cool-form" style="width:30rem; height:90vh;">
             <h1 class="h2 font-weight-normal login-title text-center">
                 Register
             </h1>
 
             <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerRequest">
                 <DataAnnotationsValidator />
-
-                <label for="inputUsername" class="sr-only">Username</label>
-                <InputText id="inputUsername" class="form-control" @bind-Value="registerRequest.Username" autofocus placeholder="Username" />
-                <ValidationMessage For="@(() => registerRequest.Username)" />
-
-                <label for="inputUsername" class="sr-only">Name</label>
-                <InputText id="inputName" class="form-control" @bind-Value="registerRequest.Name" autofocus placeholder="Name" />
-                <ValidationMessage For="@(() => registerRequest.Name)" />
-
-                <label for="inputEmail" class="sr-only">Email</label>
-                <InputText type="email" id="inputEmail" class="form-control" placeholder="Email" @bind-Value="registerRequest.Email" />
-                <ValidationMessage For="@(() => registerRequest.Email)" />
-
-
-                <label for="inputPassword" class="sr-only">Password</label>
-                <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="registerRequest.Password" />
-                <ValidationMessage For="@(() => registerRequest.Password)" />
-                <label for="inputConfirmPassword" class="sr-only">Confirm Password</label>
-                <InputText type="password" id="inputConfirmPassword" class="form-control" placeholder="Confirm password" @bind-Value="registerRequest.ConfirmPassword" />
-                <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
-
-                <br />
+                <div class="mb-3">
+                    <label for="inputUsername" class="sr-only form-label cool-label">Username</label>
+                    <InputText id="inputUsername" class="form-control cool-input" @bind-Value="registerRequest.Username" autofocus placeholder="Username" />
+                    <ValidationMessage For="@(() => registerRequest.Username)" />
+                 </div>
+                 <div class="mb-3">
+                    <label for="inputUsername" class="sr-only form-label cool-label">Name</label>
+                    <InputText id="inputName" class="form-control cool-input" @bind-Value="registerRequest.Name" autofocus placeholder="Name" />
+                    <ValidationMessage For="@(() => registerRequest.Name)" />
+                </div>
+                 <div class="mb-3">
+                    <label for="inputEmail" class="sr-only form-label cool-label">Email</label>
+                    <InputText type="email" id="inputEmail" class="form-control cool-input" placeholder="Email" @bind-Value="registerRequest.Email" />
+                    <ValidationMessage For="@(() => registerRequest.Email)" />
+                </div>
+                <div class="mb-3">
+                    <label for="inputPassword" class="sr-only form-label cool-label">Password</label>
+                    <InputText type="password" id="inputPassword" class="form-control cool-input" placeholder="Password" @bind-Value="registerRequest.Password" />
+                    <ValidationMessage For="@(() => registerRequest.Password)" />
+                </div>
+                <div class="mb-3">
+                    <label for="inputConfirmPassword" class="sr-only form-label cool-label">Confirm Password</label>
+                    <InputText type="password" id="inputConfirmPassword" class="form-control cool-input" placeholder="Confirm password" @bind-Value="registerRequest.ConfirmPassword" />
+                    <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
+                </div>
                 <div class="text-center">
-                    <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="OnClickHandler">Sign up</button>
+                    <button class="btn cool-button btn-primary" type="submit" onclick="OnClickHandler">Sign up</button>
                 </div>
 
-                <NavLink href="login">
-                    <h6 class="font-weight-normal navigation-link text-center">Sign in</h6>
+                <NavLink href="login" style="text-decoration:none;">
+                    <h6 class="font-weight-normal navigation-link text-center mt-1 cool-link" style="text-decoration:none;">Sign in</h6>
                 </NavLink>
             </EditForm>
         </div>

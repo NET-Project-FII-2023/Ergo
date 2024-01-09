@@ -173,7 +173,7 @@
 }
 else
 {
-    <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick" class="cool-button-2">Add User</Button>
+    <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick" class="cool-button">Add User</Button>
 
     <TaskAssignmentModal OnTaskCreated="HandleTaskCreated"></TaskAssignmentModal>
     @if (Message != null)
@@ -195,7 +195,7 @@ else
             <h4 class="mb-4" style="font-size:20px;">To Do</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.ToDo))
             {
-                <div class="card mb-3" style="border-radius:4px; background-color:#a249d1" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px; background: linear-gradient(to right, #a963cf, #a249d1);" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body style">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -209,7 +209,7 @@ else
             <h4 class="mb-4" style="font-size:20px;">In Progress</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.InProgress))
             {
-                <div class="card mb-3" style="border-radius:4px; background-color:#4d91d1" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px;background: linear-gradient(to right, #71a2d1, #4d91d1);" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -223,7 +223,7 @@ else
             <h4 class="mb-4" style="font-size:20px;">Done</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.Done))
             {
-                <div class="card mb-3" style="border-radius:4px; background-color:#60a88b" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px; background: linear-gradient(to right, #84b5a1, #60a88b);" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>

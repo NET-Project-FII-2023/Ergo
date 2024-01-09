@@ -139,13 +139,14 @@ html, body {
     .cool-button {
         margin-top: 1rem;
         border-radius: 3px;
-        background: rgba(105, 228, 150, 0.7);
+        
     }
 
-        .cool-button:hover, btn:hover, btn:active:focus {
-            border: 1px solid rgba(105, 228, 150, 0.7);
-            box-shadow: 0 0 5px green;
-        }
+    .cool-button:hover, btn:hover, btn:active:focus {
+        border: 1px solid rgba(105, 228, 150, 0.7);
+        box-shadow: 0 0 5px green;
+        background: #282828;
+    }
     /*.form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem white;
     border-color: var(--light-dark);
@@ -261,7 +262,14 @@ html, body {
         width: 300px;
         margin: 0 20px;
     }
+    .cool-link {
+        color: #b6b6b8;
+    }
 
+    .cool-link:hover {
+        color: rgba(105, 228, 150, 0.7);
+        text-decoration: none;
+    }
 }
 
     @media (max-width: 720px){
@@ -408,9 +416,10 @@ html, body {
             background: rgba(105, 228, 150, 0.7);
         }
 
-        .cool-button:hover, btn:hover, btn:active:focus {
+        .cool-button:hover, btn:hover, btn:active:focus, cool-button:focus, cool-button:active, cool-button:focus{
             border: 1px solid rgba(105, 228, 150, 0.7);
             box-shadow: 0 0 5px green;
+            background: #282828;
         }
         /*.form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem white;

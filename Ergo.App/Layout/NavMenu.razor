@@ -20,7 +20,7 @@
                     <Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
 
                         <a href="#" class="d-flex" @onclick:preventDefault="true" @onclick="ToggleNotificationsPanel">
-                            <i class="bi bi-notifications"></i>
+                            <i class="bi bi-notifications" style="width:20px; height:20px;"></i>
                         </a>
 
                     </Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
@@ -49,17 +49,17 @@
                 &times;
             </button>
             <nav class="flex-column">
-                <div class="nav-item px-3 mt-3" style="border-bottom: 1px solid #ccc;">
-                    <h2>Notifications</h2>
+                <div class="nav-item px-3 mt-3" style="border-bottom: 1px solid #444745;">
+                    <h2 style="font-size:22px;">Notifications</h2>
                 </div>
                 
                 @if (inboxItems != null)
                 {
                     @foreach (var inboxItem in inboxItems)
                     {
-                        <div class="nav-item px-3" style="border-bottom: 1px solid #ccc; padding: 10px 0;">
+                        <div class="nav-item px-3" style="border-bottom: 1px solid #444745; padding: 10px 0;">
                             <div class="d-flex justify-content-between">
-                                <p style="font-size: 0.9rem; padding-top: 2px">@inboxItem.CreatedDate.ToString("yyyy-MM-dd HH:mm")</p>
+                                <p style="font-size: 0.8rem; padding-top: 2px">@inboxItem.CreatedDate.ToString("yyyy-MM-dd HH:mm")</p>
                                 <div>
                                     @if (inboxItem.IsRead)
                                     {
@@ -74,7 +74,7 @@
                                     }
                                 </div>
                             </div>
-                            <p style="font-size: 1.2rem">@inboxItem.Message</p>
+                            <p style="font-size: 0.9rem">@inboxItem.Message</p>
                         </div>
                     }
                 }
