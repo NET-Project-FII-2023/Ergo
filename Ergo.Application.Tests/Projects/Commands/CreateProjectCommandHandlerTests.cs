@@ -1,5 +1,8 @@
 using Ergo.Application.Features.Projects.Commands.CreateProject;
+using Ergo.Application.Features.Users.Queries;
 using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
 using FluentAssertions;
 using NSubstitute;
 
@@ -20,7 +23,28 @@ namespace Ergo.Application.Tests.Projects.Commands
             _mockUserManager = Substitute.For<IUserManager>();
             _mockUserRepository = Substitute.For<IUserRepository>();
 
-            _handler = new CreateProjectCommandHandler(_mockProjectRepository,_mockUserManager,_mockUserRepository);
+            var fakeUserId = Guid.Parse("d1906196-01f7-4335-88b9-89f9672bb4ce");
+            var fakeUserDto = new UserDto { UserId = fakeUserId.ToString(), Username = "John Doe" };
+
+            // UserManager returns a successful result with a UserDto
+            _mockUserManager.FindByUsernameAsync("John Doe")
+                .Returns(Task.FromResult(Result<UserDto>.Success(fakeUserDto)));
+
+            // UserRepository returns a successful result with a User
+            var fakeUser = User.Create(fakeUserId).Value; // Use the static Create method to generate a valid User
+            _mockUserRepository.FindByIdAsync(fakeUserId)
+                .Returns(Task.FromResult(Result<User>.Success(fakeUser)));
+
+            // Setup ProjectRepository's AddAsync to return a Result<Project> wrapped in a Task
+            _mockProjectRepository.AddAsync(Arg.Any<Project>())
+                .Returns(callInfo => Task.FromResult(Result<Project>.Success((Project)callInfo[0])));
+
+            // UpdateAsync should also return a Result<Project> wrapped in a Task
+            _mockProjectRepository.UpdateAsync(Arg.Any<Project>())
+                .Returns(callInfo => Task.FromResult(Result<Project>.Success((Project)callInfo[0])));
+
+            // Create the handler with the mocked dependencies
+            _handler = new CreateProjectCommandHandler(_mockProjectRepository, _mockUserManager, _mockUserRepository);
         }
 
         [Fact]
