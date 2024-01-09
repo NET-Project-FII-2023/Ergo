@@ -387,6 +387,9 @@ else
     [Inject] IProjectDataService ProjectDataService { get; set; }
 
     [Inject]
+    IInboxItemDataService InboxItemDataService { get; set; }
+
+    [Inject]
     public NavigationManager NavigationManager { get; set; }
 
 
@@ -484,7 +487,7 @@ else
         if (!string.IsNullOrEmpty(query))
         {
             var queryParams = System.Web.HttpUtility.ParseQueryString(query);
-             projectId = queryParams.Get("projectId");
+            projectId = queryParams.Get("projectId");
 
             if (!string.IsNullOrEmpty(projectId))
             {
@@ -808,6 +811,27 @@ else
                     Error += result.ValidationErrors;
                 }
             }
+            projects = await ProjectDataService.GetProjectsByUserIdAsync(userId);
+            string projectName = "project";
+            foreach (var project in projects)
+            {
+                if (project.ProjectId == Guid.Parse(projectId))
+                {
+                    projectName = project.ProjectName;
+                    break;
+                }
+            }
+            //send notification to user
+            var inboxItem = new InboxItemViewModel
+            {
+                UserId = userId,
+                Message = 
+                    $"You have been assigned to a new project \"{projectName}\".",
+                CreatedDate = DateTime.UtcNow,
+                IsRead = false
+            };
+            
+            await InboxItemDataService.CreateInboxItemAsync(inboxItem);
 
         }
         catch (Exception ex)

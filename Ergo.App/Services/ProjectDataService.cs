@@ -59,6 +59,41 @@ namespace Ergo.App.Services
                 throw;
             }
         }
+        public async Task<ApiResponse<ProjectDto>> GetProjectByIdAsync(Guid id)
+        {
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization
+                    = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                var result = await httpClient.GetAsync($"{RequestUri}/{id}", HttpCompletionOption.ResponseHeadersRead);
+                result.EnsureSuccessStatusCode();
+                var content = await result.Content.ReadAsStringAsync();
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    throw new ApplicationException(content);
+                }
+
+                Console.WriteLine($"Raw JSON content: {content}");
+
+                var project = JsonSerializer.Deserialize<ApiResponse<ProjectDto>>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return project;
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedAccessException("Unauthorized access.");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
 
         public class ProjectsResponse
         {
@@ -183,5 +218,7 @@ namespace Ergo.App.Services
                 throw;
             }
         }
+
+       
     }
 }
