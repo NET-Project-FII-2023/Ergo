@@ -1,3 +1,4 @@
+using Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser;
 using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
@@ -79,6 +80,20 @@ public class TaskItemsController : ApiControllerBase
     {
         var query = new GetByIdTaskItemQuery { TaskItemId = id };
         var result = await Mediator.Send(query);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+    [Authorize(Roles = "User")]
+    [HttpPost("AssignUser")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> AssignUser(AssignTaskItemToUserCommand command)
+    {
+        var result = await Mediator.Send(command);
 
         if (!result.Success)
         {
