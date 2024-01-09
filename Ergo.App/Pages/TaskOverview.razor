@@ -4,13 +4,19 @@
 @using Ergo.Domain.Entities.Enums;
 @using BlazorBootstrap
 @using Ergo.App.Components
+@inject IJSRuntime JSRuntime
+
 
 <style>
     body {
         background-color: #1f1f1f;
         color: #e0e0e0;
+        font-family: 'Montserrat', sans-serif;
     }
 
+    .card-text{
+        font-size:14px;
+    }
     .col-md-3 {
         background-color: #333;
         border-radius: 8px;
@@ -27,9 +33,9 @@
         position: static;
     }
 
-    .card-body:hover {
-        background-color: #555;
-        border-radius: 8px;
+    .card:hover {
+        opacity:0.8;
+        border-radius: 10px;
         cursor: pointer;
     }
 
@@ -38,7 +44,7 @@
     }
 
     .col-md-3:nth-child(1) h4 {
-        border-bottom: 3px solid #d1c04d;
+        border-bottom: 3px solid #a249d1;
         border-radius: 2px;
     }
 
@@ -97,12 +103,65 @@
         transition: opacity 0.3s ease;
     }
 
-        .edit-icon:hover {
-            opacity: 0.7;
-            cursor: pointer;
-        }
+    .edit-icon:hover {
+        opacity: 0.7;
+        cursor: pointer;
+    }
+
+
+    .cool-input {
+        height: 3rem;
+        border-radius: 3px;
+        color: #d4d4d4;
+        border: 2px solid #1f1f1f;
+        background: #282828;
+        font-size: 13px;
+        outline: none;
+    }
+
+    .cool-input:focus, .cool-input:active {
+        border: 1px solid rgba(105, 228, 150, 0.7);
+        color: #d4d4d4;
+        background: #282828;
+        outline: none;
+        box-shadow: 0 0 5px green;
+    }
+
+    .cool-button-2:hover {
+        border-radius: 3px;
+        border: 1px solid rgba(105, 228, 150, 0.7);
+        box-shadow: 0 0 5px green;
+    }
+
+    .cool-button-2 {
+        background: #282828;
+        border-radius: 3px;
+    }
+
+    .cool-label {
+        color: #d4d4d4;
+        font-size: 15px;
+    }
+
+    .cool-form {
+        background: #282828;
+        border-radius: 4px;
+        padding: 45px 60px;
+        margin-top: 25px;
+    }
+
+    .cool-link {
+        color: #b6b6b8;
+    }
+
+    .cool-link:hover {
+        color: rgba(105, 228, 150, 0.7);
+        text-decoration: none;
+    }
 
 </style>
+
+
 
 
 <h3>Task Overview</h3>
@@ -114,7 +173,7 @@
 }
 else
 {
-    <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick">Add User</Button>
+    <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick" class="cool-button-2">Add User</Button>
 
     <TaskAssignmentModal OnTaskCreated="HandleTaskCreated"></TaskAssignmentModal>
     @if (Message != null)
@@ -132,12 +191,12 @@ else
         </div>
     }
     <div class="row mt-2">
-        <div class="col-md-3">
-            <h4>To Do</h4>
+        <div class="col-md-3" style="border-radius:4px;" ondragover="allowDrop(event)" ondrop="drop(event, 'ToDo')">
+            <h4 class="mb-4" style="font-size:20px;">To Do</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.ToDo))
             {
-                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
-                    <div class="card-body">
+                <div class="card mb-3" style="border-radius:4px; background-color:#a249d1" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                    <div class="card-body style">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
                         <p class="card-text"><strong>Deadline:</strong> @taskItem.Deadline.ToShortDateString()</p>
@@ -146,11 +205,11 @@ else
             }
         </div>
 
-        <div class="col-md-3">
-            <h4>In Progress</h4>
+        <div class="col-md-3" style="border-radius:4px;" ondragover="allowDrop(event)" ondrop="drop(event, 'InProgress')">
+            <h4 class="mb-4" style="font-size:20px;">In Progress</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.InProgress))
             {
-                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px; background-color:#4d91d1" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -160,11 +219,11 @@ else
             }
         </div>
 
-        <div class="col-md-3">
-            <h4>Done</h4>
+        <div class="col-md-3" style="border-radius:4px;" ondragover="allowDrop(event)" ondrop="drop(event, 'Done')">
+            <h4 class="mb-4" style="font-size:20px;">Done</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.Done))
             {
-                <div class="card mb-3" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px; background-color:#60a88b" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -290,7 +349,7 @@ else
                 </div>
 
 
-                <div class="d-flex justify-content-end">
+                <div class="d-flex">
                     <button class="btn btn-primary" @onclick="OnHideUserModalClick">Cancel</button>
                     <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidUserSubmit">Add user</button>
                 </div>
@@ -333,6 +392,7 @@ else
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
+
     public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
     public string Error { get; set; }
 
@@ -364,6 +424,11 @@ else
 
     private string projectId = default!;
 
+
+    private async Task DragStart(dynamic e, Guid taskId)
+    {
+        await JSRuntime.InvokeAsync<object>("dragStart", taskId);
+    }
 
 
     private void ToggleDescriptionEditMode()
@@ -776,3 +841,18 @@ else
         }
     }
 }
+<script>
+    window.dragStart = (taskId) => {
+        localStorage.setItem('draggedTaskId', taskId);
+    }
+
+    window.allowDrop = (e) => {
+        e.preventDefault();
+    }
+
+    window.drop = (e, column) => {
+        e.preventDefault();
+        const taskId = localStorage.getItem('draggedTaskId');
+        DotNet.invokeMethodAsync('ErgoProject', 'InProgress', taskId, column);
+    }
+</script>

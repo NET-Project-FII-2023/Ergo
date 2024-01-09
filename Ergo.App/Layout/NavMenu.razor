@@ -5,11 +5,11 @@
 @inject ILocalStorageService LocalStorageService
 
 <div class="top-row ps-3 navbar navbar-dark vw-100" style="background-color: #181818">
-    <div class="container-fluid justify-start">
-        <a class="d-flex align-items-center justify-content-center gap-2 navbar-brand" href="">
-            <img src="/images/logo.png" alt="logo" width="35px" height="35px"/>
-            <span class="h3 mb-0 ml-1">Ergo</span>
-        </a>
+    <div class="container-fluid">
+            <a class="d-flex align-items-center justify-content-center gap-2 navbar-brand" href="">
+                <img src="/images/logo.png" alt="logo" width="25px" height="25px"/>
+                <span class="h3 mb-0 ml-1" style="font-size:23px; color:gainsboro;">Ergo</span>
+            </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -34,7 +34,7 @@
                     <Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
 
                         <a href="/userprofile" class="d-flex">
-                            <span class="bi bi-user-profile"></span>
+                            <span class="bi bi-user-profile" style="width:25px; height:25px;"></span>
                         </a>
 
                     </Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
@@ -83,47 +83,11 @@
     }
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" style=" background-color: #333" @onclick="ToggleNavMenu">
+<div class="@NavMenuCssClass nav-scrollable" style=" background-color: #444745" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState>
             <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
                 <Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
-
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link px-3" href="" Match="NavLinkMatch.All">
-                            <span class="bi bi-home bi-home-hover" aria-hidden="true"></span> Home
-                        </NavLink>
-                    </div>
-
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link px-3" href="addtask">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Add Task
-                        </NavLink>
-                    </div>
-                    
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link px-3" href="updatetask">
-                            <i class="bi bi-pen-svg" aria-hidden="true"></i> Update Task
-                        </NavLink>
-                    </div>
-
-                    @* <div class="nav-item px-3"> *@
-                    @*     <NavLink class="nav-link px-3" href="userprofile"> *@
-                    @*         <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Profile *@
-                    @*     </NavLink> *@
-                    @* </div> *@
-
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link px-3" href="addcomment">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Add Comment
-                        </NavLink>
-                    </div>
-                    
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link px-3" href="updatecomment">
-                            <i class="bi bi-pen-svg" aria-hidden="true"></i> Update Comment
-                        </NavLink>
-                    </div>
 
                     <div class="nav-item px-3">
                         My Projects
@@ -142,6 +106,10 @@
                         <NavLink class="nav-link px-3" href="addproject">
                             <span class="bi bi-add" aria-hidden="true"></span> Add Project
                         </NavLink>
+                    </div>
+
+                    <div class="nav-item px-3">
+                        My Teams
                     </div>
 
                 </Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
