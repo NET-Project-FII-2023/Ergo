@@ -6,26 +6,30 @@
 <PageTitle>Home</PageTitle>
 
 <style>
-    .stars-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        overflow: hidden;
-        pointer-events: none;
-    }
 
-    .star {
-        position: absolute;
-        background-color: #fff;
-        border-radius: 50%;
-        animation: moveStar linear infinite;
-    }
     body{
         overflow:hidden;
         margin:0;
     }
+
+
+
+    .card-container {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 300px; 
+    }
+
+    .card {
+        background-color: #a249d1;
+        opacity: 0.25;
+        display: flex;
+        flex-direction: column;
+        height: fit-content; 
+        margin: 0 20px;
+    }
+
 
    
 </style>
@@ -39,10 +43,41 @@
     }
 </div>
 
-<div class="d-flex justify-content-center align-items-center flex-column" style="width: 80vw; height: 85vh; overflow-y:hidden;">
-    <h1>Ergo</h1>
-    <h5>Created for work, so you can work to create</h5>
+<div class="d-flex align-items-center flex-column justify-content-center" style="margin-bottom:5rem;margin-top:6rem;">
+    <h1 style="font-weight:700; font-size:64px; text-align:center;">Ergo</h1>
+    <h5 class="green-gradient-text">Created to empower your work, inspiring you to create.</h5>
 </div>
+
+
+<div class="home-cards">
+    <div class="card card-body-home" style=" background: linear-gradient(to right, #56296e, #a249d1); opacity:0.35;">
+        <div class="card-body">
+            <h5 class="card-title">Create facebook from scratch</h5>
+            <p class="card-text"> orem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+            <p class="card-text"><strong>Deadline:</strong> 09.02.2024</p>
+        </div>
+    </div>
+
+    <div class="card card-body-home" style="background: linear-gradient(to right, #2f577d, #4d91d1); opacity: 0.6;">
+        <div class="card-body">
+            <h5 class="card-title">Create facebook from scratch</h5>
+            <p class="card-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            <p class="card-text"><strong>Deadline:</strong> 09.02.2024</p>
+        </div>
+    </div>
+
+    <div class="card card-body-home" style="background: linear-gradient(to right, #285e48, #60a88b); opacity: 0.8;">
+        <div class="card-body">
+            <h5 class="card-title">Create facebook from scratch</h5>
+            <p class="card-text"> Lorem Ipsum has been the industry's standard dummy text ever since the 1500s. </p>
+            <p class="card-text"><strong>Deadline:</strong> 09.02.2024</p>
+        </div>
+    </div>
+</div>
+
+
+
+
 
 <br />
 <CascadingAuthenticationState>
