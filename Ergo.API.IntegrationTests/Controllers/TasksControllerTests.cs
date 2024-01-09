@@ -2,6 +2,8 @@
 using Ergo.API.IntegrationTests.Dto;
 using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
 using Ergo.Application.Features.TaskItems.Queries;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
 using Ergo.Domain.Entities.Enums;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -22,7 +24,7 @@ namespace Ergo.API.IntegrationTests.Controllers
             string token = CreateToken();
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             //Act
-            var response = await Client.GetAsync(RequestUri);
+            var response = await Client.GetAsync    (RequestUri);
             response.EnsureSuccessStatusCode();
             var responseString = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<TasksContainer>(responseString);
@@ -48,6 +50,9 @@ namespace Ergo.API.IntegrationTests.Controllers
             result.Should().NotBeNull();
             result.TaskItem.TaskItemId.Should().Be(taskId);
         }
+
+       
+        
         [Fact]
         public async Task When_DeleteTaskQueryHandlerIsCalledWithRightId_Then_Success()
         {
@@ -67,7 +72,8 @@ namespace Ergo.API.IntegrationTests.Controllers
             result.Should().NotBeNull();
             result.Success.Should().BeTrue();
         }
-        
+
+       
         private static string CreateToken()
         {
 
