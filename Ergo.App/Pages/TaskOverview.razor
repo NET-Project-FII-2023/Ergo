@@ -5,6 +5,7 @@
 @using BlazorBootstrap
 @using Ergo.App.Components
 @inject IJSRuntime JSRuntime
+using Microsoft.JSInterop;
 
 
 <style>
@@ -209,7 +210,7 @@ else
             <h4 class="mb-4" style="font-size:20px;">In Progress</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.InProgress))
             {
-                <div class="card mb-3" style="border-radius:4px;background: linear-gradient(to right, #71a2d1, #4d91d1);" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px;background: linear-gradient(to right, #71a2d1, #4d91d1);" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -223,7 +224,7 @@ else
             <h4 class="mb-4" style="font-size:20px;">Done</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.Done))
             {
-                <div class="card mb-3" style="border-radius:4px; background: linear-gradient(to right, #84b5a1, #60a88b);" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px; background: linear-gradient(to right, #84b5a1, #60a88b);" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -477,24 +478,13 @@ else
         }
     }
 
-    protected override async Task OnInitializedAsync()
+    protected async override Task OnInitializedAsync()
     {
-        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-        var query = uri.Query;
+        await FetchAllTasks();
 
-        TaskViewModel.Deadline = DateTime.UtcNow.Date;
+        var dotNetObjectRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("initializeDropHandling", dotNetObjectRef);
 
-        if (!string.IsNullOrEmpty(query))
-        {
-            var queryParams = System.Web.HttpUtility.ParseQueryString(query);
-            projectId = queryParams.Get("projectId");
-
-            if (!string.IsNullOrEmpty(projectId))
-            {
-                Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
-                Console.WriteLine("ProjectId: " + projectId);
-            }
-        }
     }
 
     private void BeginEditComment(CommentViewModel comment)
@@ -679,12 +669,11 @@ else
         if (!string.IsNullOrEmpty(query))
         {
             var queryParams = System.Web.HttpUtility.ParseQueryString(query);
-            var projectId = queryParams.Get("projectId");
+            projectId = queryParams.Get("projectId");
 
             if (!string.IsNullOrEmpty(projectId))
             {
                 Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
-                Console.WriteLine("ProjectId: " + projectId);
             }
         }
     }
@@ -840,7 +829,35 @@ else
             Message = null;
         }
     }
+
+    [JSInvokable]
+    public async Task HandleDragTaskItem(string taskIdValue, string column)
+    {
+        if (!Guid.TryParse(taskIdValue, out var taskId))
+        {
+            return;
+        }
+
+        var updateTaskDto = new UpdateTaskDto
+        {
+            TaskItemId = taskId,
+            State = (TaskState)Enum.Parse(typeof(TaskState), column)
+        };
+        var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
+
+        if (result.IsSuccess)
+        {
+            Message = "Status updated successfully";
+            await FetchAllTasks();
+            StateHasChanged();
+        }
+        else
+        {
+            Message = "Failed to update status";
+        }
+    }
 }
+
 <script>
     window.dragStart = (taskId) => {
         localStorage.setItem('draggedTaskId', taskId);
@@ -850,9 +867,11 @@ else
         e.preventDefault();
     }
 
-    window.drop = (e, column) => {
-        e.preventDefault();
-        const taskId = localStorage.getItem('draggedTaskId');
-        DotNet.invokeMethodAsync('ErgoProject', 'InProgress', taskId, column);
-    }
+    window.initializeDropHandling = (dotNetObjectRef) => {
+        window.drop = (e, column) => {
+            e.preventDefault();
+            const taskId = localStorage.getItem('draggedTaskId');
+            dotNetObjectRef.invokeMethodAsync('HandleDragTaskItem', taskId, column);
+        };
+    };
 </script>
