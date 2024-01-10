@@ -197,7 +197,7 @@ else
         <div style="margin-bottom:0.5rem;">
             <span style="font-weight:500; font-size:23px; ">Project members  </span>
         </div>
-        <div style="width:60rem;min-height:6rem; background-color: #333; border-radius:5px;padding:20px 30px; margin-bottom:1rem;">
+        <div style="width:59.2rem;min-height:6rem; background-color: #333; border-radius:5px;padding:20px 30px; margin-bottom:1rem;">
             @for (var i = 0; i < assignedUsers.Count; i++)
             {
                 <span>@assignedUsers[i].Name</span>
@@ -214,18 +214,14 @@ else
                 }
             }
             <div style="margin-top:0.5rem;">
-                <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick" class="cool-button" style="margin:0; background:rgba(105, 228, 150, 0.7);">Add</Button>
-                <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick" class="cool-button" style="margin:0; background:#4a4a4a;">Remove</Button>
+                <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick" class="cool-button" style="margin:0; background:rgba(105, 228, 150, 0.7);">Add Member</Button>
+                <Button Color="ButtonColor.Primary" @onclick="OnShowRemoveUserModalClick" class="cool-button" style="margin:0; background:#4a4a4a;">Remove Member</Button>
             </div>
         </div>
         
         
     }
    
-    @* <div>
-     
-        <TaskAssignmentModal OnTaskCreated="HandleTaskCreated"></TaskAssignmentModal>
-    </div> *@
     @if (Message != null)
     {
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -240,7 +236,7 @@ else
             </div>
         </div>
     }
-    <div class="row mt-2" style="margin-left:0.1rem;">
+    <div class="row mt-2" style="margin-left:0.08rem;">
         <div class="col-md-3" style="border-radius:4px;" ondragover="allowDrop(event)" ondrop="drop(event, 'ToDo')">
             <h4 class="mb-4" style="font-size:20px;">To Do</h4>
             
@@ -410,7 +406,7 @@ else
 
 
 
-    <Modal @ref="userModal" Title="Add a user to this project:">
+    <Modal @ref="userModal" Title="Add a member to this project:">
         <BodyTemplate>
             <EditForm Model="@ProjectAssignUserViewModel">
 
@@ -431,6 +427,28 @@ else
                     <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidUserSubmit">Add user</button>
                 </div>
 
+            </EditForm>
+        </BodyTemplate>
+    </Modal>
+
+    <Modal @ref="removeUserModal" Title="Remove a member from this project:">
+        <BodyTemplate>
+            <EditForm Model="@RemoveUserFromProjectViewModel">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="row mb-3 ms-2">
+                    <label for="userId" class="col-sm-3 form-label" style="color:black;">User ID:</label>
+                    <div class="col-sm-7">
+                        <InputText id="userId" class="form-control" @bind-Value="@RemoveUserFromProjectViewModel.UserId" placeholder="User ID..."></InputText>
+                        <ValidationMessage For="@(() => RemoveUserFromProjectViewModel.UserId)" />
+                    </div>
+                </div>
+
+                <div class="d-flex">
+                    <button class="btn btn-primary" @onclick="OnHideRemoveUserModalClick">Cancel</button>
+                    <button type="submit" class="btn btn-primary mx-1" @onclick="HandleRemoveUserSubmit">Remove user</button>
+                </div>
             </EditForm>
         </BodyTemplate>
     </Modal>
@@ -471,6 +489,7 @@ else
 
 
     public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
+    public RemoveUserFromProjectViewModel RemoveUserFromProjectViewModel { get; set; } = new RemoveUserFromProjectViewModel();
     public string Error { get; set; }
 
     public List<TaskViewModel> Tasks { get; set; }
@@ -498,6 +517,8 @@ else
     private Modal detailsModal = default!;
 
     private Modal userModal = default!;
+
+    private Modal removeUserModal = default!;
 
     private string projectId = default!;
 
@@ -887,6 +908,15 @@ else
         await userModal.HideAsync();
     }
 
+    private async Task OnShowRemoveUserModalClick()
+    {
+        await removeUserModal.ShowAsync();
+    }
+    private async Task OnHideRemoveUserModalClick()
+    {
+        await removeUserModal.HideAsync();
+    }
+
     private void DismissError()
     {
         Error = null;
@@ -962,6 +992,30 @@ else
             Message = null;
         }
     }
+
+    private async Task HandleRemoveUserSubmit()
+    {
+        try
+        {
+            var result = await ProjectDataService.DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel);
+
+            if (result != null && result.IsSuccess)
+            {
+                Message = "User removed successfully";
+                Error = null;
+                await removeUserModal.HideAsync();
+            }
+            else
+            {
+                Message = "Failed to remove user";
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error removing user: {ex.Message}";
+        }
+    }
+
 
     [JSInvokable]
     public async Task HandleDragTaskItem(string taskIdValue, string column)
