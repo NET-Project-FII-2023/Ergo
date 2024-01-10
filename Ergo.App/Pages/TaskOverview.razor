@@ -438,10 +438,9 @@ else
                 <ValidationSummary />
 
                 <div class="row mb-3 ms-2">
-                    <label for="userId" class="col-sm-3 form-label" style="color:black;">User ID:</label>
+                    <label for="userId" class="col-sm-3 form-label" style="color:black;">Username</label>
                     <div class="col-sm-7">
-                        <InputText id="userId" class="form-control" @bind-Value="@RemoveUserFromProjectViewModel.UserId" placeholder="User ID..."></InputText>
-                        <ValidationMessage For="@(() => RemoveUserFromProjectViewModel.UserId)" />
+                        <InputText id="userId" class="form-control" @bind-Value="@RemoveUserFromProjectViewModel.Username" placeholder="Username..."></InputText>
                     </div>
                 </div>
 
@@ -487,14 +486,16 @@ else
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
-
     public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
+
     public RemoveUserFromProjectViewModel RemoveUserFromProjectViewModel { get; set; } = new RemoveUserFromProjectViewModel();
+
     public string Error { get; set; }
 
     public List<TaskViewModel> Tasks { get; set; }
 
     private List<CommentViewModel> commentsList = new List<CommentViewModel>();
+
     public UpdateTaskViewModel UpdateTaskViewModel { get; set; } = new UpdateTaskViewModel();
 
     public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
@@ -510,6 +511,7 @@ else
     private Modal modal = default!;
 
     private Guid selectedTaskId;
+
     private Guid selectedCommentId;
 
     private Modal commentModal = default!;
@@ -531,13 +533,10 @@ else
         allMembersModal.ShowAsync();
     }
 
-
     private async Task DragStart(dynamic e, Guid taskId)
     {
         await JSRuntime.InvokeAsync<object>("dragStart", taskId);
     }
-
-
 
     private void ToggleDescriptionEditMode()
     {
@@ -546,6 +545,7 @@ else
             selectedTask.DescriptionEditMode = true;
         }
     }
+
     private async Task SaveDescriptionEdit()
     {
         if (selectedTask != null)
@@ -575,7 +575,6 @@ else
             }
         }
     }
-
 
     private void CancelDescriptionEdit()
     {
@@ -697,13 +696,10 @@ else
         }
     }
 
-
     private void CancelCommentEdit()
     {
         commentBeingEdited = null;
     }
-
-
 
     private async Task ShowDetailsModal(Guid taskId)
     {
@@ -726,12 +722,10 @@ else
         await detailsModal.ShowAsync();
     }
 
-
     private bool ShouldAllowEdit(CommentViewModel comment, string currentUser)
     {
         return comment.CreatedBy == currentUser;
     }
-
 
     private void DisplayTaskId(Guid taskId)
     {
@@ -744,6 +738,7 @@ else
         selectedCommentId = commentId;
         Console.WriteLine("Selected Comment ID: " + selectedCommentId);
     }
+
     private async Task HideCommentModal()
     {
         await commentModal.HideAsync();
@@ -799,7 +794,6 @@ else
         await commentModal.ShowAsync();
     }
 
-
     private async Task OnShowModalClick()
     {
         await modal.ShowAsync();
@@ -809,8 +803,6 @@ else
     {
         await modal.HideAsync();
     }
-
-
 
     private async Task FetchAllTasks()
     {
@@ -831,7 +823,6 @@ else
             }
         }
     }
-
 
     private void ToggleTitleEditMode()
     {
@@ -903,6 +894,7 @@ else
     {
         await userModal.ShowAsync();
     }
+
     private async Task OnHideUserModalClick()
     {
         await userModal.HideAsync();
@@ -912,6 +904,7 @@ else
     {
         await removeUserModal.ShowAsync();
     }
+
     private async Task OnHideRemoveUserModalClick()
     {
         await removeUserModal.HideAsync();
@@ -921,6 +914,7 @@ else
     {
         Error = null;
     }
+
     private async Task HandleValidUserSubmit()
     {
         try
@@ -982,7 +976,7 @@ else
                 CreatedDate = DateTime.UtcNow,
                 IsRead = false
             };
-            
+
             await InboxItemDataService.CreateInboxItemAsync(inboxItem);
 
         }
@@ -997,6 +991,11 @@ else
     {
         try
         {
+            var userId = GetUserIdByUsername(RemoveUserFromProjectViewModel.Username);
+            RemoveUserFromProjectViewModel.UserId = userId;
+            RemoveUserFromProjectViewModel.ProjectId = projectId;
+            RemoveUserFromProjectViewModel.OwnerUsername = "tudstk";
+
             var result = await ProjectDataService.DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel);
 
             if (result != null && result.IsSuccess)
@@ -1012,10 +1011,10 @@ else
         }
         catch (Exception ex)
         {
-            Message = $"Error removing user: {ex.Message}";
+            Error = $"Error removing user: {ex.Message}";
+            Message = null;
         }
     }
-
 
     [JSInvokable]
     public async Task HandleDragTaskItem(string taskIdValue, string column)
@@ -1042,6 +1041,19 @@ else
             Message = "Failed to update status";
         }
     }
+
+    private string GetUserIdByUsername(string username)
+    {
+        foreach (var user in assignedUsers)
+        {
+            if (user.Username == username)
+            {
+                return user.UserId;
+            }
+        }
+        return null;
+    }
+
 }
 
 <script>

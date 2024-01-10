@@ -76,6 +76,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("Open");
+
 app.UseAuthorization();
 
 app.MapControllers();
