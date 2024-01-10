@@ -997,6 +997,10 @@ else
     {
         try
         {
+
+            RemoveUserFromProjectViewModel.ProjectId = projectId;
+            RemoveUserFromProjectViewModel.OwnerUsername = "tudstk";
+
             var result = await ProjectDataService.DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel);
 
             if (result != null && result.IsSuccess)
@@ -1012,7 +1016,8 @@ else
         }
         catch (Exception ex)
         {
-            Message = $"Error removing user: {ex.Message}";
+            Error = $"Error removing user: {ex.Message}";
+            Message = null;
         }
     }
 

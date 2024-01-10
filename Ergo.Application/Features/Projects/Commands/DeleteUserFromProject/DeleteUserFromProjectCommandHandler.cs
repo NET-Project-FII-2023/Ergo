@@ -8,6 +8,7 @@ namespace Ergo.Application.Features.Projects.Commands.DeleteUserFromProject
         private readonly IProjectRepository projectRepository;
         private readonly IUserRepository userRepository;
         private readonly IUserManager userManager;
+
         public DeleteUserFromProjectCommandHandler(IProjectRepository projectRepository, IUserRepository userRepository, IUserManager userManager)
         {
             this.projectRepository = projectRepository;
@@ -16,7 +17,7 @@ namespace Ergo.Application.Features.Projects.Commands.DeleteUserFromProject
         }
 
         public async Task<DeleteUserFromProjectCommandResponse> Handle(DeleteUserFromProjectCommand request, CancellationToken cancellationToken)
-        {
+            {
             var project = await projectRepository.FindByIdAsync(Guid.Parse(request.ProjectId));
             if (!project.IsSuccess)
             {
