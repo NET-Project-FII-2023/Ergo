@@ -69,5 +69,49 @@ namespace Ergo.App.Services
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
         }
+
+        public async Task<List<UserViewModel>> GetAssignedUsersByProjectId(Guid projectId)
+        {
+            try
+            {
+                var uri = $"{RequestUri}/ByProjectId/{projectId}";
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                var result = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
+                result.EnsureSuccessStatusCode();
+                var content = await result.Content.ReadAsStringAsync();
+
+                // Log or debug the content here to inspect the received JSON
+                Console.WriteLine($"Received JSON: {content}");
+
+                // Check for empty response or null content
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    // Handle empty response
+                    return new List<UserViewModel>();
+                }
+
+                // Deserialize the JSON response
+                var responseObject = JsonSerializer.Deserialize<UserResponse>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                // Extract the users from the response object
+                var users = responseObject?.Users;
+
+                return users ?? new List<UserViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during deserialization: {ex}");
+                throw;
+            }
+        }
+
+        public class UserResponse
+        {
+            public List<UserViewModel> Users { get; set; }
+        }
+
     }
 }
