@@ -480,11 +480,21 @@ else
 
     protected async override Task OnInitializedAsync()
     {
+        NavigationManager.LocationChanged += HandleLocationChanged;
         await FetchAllTasks();
 
         var dotNetObjectRef = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("initializeDropHandling", dotNetObjectRef);
+    }
 
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= HandleLocationChanged;
+    }
+
+    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        await FetchAllTasks();
     }
 
     private void BeginEditComment(CommentViewModel comment)
@@ -674,6 +684,7 @@ else
             if (!string.IsNullOrEmpty(projectId))
             {
                 Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
+                StateHasChanged();
             }
         }
     }
@@ -849,7 +860,6 @@ else
         {
             Message = "Status updated successfully";
             await FetchAllTasks();
-            StateHasChanged();
         }
         else
         {
