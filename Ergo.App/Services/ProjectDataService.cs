@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using static Ergo.App.Services.TaskDataService;
 
@@ -190,6 +191,42 @@ namespace Ergo.App.Services
             }
         }
 
+        public async Task<ApiResponse<ProjectDto>> DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel removeUserFromProjectViewModel)
+        {
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization
+                    = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+
+                var projectId = removeUserFromProjectViewModel.ProjectId;
+                var userId = removeUserFromProjectViewModel.UserId;
+
+                var result = await httpClient.DeleteAsync($"{RequestUri}/DeleteUserFromProject?projectId={projectId}&userId={userId}");
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    if (result.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        Console.WriteLine("Project or user not found.");
+                        return null;
+                    }
+                    else
+                    {
+                        throw new HttpRequestException($"Unexpected HTTP status code {result.StatusCode}");
+                    }
+                }
+
+                var response = await result.Content.ReadFromJsonAsync<ApiResponse<ProjectDto>>();
+                response!.IsSuccess = result.IsSuccessStatusCode;
+                return response!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex}");
+                throw;
+            }
+        }
+
 
         public async Task<List<ProjectViewModel>> GetProjectsByUserIdAsync(string userId)
         {
@@ -219,6 +256,5 @@ namespace Ergo.App.Services
             }
         }
 
-       
     }
 }

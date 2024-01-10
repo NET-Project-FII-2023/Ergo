@@ -1,4 +1,6 @@
-﻿namespace Ergo.App.Services.Responses
+﻿using Ergo.App.ViewModels;
+
+namespace Ergo.App.Services.Responses
 {
     public class ApiResponse<T>
     {
