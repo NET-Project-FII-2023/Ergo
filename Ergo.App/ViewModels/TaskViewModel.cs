@@ -19,6 +19,9 @@ namespace Ergo.App.ViewModels
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime Deadline { get; set; }
 
+        public string? AssignedUserId { get; set; }
+        public string? AssignedUserName { get; set; }
+
         public string? CreatedBy { get; set; }
 
         [Required(ErrorMessage = "Project ID is required.")]

@@ -336,6 +336,22 @@ else
                     </div>
                 }
 
+
+                @if (selectedTask != null)
+                {
+                    <div>
+                        <label for="assignedUser">Assign User:</label>
+                        <select @bind="selectedTask.AssignedUserId">
+                            <option value="">Select User</option>
+                            @foreach (var user in assignedUsers)
+                            {
+                                <option value="@user.UserId">@user.Name</option>
+                            }
+                        </select>
+                        <button class="btn btn-outline-primary btn-sm mx-2" @onclick="() => AssignUserToTask(selectedTask.AssignedUserId)">Assign</button>
+                    </div>
+                }
+
                 <h5 class="mt-4">Comments:</h5>
 
 
@@ -631,6 +647,25 @@ else
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching assigned users: {ex.Message}");
+        }
+    }
+
+    private async void AssignUserToTask(string userId)
+    {
+        if (!Guid.TryParse(userId, out var guidUserId))
+        {
+            return;
+        }
+
+        var response = await TaskDataService.AssignUserToTaskAsync(selectedTask.TaskItemId, guidUserId);
+        if (response.IsSuccess)
+        {
+            Message = "User assigned successfully";
+            await FetchAllTasks();
+        }
+        else
+        {
+            Message = "Failed to assign user";
         }
     }
 
