@@ -12,4 +12,5 @@ public class ErgoContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<InboxItem> InboxItems { get; set; }
+    public DbSet<Photo> Photos { get; set; }
 }
