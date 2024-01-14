@@ -1,6 +1,9 @@
+using Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser;
 using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem;
+using Ergo.Application.Features.TaskItems.Commands.PauseTimerTaskItem;
+using Ergo.Application.Features.TaskItems.Commands.StartTimerTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
 using Ergo.Application.Features.TaskItems.Queries.GetAll;
 using Ergo.Application.Features.TaskItems.Queries.GetById;
@@ -118,5 +121,48 @@ public class TaskItemsController : ApiControllerBase
 
         return Ok(result);
     }
+    [Authorize(Roles = "User")]
+    [HttpPost("StartTimer")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> StartTimer(StartTimerTaskItemCommand command)
+    {
+        var result = await Mediator.Send(command);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+    [Authorize(Roles = "User")]
+    [HttpPost("PauseTimer")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> PauseTimer(PauseTimerTaskItemCommand command)
+    {
+        var result = await Mediator.Send(command);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+    [Authorize(Roles = "User")]
+    [HttpPost("AddManualTime")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> AddManualTime(AddManualTimeTaskItemCommand command)
+    {
+        var result = await Mediator.Send(command);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
 
 }

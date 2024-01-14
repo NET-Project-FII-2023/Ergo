@@ -75,6 +75,20 @@ namespace Ergo.API.IntegrationTests.Controllers
             result.ProjectId.Should().Be(projectId);
         }
         [Fact]
+        public async Task When_GetProjectByIdQueryHandlerIsCalledWithBadId_Then_Failure()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            //Act
+            var getResponse = await Client.GetAsync($"{RequestUri}/{00000000 - 0000 - 0000 - 0000 - 000000000000}");
+            var responseString = await getResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<ProjectDto>(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result.ProjectId.Should().Be("00000000-0000-0000-0000-000000000000");
+        }
+        [Fact]
         public async Task When_DeleteProjectQueryHandlerIsCalledWithRightId_Then_Success()
         {
             //Arrange
