@@ -8,6 +8,7 @@ using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
 using Ergo.Application.Features.TaskItems.Queries.GetAll;
 using Ergo.Application.Features.TaskItems.Queries.GetById;
 using Ergo.Application.Features.TaskItems.Queries.GetByProjectId;
+using Ergo.Application.Features.TaskItems.Queries.GetTaskItemTime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -155,6 +156,21 @@ public class TaskItemsController : ApiControllerBase
     public async Task<IActionResult> AddManualTime(AddManualTimeTaskItemCommand command)
     {
         var result = await Mediator.Send(command);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+    [Authorize(Roles = "User")]
+    [HttpGet("GetTaskItemTime/{taskItemId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTaskItemTime(Guid taskItemId)
+    {
+        var query = new GetTaskItemTimeQuery { TaskItemId = taskItemId };
+        var result = await Mediator.Send(query);
 
         if (!result.Success)
         {
