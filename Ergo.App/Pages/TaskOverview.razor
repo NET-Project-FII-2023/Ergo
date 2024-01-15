@@ -337,9 +337,7 @@ else
                 }
 
                 <h5 class="mt-4">Comments:</h5>
-
-
-
+                
                 <ul class="list-unstyled">
                     @foreach (var comment in commentsList)
                     {
@@ -356,12 +354,15 @@ else
                             {
                                 <div class="d-flex justify-content-between align-items-center bg-secondary-light text-dark p-2 rounded">
                                     <div class="justify-content-center align-items-center">
+                                        <p class="mb-0 small">@comment.LastModifiedDate.ToString()</p>
                                         <strong>@comment.CreatedBy:</strong> @comment.CommentText
-                                        <p>@comment.LastModifiedDate.ToString()</p>
                                     </div>
                                     @if (comment.CanEdit)
                                     {
-                                        <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => {DisplayCommentId(comment.CommentId);BeginEditComment(comment);}" />
+                                        <div class="d-flex flex-column">
+                                            <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => {DisplayCommentId(comment.CommentId);BeginEditComment(comment);}" />
+                                            <i class="bi bi-trash h5 mt-2 edit-icon" style="color: deepskyblue" @onclick="() => {DeleteComment(comment.CommentId);}"></i>
+                                        </div>
                                     }
                                 </div>
                             }
@@ -775,10 +776,67 @@ else
                     Message += result.ValidationErrors;
                 }
             }
+            
+            //project name
+            var projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
+            string projectName = "project";
+            foreach (var project in projects)
+            {
+                if (project.ProjectId == Guid.Parse(projectId))
+                {
+                    projectName = project.ProjectName;
+                    break;
+                }
+            }
+            
+            //send notifications to users assigned to the project
+            var users = await UserDataService.GetAssignedUsersByProjectId(Guid.Parse(projectId));
+            foreach (var user in users)
+            {
+                //only if the user is not the one who created the comment
+                if (user.Username == username)
+                {
+                    continue;
+                }
+                var inboxItem = new InboxItemViewModel
+                {
+                    UserId = user.UserId,
+                    Message = $"There is a new comment on task \"{selectedTask.TaskName}\" in project \"{projectName}\".",
+                    CreatedDate = DateTime.UtcNow,
+                    IsRead = false
+                };
+                await InboxItemDataService.CreateInboxItemAsync(inboxItem);
+            }
+            
+            //clear comment text
+            CommentViewModel.CommentText = "";
+
         }
         catch (Exception ex)
         {
             Message = $"Error creating comment: {ex.Message}";
+        }
+    }
+    
+    private async Task DeleteComment(Guid commentId)
+    {
+        try
+        {
+            var result = await CommentDataService.DeleteCommentAsync(commentId);
+            if (result.IsSuccess)
+            {
+                Message = "Comment deleted successfully";
+                await FetchCommentsForSelectedTask(selectedTaskId);
+                StateHasChanged();
+            }
+            else
+            {
+                Message = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error deleting comment: {ex.Message}";
         }
     }
 

@@ -116,6 +116,17 @@ namespace Ergo.App.Services
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
         }
+        
+        public async Task<ApiResponse<CommentDto>> DeleteCommentAsync(Guid commentId)
+        {
+            httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.DeleteAsync($"{RequestUri}/{commentId}");
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<CommentDto>>();
+            response!.IsSuccess = result.IsSuccessStatusCode;
+            return response!;
+        }
 
         public class CommentsResponse
         {
