@@ -1,7 +1,6 @@
 ﻿using Ergo.App.Contracts;
 using Ergo.App.Services.Responses;
 using Ergo.App.ViewModels;
-using Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -124,7 +123,7 @@ namespace Ergo.App.Services
         {
             httpClient.DefaultRequestHeaders.Authorization
                 = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
-            var result = await httpClient.PostAsJsonAsync($"{RequestUri}/AssignUser", new AssignTaskItemToUserCommand { TaskItemId = taskId, UserId = userId });
+            var result = await httpClient.PostAsJsonAsync($"{RequestUri}/AssignUser", new AssignTaskItemToUserDto { TaskItemId = taskId, UserId = userId });
             result.EnsureSuccessStatusCode();
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<TaskDto>>();
             response!.IsSuccess = result.IsSuccessStatusCode;

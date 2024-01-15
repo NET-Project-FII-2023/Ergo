@@ -1,16 +1,17 @@
-﻿using Ergo.Application.Persistence;
+﻿using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Persistence;
 using MediatR;
-using Ergo.Application.Features.TaskItems.Queries.GetByProjectId;
-
-namespace Ergo.Application.Features.TaskItems.Queries.GetTasksByProjectId
+namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
 {
     public class GetTasksByProjectIdQueryHandler : IRequestHandler<GetTasksByProjectIdQuery, GetTasksByProjectIdQueryResponse>
     {
         private readonly ITaskItemRepository _taskItemRepository;
+        private readonly IUserManager userManager;
 
-        public GetTasksByProjectIdQueryHandler(ITaskItemRepository taskItemRepository)
+        public GetTasksByProjectIdQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager)
         {
             _taskItemRepository = taskItemRepository;
+            this.userManager = userManager;
         }
 
         public async Task<GetTasksByProjectIdQueryResponse> Handle(GetTasksByProjectIdQuery request, CancellationToken cancellationToken)
@@ -43,6 +44,27 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetTasksByProjectId
 
             foreach (var taskItem in taskItems)
             {
+                UserTaskDto? assignedUser = null;
+                var assignedUserId = await _taskItemRepository.GetAssignedUser(taskItem.TaskItemId);
+
+                if (assignedUserId.IsSuccess)
+                {
+                    if (Guid.TryParse(assignedUserId.Value, out var guidUserId))
+                    {
+                        var user = await userManager.FindByIdAsync(guidUserId);
+
+                        if (user.IsSuccess)
+                        {
+                            assignedUser = new UserTaskDto
+                            {
+                                UserId = user.Value.UserId,
+                                Name = user.Value.Name,
+                                Username = user.Value.Username,
+                            };
+                        }
+                    }
+                }
+
                 taskItemDtos.Add(new TaskItemDto
                 {
                     TaskItemId = taskItem.TaskItemId,
@@ -51,7 +73,8 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetTasksByProjectId
                     Description = taskItem.Description,
                     Deadline = taskItem.Deadline,
                     ProjectId = taskItem.ProjectId,
-                    State = taskItem.State
+                    State = taskItem.State,
+                    AssignedUser = assignedUser,
                 });
             }
 
