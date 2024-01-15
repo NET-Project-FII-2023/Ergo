@@ -33,6 +33,7 @@ namespace Infrastructure
             services.AddScoped<
                 IProjectRepository, ProjectRepository>();
             services.AddScoped<IInboxItemRepository, InboxItemRepository>();
+            services.AddScoped<IPhotoRepository, PhotoRepository>();
             return services;
         }
     }

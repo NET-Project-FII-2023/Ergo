@@ -1,11 +1,5 @@
 ﻿using Ergo.Application.Persistence;
-using Ergo.Application.Responses;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Ergo.Domain.Entities.Enums;
 using Ergo.Application.Features.TaskItems.Queries.GetByProjectId;
 
 namespace Ergo.Application.Features.TaskItems.Queries.GetTasksByProjectId
@@ -21,6 +15,15 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetTasksByProjectId
 
         public async Task<GetTasksByProjectIdQueryResponse> Handle(GetTasksByProjectIdQuery request, CancellationToken cancellationToken)
         {
+            //var projectExists = await _taskItemRepository.FindByIdAsync(request.ProjectId);
+            //if(!projectExists.IsSuccess)
+            //{
+            //    return new GetTasksByProjectIdQueryResponse
+            //    {
+            //        Success = false,
+            //        ValidationsErrors = new List<string> { "Project with the provided ID does not exist." }
+            //    };
+            //}
             var taskItemsResult = await _taskItemRepository.GetTasksByProjectIdAsync(request.ProjectId);
 
             if (!taskItemsResult.IsSuccess)

@@ -191,24 +191,21 @@ namespace Ergo.App.Services
             }
         }
 
-        public async Task<ApiResponse<ProjectDto>> DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel removeUserFromProjectViewModel)
+   
+        public async Task<ApiResponse<ProjectDto>> DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel deleteUserFromProjectViewModel)
         {
             try
             {
-                httpClient.DefaultRequestHeaders.Authorization
-                    = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
 
-                var projectId = removeUserFromProjectViewModel.ProjectId;
-                var userId = removeUserFromProjectViewModel.UserId;
-
-                var result = await httpClient.DeleteAsync($"{RequestUri}/DeleteUserFromProject?projectId={projectId}&userId={userId}");
+                var result = await httpClient.PostAsJsonAsync($"{RequestUri}/DeleteUserFromProject", deleteUserFromProjectViewModel);
 
                 if (!result.IsSuccessStatusCode)
                 {
                     if (result.StatusCode == HttpStatusCode.NotFound)
                     {
-                        Console.WriteLine("Project or user not found.");
-                        return null;
+                        Console.WriteLine("User or project not found.");
+                        return null; // Or handle the response accordingly
                     }
                     else
                     {
@@ -226,7 +223,6 @@ namespace Ergo.App.Services
                 throw;
             }
         }
-
 
         public async Task<List<ProjectViewModel>> GetProjectsByUserIdAsync(string userId)
         {
@@ -256,5 +252,6 @@ namespace Ergo.App.Services
             }
         }
 
+        
     }
 }

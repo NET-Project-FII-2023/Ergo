@@ -84,9 +84,8 @@ public class ProjectsController : ApiControllerBase
         }
         return Ok(result);
     }
-    [Authorize(Roles ="User")]
-    [HttpDelete]
-    [Route("DeleteUserFromProject")]
+    [Authorize(Roles = "User")]
+    [HttpPost("DeleteUserFromProject")] // Specify the route for the POST action
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public async Task<IActionResult> DeleteUserFromProject(DeleteUserFromProjectCommand command)
     {

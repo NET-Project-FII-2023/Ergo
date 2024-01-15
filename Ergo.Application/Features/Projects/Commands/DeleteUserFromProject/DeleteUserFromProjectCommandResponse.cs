@@ -5,11 +5,9 @@ namespace Ergo.Application.Features.Projects.Commands.DeleteUserFromProject
 {
     public class DeleteUserFromProjectCommandResponse : BaseResponse
     {
-
-
         public DeleteUserFromProjectCommandResponse() : base()
         {
-            
+
         }
     }
 }

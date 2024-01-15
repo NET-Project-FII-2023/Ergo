@@ -14,7 +14,7 @@ namespace Ergo.App.Contracts
 
         Task<ApiResponse<ProjectDto>> AssignUserToProjectAsync(ProjectAssignUserViewModel projectAssignUserViewModel);
 
-        Task<ApiResponse<ProjectDto>> DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel projectAssignUserViewModel);
+        Task<ApiResponse<ProjectDto>> DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel deleteUserFromProjectViewModel);
 
 
     }
