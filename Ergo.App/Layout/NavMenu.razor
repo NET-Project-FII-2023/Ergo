@@ -2,7 +2,10 @@
 @using Ergo.App.ViewModels
 @using Blazored.LocalStorage
 @using Ergo.App.Components
+@using Microsoft.AspNetCore.Components.Authorization
 @inject ILocalStorageService LocalStorageService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 
 <div class="top-row ps-3 navbar navbar-dark vw-100" style="background-color: #181818">
     <div class="container-fluid">
@@ -93,14 +96,29 @@
                         My Projects
                     </div>
                     @if(projects != null)
-                    @foreach (var project in projects)
-                    {
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link px-3" href="@($"taskoverview?projectId={project.ProjectId}")">
-                                <span class="bi bi-project bi-project-hover" aria-hidden="true"></span> @project.ProjectName
-                            </NavLink>
-                        </div>
-                    }
+                        @foreach (var project in projects)
+                        {
+                            <div class="nav-item px-3">
+                                @if (project.IsEditing)
+                                {
+                                    <input type="text" @bind="project.ProjectName" />
+                                    <button class="btn" @onclick="() => SaveProjectNameEdit(project)">Save</button>
+                                }
+                                else
+                                {
+                                    <div style="display:flex; flex-direction:row; justify-content:space-between;">
+                                    <NavLink style="min-width:150px;" class="nav-link px-3 " href="@($"taskoverview?projectId={project.ProjectId}")">
+                                        
+                                        <span class="bi bi-project" aria-hidden="true"></span> @project.ProjectName
+                                        
+                                       
+                                    </NavLink>
+                                    <button class="btn" style="justify-self:end;" @onclick="() => EditProjectName(project)"><i class="bi bi-pencil"></i></button>
+                                    </div>
+                                   
+                                }
+                            </div>
+                        }
 
                     <div class="nav-item px-3">
                         <NavLink class="nav-link px-3" href="addproject">
@@ -137,10 +155,77 @@
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
     
     private bool showNotificationsPanel = false;
+
+    private string Message { get; set; } = string.Empty;
 }
 
 @functions
 {
+    private async Task SaveProjectNameEdit(ProjectViewModel selectedProject)
+    {
+        if (selectedProject != null)
+        {
+            Console.WriteLine("SaveProjectNameEdit:");
+            Console.WriteLine(selectedProject.ProjectName);
+            Console.WriteLine("ProjectId:");
+            Console.WriteLine(selectedProject.ProjectId);
+            Console.WriteLine("Description:");
+            Console.WriteLine(selectedProject.Description);
+            Console.WriteLine("GitRepository:");
+            Console.WriteLine(selectedProject.GitRepository);
+            Console.WriteLine("Deadline:");
+            Console.WriteLine(selectedProject.Deadline);
+            Console.WriteLine("LastModifiedBy:");
+            Console.WriteLine(selectedProject.ModifiedBy);
+            Console.WriteLine("State:");
+            Console.WriteLine(selectedProject.State);
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            if (user.Identity.IsAuthenticated)
+            {
+                var username = user.Identity.Name; 
+
+                selectedProject.IsEditing = false;
+                selectedProject.ModifiedBy = username; 
+
+                var updateProjectDto = new ProjectViewModel
+                    {
+                        ProjectId = selectedProject.ProjectId,
+                        ProjectName = selectedProject.ProjectName,
+                        Description = selectedProject.Description,
+                        GitRepository = selectedProject.GitRepository,
+                        ModifiedBy = selectedProject.ModifiedBy,
+                        Deadline = selectedProject.Deadline,
+                        State = selectedProject.State,
+                    };
+
+                var result = await ProjectDataService.UpdateProjectAsync(updateProjectDto);
+
+                if (result.IsSuccess)
+                {
+                    Message = "Project name updated successfully";
+                }
+                else
+                {
+                    Message = "Failed to update project name";
+                }
+            }
+            else
+            {
+                Console.WriteLine("Utilizatorul nu este autentificat");
+               
+            }
+        }
+    }
+
+
+
+
+        private void EditProjectName(ProjectViewModel project)
+        {
+            project.IsEditing = true;
+         } 
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;

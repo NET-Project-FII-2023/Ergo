@@ -1,3 +1,4 @@
+using Ergo.Domain.Entities.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ergo.App.ViewModels
@@ -20,5 +21,11 @@ namespace Ergo.App.ViewModels
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime Deadline { get; set; }
+
+        public bool IsEditing { get; set; }
+
+        public ProjectState State { get; set; }
+
+        public string ModifiedBy { get; set; }
     }
 }
