@@ -359,7 +359,10 @@ else
                                     </div>
                                     @if (comment.CanEdit)
                                     {
-                                        <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => {DisplayCommentId(comment.CommentId);BeginEditComment(comment);}" />
+                                        <div class="d-flex flex-column">
+                                            <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => {DisplayCommentId(comment.CommentId);BeginEditComment(comment);}" />
+                                            <i class="bi bi-trash h5 mt-2 edit-icon" style="color: deepskyblue" @onclick="() => {DeleteComment(comment.CommentId);}"></i>
+                                        </div>
                                     }
                                 </div>
                             }
@@ -812,6 +815,28 @@ else
         catch (Exception ex)
         {
             Message = $"Error creating comment: {ex.Message}";
+        }
+    }
+    
+    private async Task DeleteComment(Guid commentId)
+    {
+        try
+        {
+            var result = await CommentDataService.DeleteCommentAsync(commentId);
+            if (result.IsSuccess)
+            {
+                Message = "Comment deleted successfully";
+                await FetchCommentsForSelectedTask(selectedTaskId);
+                StateHasChanged();
+            }
+            else
+            {
+                Message = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error deleting comment: {ex.Message}";
         }
     }
 
