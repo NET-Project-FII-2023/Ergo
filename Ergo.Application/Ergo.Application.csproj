@@ -21,4 +21,8 @@
       <ProjectReference Include="..\Ergo.Domain\Ergo.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\ML\Commands\" />
+    </ItemGroup>
+
 </Project>

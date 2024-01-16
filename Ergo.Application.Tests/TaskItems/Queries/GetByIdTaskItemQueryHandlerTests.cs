@@ -11,12 +11,14 @@ namespace Ergo.Application.Tests.TaskItems.Queries;
 public class GetByIdTaskItemQueryHandlerTests : IDisposable
 {
     private readonly ITaskItemRepository _mockTaskItemRepository;
+    private readonly IUserManager _mockUserManager;
     private readonly GetByIdTaskItemQueryHandler _handler;
 
     public GetByIdTaskItemQueryHandlerTests()
     {
         _mockTaskItemRepository = TaskItemRepositoryMocks.GetTaskItemRepository();
-        _handler = new GetByIdTaskItemQueryHandler(_mockTaskItemRepository);
+        _mockUserManager = Substitute.For<IUserManager>();
+        _handler = new GetByIdTaskItemQueryHandler(_mockTaskItemRepository, _mockUserManager);
     }
     
     /*[Fact]

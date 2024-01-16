@@ -1,4 +1,5 @@
 ﻿using Ergo.Application.Persistence;
+using Infrastructure.ML;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -34,6 +35,7 @@ namespace Infrastructure
                 IProjectRepository, ProjectRepository>();
             services.AddScoped<IInboxItemRepository, InboxItemRepository>();
             services.AddScoped<IPhotoRepository, PhotoRepository>();
+            services.AddScoped<IMLService, MLService>();
             return services;
         }
     }
