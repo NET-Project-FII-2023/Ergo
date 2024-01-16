@@ -312,10 +312,13 @@ else
                 {
                     <p>Time Spent: @timeSpent</p>
                 }
-                <div class="mt-2">
-                    <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandleStartTimer(selectedTask.AssignedUser.UserId);FetchTimeSpent(selectedTask.TaskItemId);}">Start Timer</button>
-                    <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId); FetchTimeSpent(selectedTask.TaskItemId);}">Pause Timer</button>
-                </div>
+                @if(selectedTask.State != TaskState.Done)
+                {
+                    <div class="mt-2">
+                        <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandleStartTimer(selectedTask.AssignedUser.UserId);FetchTimeSpent(selectedTask.TaskItemId);}">Start Timer</button>
+                        <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId); FetchTimeSpent(selectedTask.TaskItemId);}">Pause Timer</button>
+                    </div>
+                }
 
                
                 @if (selectedTask != null && !selectedTask.IsTitleEditMode)
