@@ -142,6 +142,9 @@
     
     [Inject]
     public IInboxItemDataService InboxItemDataService { get; set; }
+    
+    [Inject]
+    public IUserDataService UserDataService { get; set; }
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
@@ -165,20 +168,6 @@
     {
         if (selectedProject != null)
         {
-            Console.WriteLine("SaveProjectNameEdit:");
-            Console.WriteLine(selectedProject.ProjectName);
-            Console.WriteLine("ProjectId:");
-            Console.WriteLine(selectedProject.ProjectId);
-            Console.WriteLine("Description:");
-            Console.WriteLine(selectedProject.Description);
-            Console.WriteLine("GitRepository:");
-            Console.WriteLine(selectedProject.GitRepository);
-            Console.WriteLine("Deadline:");
-            Console.WriteLine(selectedProject.Deadline);
-            Console.WriteLine("LastModifiedBy:");
-            Console.WriteLine(selectedProject.ModifiedBy);
-            Console.WriteLine("State:");
-            Console.WriteLine(selectedProject.State);
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
             if (user.Identity.IsAuthenticated)
@@ -214,6 +203,20 @@
             {
                 Console.WriteLine("Utilizatorul nu este autentificat");
                
+            }
+            
+            //send notification to all team members
+            var users = await UserDataService.GetAssignedUsersByProjectId(selectedProject.ProjectId);
+            foreach (var usr in users)
+            {
+                var inboxItem = new InboxItemViewModel
+                {
+                    Message = $"Project name changed to {selectedProject.ProjectName}",
+                    IsRead = false,
+                    CreatedDate = DateTime.Now,
+                    UserId = usr.UserId
+                };
+                await InboxItemDataService.CreateInboxItemAsync(inboxItem);
             }
         }
     }
