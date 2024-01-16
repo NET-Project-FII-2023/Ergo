@@ -242,7 +242,7 @@ else
             
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.ToDo))
             {
-                <div class="card mb-3" style="border-radius:4px; background: linear-gradient(to right, #a963cf, #a249d1);" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px; background: linear-gradient(to right, #a963cf, #a249d1);" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId); FetchTimeSpent(taskItem.TaskItemId);}">
                     <div class="card-body style">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -260,7 +260,7 @@ else
             <h4 class="mb-4" style="font-size:20px;">In Progress</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.InProgress))
             {
-                <div class="card mb-3" style="border-radius:4px;background: linear-gradient(to right, #71a2d1, #4d91d1);" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px;background: linear-gradient(to right, #71a2d1, #4d91d1);" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId); FetchTimeSpent(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -274,7 +274,7 @@ else
             <h4 class="mb-4" style="font-size:20px;">Done</h4>
             @foreach (var taskItem in Tasks.Where(task => task.State == TaskState.Done))
             {
-                <div class="card mb-3" style="border-radius:4px; background: linear-gradient(to right, #84b5a1, #60a88b);" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId);}">
+                <div class="card mb-3" style="border-radius:4px; background: linear-gradient(to right, #84b5a1, #60a88b);" draggable="true" @ondragstart="@(e => DragStart(e, taskItem.TaskItemId))" @onclick="() => {ShowDetailsModal(taskItem.TaskItemId); DisplayTaskId(taskItem.TaskItemId); FetchTimeSpent(taskItem.TaskItemId);}">
                     <div class="card-body">
                         <h5 class="card-title">@taskItem.TaskName</h5>
                         <p class="card-text">@taskItem.Description</p>
@@ -308,16 +308,13 @@ else
     <Modal @ref="detailsModal" Title="Task Details">
         <BodyTemplate>
             <div class="modal-body text-dark">
-
+                @if(timeSpent != "00:00:00")
+                {
+                    <p>Time Spent: @timeSpent</p>
+                }
                 <div class="mt-2">
-                    @if (!isTimerRunning)
-                    {
-                        <button class="btn btn-outline-primary btn-sm" @onclick="() => HandleStartTimer(selectedTask.AssignedUserId)">Start Timer</button>
-                    }
-                    @if (isTimerRunning)
-                    {
-                        <button class="btn btn-outline-primary btn-sm" @onclick="() => HandlePauseTimer(selectedTask.AssignedUserId)">Pause Timer</button>
-                    }
+                    <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandleStartTimer(selectedTask.AssignedUser.UserId);FetchTimeSpent(selectedTask.TaskItemId);}">Start Timer</button>
+                    <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId); FetchTimeSpent(selectedTask.TaskItemId);}">Pause Timer</button>
                 </div>
 
                
@@ -562,9 +559,35 @@ else
 
     private string projectId = default!;
 
+    private string timeSpent;
+
     private List<UserViewModel> assignedUsers = new List<UserViewModel>();
 
     private Modal allMembersModal = default!;
+
+    private async Task FetchTimeSpent(Guid taskItemId)
+    {
+        try
+        {
+            // Call the service method to fetch time spent
+            var response = await TaskDataService.GetTaskItemTimeAsync(taskItemId);
+
+            if (response.IsSuccess)
+            {
+                // Assign the time spent to the local variable
+                timeSpent = response.Data.RecordedTime.ToString();
+            }
+            else
+            {
+                Console.WriteLine($"Failed to fetch time spent: {response.Message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            Console.WriteLine($"Exception while fetching time spent: {ex}");
+        }
+    }
 
     private async Task ShowAllMembersModal()
     {
@@ -1204,7 +1227,7 @@ else
             else
             {
                 Console.WriteLine($"Error: {response.Message}");
-                Message = response.Message;
+                // Message = response.Message;
             }
         }
     }
@@ -1247,7 +1270,7 @@ else
             else
             {
                 Console.WriteLine($"Error: {response.Message}");
-                Message = response.Message;
+                // Message = response.Message;
             }
         }
     }
