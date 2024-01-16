@@ -308,21 +308,13 @@ else
     <Modal @ref="detailsModal" Title="Task Details">
         <BodyTemplate>
             <div class="modal-body text-dark">
-                <!-- Display the fetched time spent -->
-                @if(timeSpent == "00:00:00")
+                @if(timeSpent != "00:00:00")
                 {
-                    <p>PULAA</p>
+                    <p>Time Spent: @timeSpent</p>
                 }
-                <p>Time Spent: @timeSpent</p>
                 <div class="mt-2">
-                    @if(!isTimerRunning)
-                    {
-                        <button class="btn btn-outline-primary btn-sm" @onclick="() => HandleStartTimer(selectedTask.AssignedUser.UserId)">Start Timer</button>
-                    }
-                    @if (isTimerRunning)
-                    {
-                        <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId); FetchTimeSpent(selectedTask.TaskItemId);}">Pause Timer</button>
-                    }
+                    <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandleStartTimer(selectedTask.AssignedUser.UserId);FetchTimeSpent(selectedTask.TaskItemId);}">Start Timer</button>
+                    <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId); FetchTimeSpent(selectedTask.TaskItemId);}">Pause Timer</button>
                 </div>
 
                
@@ -584,14 +576,6 @@ else
             {
                 // Assign the time spent to the local variable
                 timeSpent = response.Data.RecordedTime.ToString();
-                if(timeSpent == "00:00:00")
-                {
-                    isTimerRunning = false;
-                }
-                else
-                {
-                    isTimerRunning = true;
-                }
             }
             else
             {
@@ -1243,7 +1227,7 @@ else
             else
             {
                 Console.WriteLine($"Error: {response.Message}");
-                Message = response.Message;
+                // Message = response.Message;
             }
         }
     }
@@ -1286,7 +1270,7 @@ else
             else
             {
                 Console.WriteLine($"Error: {response.Message}");
-                Message = response.Message;
+                // Message = response.Message;
             }
         }
     }
