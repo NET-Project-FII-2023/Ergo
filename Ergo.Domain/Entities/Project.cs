@@ -78,7 +78,7 @@ namespace Ergo.Domain.Entities
             {
                 return Result<Project>.Failure(Constants.CreatorFullNameRequired);
             }
-            if (state == default)
+            if (!Enum.IsDefined(typeof(ProjectState), state))
             {
                 return Result<Project>.Failure("A valid project state is required");
             }

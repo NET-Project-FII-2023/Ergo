@@ -59,7 +59,7 @@ namespace Ergo.Application.Features.Users.Queries.GetByProjectId
             {
                 Success = true,
                 Users = usersDto
-            };   
+            };
         }
     }
 }
