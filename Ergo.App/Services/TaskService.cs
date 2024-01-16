@@ -133,6 +133,24 @@ namespace Ergo.App.Services
             }
         }
 
+        public async Task<ApiResponse<TaskDto>> PauseTimerAsync(Guid taskId, Guid userId)
+        {
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                var result = await httpClient.PostAsJsonAsync($"{RequestUri}/PauseTimer", new AssignTaskItemToUserDto { TaskItemId = taskId, UserId = userId });
+                result.EnsureSuccessStatusCode();
+                var response = await result.Content.ReadFromJsonAsync<ApiResponse<TaskDto>>();
+                response!.IsSuccess = result.IsSuccessStatusCode;
+                return response!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during timer start: {ex}");
+                throw;
+            }
+        }
+
         public class TaskItemsResponse
         {
             public List<TaskViewModel> TaskItems { get; set; }

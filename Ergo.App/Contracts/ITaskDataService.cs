@@ -11,6 +11,7 @@ namespace Ergo.App.Contracts
         Task<ApiResponse<UpdateTaskDto>> UpdateTaskAsync(UpdateTaskDto updateTaskViewModel);
         Task<ApiResponse<TaskDto>> AssignUserToTaskAsync(Guid taskId, Guid userId);
         Task<ApiResponse<TaskDto>> StartTimerAsync(Guid taskId, Guid userId);
+        Task<ApiResponse<TaskDto>> PauseTimerAsync(Guid taskId, Guid userId);
         Task<string> GetUsernameFromTokenAsync();
 
 

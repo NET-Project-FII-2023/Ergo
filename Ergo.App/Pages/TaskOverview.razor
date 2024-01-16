@@ -309,6 +309,11 @@ else
         <BodyTemplate>
             <div class="modal-body text-dark">
                 
+                <div class="mt-2">
+                    <button class="btn btn-outline-primary btn-sm" @onclick="() => HandleStartTimer(selectedTask.AssignedUserId)">Start Timer</button>
+                    <button class="btn btn-outline-primary btn-sm" @onclick="() => HandlePauseTimer(selectedTask.AssignedUserId)">Pause Timer</button>
+                </div>
+               
                 @if (selectedTask != null && !selectedTask.IsTitleEditMode)
                 {
                     <h2 class="card-title">@selectedTask.TaskName</h2>
@@ -350,9 +355,6 @@ else
                             }
                         </select>
                         <button class="btn btn-outline-primary btn-sm mx-2" @onclick="() => AssignUserToTask(selectedTask.AssignedUserId)">Assign</button>
-                        <div class="mt-2">
-                            <button class="btn btn-outline-primary btn-sm" @onclick="() => HandleStartTimer(selectedTask.AssignedUserId)">Start Timer</button>
-                        </div>
                     </div>
                 }
 
@@ -1103,14 +1105,30 @@ else
         var response = await TaskDataService.StartTimerAsync(selectedTask.TaskItemId, guidUserId);
         if (response.IsSuccess)
         {
-            Message = "User assigned successfully";
-            await FetchAllTasks();
+            Message = "Timer Started!";
         }
         else
         {
-            Message = "Failed to assign user";
+            Message = "Failed to start timer!";
         }
-           
+
+    }
+    private async Task HandlePauseTimer(string userId)
+    {
+        if (!Guid.TryParse(userId, out var guidUserId))
+        {
+            return;
+        }
+
+        var response = await TaskDataService.PauseTimerAsync(selectedTask.TaskItemId, guidUserId);
+        if (response.IsSuccess)
+        {
+            Message = "Timer Paused!";
+        }
+        else
+        {
+            Message = "Failed to pause timer!";
+        }
 
     }
 }
