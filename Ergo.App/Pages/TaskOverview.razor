@@ -308,11 +308,18 @@ else
     <Modal @ref="detailsModal" Title="Task Details">
         <BodyTemplate>
             <div class="modal-body text-dark">
-                
+
                 <div class="mt-2">
-                    <button class="btn btn-outline-primary btn-sm" @onclick="() => HandleStartTimer(selectedTask.AssignedUserId)">Start Timer</button>
-                    <button class="btn btn-outline-primary btn-sm" @onclick="() => HandlePauseTimer(selectedTask.AssignedUserId)">Pause Timer</button>
+                    @if (!isTimerRunning)
+                    {
+                        <button class="btn btn-outline-primary btn-sm" @onclick="() => HandleStartTimer(selectedTask.AssignedUserId)">Start Timer</button>
+                    }
+                    @if (isTimerRunning)
+                    {
+                        <button class="btn btn-outline-primary btn-sm" @onclick="() => HandlePauseTimer(selectedTask.AssignedUserId)">Pause Timer</button>
+                    }
                 </div>
+
                
                 @if (selectedTask != null && !selectedTask.IsTitleEditMode)
                 {
@@ -508,6 +515,12 @@ else
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
+    [Inject]
+    public ITokenService TokenService { get; set; }
+
+    public UserViewModel User { get; set; }
+    private string email;
+
     public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
 
     public RemoveUserFromProjectViewModel RemoveUserFromProjectViewModel { get; set; } = new RemoveUserFromProjectViewModel();
@@ -527,6 +540,8 @@ else
     public CommentViewModel CommentViewModel { get; set; } = new CommentViewModel();
 
     private CommentViewModel? commentBeingEdited;
+
+    private bool isTimerRunning = false;
 
     public string Message { get; set; }
 
@@ -1097,39 +1112,86 @@ else
 
     private async Task HandleStartTimer(string userId)
     {
-        if (!Guid.TryParse(userId, out var guidUserId))
+        var token = await TokenService.GetTokenAsync();
+        email = await TokenService.DecodeEmailFromTokenAsync(token);
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            User = await UserDataService.GetUserByEmailAsync(email);
+        }
+
+        if (!Guid.TryParse(User.UserId, out var guidUserId))
         {
             return;
         }
 
         var response = await TaskDataService.StartTimerAsync(selectedTask.TaskItemId, guidUserId);
+
         if (response.IsSuccess)
         {
             Message = "Timer Started!";
+            isTimerRunning = true;
         }
         else
         {
-            Message = "Failed to start timer!";
+            if (response.ValidationErrors != null && response.ValidationErrors.Any())
+            {
+                Console.WriteLine("Validation Errors:");
+                foreach (var error in response.ValidationErrors)
+                {
+                    Console.WriteLine(error);
+                }
+                Message = "Failed to start timer due to validation errors.";
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.Message}");
+                Message = response.Message;
+            }
         }
-
     }
+
+
     private async Task HandlePauseTimer(string userId)
     {
-        if (!Guid.TryParse(userId, out var guidUserId))
+
+        var token = await TokenService.GetTokenAsync();
+        email = await TokenService.DecodeEmailFromTokenAsync(token);
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            User = await UserDataService.GetUserByEmailAsync(email);
+        }
+
+        if (!Guid.TryParse(User.UserId, out var guidUserId))
         {
             return;
         }
 
         var response = await TaskDataService.PauseTimerAsync(selectedTask.TaskItemId, guidUserId);
+
         if (response.IsSuccess)
         {
             Message = "Timer Paused!";
+            isTimerRunning = false;
         }
         else
         {
-            Message = "Failed to pause timer!";
+            if (response.ValidationErrors != null && response.ValidationErrors.Any())
+            {
+                Console.WriteLine("Validation Errors:");
+                foreach (var error in response.ValidationErrors)
+                {
+                    Console.WriteLine(error);
+                }
+                Message = "Failed to pause timer due to validation errors.";
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.Message}");
+                Message = response.Message;
+            }
         }
-
     }
 }
 
