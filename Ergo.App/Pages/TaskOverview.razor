@@ -109,6 +109,11 @@ using Microsoft.JSInterop;
         cursor: pointer;
     }
 
+    .description-container {
+        padding: 10px;
+        border-radius: 4px;
+        border: solid 1px #ccc;
+    }
 
     .cool-input {
         height: 3rem;
@@ -332,8 +337,10 @@ else
                
                 @if (selectedTask != null && !selectedTask.IsTitleEditMode)
                 {
-                    <h2 class="card-title">@selectedTask.TaskName</h2>
-                    <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="ToggleTitleEditMode" />
+                    <div class="d-flex align-items-center">
+                        <h2 class="card-title">@selectedTask.TaskName</h2>
+                        <img src="./edit.png" class="edit-icon mx-2" alt="Edit" @onclick="ToggleTitleEditMode" />
+                    </div>
                 }
                 else
                 {
@@ -345,9 +352,13 @@ else
                 }
                 @if (selectedTask != null && !selectedTask.DescriptionEditMode)
                 {
-                    <h5 class="card-title mt-4 mb-2">Description</h5>
-                    <p>@selectedTask.Description</p>
-                    <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="ToggleDescriptionEditMode" />
+                    <div class="d-flex align-items-center mt-4 mb-2">
+                        <h5 class="card-title">Description</h5>
+                        <img src="./edit.png" class="edit-icon mx-2" alt="Edit" @onclick="ToggleDescriptionEditMode" />
+                    </div>
+                    <div class="description-container">
+                        <p>@selectedTask.Description</p>
+                    </div>
                 }
                 else
                 {
@@ -361,16 +372,18 @@ else
 
                 @if (selectedTask != null)
                 {
-                    <div>
-                        <label for="assignedUser">Assign User:</label>
-                        <select @bind="selectedTask.AssignedUser.UserId">
-                            <option value="">Select User</option>
+                    <div class="mt-3">
+                        <label for="assignedUser">Assigned: </label>
+                            <select @onchange="OnChangeUserSelection" class="mx-2">
+                            @if (String.IsNullOrEmpty(selectedTask.AssignedUser.UserId))
+                            {
+                                <option value="">Select User</option>
+                            }
                             @foreach (var user in assignedUsers)
                             {
                                 <option value="@user.UserId">@user.Name</option>
                             }
                         </select>
-                        <button class="btn btn-outline-primary btn-sm mx-2" @onclick="() => AssignUserToTask(selectedTask.AssignedUser.UserId)">Assign</button>
                     </div>
                 }
 
@@ -726,7 +739,16 @@ else
         }
     }
 
-    private async void AssignUserToTask(string userId)
+    private async Task OnChangeUserSelection(ChangeEventArgs e)
+    {
+        var selectedUserId = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(selectedUserId))
+        {
+            await AssignUserToTask(selectedUserId);
+        }
+    }
+
+    private async Task AssignUserToTask(string userId)
     {
         if (!Guid.TryParse(userId, out var guidUserId))
         {
