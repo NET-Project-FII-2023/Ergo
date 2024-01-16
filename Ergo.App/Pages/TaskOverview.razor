@@ -312,10 +312,16 @@ else
                 {
                     <p>Time Spent: @timeSpent</p>
                 }
-                <div class="mt-2">
-                    <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandleStartTimer(selectedTask.AssignedUser.UserId);FetchTimeSpent(selectedTask.TaskItemId);}">Start Timer</button>
-                    <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId); FetchTimeSpent(selectedTask.TaskItemId);}">Pause Timer</button>
-                </div>
+                @if(selectedTask.State != TaskState.Done)
+                {
+                    if(selectedTask.AssignedUser.UserId == currentUserId.ToString())
+                    {
+                        <div class="mt-2">
+                            <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandleStartTimer(selectedTask.AssignedUser.UserId);FetchTimeSpent(selectedTask.TaskItemId);}">Start Timer</button>
+                            <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId); FetchTimeSpent(selectedTask.TaskItemId);}">Pause Timer</button>
+                        </div>
+                    }
+                }
 
                
                 @if (selectedTask != null && !selectedTask.IsTitleEditMode)
@@ -565,6 +571,8 @@ else
 
     private Modal allMembersModal = default!;
 
+    private Guid currentUserId;
+
     private async Task FetchTimeSpent(Guid taskItemId)
     {
         try
@@ -653,6 +661,21 @@ else
         var dotNetObjectRef = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("initializeDropHandling", dotNetObjectRef);
         await FetchAssignedUsers();
+
+        var token = await TokenService.GetTokenAsync();
+        email = await TokenService.DecodeEmailFromTokenAsync(token);
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            User = await UserDataService.GetUserByEmailAsync(email);
+        }
+        if (!Guid.TryParse(User.UserId, out var guidUserId))
+        {
+            return;
+        }
+
+        currentUserId = guidUserId;
+        Console.WriteLine("CURRREEEEENTTT UIDDDDDDDDDDDDDDDDDDD: " + currentUserId);
     }
 
     public void Dispose()
