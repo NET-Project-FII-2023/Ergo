@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ergo.Domain.Tests", "Ergo.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ergo.Application.Tests", "Ergo.Application.Tests\Ergo.Application.Tests.csproj", "{8A7620A2-5D52-4B06-BADE-C1EC0C16F7EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ergo.API.IntegrationTests", "Ergo.API.IntegrationTests\Ergo.API.IntegrationTests.csproj", "{004CD588-42B1-4FAE-AADA-EE874549C555}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ergo.API.IntegrationTests", "Ergo.API.IntegrationTests\Ergo.API.IntegrationTests.csproj", "{004CD588-42B1-4FAE-AADA-EE874549C555}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
