@@ -94,6 +94,17 @@ namespace Ergo.App.Services
                     PropertyNameCaseInsensitive = true
                 });
 
+                if (tasks.TaskItems != null)
+                {
+                    foreach (var task in tasks.TaskItems)
+                    {
+                        if (task.AssignedUser == null)
+                        {
+                            task.AssignedUser = new TaskAssignedUserModel();
+                        }
+                    }
+                }
+
                 return tasks?.TaskItems ?? new List<TaskViewModel>();
             }
             catch (Exception ex)

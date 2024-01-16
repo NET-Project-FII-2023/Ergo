@@ -341,14 +341,14 @@ else
                 {
                     <div>
                         <label for="assignedUser">Assign User:</label>
-                        <select @bind="selectedTask.AssignedUserId">
+                        <select @bind="selectedTask.AssignedUser.UserId">
                             <option value="">Select User</option>
                             @foreach (var user in assignedUsers)
                             {
                                 <option value="@user.UserId">@user.Name</option>
                             }
                         </select>
-                        <button class="btn btn-outline-primary btn-sm mx-2" @onclick="() => AssignUserToTask(selectedTask.AssignedUserId)">Assign</button>
+                        <button class="btn btn-outline-primary btn-sm mx-2" @onclick="() => AssignUserToTask(selectedTask.AssignedUser.UserId)">Assign</button>
                     </div>
                 }
 
