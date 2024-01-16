@@ -1,6 +1,7 @@
 ﻿using Ergo.App.Contracts;
 using Ergo.App.Services.Responses;
 using Ergo.App.ViewModels;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -125,6 +126,83 @@ namespace Ergo.App.Services
             return response!;
         }
 
+
+        public async Task<ApiResponse<TaskDto>> StartTimerAsync(Guid taskId, Guid userId)
+        {
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                var result = await httpClient.PostAsJsonAsync($"{RequestUri}/StartTimer", new AssignTaskItemToUserDto { TaskItemId = taskId, UserId = userId });
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    var content = await result.Content.ReadAsStringAsync();
+                    var errorResponse = JsonSerializer.Deserialize<ApiResponse<TaskDto>>(content, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    return new ApiResponse<TaskDto>
+                    {
+                        IsSuccess = false,
+                        ValidationErrors = errorResponse?.ValidationErrors,
+                        Message = errorResponse?.ValidationErrors ?? "Failed to start timer: you are not assigned to this task!"
+                    };
+                }
+
+                var response = await result.Content.ReadFromJsonAsync<ApiResponse<TaskDto>>();
+                response!.IsSuccess = result.IsSuccessStatusCode;
+                return response!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during timer start: {ex}");
+                throw;
+            }
+        }
+        public class ErrorResponse
+        {
+            public List<string> ValidationErrors { get; set; }
+        }
+
+
+        public async Task<ApiResponse<TaskDto>> PauseTimerAsync(Guid taskId, Guid userId)
+        {
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                var result = await httpClient.PostAsJsonAsync($"{RequestUri}/PauseTimer", new AssignTaskItemToUserDto { TaskItemId = taskId, UserId = userId });
+
+                // Check if the response indicates a validation error
+                if (!result.IsSuccessStatusCode)
+                {
+                    var content = await result.Content.ReadAsStringAsync();
+                    var errorResponse = JsonSerializer.Deserialize<ApiResponse<TaskDto>>(content, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    return new ApiResponse<TaskDto>
+                    {
+                        IsSuccess = false,
+                        ValidationErrors = errorResponse?.ValidationErrors,
+                        Message = errorResponse?.ValidationErrors ?? "Failed to start timer: you are not assigned to this task!"
+                    };
+                }
+
+                // Continue with the success path
+                var response = await result.Content.ReadFromJsonAsync<ApiResponse<TaskDto>>();
+                response!.IsSuccess = result.IsSuccessStatusCode;
+                return response!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during timer pause: {ex}");
+                throw;
+            }
+        }
+
+
         public class TaskItemsResponse
         {
             public List<TaskViewModel> TaskItems { get; set; }
@@ -137,10 +215,10 @@ namespace Ergo.App.Services
             var result = await httpClient.PostAsJsonAsync($"{RequestUri}/AssignUser", new AssignTaskItemToUserDto { TaskItemId = taskId, UserId = userId });
             result.EnsureSuccessStatusCode();
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<TaskDto>>();
+            Console.WriteLine(response);
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
         }
-
 
     }
 }
