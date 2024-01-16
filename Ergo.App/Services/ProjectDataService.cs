@@ -60,6 +60,26 @@ namespace Ergo.App.Services
                 throw;
             }
         }
+
+        public async Task<ApiResponse<ProjectDto>> UpdateProjectAsync(ProjectViewModel updateProjectViewModel)
+        {
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization
+                    = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                var result = await httpClient.PutAsJsonAsync($"{RequestUri}/{updateProjectViewModel.ProjectId}", updateProjectViewModel);
+                result.EnsureSuccessStatusCode();
+                var response = await result.Content.ReadFromJsonAsync<ApiResponse<ProjectDto>>();
+                response!.IsSuccess = result.IsSuccessStatusCode;
+                return response!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex}");
+                throw;
+            }
+        }
+
         public async Task<ApiResponse<ProjectDto>> GetProjectByIdAsync(Guid id)
         {
             try
@@ -191,7 +211,10 @@ namespace Ergo.App.Services
             }
         }
 
-   
+        
+
+
+
         public async Task<ApiResponse<ProjectDto>> DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel deleteUserFromProjectViewModel)
         {
             try

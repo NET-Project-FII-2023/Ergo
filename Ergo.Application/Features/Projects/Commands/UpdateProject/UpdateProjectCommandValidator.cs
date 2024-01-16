@@ -20,9 +20,7 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
                     .NotEmpty().WithMessage("{PropertyName} is required.")
                     .NotNull();
 
-                RuleFor(p => p.ModifiedBy)
-                    .NotEmpty().WithMessage("{PropertyName} is required.")
-                    .NotNull();
+                
 
                 RuleFor(p => p.State)
                     .IsInEnum()
