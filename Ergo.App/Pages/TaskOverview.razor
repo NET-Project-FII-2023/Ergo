@@ -317,8 +317,8 @@ else
                     if(selectedTask.AssignedUser.UserId == currentUserId.ToString())
                     {
                         <div class="mt-2">
-                            <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandleStartTimer(selectedTask.AssignedUser.UserId);FetchTimeSpent(selectedTask.TaskItemId);}">Start Timer</button>
-                            <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId); FetchTimeSpent(selectedTask.TaskItemId);}">Pause Timer</button>
+                            <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandleStartTimer(selectedTask.AssignedUser.UserId);}">Start Timer</button>
+                            <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId);}">Pause Timer</button>
                         </div>
                     }
                 }
@@ -577,12 +577,10 @@ else
     {
         try
         {
-            // Call the service method to fetch time spent
             var response = await TaskDataService.GetTaskItemTimeAsync(taskItemId);
 
             if (response.IsSuccess)
             {
-                // Assign the time spent to the local variable
                 timeSpent = response.Data.RecordedTime.ToString();
             }
             else
@@ -675,7 +673,6 @@ else
         }
 
         currentUserId = guidUserId;
-        Console.WriteLine("CURRREEEEENTTT UIDDDDDDDDDDDDDDDDDDD: " + currentUserId);
     }
 
     public void Dispose()
@@ -878,7 +875,7 @@ else
                     Message += result.ValidationErrors;
                 }
             }
-            
+
             //project name
             var projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
             string projectName = "project";
@@ -890,7 +887,7 @@ else
                     break;
                 }
             }
-            
+
             //send notifications to users assigned to the project
             var users = await UserDataService.GetAssignedUsersByProjectId(Guid.Parse(projectId));
             foreach (var user in users)
@@ -909,7 +906,7 @@ else
                 };
                 await InboxItemDataService.CreateInboxItemAsync(inboxItem);
             }
-            
+
             //clear comment text
             CommentViewModel.CommentText = "";
 
@@ -919,7 +916,7 @@ else
             Message = $"Error creating comment: {ex.Message}";
         }
     }
-    
+
     private async Task DeleteComment(Guid commentId)
     {
         try
@@ -1235,6 +1232,7 @@ else
         {
             Message = "Timer Started!";
             isTimerRunning = true;
+            FetchTimeSpent(selectedTask.TaskItemId);
         }
         else
         {
@@ -1278,6 +1276,7 @@ else
         {
             Message = "Timer Paused!";
             isTimerRunning = false;
+            FetchTimeSpent(selectedTask.TaskItemId);
         }
         else
         {
