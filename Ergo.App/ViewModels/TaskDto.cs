@@ -11,6 +11,6 @@ namespace Ergo.App.ViewModels
         public string? CreatedBy { get; set; }
         public Guid ProjectId { get; set; }
         public TaskState? State { get; set; }
-
+        public UserTaskDto? AssignedUser { get; set; }
     }
 }

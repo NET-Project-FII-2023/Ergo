@@ -27,6 +27,7 @@ namespace Ergo.App.ViewModels
         [Required(ErrorMessage = "Project ID is required.")]
         public Guid ProjectId { get; set; }
 
+        public UserTaskDto? AssignedUser { get; set; }
         public TaskState? State { get; set; } = TaskState.ToDo;
 
         public bool DescriptionEditMode { get; set; }

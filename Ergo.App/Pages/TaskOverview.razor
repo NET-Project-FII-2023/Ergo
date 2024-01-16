@@ -308,6 +308,7 @@ else
     <Modal @ref="detailsModal" Title="Task Details">
         <BodyTemplate>
             <div class="modal-body text-dark">
+                
                 @if (selectedTask != null && !selectedTask.IsTitleEditMode)
                 {
                     <h2 class="card-title">@selectedTask.TaskName</h2>
@@ -349,6 +350,9 @@ else
                             }
                         </select>
                         <button class="btn btn-outline-primary btn-sm mx-2" @onclick="() => AssignUserToTask(selectedTask.AssignedUserId)">Assign</button>
+                        <div class="mt-2">
+                            <button class="btn btn-outline-primary btn-sm" @onclick="() => HandleStartTimer(selectedTask.AssignedUserId)">Start Timer</button>
+                        </div>
                     </div>
                 }
 
@@ -1089,6 +1093,26 @@ else
         return null;
     }
 
+    private async Task HandleStartTimer(string userId)
+    {
+        if (!Guid.TryParse(userId, out var guidUserId))
+        {
+            return;
+        }
+
+        var response = await TaskDataService.StartTimerAsync(selectedTask.TaskItemId, guidUserId);
+        if (response.IsSuccess)
+        {
+            Message = "User assigned successfully";
+            await FetchAllTasks();
+        }
+        else
+        {
+            Message = "Failed to assign user";
+        }
+           
+
+    }
 }
 
 <script>

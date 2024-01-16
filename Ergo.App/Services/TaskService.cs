@@ -114,6 +114,25 @@ namespace Ergo.App.Services
             return response!;
         }
 
+
+        public async Task<ApiResponse<TaskDto>> StartTimerAsync(Guid taskId, Guid userId)
+        {
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+                var result = await httpClient.PostAsJsonAsync($"{RequestUri}/StartTimer", new AssignTaskItemToUserDto { TaskItemId = taskId, UserId = userId });
+                result.EnsureSuccessStatusCode();
+                var response = await result.Content.ReadFromJsonAsync<ApiResponse<TaskDto>>();
+                response!.IsSuccess = result.IsSuccessStatusCode;
+                return response!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception during timer start: {ex}");
+                throw;
+            }
+        }
+
         public class TaskItemsResponse
         {
             public List<TaskViewModel> TaskItems { get; set; }
@@ -126,6 +145,7 @@ namespace Ergo.App.Services
             var result = await httpClient.PostAsJsonAsync($"{RequestUri}/AssignUser", new AssignTaskItemToUserDto { TaskItemId = taskId, UserId = userId });
             result.EnsureSuccessStatusCode();
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<TaskDto>>();
+            Console.WriteLine(response);
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
         }
