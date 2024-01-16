@@ -738,6 +738,28 @@ else
         {
             Message = "User assigned successfully";
             await FetchAllTasks();
+            
+            //project name
+            var projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
+            string projectName = "project";
+            foreach (var project in projects)
+            {
+                if (project.ProjectId == Guid.Parse(projectId))
+                {
+                    projectName = project.ProjectName;
+                    break;
+                }
+            }
+            
+            //send notification to user
+            var inboxItem = new InboxItemViewModel
+            {
+                UserId = userId,
+                Message = $"You have been assigned to task \"{selectedTask.TaskName}\" in project \"{projectName}\".",
+                CreatedDate = DateTime.UtcNow,
+                IsRead = false
+            };
+            await InboxItemDataService.CreateInboxItemAsync(inboxItem);
         }
         else
         {
