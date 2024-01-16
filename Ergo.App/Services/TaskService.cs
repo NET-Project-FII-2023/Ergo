@@ -94,6 +94,17 @@ namespace Ergo.App.Services
                     PropertyNameCaseInsensitive = true
                 });
 
+                if (tasks.TaskItems != null)
+                {
+                    foreach (var task in tasks.TaskItems)
+                    {
+                        if (task.AssignedUser == null)
+                        {
+                            task.AssignedUser = new TaskAssignedUserModel();
+                        }
+                    }
+                }
+
                 return tasks?.TaskItems ?? new List<TaskViewModel>();
             }
             catch (Exception ex)
@@ -119,7 +130,16 @@ namespace Ergo.App.Services
             public List<TaskViewModel> TaskItems { get; set; }
         }
 
-
+        public async Task<ApiResponse<TaskDto>> AssignUserToTaskAsync(Guid taskId, Guid userId)
+        {
+            httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.PostAsJsonAsync($"{RequestUri}/AssignUser", new AssignTaskItemToUserDto { TaskItemId = taskId, UserId = userId });
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<TaskDto>>();
+            response!.IsSuccess = result.IsSuccessStatusCode;
+            return response!;
+        }
 
 
     }

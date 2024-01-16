@@ -1,8 +1,5 @@
 ﻿using Ergo.Application.Responses;
-using System;
-using System.Collections.Generic;
-
-namespace Ergo.Application.Features.TaskItems.Queries.GetTasksByProjectId
+namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
 {
     public class GetTasksByProjectIdQueryResponse : BaseResponse
     {

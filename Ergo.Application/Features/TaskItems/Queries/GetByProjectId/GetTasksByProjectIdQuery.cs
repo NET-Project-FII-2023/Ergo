@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Ergo.Application.Features.TaskItems.Queries.GetTasksByProjectId;
 
 namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
 {
