@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Ergo.App.Contracts
 @using Microsoft.AspNetCore.Components.Authorization
+@using Ergo.App.Components
 @inherits LayoutComponentBase
 
 <PageTitle>Home</PageTitle>
@@ -33,6 +34,8 @@
 
    
 </style>
+
+
 
 <div class="stars-container">
     @for (int i = 0; i < 250; i++)

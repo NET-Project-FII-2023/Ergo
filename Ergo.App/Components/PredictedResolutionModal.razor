@@ -1,0 +1,109 @@
+﻿@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
+@using Ergo.Domain.Entities.Enums;
+@using BlazorBootstrap
+@using Ergo.App.Components
+
+
+<style>
+    .cool-button-2:hover {
+        border-radius: 3px;
+        border: 1px solid rgba(105, 228, 150, 0.7);
+        box-shadow: 0 0 5px green;
+        background: #282828;
+    }
+
+    .cool-button-2 {
+        background: #282828;
+        border-radius: 3px;
+    }
+</style>
+
+
+<Modal @ref="modal" Title="ML estimation">
+    <BodyTemplate>
+        <EditForm Model="@TaskPredictionViewModel">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary></ValidationSummary>
+
+            <div class="row mb-3 ms-2">
+                <label for="complexity" class="col-sm-3 form-label" style="color:black;">Task Complexity:</label>
+                <div class="col-sm-7">
+                    <NumberInput TValue="float" EnableMinMax="true" Min="1" Max="3" id="complexity" class="form-control" @bind-Value="@TaskPredictionViewModel.TaskComplexity" placeholder="Task complexity(1-3)..." />
+                    <ValidationMessage For="@(() => TaskPredictionViewModel.TaskComplexity)" />
+                </div>
+            </div>
+
+            <div class="row mb-3 ms-2">
+                <label for="participants" class="col-sm-3 form-label" style="color:black;">Number of Participants:</label>
+                <div class="col-sm-7">
+                    <NumberInput TValue="float" EnableMinMax="true" Min="1" Max="50" id="participants" class="form-control" @bind-Value="@TaskPredictionViewModel.NumberOfParticipants" />
+                    <ValidationMessage For="@(() => TaskPredictionViewModel.NumberOfParticipants)" />
+                </div>
+            </div>
+
+            <div class="row mb-3 ms-2">
+                <label for="urgency" class="col-sm-3 form-label" style="color:black;">Task Urgency :</label>
+                <div class="col-sm-7">
+                    <NumberInput TValue="float" EnableMinMax="true" Min="1" Max="3" id="urgency" class="form-control" @bind-Value="@TaskPredictionViewModel.TaskUrgency" />
+                    <ValidationMessage For="@(() => TaskPredictionViewModel.TaskUrgency )" /> 
+                </div>
+            </div>
+            <div class="mt-3" style="color: black;">
+                @if (predictedData != null)
+                {
+                    <p>Predicted Resolution Time: @predictedData.PredictedResolutionTime</p>
+                }
+            </div>
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-outline-secondary btn-sm" @onclick="OnHideModalClick">Cancel</button>
+                <button type="submit" @onclick="Predict" class="btn btn-outline-primary btn-sm mx-1" >Predict</button>
+            </div>
+
+        </EditForm>
+    </BodyTemplate>
+</Modal>
+<Button Color="ButtonColor.Primary"  @onclick="OnShowModalClick" class="cool-button" style="margin:0; background:rgba(105, 228, 150, 0.7); height:2.5rem;">Predict Task Resolution</Button>
+
+
+@code {
+    [Inject]
+    public IMachineLearningService MachineLearningService { get; set; }
+
+    public TaskPredictionViewModel TaskPredictionViewModel { get; set; } = new TaskPredictionViewModel();
+    private PredictionDto predictedData;
+
+    private Modal modal = default!;
+
+    private async Task OnShowModalClick()
+    {
+        await modal.ShowAsync();
+    }
+
+    private async Task OnHideModalClick()
+    {
+        await modal.HideAsync();
+    }
+
+    private async Task Predict()
+    {
+        try
+        {
+            var response = await MachineLearningService.GetPredictionAsync(TaskPredictionViewModel);
+
+            if (response.IsSuccess)
+            {
+                predictedData = response.Data;
+            }
+            else
+            {
+                var errorMessage = response.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception during prediction: {ex}");
+        }
+    }
+}

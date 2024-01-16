@@ -213,15 +213,21 @@ else
                     break;
                 }
             }
-            <div style="margin-top:0.5rem;">
-                <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick" class="cool-button" style="margin:0; background:rgba(105, 228, 150, 0.7);">Add Member</Button>
-                <Button Color="ButtonColor.Primary" @onclick="OnShowRemoveUserModalClick" class="cool-button" style="margin:0; background:#4a4a4a;">Remove Member</Button>
+            <div style="display:flex; justify-content:space-between; flex-direction:row;">
+                <div style="margin:0.5rem;">
+                    <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick" class="cool-button" style="margin:0; background:rgba(105, 228, 150, 0.7);">Add Member</Button>
+                    <Button Color="ButtonColor.Primary" @onclick="OnShowRemoveUserModalClick" class="cool-button" style="margin:0; background:#4a4a4a;">Remove Member</Button>
+                </div>
+                <PredictedResolutionModal></PredictedResolutionModal>
             </div>
+          
         </div>
-        
+
         
     }
-   
+
+
+
     @if (Message != null)
     {
         <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -484,6 +490,9 @@ else
             </EditForm>
         </BodyTemplate>
     </Modal>
+
+
+
 
     @if (Error != null)
     {
@@ -1297,6 +1306,7 @@ else
             }
         }
     }
+
 }
 
 <script>
