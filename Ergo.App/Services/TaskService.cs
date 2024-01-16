@@ -220,5 +220,31 @@ namespace Ergo.App.Services
             return response!;
         }
 
+        public async Task<ApiResponse<TimeSpentDto>> GetTaskItemTimeAsync(Guid taskItemId)
+        {
+            try
+            {
+                var result = await httpClient.GetAsync($"api/v1/TaskItems/GetTaskItemTime/{taskItemId}");
+                result.EnsureSuccessStatusCode();
+                var content = await result.Content.ReadAsStringAsync();
+
+                var response = JsonSerializer.Deserialize<TimeSpentDto>(content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return new ApiResponse<TimeSpentDto>
+                {
+                    IsSuccess = result.IsSuccessStatusCode,
+                    Data = response
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception while getting task item time: {ex}");
+                throw;
+            }
+        }
+
     }
 }
