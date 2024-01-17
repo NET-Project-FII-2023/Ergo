@@ -74,12 +74,13 @@
         allMembersModal.ShowAsync();
     }
 
-    protected async override Task OnInitializedAsync()
+    private async Task FetchAssignedUsers()
     {
         try
         {
             var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
             var query = uri.Query;
+
             if (!string.IsNullOrEmpty(query))
             {
                 var queryParams = System.Web.HttpUtility.ParseQueryString(query);
@@ -88,15 +89,26 @@
                 if (!string.IsNullOrEmpty(projectId))
                 {
                     assignedUsers = await UserDataService.GetAssignedUsersByProjectId(Guid.Parse(projectId));
-                    Console.WriteLine($"---- Sunt proiectul: " + projectId);
+                    StateHasChanged();
                 }
-
             }
+            if (assignedUsers == null)
+            {
+                Console.WriteLine("AM BELIT PLS");
+            }
+
+
+
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error fetching assigned users: {ex.Message}");
         }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await FetchAssignedUsers();
     }
 
 

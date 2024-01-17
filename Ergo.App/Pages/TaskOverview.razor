@@ -201,7 +201,21 @@ else
             <span style="font-weight:500; font-size:23px; ">Project members  </span>
         </div>
         <div style="width:59.2rem;min-height:6rem; background-color: #333; border-radius:5px;padding:20px 30px; margin-bottom:1rem;">
-            <AllMembersModal></AllMembersModal>
+            @for (var i = 0; i < assignedUsers.Count; i++)
+            {
+                <span>@assignedUsers[i].Name</span>
+                <span style="color:#878787">#@assignedUsers[i].Username</span>
+                @if (i < 1 && i < assignedUsers.Count - 1)
+                {
+                    <span>, </span>
+                }
+                else if (i == 1 && assignedUsers.Count > 2)
+                {
+                    <span>,  and</span>
+                    <span @onclick="ShowAllMembersModal" class="others-link" style="margin-right: 5px;color: rgba(105, 228, 150, 0.7);"> @(assignedUsers.Count - 2) others</span>
+                    break;
+                }
+            }
             <div style="display:flex; justify-content:space-between; flex-direction:row;">
                 <div style="margin:0.5rem;">
                     <AddUserModal OnUserAdded="HandleUserRender"></AddUserModal>
@@ -280,6 +294,26 @@ else
         </div>
         
     </div>
+    <Modal @ref="allMembersModal" Title="All Assigned Users">
+        <BodyTemplate>
+            @if (assignedUsers != null && assignedUsers.Any())
+            {
+                <ul>
+                    @foreach (var user in assignedUsers)
+                    {
+                        <li style="color:#1f1f1f;">
+                            <span style="color:#1f1f1f;">@user.Name </span>
+                            <span style="color:#878787"> #@user.Username</span>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No users assigned to this project.</p>
+            }
+        </BodyTemplate>
+    </Modal>
 
     <Modal @ref="detailsModal" Title="Task Details">
         <BodyTemplate>
@@ -479,6 +513,8 @@ else
     public UserViewModel User { get; set; }
     private string email;
 
+    private Modal allMembersModal = default!;
+
     public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
 
     public RemoveUserFromProjectViewModel RemoveUserFromProjectViewModel { get; set; } = new RemoveUserFromProjectViewModel();
@@ -641,6 +677,11 @@ else
         {
             selectedTask.DescriptionEditMode = false;
         }
+    }
+
+    private async Task ShowAllMembersModal()
+    {
+        allMembersModal.ShowAsync();
     }
 
     protected async override Task OnInitializedAsync()
