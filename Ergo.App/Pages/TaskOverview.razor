@@ -220,8 +220,8 @@ else
             }
             <div style="display:flex; justify-content:space-between; flex-direction:row;">
                 <div style="margin:0.5rem;">
-                    <AddUserModal OnUserAdded="HandleUserAdded"></AddUserModal>
-                    <Button Color="ButtonColor.Primary" @onclick="OnShowRemoveUserModalClick" class="cool-button" style="margin:0; background:#4a4a4a;">Remove Member</Button>
+                    <AddUserModal OnUserAdded="HandleUserRender"></AddUserModal>
+                    <RemoveUserModal OnUserRemoved="HandleUserRender"></RemoveUserModal>
                 </div>
                 <PredictedResolutionModal></PredictedResolutionModal>
             </div>
@@ -455,29 +455,6 @@ else
 
     @* ------------ USER -------------- *@
 
-    <Modal @ref="removeUserModal" Title="Remove a member from this project:">
-        <BodyTemplate>
-            <EditForm Model="@RemoveUserFromProjectViewModel">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-
-                <div class="row mb-3 ms-2">
-                    <label for="userId" class="col-sm-3 form-label" style="color:black;">Username</label>
-                    <div class="col-sm-7">
-                        <InputText id="userId" class="form-control" @bind-Value="@RemoveUserFromProjectViewModel.Username" placeholder="Username..."></InputText>
-                    </div>
-                </div>
-
-                <div class="d-flex">
-                    <button class="btn btn-primary" @onclick="OnHideRemoveUserModalClick">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1" @onclick="HandleRemoveUserSubmit">Remove user</button>
-                </div>
-            </EditForm>
-        </BodyTemplate>
-    </Modal>
-
-
-
 
     @if (Error != null)
     {
@@ -565,7 +542,7 @@ else
 
     private Guid currentUserId;
 
-    private async Task HandleUserAdded()
+    private async Task HandleUserRender()
     {
         await FetchAssignedUsers();
     }
