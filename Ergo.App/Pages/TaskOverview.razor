@@ -220,7 +220,7 @@ else
             }
             <div style="display:flex; justify-content:space-between; flex-direction:row;">
                 <div style="margin:0.5rem;">
-                    <Button Color="ButtonColor.Primary" @onclick="OnShowUserModalClick" class="cool-button" style="margin:0; background:rgba(105, 228, 150, 0.7);">Add Member</Button>
+                    <AddUserModal OnUserAdded="HandleUserAdded"></AddUserModal>
                     <Button Color="ButtonColor.Primary" @onclick="OnShowRemoveUserModalClick" class="cool-button" style="margin:0; background:#4a4a4a;">Remove Member</Button>
                 </div>
                 <PredictedResolutionModal></PredictedResolutionModal>
@@ -455,34 +455,6 @@ else
 
     @* ------------ USER -------------- *@
 
-
-
-
-    <Modal @ref="userModal" Title="Add a member to this project:">
-        <BodyTemplate>
-            <EditForm Model="@ProjectAssignUserViewModel">
-
-                <DataAnnotationsValidator />
-                <ValidationSummary></ValidationSummary>
-
-                <div class="row mb-3 ms-2">
-                    <label for="taskname" class="col-sm-3 form-label" style="color:black;">User email:</label>
-                    <div class="col-sm-7">
-                        <InputText id="username" class="form-control" @bind-Value="@ProjectAssignUserViewModel.Email" placeholder="User email..."></InputText>
-                        <ValidationMessage For="@(() => ProjectAssignUserViewModel.Email)" />
-                    </div>
-                </div>
-
-
-                <div class="d-flex">
-                    <button class="btn btn-primary" @onclick="OnHideUserModalClick">Cancel</button>
-                    <button type="submit" class="btn btn-primary mx-1" @onclick="HandleValidUserSubmit">Add user</button>
-                </div>
-
-            </EditForm>
-        </BodyTemplate>
-    </Modal>
-
     <Modal @ref="removeUserModal" Title="Remove a member from this project:">
         <BodyTemplate>
             <EditForm Model="@RemoveUserFromProjectViewModel">
@@ -581,8 +553,6 @@ else
 
     private Modal detailsModal = default!;
 
-    private Modal userModal = default!;
-
     private Modal removeUserModal = default!;
 
     private string projectId = default!;
@@ -595,16 +565,19 @@ else
 
     private Guid currentUserId;
 
+    private async Task HandleUserAdded()
+    {
+        await FetchAssignedUsers();
+    }
+
     private async Task FetchTimeSpent(Guid taskItemId)
     {
         try
         {
-            // Call the service method to fetch time spent
             var response = await TaskDataService.GetTaskItemTimeAsync(taskItemId);
 
             if (response.IsSuccess)
             {
-                // Assign the time spent to the local variable
                 timeSpent = response.Data.RecordedTime.ToString();
             }
             else
@@ -614,7 +587,6 @@ else
         }
         catch (Exception ex)
         {
-            // Handle exceptions
             Console.WriteLine($"Exception while fetching time spent: {ex}");
         }
     }
@@ -760,7 +732,7 @@ else
         {
             Message = "User assigned successfully";
             await FetchAllTasks();
-            
+
             //project name
             var projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
             string projectName = "project";
@@ -772,7 +744,7 @@ else
                     break;
                 }
             }
-            
+
             //send notification to user
             var inboxItem = new InboxItemViewModel
             {
@@ -931,7 +903,7 @@ else
                     Message += result.ValidationErrors;
                 }
             }
-            
+
             //project name
             var projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
             string projectName = "project";
@@ -943,7 +915,7 @@ else
                     break;
                 }
             }
-            
+
             //send notifications to users assigned to the project
             var users = await UserDataService.GetAssignedUsersByProjectId(Guid.Parse(projectId));
             foreach (var user in users)
@@ -962,7 +934,7 @@ else
                 };
                 await InboxItemDataService.CreateInboxItemAsync(inboxItem);
             }
-            
+
             //clear comment text
             CommentViewModel.CommentText = "";
 
@@ -972,7 +944,7 @@ else
             Message = $"Error creating comment: {ex.Message}";
         }
     }
-    
+
     private async Task DeleteComment(Guid commentId)
     {
         try
@@ -1103,16 +1075,6 @@ else
             }).ToList();
     }
 
-    private async Task OnShowUserModalClick()
-    {
-        await userModal.ShowAsync();
-    }
-
-    private async Task OnHideUserModalClick()
-    {
-        await userModal.HideAsync();
-    }
-
     private async Task OnShowRemoveUserModalClick()
     {
         await removeUserModal.ShowAsync();
@@ -1127,79 +1089,6 @@ else
     {
         Error = null;
     }
-
-    private async Task HandleValidUserSubmit()
-    {
-        try
-        {
-            var email = ProjectAssignUserViewModel.Email;
-            var userId = await UserDataService.GetUserIdByEmailAsync(email);
-
-            if (userId == null)
-            {
-                Error = "User not found.";
-                Message = null;
-                return;
-            }
-            ProjectAssignUserViewModel.ProjectId = projectId;
-            ProjectAssignUserViewModel.UserId = userId;
-
-            var projects = await ProjectDataService.GetProjectsByUserIdAsync(userId);
-            foreach (var project in projects)
-            {
-                if (project.ProjectId ==  Guid.Parse(projectId))
-                {
-                    Error = "User is already assigned to this project.";
-                    Message = null;
-                    return;
-                }
-            }
-
-            var result = await ProjectDataService.AssignUserToProjectAsync(ProjectAssignUserViewModel);
-            if (result.IsSuccess)
-            {
-                Message = "User assigned successfully";
-                Error = null;
-                await userModal.HideAsync();
-            }
-            else
-            {
-                Message = result.Message;
-                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
-                {
-                    Error += result.ValidationErrors;
-                }
-            }
-            projects = await ProjectDataService.GetProjectsByUserIdAsync(userId);
-            string projectName = "project";
-            foreach (var project in projects)
-            {
-                if (project.ProjectId == Guid.Parse(projectId))
-                {
-                    projectName = project.ProjectName;
-                    break;
-                }
-            }
-            //send notification to user
-            var inboxItem = new InboxItemViewModel
-            {
-                UserId = userId,
-                Message = 
-                    $"You have been assigned to a new project \"{projectName}\".",
-                CreatedDate = DateTime.UtcNow,
-                IsRead = false
-            };
-
-            await InboxItemDataService.CreateInboxItemAsync(inboxItem);
-
-        }
-        catch (Exception ex)
-        {
-            Error = "User not found";
-            Message = null;
-        }
-    }
-
     private async Task HandleRemoveUserSubmit()
     {
         try
