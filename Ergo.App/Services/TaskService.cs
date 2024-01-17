@@ -1,7 +1,6 @@
 ﻿using Ergo.App.Contracts;
 using Ergo.App.Services.Responses;
 using Ergo.App.ViewModels;
-using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -246,5 +245,49 @@ namespace Ergo.App.Services
             }
         }
 
+        public async Task<ApiResponse<PhotoDto>> AddPhotoToTaskItemAsync(Guid taskItemId, Stream photoStream, string fileName)
+        {
+            var formData = new MultipartFormDataContent();
+            using var streamContent = new StreamContent(photoStream);
+            formData.Add(streamContent, "Photo", fileName);
+            formData.Add(new StringContent(taskItemId.ToString()), "TaskItemId");
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.PostAsync("api/v1/Photos", formData);
+            if (!result.IsSuccessStatusCode)
+            {
+                var errorResponse = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<PhotoDto> { IsSuccess = false, Message = errorResponse };
+            }
+
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<PhotoDto>>();
+            response!.IsSuccess = result.IsSuccessStatusCode;
+            return response!;
+        }
+
+        public async Task<ApiResponse<List<PhotoDto>>> GetPhotosForTaskItemAsync(Guid taskItemId)
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.GetAsync($"api/v1/Photos/{taskItemId}");
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var errorResponse = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<List<PhotoDto>> { IsSuccess = false, Message = errorResponse };
+            }
+
+            var content = await result.Content.ReadAsStringAsync();
+            var photosResponse = JsonSerializer.Deserialize<PhotoResponse.PhotosResponse>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return new ApiResponse<List<PhotoDto>>
+            {
+                IsSuccess = photosResponse?.Success ?? false,
+                Message = photosResponse?.Message,
+                Data = photosResponse?.Photos
+            };
+        }
     }
 }

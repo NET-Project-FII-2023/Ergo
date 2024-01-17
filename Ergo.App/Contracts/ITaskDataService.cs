@@ -14,7 +14,7 @@ namespace Ergo.App.Contracts
         Task<ApiResponse<TaskDto>> PauseTimerAsync(Guid taskId, Guid userId);
         Task<ApiResponse<TimeSpentDto>> GetTaskItemTimeAsync(Guid taskItemId);
         Task<string> GetUsernameFromTokenAsync();
-
-
+        Task<ApiResponse<PhotoDto>> AddPhotoToTaskItemAsync(Guid taskItemId, Stream photoStream, string fileName);
+        Task<ApiResponse<List<PhotoDto>>> GetPhotosForTaskItemAsync(Guid taskItemId);
     }
 }
