@@ -5,78 +5,565 @@
 
 <Modal @ref="detailsModal" Title="Task Details">
     <BodyTemplate>
-        <div class="modal-body bg-dark text-light">
-            <h5>@selectedTask?.TaskName</h5>
-            <p>@selectedTask?.Description</p>
+        <div class="modal-body text-dark">
+            @if (timeSpent != "00:00:00")
+            {
+                <p>Time Spent: @timeSpent</p>
+            }
+            @if (selectedTask.State != TaskState.Done)
+            {
+                if (selectedTask.AssignedUser.UserId == currentUserId.ToString())
+                {
+                    <div class="mt-2">
+                        <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandleStartTimer(selectedTask.AssignedUser.UserId);FetchTimeSpent(selectedTask.TaskItemId);}">Start Timer</button>
+                        <button class="btn btn-outline-primary btn-sm" @onclick="() => {HandlePauseTimer(selectedTask.AssignedUser.UserId); FetchTimeSpent(selectedTask.TaskItemId);}">Pause Timer</button>
+                    </div>
+                }
+            }
 
-            <h6>Comments:</h6>
+
+            @if (selectedTask != null && !selectedTask.IsTitleEditMode)
+            {
+                <div class="d-flex align-items-center">
+                    <h2 class="card-title">@selectedTask.TaskName</h2>
+                    <img src="./edit.png" class="edit-icon mx-2" alt="Edit" @onclick="ToggleTitleEditMode" />
+                </div>
+            }
+            else
+            {
+                <input class="form-control text-dark" @bind="selectedTask.TaskName" />
+                <div class="mt-2">
+                    <button class="btn btn-outline-primary btn-sm" @onclick="SaveTitleEdit">Save</button>
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="CancelTitleEdit">Cancel</button>
+                </div>
+            }
+            @if (selectedTask != null && !selectedTask.DescriptionEditMode)
+            {
+                <div class="d-flex align-items-center mt-4 mb-2">
+                    <h5 class="card-title">Description</h5>
+                    <img src="./edit.png" class="edit-icon mx-2" alt="Edit" @onclick="ToggleDescriptionEditMode" />
+                </div>
+                <div class="description-container">
+                    <p>@selectedTask.Description</p>
+                </div>
+            }
+            else
+            {
+                <textarea class="form-control text-dark mt-4" @bind="selectedTask.Description"></textarea>
+                <div class="mt-4">
+                    <button class="btn btn-outline-primary btn-sm" @onclick="SaveDescriptionEdit">Save</button>
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="CancelDescriptionEdit">Cancel</button>
+                </div>
+            }
+
+
+            @if (selectedTask != null)
+            {
+                <div class="mt-3">
+                    <label for="assignedUser">Assigned: </label>
+                    <select @onchange="OnChangeUserSelection" class="mx-2">
+                        @if (String.IsNullOrEmpty(selectedTask.AssignedUser.UserId))
+                        {
+                            <option value="">Select User</option>
+                        }
+                        @foreach (var user in assignedUsers)
+                        {
+                            <option value="@user.UserId">@user.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+
+            @* ------------ FILE UPLOAD -------------- *@
+            @if (selectedTask != null)
+            {
+                <div class="my-3">
+                    @if (selectedTask.Photos != null && selectedTask.Photos.Any())
+                    {
+                        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-indicators">
+                                @for (var i = 0; i < selectedTask.Photos.Count; i++)
+                                {
+                                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @i"></button>
+                                }
+                            </div>
+                            <div class="carousel-inner">
+                                @for (var i = 0; i < selectedTask.Photos.Count; i++)
+                                {
+                                    var photo = selectedTask.Photos[i];
+                                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                                        <img src="@($"data:image/png;base64,{photo.ImageData}")" class="d-block w-100" alt="Task Photo">
+                                    </div>
+                                }
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    }
+
+                    <div class="d-flex align-items-center justify-content-center mt-3">
+                        <InputFile OnChange="HandleFileSelected" accept=".png" />
+                        <button class="btn btn-primary" @onclick="UploadFile">Upload</button>
+                    </div>
+                </div>
+            }
+
+
+            <h5 class="mt-4">Comments:</h5>
+
             <ul class="list-unstyled">
                 @foreach (var comment in commentsList)
                 {
                     <li class="mb-2" title="Last modified: @comment.LastModifiedDate.ToString()">
                         @if (commentBeingEdited != null && commentBeingEdited.CommentId == comment.CommentId)
                         {
-                            <textarea class="form-control bg-secondary text-light" @bind="commentBeingEdited.CommentText"></textarea>
+                            <textarea class="form-control text-dark" @bind="commentBeingEdited.CommentText"></textarea>
                             <div class="mt-2">
-                                <button class="btn btn-success btn-sm" @onclick="SaveCommentEdit">Save</button>
-                                <button class="btn btn-warning btn-sm" @onclick="CancelCommentEdit">Cancel</button>
+                                <button class="btn btn-outline-primary btn-sm" @onclick="SaveCommentEdit">Save</button>
+                                <button class="btn btn-outline-secondary btn-sm" @onclick="CancelCommentEdit">Cancel</button>
                             </div>
                         }
                         else
                         {
-                            <div class="d-flex justify-content-between align-items-center bg-secondary p-2 rounded">
-                                <div>
+                            <div class="d-flex justify-content-between align-items-center bg-secondary-light text-dark p-2 rounded">
+                                <div class="justify-content-center align-items-center">
+                                    <p class="mb-0 small">@comment.LastModifiedDate.ToString()</p>
                                     <strong>@comment.CreatedBy:</strong> @comment.CommentText
                                 </div>
                                 @if (comment.CanEdit)
                                 {
-                                    <button class="btn btn-outline-info btn-sm" @onclick="() => BeginEditComment(comment)">Edit</button>
+                                    <div class="d-flex flex-column">
+                                        <img src="./edit.png" class="edit-icon" alt="Edit" @onclick="() => {DisplayCommentId(comment.CommentId);BeginEditComment(comment);}" />
+                                        <i class="bi bi-trash h5 mt-2 edit-icon" style="color: deepskyblue" @onclick="() => {DeleteComment(comment.CommentId);}"></i>
+                                    </div>
                                 }
                             </div>
                         }
                     </li>
                 }
             </ul>
+
+            <div class="mb-2">
+                <InputText @bind-Value="@CommentViewModel.CommentText" class="form-control" placeholder="Your comment..."></InputText>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-outline-primary btn-sm mb-4" @onclick="SaveComment">Submit</button>
+            </div>
         </div>
     </BodyTemplate>
 </Modal>
 
-<Button class="btn btn-secondary" @onclick="ShowDetails">Details</Button>
-
-
 
 
 @code {
-    [Parameter]
-    public Guid TaskItemId { get; set; }
 
-    [Parameter]
-    public EventCallback<Guid> ShowDetailsModal { get; set; }
+    [Inject]
+    public IUserDataService UserDataService { get; set; }
 
     [Inject]
     public ITaskDataService TaskDataService { get; set; }
 
+    [Inject] ICommentDataService CommentDataService { get; set; }
+
+    [Inject] IProjectDataService ProjectDataService { get; set; }
+
     [Inject]
-    public ICommentDataService CommentDataService { get; set; }
+    IInboxItemDataService InboxItemDataService { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    [Inject]
+    public ITokenService TokenService { get; set; }
+
+    public UserViewModel User { get; set; }
+    private string email;
+
+    private IBrowserFile selectedFile;
+
+    public ProjectAssignUserViewModel ProjectAssignUserViewModel { get; set; } = new ProjectAssignUserViewModel();
+
+    public RemoveUserFromProjectViewModel RemoveUserFromProjectViewModel { get; set; } = new RemoveUserFromProjectViewModel();
+
+    public string Error { get; set; }
 
     public List<TaskViewModel> Tasks { get; set; }
 
     private List<CommentViewModel> commentsList = new List<CommentViewModel>();
 
-    private Modal detailsModal = default!;
+    public UpdateTaskViewModel UpdateTaskViewModel { get; set; } = new UpdateTaskViewModel();
 
-    private TaskViewModel selectedTask;
+    public TaskViewModel TaskViewModel { get; set; } = new TaskViewModel();
+
+    private TaskViewModel? selectedTask;
+
+    public CommentViewModel CommentViewModel { get; set; } = new CommentViewModel();
 
     private CommentViewModel? commentBeingEdited;
 
+    private bool isTimerRunning = false;
+
     public string Message { get; set; }
 
-    
-    private async Task ShowDetails()
+    private Modal modal = default!;
+
+    private Guid selectedTaskId;
+
+    private Guid selectedCommentId;
+
+    private Modal commentModal = default!;
+
+    private Modal detailsModal = default!;
+
+    private Modal removeUserModal = default!;
+
+    private string projectId = default!;
+
+    private string timeSpent;
+
+    private List<UserViewModel> assignedUsers = new List<UserViewModel>();
+
+    private Modal allMembersModal = default!;
+
+    private Guid currentUserId;
+
+
+    private async Task ShowDetailsModal(Guid taskId)
     {
-        await ShowDetailsModal.InvokeAsync(TaskItemId);
+        selectedTask = Tasks.FirstOrDefault(t => t.TaskItemId == taskId);
+
+        var comments = await CommentDataService.GetCommentsByTaskIdAsync(taskId);
+
+        var currentUser = await TaskDataService.GetUsernameFromTokenAsync();
+
+
+        commentsList = comments.Select(comment => new CommentViewModel
+            {
+                CommentId = comment.CommentId,
+                CommentText = comment.CommentText,
+                CreatedBy = comment.CreatedBy,
+                LastModifiedDate = comment.LastModifiedDate,
+                CanEdit = ShouldAllowEdit(comment, currentUser)
+            }).ToList();
+
+        await detailsModal.ShowAsync();
     }
 
+    private void ToggleTitleEditMode()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.IsTitleEditMode = true;
+        }
+    }
+    private async Task SaveTitleEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.IsTitleEditMode = false;
+
+            var updateTaskDto = new UpdateTaskDto
+                {
+                    TaskItemId = selectedTask.TaskItemId,
+                    TaskName = selectedTask.TaskName,
+                    Description = selectedTask.Description,
+                    CreatedBy = selectedTask.CreatedBy,
+                    Deadline = selectedTask.Deadline,
+                    State = selectedTask.State
+                };
+
+            var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
+
+            if (result.IsSuccess)
+            {
+                Message = "Title updated successfully";
+            }
+            else
+            {
+                Message = "Failed to update title";
+            }
+        }
+    }
+    private void CancelTitleEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.IsTitleEditMode = false;
+        }
+    }
+    
+
+    private bool ShouldAllowEdit(CommentViewModel comment, string currentUser)
+    {
+        return comment.CreatedBy == currentUser;
+    }
+    private void DisplayTaskId(Guid taskId)
+    {
+        selectedTaskId = taskId;
+
+    }
+    private void DisplayCommentId(Guid commentId)
+    {
+        selectedCommentId = commentId;
+        Console.WriteLine("Selected Comment ID: " + selectedCommentId);
+    }
+    private async Task SaveComment()
+    {
+        try
+        {
+            var username = await TaskDataService.GetUsernameFromTokenAsync();
+
+            if (string.IsNullOrEmpty(username))
+            {
+                Message = "Unable to retrieve user email from token.";
+                return;
+            }
+
+            CommentViewModel.CreatedBy = username;
+            CommentViewModel.LastModifiedBy = username;
+            CommentViewModel.TaskId = selectedTaskId;
+            var result = await CommentDataService.CreateCommentAsync(CommentViewModel);
+            if (result.IsSuccess)
+            {
+                Message = "Comment created successfully";
+                await FetchCommentsForSelectedTask(selectedTaskId);
+
+            }
+            else
+            {
+                Message = result.Message;
+                if (!string.IsNullOrWhiteSpace(result.ValidationErrors))
+                {
+                    Message += result.ValidationErrors;
+                }
+            }
+
+            //project name
+            var projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
+            string projectName = "project";
+            foreach (var project in projects)
+            {
+                if (project.ProjectId == Guid.Parse(projectId))
+                {
+                    projectName = project.ProjectName;
+                    break;
+                }
+            }
+
+            //send notifications to users assigned to the project
+            var users = await UserDataService.GetAssignedUsersByProjectId(Guid.Parse(projectId));
+            foreach (var user in users)
+            {
+                //only if the user is not the one who created the comment
+                if (user.Username == username)
+                {
+                    continue;
+                }
+                var inboxItem = new InboxItemViewModel
+                    {
+                        UserId = user.UserId,
+                        Message = $"There is a new comment on task \"{selectedTask.TaskName}\" in project \"{projectName}\".",
+                        CreatedDate = DateTime.UtcNow,
+                        IsRead = false
+                    };
+                await InboxItemDataService.CreateInboxItemAsync(inboxItem);
+            }
+
+            //clear comment text
+            CommentViewModel.CommentText = "";
+
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error creating comment: {ex.Message}";
+        }
+    }
+    private async Task DeleteComment(Guid commentId)
+    {
+        try
+        {
+            var result = await CommentDataService.DeleteCommentAsync(commentId);
+            if (result.IsSuccess)
+            {
+                Message = "Comment deleted successfully";
+                await FetchCommentsForSelectedTask(selectedTaskId);
+                StateHasChanged();
+            }
+            else
+            {
+                Message = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error deleting comment: {ex.Message}";
+        }
+    }
+
+
+
+    private void ToggleDescriptionEditMode()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.DescriptionEditMode = true;
+        }
+    }
+    private void CancelDescriptionEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.DescriptionEditMode = false;
+        }
+    }
+    private async Task SaveDescriptionEdit()
+    {
+        if (selectedTask != null)
+        {
+            selectedTask.DescriptionEditMode = false;
+
+            var updateTaskDto = new UpdateTaskDto
+                {
+                    TaskItemId = selectedTask.TaskItemId,
+                    TaskName = selectedTask.TaskName,
+                    Description = selectedTask.Description,
+                    CreatedBy = selectedTask.CreatedBy,
+                    Deadline = selectedTask.Deadline,
+                    State = selectedTask.State
+
+                };
+
+            var result = await TaskDataService.UpdateTaskAsync(updateTaskDto);
+
+            if (result.IsSuccess)
+            {
+                Message = "Description updated successfully";
+            }
+            else
+            {
+                Message = "Failed to update description";
+            }
+        }
+    }
+
+
+
+    private async Task HandleStartTimer(string userId)
+    {
+        var token = await TokenService.GetTokenAsync();
+        email = await TokenService.DecodeEmailFromTokenAsync(token);
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            User = await UserDataService.GetUserByEmailAsync(email);
+        }
+
+        if (!Guid.TryParse(User.UserId, out var guidUserId))
+        {
+            return;
+        }
+
+        var response = await TaskDataService.StartTimerAsync(selectedTask.TaskItemId, guidUserId);
+
+        if (response.IsSuccess)
+        {
+            Message = "Timer Started!";
+            isTimerRunning = true;
+        }
+        else
+        {
+            if (response.ValidationErrors != null && response.ValidationErrors.Any())
+            {
+                Console.WriteLine("Validation Errors:");
+                foreach (var error in response.ValidationErrors)
+                {
+                    Console.WriteLine(error);
+                }
+                Message = "Failed to start timer due to validation errors.";
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.Message}");
+                // Message = response.Message;
+            }
+        }
+    }
+    private async Task HandlePauseTimer(string userId)
+    {
+
+        var token = await TokenService.GetTokenAsync();
+        email = await TokenService.DecodeEmailFromTokenAsync(token);
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            User = await UserDataService.GetUserByEmailAsync(email);
+        }
+
+        if (!Guid.TryParse(User.UserId, out var guidUserId))
+        {
+            return;
+        }
+
+        var response = await TaskDataService.PauseTimerAsync(selectedTask.TaskItemId, guidUserId);
+
+        if (response.IsSuccess)
+        {
+            Message = "Timer Paused!";
+            isTimerRunning = false;
+        }
+        else
+        {
+            if (response.ValidationErrors != null && response.ValidationErrors.Any())
+            {
+                Console.WriteLine("Validation Errors:");
+                foreach (var error in response.ValidationErrors)
+                {
+                    Console.WriteLine(error);
+                }
+                Message = "Failed to pause timer due to validation errors.";
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.Message}");
+                // Message = response.Message;
+            }
+        }
+    }
+    private async Task FetchTimeSpent(Guid taskItemId)
+    {
+        try
+        {
+            var response = await TaskDataService.GetTaskItemTimeAsync(taskItemId);
+
+            if (response.IsSuccess)
+            {
+                timeSpent = response.Data.RecordedTime.ToString();
+            }
+            else
+            {
+                Console.WriteLine($"Failed to fetch time spent: {response.Message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception while fetching time spent: {ex}");
+        }
+    }
+
+
+
+    private void BeginEditComment(CommentViewModel comment)
+    {
+
+        commentBeingEdited = comment;
+    }
     private async Task SaveCommentEdit()
     {
         var username = await TaskDataService.GetUsernameFromTokenAsync();
@@ -88,25 +575,31 @@
 
         if (commentBeingEdited != null)
         {
+            commentBeingEdited.CommentId = selectedCommentId;
+            commentBeingEdited.CreatedBy = username;
+            commentBeingEdited.LastModifiedBy = username;
+            commentBeingEdited.LastModifiedDate = DateTime.UtcNow;
+            commentBeingEdited.TaskId = selectedTaskId;
+
 
             var updateCommentDto = new UpdateCommentDto
                 {
                     CommentId = commentBeingEdited.CommentId,
-                    CreatedBy = username,
+                    CreatedBy = commentBeingEdited.CreatedBy,
                     CommentText = commentBeingEdited.CommentText,
-                    LastModifiedBy = username,
-                    LastModifiedDate = DateTime.UtcNow,
+                    LastModifiedBy = commentBeingEdited.LastModifiedBy,
+                    LastModifiedDate = commentBeingEdited.LastModifiedDate,
                     TaskId = commentBeingEdited.TaskId
 
                 };
+
 
             var response = await CommentDataService.UpdateCommentAsync(updateCommentDto);
 
             if (response.IsSuccess)
             {
                 Message = "Comment updated successfully";
-
-                await detailsModal.HideAsync();
+                await FetchCommentsForSelectedTask(selectedTaskId);
             }
             else
             {
@@ -121,17 +614,152 @@
             commentBeingEdited = null;
         }
     }
-
-
-    private void BeginEditComment(CommentViewModel comment)
-    {
-
-        commentBeingEdited = comment;
-    }
-
     private void CancelCommentEdit()
     {
         commentBeingEdited = null;
     }
+    private async Task FetchCommentsForSelectedTask(Guid taskId)
+    {
+        var comments = await CommentDataService.GetCommentsByTaskIdAsync(taskId);
 
+        var currentUser = await TaskDataService.GetUsernameFromTokenAsync();
+
+        commentsList = comments.Select(comment => new CommentViewModel
+            {
+                CommentId = comment.CommentId,
+                CommentText = comment.CommentText,
+                CreatedBy = comment.CreatedBy,
+                LastModifiedDate = comment.LastModifiedDate,
+                CanEdit = ShouldAllowEdit(comment, currentUser)
+            }).ToList();
+    }
+
+
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+        if (files.Count > 0)
+        {
+            selectedFile = files[0];
+        }
+    }
+    private async Task UploadFile()
+    {
+        if (selectedFile == null)
+        {
+            Error = "No file selected.";
+            return;
+        }
+
+        try
+        {
+            using var stream = selectedFile.OpenReadStream();
+            var result = await TaskDataService.AddPhotoToTaskItemAsync(selectedTask.TaskItemId, stream, selectedFile.Name);
+
+            if (result.IsSuccess)
+            {
+                Message = "Image uploaded successfully.";
+                selectedFile = null;
+
+                await FetchTaskItemImages(selectedTask.TaskItemId);
+            }
+            else
+            {
+                Error = "Failed to upload image.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error uploading image: {ex.Message}";
+        }
+
+    }
+    private async Task FetchTaskItemImages(Guid taskId)
+    {
+        var photoResponse = await TaskDataService.GetPhotosForTaskItemAsync(taskId);
+
+        if (photoResponse.IsSuccess && photoResponse.Data != null)
+        {
+            selectedTask.Photos = photoResponse.Data;
+            StateHasChanged();
+        }
+        else
+        {
+            Error = photoResponse.ValidationErrors;
+            Console.WriteLine("aoleu");
+        }
+    }
+
+
+    private async Task AssignUserToTask(string userId)
+    {
+        if (!Guid.TryParse(userId, out var guidUserId))
+        {
+            return;
+        }
+
+        var response = await TaskDataService.AssignUserToTaskAsync(selectedTask.TaskItemId, guidUserId);
+        if (response.IsSuccess)
+        {
+            Message = "User assigned successfully";
+            await FetchAllTasks();
+
+            //project name
+            var projects = await ProjectDataService.GetProjectsByUserIdFromTokenAsync();
+            string projectName = "project";
+            foreach (var project in projects)
+            {
+                if (project.ProjectId == Guid.Parse(projectId))
+                {
+                    projectName = project.ProjectName;
+                    break;
+                }
+            }
+
+            var inboxItem = new InboxItemViewModel
+                {
+                    UserId = userId,
+                    Message = $"You have been assigned to task \"{selectedTask.TaskName}\" in project \"{projectName}\".",
+                    CreatedDate = DateTime.UtcNow,
+                    IsRead = false
+                };
+            await InboxItemDataService.CreateInboxItemAsync(inboxItem);
+        }
+        else
+        {
+            Message = "Failed to assign user";
+        }
+    }
+
+
+    private async Task FetchAllTasks()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = uri.Query;
+
+        TaskViewModel.Deadline = DateTime.UtcNow.Date;
+
+        if (!string.IsNullOrEmpty(query))
+        {
+            var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+            projectId = queryParams.Get("projectId");
+
+            if (!string.IsNullOrEmpty(projectId))
+            {
+                Tasks = await TaskDataService.GetTasksByProjectIdAsync(Guid.Parse(projectId));
+                StateHasChanged();
+            }
+        }
+    }
+
+
+    private async Task OnChangeUserSelection(ChangeEventArgs e)
+    {
+        var selectedUserId = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(selectedUserId))
+        {
+            await AssignUserToTask(selectedUserId);
+        }
+    }
 }

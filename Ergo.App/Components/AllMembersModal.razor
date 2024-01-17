@@ -1,0 +1,103 @@
+﻿@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
+@using Ergo.Domain.Entities.Enums;
+@using BlazorBootstrap
+@using Ergo.App.Components
+
+
+
+@for (var i = 0; i < assignedUsers.Count; i++)
+{
+    <span>@assignedUsers[i].Name</span>
+    <span style="color:#878787">#@assignedUsers[i].Username</span>
+    @if (i < 1 && i < assignedUsers.Count - 1)
+    {
+        <span>, </span>
+    }
+    else if (i == 1 && assignedUsers.Count > 2)
+    {
+        <span>,  and</span>
+        <span @onclick="ShowAllMembersModal" class="others-link" style="margin-right: 5px;color: rgba(105, 228, 150, 0.7);"> @(assignedUsers.Count - 2) others</span>
+        break;
+    }
+}
+
+<Modal @ref="allMembersModal" Title="All Assigned Users">
+    <BodyTemplate>
+        @if (assignedUsers != null && assignedUsers.Any())
+        {
+            <ul>
+                @foreach (var user in assignedUsers)
+                {
+                    <li style="color:#1f1f1f;">
+                        <span style="color:#1f1f1f;">@user.Name </span>
+                        <span style="color:#878787"> #@user.Username</span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No users assigned to this project.</p>
+        }
+    </BodyTemplate>
+</Modal>
+
+@code {
+
+    [Inject]
+    IProjectDataService ProjectDataService { get; set; }
+
+    [Inject]
+    public IUserDataService UserDataService { get; set; }
+
+    [Inject]
+    IInboxItemDataService InboxItemDataService { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    private List<UserViewModel> assignedUsers = new List<UserViewModel>();
+
+    private string projectId = default!;
+
+    private Modal removeUserModal = default!;
+
+    public string Error { get; set; }
+
+    public string Message { get; set; }
+
+    private Modal allMembersModal = default!;
+
+    private async Task ShowAllMembersModal()
+    {
+        allMembersModal.ShowAsync();
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            var query = uri.Query;
+            if (!string.IsNullOrEmpty(query))
+            {
+                var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+                projectId = queryParams.Get("projectId");
+
+                if (!string.IsNullOrEmpty(projectId))
+                {
+                    assignedUsers = await UserDataService.GetAssignedUsersByProjectId(Guid.Parse(projectId));
+                    Console.WriteLine($"---- Sunt proiectul: " + projectId);
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching assigned users: {ex.Message}");
+        }
+    }
+
+
+}
