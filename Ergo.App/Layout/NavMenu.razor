@@ -106,16 +106,15 @@
                                 }
                                 else
                                 {
-                                    <div style="display:flex; flex-direction:row; justify-content:space-between;">
-                                    <NavLink style="min-width:150px;" class="nav-link px-3 " href="@($"taskoverview?projectId={project.ProjectId}")">
-                                        
-                                        <span class="bi bi-project" aria-hidden="true"></span> @project.ProjectName
-                                        
-                                       
-                                    </NavLink>
-                                    <button class="btn" style="justify-self:end;" @onclick="() => EditProjectName(project)"><i class="bi bi-pencil"></i></button>
+                                    <div class="position-relative">
+                                        <NavLink class="nav-link px-3" href="@($"taskoverview?projectId={project.ProjectId}")">
+                                            <span class="bi bi-project bi-project-hover" aria-hidden="true"></span>
+                                            @project.ProjectName
+                                        </NavLink>
+                                        <div class="position-absolute" style="right: 0; top: 14px; cursor: pointer" @onclick:stopPropagation="true" @onclick="() => EditProjectName(project)">
+                                            <i class="bi bi-pencil"></i>
+                                        </div>
                                     </div>
-                                   
                                 }
                             </div>
                         }
@@ -224,10 +223,10 @@
 
 
 
-        private void EditProjectName(ProjectViewModel project)
-        {
-            project.IsEditing = true;
-         } 
+    private void EditProjectName(ProjectViewModel project)
+    {
+        project.IsEditing = true;
+    }
 
     private void ToggleNavMenu()
     {
