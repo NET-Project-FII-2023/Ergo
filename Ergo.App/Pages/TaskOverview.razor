@@ -233,17 +233,7 @@ else
 
     @if (Message != null)
     {
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <strong class="me-auto">Success</strong>
-                    <button type="button" class="btn-close" @onclick="DismissSuccess" aria-label="Close"></button>
-                </div>
-                <div class="toast-body" style="color:green">
-                    @Message
-                </div>
-            </div>
-        </div>
+        <SuccessToast DismissSuccess="DismissSuccess" Message="Message"></SuccessToast>
     }
     <div class="row mt-2" style="margin-left:0.08rem;">
         <div class="col-md-3" style="border-radius:4px;" ondragover="allowDrop(event)" ondrop="drop(event, 'ToDo')">
@@ -475,7 +465,7 @@ else
 
     @if (Error != null)
     {
-        <ErrorToast Error="@Error" DismissError="@DismissError" />
+       <ErrorToast DismissError="DismissError" Error="Error"></ErrorToast>
     }
 }
 
