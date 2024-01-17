@@ -66,7 +66,7 @@
     [Parameter]
     public EventCallback OnUserAdded { get; set; }
 
-    [Inject] 
+    [Inject]
     IProjectDataService ProjectDataService { get; set; }
 
     [Inject]
@@ -156,8 +156,9 @@
             {
                 Message = "User assigned successfully";
                 Error = null;
-                await userModal.HideAsync();
                 await OnUserAdded.InvokeAsync(null);
+                await userModal.HideAsync();
+             
             }
             else
             {
@@ -181,7 +182,7 @@
                 {
                     UserId = userId,
                     Message =
-                        $"You have been assigned to a new project \"{projectName}\".",
+                            $"You have been assigned to a new project \"{projectName}\".",
                     CreatedDate = DateTime.UtcNow,
                     IsRead = false
                 };

@@ -1,0 +1,175 @@
+﻿@using Ergo.App.Contracts
+@using Ergo.App.ViewModels
+@using Ergo.Domain.Entities.Enums;
+@using BlazorBootstrap
+@using Ergo.App.Components
+
+<Modal @ref="removeUserModal" Title="Remove a member from this project:">
+    <BodyTemplate>
+        <EditForm Model="@RemoveUserFromProjectViewModel">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="row mb-3 ms-2">
+                <label for="userId" class="col-sm-3 form-label" style="color:black;">Username</label>
+                <div class="col-sm-7">
+                    <InputText id="userId" class="form-control" @bind-Value="@RemoveUserFromProjectViewModel.Username" placeholder="Username..."></InputText>
+                </div>
+            </div>
+
+            <div class="d-flex">
+                <button class="btn btn-primary" @onclick="OnHideRemoveUserModalClick">Cancel</button>
+                <button type="submit" class="btn btn-primary mx-1" @onclick="HandleRemoveUserSubmit">Remove user</button>
+            </div>
+        </EditForm>
+    </BodyTemplate>
+</Modal>
+
+<Button Color="ButtonColor.Primary" @onclick="OnShowRemoveUserModalClick" class="cool-button" style="margin:0; background:#4a4a4a;">Remove Member</Button>
+
+@if (Error != null)
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Error</strong>
+                <button type="button" class="btn-close" @onclick="DismissError" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" style="color:red">
+                @Error
+            </div>
+        </div>
+    </div>
+}
+
+@if (Message != null)
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close" @onclick="DismissSuccess" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" style="color:green">
+                @Message
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public EventCallback OnUserRemoved { get; set; }
+
+    [Inject]
+    IProjectDataService ProjectDataService { get; set; }
+
+    [Inject]
+    public IUserDataService UserDataService { get; set; }
+
+    [Inject]
+    IInboxItemDataService InboxItemDataService { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    private List<UserViewModel> assignedUsers = new List<UserViewModel>();
+
+    public RemoveUserFromProjectViewModel RemoveUserFromProjectViewModel { get; set; } = new RemoveUserFromProjectViewModel();
+
+    private string projectId = default!;
+
+    private Modal removeUserModal = default!;
+
+    public string Error { get; set; }
+
+    public string Message { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            var query = uri.Query;
+            if (!string.IsNullOrEmpty(query))
+            {
+                var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+                projectId = queryParams.Get("projectId");
+
+                if (!string.IsNullOrEmpty(projectId))
+                {
+                    assignedUsers = await UserDataService.GetAssignedUsersByProjectId(Guid.Parse(projectId));
+                    Console.WriteLine($"---- Sunt proiectul: " + projectId);
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching assigned users: {ex.Message}");
+        }
+    }
+
+    private async Task OnShowRemoveUserModalClick()
+    {
+        await removeUserModal.ShowAsync();
+    }
+
+    private async Task OnHideRemoveUserModalClick()
+    {
+        await removeUserModal.HideAsync();
+    }
+
+    private async Task HandleRemoveUserSubmit()
+    {
+        try
+        {
+            var userId = GetUserIdByUsername(RemoveUserFromProjectViewModel.Username);
+            RemoveUserFromProjectViewModel.UserId = userId;
+            RemoveUserFromProjectViewModel.ProjectId = projectId;
+            RemoveUserFromProjectViewModel.OwnerUsername = "tudstk";
+
+            var result = await ProjectDataService.DeleteUserFromProjectAsync(RemoveUserFromProjectViewModel);
+
+            if (result != null && result.IsSuccess)
+            {
+                Message = "User removed successfully";
+                Error = null;
+                await removeUserModal.HideAsync();
+                await OnUserRemoved.InvokeAsync(null);
+            }
+            else
+            {
+                Message = "Failed to remove user";
+            }
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error removing user: {ex.Message}";
+            Message = null;
+        }
+    }
+
+    private string GetUserIdByUsername(string username)
+    {
+        foreach (var user in assignedUsers)
+        {
+            if (user.Username == username)
+            {
+                return user.UserId;
+            }
+        }
+        return null;
+    }
+
+    private void DismissError()
+    {
+        Error = null;
+    }
+
+    private void DismissSuccess()
+    {
+        Message = null;
+    }
+}
