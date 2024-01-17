@@ -391,11 +391,30 @@ else
                     <div class="my-3">
                         @if (selectedTask.Photos != null && selectedTask.Photos.Any())
                         {
-                            <div>
-                                @foreach (var photo in selectedTask.Photos)
-                                {
-                                    <img src="@($"data:image/png;base64,{photo.ImageData}")" alt="Task Photo" style="max-width: 100%; height: auto;"/>
-                                }
+                            <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-indicators">
+                                    @for (var i = 0; i < selectedTask.Photos.Count; i++)
+                                    {
+                                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @i"></button>
+                                    }
+                                </div>
+                                <div class="carousel-inner">
+                                    @for (var i = 0; i < selectedTask.Photos.Count; i++)
+                                    {
+                                        var photo = selectedTask.Photos[i];
+                                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                                            <img src="@($"data:image/png;base64,{photo.ImageData}")" class="d-block w-100" alt="Task Photo">
+                                        </div>
+                                    }
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
                             </div>
                         }
 
