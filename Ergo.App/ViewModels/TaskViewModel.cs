@@ -32,5 +32,7 @@ namespace Ergo.App.ViewModels
         public bool DescriptionEditMode { get; set; }
 
         public bool IsTitleEditMode { get; set; }
+
+        public List<PhotoDto> Photos { get; set; } = new List<PhotoDto>();
     }
 }

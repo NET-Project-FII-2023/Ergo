@@ -5,8 +5,6 @@
 @using BlazorBootstrap
 @using Ergo.App.Components
 @inject IJSRuntime JSRuntime
-using Microsoft.JSInterop;
-
 
 <style>
     body {
@@ -190,7 +188,7 @@ using Microsoft.JSInterop;
 
 </style>
 
-<h3 style="margin-top:2rem; font-weight:700; font-size:60px;">Task Overview</h3>
+<h3 style="margin-top:2.5rem; font-weight:700; font-size:60px;">Task Overview</h3>
 @if (Tasks == null)
 {
     <p><em>Loading...</em></p>
@@ -387,6 +385,28 @@ else
                     </div>
                 }
 
+                @* ------------ FILE UPLOAD -------------- *@
+                @if (selectedTask != null)
+                {
+                    <div class="my-3">
+                        @if (selectedTask.Photos != null && selectedTask.Photos.Any())
+                        {
+                            <div>
+                                @foreach (var photo in selectedTask.Photos)
+                                {
+                                    <img src="@($"data:image/png;base64,{photo.ImageData}")" alt="Task Photo" style="max-width: 100%; height: auto;"/>
+                                }
+                            </div>
+                        }
+
+                        <div class="d-flex align-items-center justify-content-center mt-3">
+                            <InputFile OnChange="HandleFileSelected" accept=".png"/>
+                            <button class="btn btn-primary" @onclick="UploadFile">Upload</button>
+                        </div>
+                    </div>
+                }
+
+
                 <h5 class="mt-4">Comments:</h5>
                 
                 <ul class="list-unstyled">
@@ -565,10 +585,54 @@ else
 
     private Guid currentUserId;
 
+    private IBrowserFile selectedFile;
+
     private async Task HandleUserAdded()
     {
         await FetchAssignedUsers();
     }
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+        if (files.Count > 0)
+        {
+            selectedFile = files[0];
+        }
+    }
+
+    private async Task UploadFile()
+    {
+        if (selectedFile == null)
+        {
+            Error = "No file selected.";
+            return;
+        }
+
+        try
+        {
+            using var stream = selectedFile.OpenReadStream();
+            var result = await TaskDataService.AddPhotoToTaskItemAsync(selectedTask.TaskItemId, stream, selectedFile.Name);
+
+            if (result.IsSuccess)
+            {
+                Message = "Image uploaded successfully.";
+                selectedFile = null;
+
+                await FetchTaskItemImages(selectedTask.TaskItemId);
+            }
+            else
+            {
+                Error = "Failed to upload image.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error uploading image: {ex.Message}";
+        }
+
+    }
+
 
     private async Task FetchTimeSpent(Guid taskItemId)
     {
@@ -582,12 +646,12 @@ else
             }
             else
             {
-                Console.WriteLine($"Failed to fetch time spent: {response.Message}");
+                Error = $"Failed to fetch time spent: {response.Message}";
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception while fetching time spent: {ex}");
+            Error = $"Exception while fetching time spent: {ex}";
         }
     }
 
@@ -829,6 +893,22 @@ else
         commentBeingEdited = null;
     }
 
+    private async Task FetchTaskItemImages(Guid taskId)
+    {
+        var photoResponse = await TaskDataService.GetPhotosForTaskItemAsync(taskId);
+
+        if (photoResponse.IsSuccess && photoResponse.Data != null)
+        {
+            selectedTask.Photos = photoResponse.Data;
+            StateHasChanged();
+        }
+        else
+        {
+            Error = photoResponse.ValidationErrors;
+            Console.WriteLine("aoleu");
+        }
+    }
+
     private async Task ShowDetailsModal(Guid taskId)
     {
         selectedTask = Tasks.FirstOrDefault(t => t.TaskItemId == taskId);
@@ -846,6 +926,8 @@ else
                 LastModifiedDate = comment.LastModifiedDate,
                 CanEdit = ShouldAllowEdit(comment, currentUser)
             }).ToList();
+
+        await FetchTaskItemImages(taskId);
 
         await detailsModal.ShowAsync();
     }
