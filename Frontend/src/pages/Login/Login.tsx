@@ -1,5 +1,7 @@
 import React from "react";
 import {Box, Button, Container, IconButton, InputAdornment, TextField, Typography} from "@mui/material";
+import axios from "axios";
+import {api_path} from "../../api/APIUtils";
 
 export default function Login() {
     const [username, setUsername] = React.useState('');
@@ -9,11 +11,14 @@ export default function Login() {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        console.log({
-            username: username,
-            password: password,
+        axios.post(`${api_path}/api/v1/Authentication/login`, {
+            username,
+            password,
+        }).then((response) => {
+            localStorage.setItem('token', response.data);
+        }).catch((error) => {
+            console.log(error);
         });
-        // Here you can add logic to handle the login
     };
 
     return (
