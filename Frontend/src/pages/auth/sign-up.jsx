@@ -26,7 +26,7 @@ export function SignUp() {
 
   const register = async (register_data) => {
     try {
-      const response = await api.post(baseURL, {
+      const response = await api.post("/api/v1/Authentication/register", {
         username: register_data.username,
         name: register_data.name,
         email: register_data.email,
