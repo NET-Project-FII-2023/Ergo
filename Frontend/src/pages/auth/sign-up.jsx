@@ -4,13 +4,94 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
+import axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import api from "../../services/api";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+const baseURL = "https://localhost:7248/api/v1/Authentication/register";
 
 export function SignUp() {
+  const navigate = useNavigate();
+  const [inputs, setInputs] = useState({
+    username: '',
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+
+  const register = async (register_data) => {
+    try {
+      const response = await api.post(baseURL, {
+        username: register_data.username,
+        name: register_data.name,
+        email: register_data.email,
+        password: register_data.password,
+      });
+
+      if (response.status === 201) {
+        navigate('/auth/sign-in');
+        toast.success("Registration Successful");
+      } else {
+        toast.error("Registration failed");
+      }
+    } catch (error) {
+      let errorMessage = "Registration failed";
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server response:", error.response);
+        if (error.response.data) {
+          errorMessage += ": " + error.response.data;
+        }
+      } else if (error instanceof Error) {
+        errorMessage += ": " + error.message;
+      }
+      toast.error(errorMessage);
+    }
+
+  };
+
+  const validatePassword = (password) => {
+    if(password.length < 7){
+      toast.error("Password must be at least 7 characters long");
+      return false;
+    }
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{7,}$/;
+    if(!regex.test(password)){
+      toast.error("Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character");
+      return false;
+    }
+    return true;
+  }
+
+  const handleChange = (e) => {
+    const {name,value} = e.target;
+    setInputs(prev => ({...prev,[name]:value}));
+  }
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+
+    if(inputs.username === '' || inputs.name === '' || inputs.email === '' || inputs.password === '' || inputs.confirmPassword === ''){
+      toast.error("Please fill all the fields");
+      return;
+    }
+
+    if(inputs.password !== inputs.confirmPassword){
+      toast.error("Passwords do not match");
+      return;
+    }
+    if(!validatePassword(inputs.password)){
+      return;
+    }
+      register(inputs);
+  }
   return (
     <section className="m-8 flex">
-            <div className="w-2/5 h-full hidden lg:block">
+            <div className="w-2/5  h-full hidden lg:block">
         <img
           src="/img/pattern.png"
           className="h-full w-full object-cover rounded-3xl"
@@ -18,73 +99,108 @@ export function SignUp() {
       </div>
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
         <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">Join Us Today</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to register.</Typography>
+          <Typography variant="h2" className="font-bold mb-1">Join Us Today</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email, username, name and password to register.</Typography>
         </div>
-        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
+        <form className="mt-2 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleSignup}>
           <div className="mb-1 flex flex-col gap-6">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your email
             </Typography>
             <Input
               size="lg"
+              type="email"
               placeholder="name@mail.com"
+              name="email"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
+              onChange={handleChange}
             />
           </div>
-          <Checkbox
-            label={
-              <Typography
-                variant="small"
-                color="gray"
-                className="flex items-center justify-start font-medium"
-              >
-                I agree the&nbsp;
-                <a
-                  href="#"
-                  className="font-normal text-black transition-colors hover:text-gray-900 underline"
-                >
-                  Terms and Conditions
-                </a>
-              </Typography>
-            }
-            containerProps={{ className: "-ml-2.5" }}
-          />
-          <Button className="mt-6" fullWidth>
+          <div className="mb-1 flex flex-col gap-6">
+            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+              Your username
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Username"
+              name="username"
+              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-1 flex flex-col gap-6">
+            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+              Your name
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Name"
+              name="name"
+              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-1 flex flex-col gap-6">
+            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+              Your password
+            </Typography>
+            <Input
+              type="password"
+              size="lg"
+              placeholder="Password"
+              name="password"
+              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-1 flex flex-col gap-6">
+            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+              Confirm password
+            </Typography>
+            <Input
+              type="password"
+              size="lg"
+              placeholder="Confirm password"
+              name="confirmPassword"
+              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+              onChange={handleChange}
+            />
+          </div>
+          <Button className="mt-6" fullWidth type="submit">
             Register Now
           </Button>
-
-          <div className="space-y-4 mt-8">
-            <Button size="lg" color="white" className="flex items-center gap-2 justify-center shadow-md" fullWidth>
-              <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clipPath="url(#clip0_1156_824)">
-                  <path d="M16.3442 8.18429C16.3442 7.64047 16.3001 7.09371 16.206 6.55872H8.66016V9.63937H12.9813C12.802 10.6329 12.2258 11.5119 11.3822 12.0704V14.0693H13.9602C15.4741 12.6759 16.3442 10.6182 16.3442 8.18429Z" fill="#4285F4" />
-                  <path d="M8.65974 16.0006C10.8174 16.0006 12.637 15.2922 13.9627 14.0693L11.3847 12.0704C10.6675 12.5584 9.7415 12.8347 8.66268 12.8347C6.5756 12.8347 4.80598 11.4266 4.17104 9.53357H1.51074V11.5942C2.86882 14.2956 5.63494 16.0006 8.65974 16.0006Z" fill="#34A853" />
-                  <path d="M4.16852 9.53356C3.83341 8.53999 3.83341 7.46411 4.16852 6.47054V4.40991H1.51116C0.376489 6.67043 0.376489 9.33367 1.51116 11.5942L4.16852 9.53356Z" fill="#FBBC04" />
-                  <path d="M8.65974 3.16644C9.80029 3.1488 10.9026 3.57798 11.7286 4.36578L14.0127 2.08174C12.5664 0.72367 10.6469 -0.0229773 8.65974 0.000539111C5.63494 0.000539111 2.86882 1.70548 1.51074 4.40987L4.1681 6.4705C4.8001 4.57449 6.57266 3.16644 8.65974 3.16644Z" fill="#EA4335" />
-                </g>
-                <defs>
-                  <clipPath id="clip0_1156_824">
-                    <rect width="16" height="16" fill="white" transform="translate(0.5)" />
-                  </clipPath>
-                </defs>
-              </svg>
-              <span>Sign in With Google</span>
-            </Button>
-            <Button size="lg" color="white" className="flex items-center gap-2 justify-center shadow-md" fullWidth>
-              <img src="/img/twitter-logo.svg" height={24} width={24} alt="" />
-              <span>Sign in With Twitter</span>
-            </Button>
-          </div>
           <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
             Already have an account?
             <Link to="/auth/sign-in" className="text-gray-900 ml-1">Sign in</Link>
           </Typography>
         </form>
-
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          />
       </div>
     </section>
   );
