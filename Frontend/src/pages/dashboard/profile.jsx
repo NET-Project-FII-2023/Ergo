@@ -9,8 +9,11 @@ import {
   PencilIcon,
 } from "@heroicons/react/24/solid";
 import { ProfileInfoCard } from "@/widgets/cards";
+import {useUser} from "@/context/LoginRequired.jsx";
 
 export function Profile() {
+    const user = useUser();
+
   return (
     <>
       <div className="relative mt-8 h-72 w-full overflow-hidden rounded-xl bg-[url('/img/background-image.png')] bg-cover	bg-center">
@@ -29,13 +32,13 @@ export function Profile() {
               />
               <div>
                 <Typography variant="h5" color="blue-gray" className="mb-1">
-                  Richard Davis
+                    {user?.name || "John Doe"}
                 </Typography>
                 <Typography
                   variant="small"
                   className="font-normal text-blue-gray-600"
                 >
-                  CEO / Co-Founder
+                    {user?.role || "Unknown role"}
                 </Typography>
               </div>
             </div>
@@ -45,17 +48,16 @@ export function Profile() {
               title="Profile Information"
               description="Hi, I'm Alec Thompson, Decisions: If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
               details={{
-                "first name": "Alec M. Thompson",
                 mobile: "(44) 123 1234 123",
-                email: "alecthompson@mail.com",
-                location: "USA",
-                social: (
-                  <div className="flex items-center gap-4">
-                    <i className="fa-brands fa-facebook text-blue-700" />
-                    <i className="fa-brands fa-twitter text-blue-400" />
-                    <i className="fa-brands fa-instagram text-purple-500" />
-                  </div>
-                ),
+                email: user?.email || "",
+                // location: "USA",
+                // social: (
+                //   <div className="flex items-center gap-4">
+                //     <i className="fa-brands fa-facebook text-blue-700" />
+                //     <i className="fa-brands fa-twitter text-blue-400" />
+                //     <i className="fa-brands fa-instagram text-purple-500" />
+                //   </div>
+                // ),
               }}
               action={
                 <Tooltip content="Edit Profile">
