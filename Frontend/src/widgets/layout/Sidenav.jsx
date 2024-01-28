@@ -57,16 +57,16 @@ export function Sidenav({ brandImg, brandName, routes }) {
         openSidenav ? "translate-x-0" : "-translate-x-80"
       } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100`}
     >
-      <div
-        className={`relative`}
-      >
-        <Link to="/" className="py-6 px-8 text-center">
-          <Typography
-            variant="h6"
-            color={"blue-gray"}
-          >
-            {brandName}
-          </Typography>
+      <div className={`relative`}>
+        <Link to="/" className="py-5 flex items-center justify-center">
+            <img src={brandImg} alt="logo" className="h-12" />
+            <Typography
+              variant="h3"
+              color={"blue-gray"}
+              className="w-min"
+            >
+              {brandName}
+            </Typography>
         </Link>
         <IconButton
           variant="text"
@@ -163,8 +163,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
 }
 
 Sidenav.defaultProps = {
-  brandImg: "/img/logo-ct.png",
-  brandName: "Material Tailwind React",
+  brandImg: "/img/logo.png",
+  brandName: "Ergo",
 };
 
 Sidenav.propTypes = {
