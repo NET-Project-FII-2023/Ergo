@@ -13,4 +13,5 @@ public class ErgoContext : DbContext
     public DbSet<Comment> Comments { get; set; }
     public DbSet<InboxItem> InboxItems { get; set; }
     public DbSet<Photo> Photos { get; set; }
+    public DbSet<PasswordResetCode> PasswordResetCodes { get; set; }
 }

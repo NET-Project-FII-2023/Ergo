@@ -82,6 +82,8 @@ namespace Ergo.API.Controllers
             await _authService.Logout();
             return Ok();
         }
+
+        
         [HttpGet]
         [Route("currentuserinfo")]
         public CurrentUser CurrentUserInfo()

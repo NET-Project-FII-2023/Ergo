@@ -120,4 +120,17 @@ public class UsersController : ApiControllerBase
         }
         return Ok(result);
     }
+
+    //[HttpPost]
+    //[Route("reset-code")]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //public async Task<IActionResult> ResetCode(ResetCodeCommand command)
+    //{
+    //    var result = await Mediator.Send(command);
+    //    if (!result.Success)
+    //    {
+    //        return BadRequest(result);
+    //    }
+    //    return Ok(result);
+    //}
 }

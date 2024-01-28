@@ -35,6 +35,7 @@ namespace Infrastructure
                 IProjectRepository, ProjectRepository>();
             services.AddScoped<IInboxItemRepository, InboxItemRepository>();
             services.AddScoped<IPhotoRepository, PhotoRepository>();
+            services.AddScoped<IPasswordResetCode, PasswordResetCodeRepository>();
             services.AddScoped<IMLService, MLService>();
             return services;
         }
