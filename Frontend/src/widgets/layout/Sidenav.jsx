@@ -63,13 +63,15 @@ export function Sidenav({ brandImg, brandName, routes }) {
       <div
         className={`relative`}
       >
-        <Link to="/" className="py-6 px-8 text-center">
-          <Typography
-            variant="h6"
-            color={"blue-gray"}
-          >
-            {brandName}
-          </Typography>
+        <Link to="/" className="py-5 flex items-center justify-center">
+          <img src={brandImg} alt="logo" className="h-12" />
+            <Typography
+              variant="h3"
+              color={"blue-gray"}
+              className="w-min"
+            >
+              {brandName}
+            </Typography>
         </Link>
         <IconButton
           variant="text"
@@ -96,22 +98,24 @@ export function Sidenav({ brandImg, brandName, routes }) {
                 </Typography>
               </li>
             )}
-            {pages.slice(0,-1).map(({ icon, name, path }) => (
+            {pages
+            .filter(({ name }) => name !== "project")
+            .map(({ icon, name, path }) => (
               <li key={name}>
                 <NavLink to={`/${layout}${path}`}>
                   {({ isActive }) => (
                     <Button
                       variant={isActive ? "gradient" : "text"}
-                      color={
-                        isActive ? "blue-gray" : undefined
-                      }
+                      color={isActive ? "blue-gray" : undefined}
                       className="flex items-center gap-4 px-4 capitalize"
                       fullWidth
                     >
                       {icon}
                       <Typography
                         color="inherit"
-                        className={`font-medium capitalize ${isActive ? 'opacity-100' : 'opacity-75'}`}
+                        className={`font-medium capitalize ${
+                          isActive ? 'opacity-100' : 'opacity-75'
+                        }`}
                       >
                         {name}
                       </Typography>
@@ -120,6 +124,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                 </NavLink>
               </li>
             ))}
+
           </ul>
         ))}
         <ul className={"list-none"}>
