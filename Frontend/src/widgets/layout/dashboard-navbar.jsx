@@ -8,7 +8,6 @@ import {
   Menu,
   MenuHandler,
   MenuList,
-  MenuItem,
   ListItem
 } from "@material-tailwind/react";
 import {
@@ -24,6 +23,7 @@ import {
 } from "@/context";
 import { useEffect, useState } from "react";
 import api from "@/services/api";
+import { toast } from "react-toastify";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -105,6 +105,26 @@ export function DashboardNavbar() {
   async function markAsRead(e, notification) {
     e.stopPropagation();
     console.log(notification);
+    try {
+      const response = await api.put(`/api/v1/InboxItem/${notification.inboxItemId}`, {
+        isRead: true,
+        createdDate: notification.createdDate,
+        message: notification.message,
+        userId: notification.userId,
+      }, {
+        headers: {
+          Authorization: `Bearer ${hardcodedToken}`,
+        },
+      });
+      if (response.status !== 200) {
+        throw new Error(response);
+      }
+      setNotifications(prev => prev.map(notif => notif.inboxItemId === notification.inboxItemId ? {...notif, isRead: true} : notif));
+      toast.success("Notification marked as read!");
+    } catch (error) {
+      console.log(`Error while marking notification as read: ${error.response.data}`);
+      toast.error("Couldn't update notification");
+    }
   }
 
   return (
