@@ -9,11 +9,11 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-blue-gray-50/50">
-      <Sidenav
-          brandName={"Ergo"}
-        routes={routes}
-        brandImg={"/img/logo-ct.png"}
-      />
+        <Sidenav
+            brandName={"Ergo"}
+            routes={routes}
+            brandImg={"/img/logo.png"}
+        />
       <div className="p-4 xl:ml-80">
         <DashboardNavbar />
         <Routes>
