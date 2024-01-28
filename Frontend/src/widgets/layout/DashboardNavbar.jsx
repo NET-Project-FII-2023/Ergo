@@ -30,30 +30,26 @@ export function DashboardNavbar() {
   const { openSidenav } = controller;
   const { pathname } = useLocation();
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
-
   const [notifications, setNotifications] = useState([]);
   const [hardcodedToken, setHardcodedToken] = useState("");
+  
 
   useEffect(() => {
     (async () => {
-      //========= HARDCODED LOGIN AND USER INFORMATION
       const token = await hardcodedLogin("tudstk", "Abc123!");
       if (!token) return;
       setHardcodedToken(token);
       const { userId } = (await getUserWithEmail("tudorstroescu@yahoo.com", token))?.user;
       if (!userId) return;
-      //========= END OF HARDCODED SHIT
-
-      //get notifications
       const inboxItems = await fetchNotifications(userId, token);
-
-      //sort them by createdDate
       inboxItems.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
 
       setNotifications(inboxItems);
       console.log(inboxItems);
     })();
   }, []);
+
+
 
   async function hardcodedLogin(username, password) {
     try {
@@ -200,7 +196,7 @@ export function DashboardNavbar() {
                 </ListItem> 
                 : 
                 notifications.map((notification, index) =>
-                  <ListItem className="flex flex-col items-start w-[20rem]" key={`notif-${index}`}>
+                  <ListItem className="flex flex-col items-start w-full md:w-[20rem]" key={`notif-${index}`}>
                     <Typography variant="small" color="blue-gray" className="mb-1 font-normal">
                       <strong>{notification.message}</strong>
                     </Typography>

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
   Button,
@@ -7,10 +7,82 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
+import { useEffect, useState } from "react";
+import api from "@/services/api";
 
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { openSidenav } = controller;
+  const { pathname } = useLocation();
+  const [projects, setProjects] = useState([]);
+  const [hardcodedToken, setHardcodedToken] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      const token = await hardcodedLogin("tudstk", "Abc123!");
+      if (!token) return;
+      setHardcodedToken(token);
+      const { userId } = (await getUserWithEmail("tudorstroescu@yahoo.com", token))?.user;
+      if (!userId) return;
+
+      const userProjects = await getProjectsByUserId(userId, token);
+
+      if (userProjects?.success) {
+        setProjects(userProjects.projects);
+        console.log("Projects:")
+        console.log(userProjects.projects);
+      } else {
+        console.log("Error while fetching user projects");
+      }
+    })();
+  }, []);
+
+  async function getProjectsByUserId(userId, token) {
+    try {
+      const response = await api.get(`/api/v1/Projects/GetProjectsByUserId/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status !== 200) {
+        throw new Error(response);
+      }
+      return response.data;
+    } catch (error) {
+      console.log(`Error while getting user projects: ${error.response.data}`);
+    }
+  }
+
+  async function hardcodedLogin(username, password) {
+    try {
+      const response = await api.post("/api/v1/Authentication/login", {
+        username,
+        password,
+      });
+      if (response.status !== 200) {
+        throw new Error(response);
+      }
+      return response.data;
+    } catch (error) {
+      console.log(`Error in hardcoded login: ${error.response.data}`);
+    }
+  }
+
+  async function getUserWithEmail(email, token) {
+    try {
+      const response = await api.get(`/api/v1/Users/ByEmail/${email}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status !== 200) {
+        throw new Error(response);
+      }
+      return response.data;
+    } catch (error) {
+      console.log(`Error while getting user id: ${error.response.data}`);
+    }
+  }
 
   return (
     <aside
@@ -69,7 +141,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                       {icon}
                       <Typography
                         color="inherit"
-                        className="font-medium capitalize"
+                        className={`font-medium capitalize ${isActive ? 'opacity-100' : 'opacity-75'}`}
                       >
                         {name}
                       </Typography>
@@ -80,6 +152,44 @@ export function Sidenav({ brandImg, brandName, routes }) {
             ))}
           </ul>
         ))}
+        {projects.length > 0 && (
+          <ul className="mb-4 flex flex-col gap-1">
+            <li className="mx-3.5 mt-4 mb-2">
+              <Typography
+                variant="small"
+                color={"blue-gray"}
+                className="font-black uppercase opacity-75"
+              >
+                Projects
+              </Typography>
+            </li>
+            {projects.map((project, index) => (
+              <li key={`project-${index}`}>
+                <NavLink to={`/project/${project.projectId}`}>
+                  {({ isActive }) => (
+                    <Button
+                      variant={isActive ? "gradient" : "text"}
+                      color={
+                        isActive ? "blue-gray" : undefined
+                      }
+                      className="flex items-center gap-4 px-4 capitalize"
+                      fullWidth
+                    >
+                      {/* You can replace the icon with your desired project icon */}
+                      {/* Example: <ProjectIcon className="h-6 w-6" /> */}
+                      <Typography
+                        color="inherit"
+                        className={`font-medium capitalize ${isActive ? 'opacity-100' : 'opacity-75'}`}
+                      >
+                        {project.projectName}
+                      </Typography>
+                    </Button>
+                  )}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </aside>
   );
