@@ -93,12 +93,18 @@ namespace Ergo.API.Controllers
                     IsAuthenticated = false
                 };
             }
+
+            var claims = this.currentUserService.GetCurrentClaimsPrincipal().Claims
+                .GroupBy(c => c.Type)
+                .ToDictionary(g => g.Key, g => string.Join(", ", g.Select(c => c.Value)));
+
             return new CurrentUser
             {
                 IsAuthenticated = true,
                 UserName = this.currentUserService.GetCurrentUserId(),
-                Claims = this.currentUserService.GetCurrentClaimsPrincipal().Claims.ToDictionary(c => c.Type, c => c.Value)
+                Claims = claims
             };
         }
+
     }
 }
