@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const baseURL = "https://localhost:7248/api/v1/Authentication/register";
@@ -189,18 +189,6 @@ export function SignUp() {
             <Link to="/auth/sign-in" className="text-gray-900 ml-1">Sign in</Link>
           </Typography>
         </form>
-        <ToastContainer
-          position="bottom-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          />
       </div>
     </section>
   );
