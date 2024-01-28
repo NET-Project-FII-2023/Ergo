@@ -37,10 +37,10 @@ export function DashboardNavbar() {
   useEffect(() => {
     (async () => {
       //========= HARDCODED LOGIN AND USER INFORMATION
-      const token = await hardcodedLogin("marcel", "Alin24218!");
+      const token = await hardcodedLogin("tudstk", "Abc123!");
       if (!token) return;
       setHardcodedToken(token);
-      const { userId } = (await getUserWithEmail("marcel@gmail.com", token))?.user;
+      const { userId } = (await getUserWithEmail("tudorstroescu@yahoo.com", token))?.user;
       if (!userId) return;
       //========= END OF HARDCODED SHIT
 
@@ -200,7 +200,7 @@ export function DashboardNavbar() {
                 </ListItem> 
                 : 
                 notifications.map((notification, index) =>
-                  <ListItem className="flex flex-col items-start w-full" key={`notif-${index}`}>
+                  <ListItem className="flex flex-col items-start w-[20rem]" key={`notif-${index}`}>
                     <Typography variant="small" color="blue-gray" className="mb-1 font-normal">
                       <strong>{notification.message}</strong>
                     </Typography>
