@@ -3,13 +3,14 @@ import {
   CardBody,
   Avatar,
   Typography,
-  Tooltip,
+  Tooltip, Button,
 } from "@material-tailwind/react";
 import {
   PencilIcon,
 } from "@heroicons/react/24/solid";
 import { ProfileInfoCard } from "@/widgets/cards";
 import {useUser} from "@/context/LoginRequired.jsx";
+import {Link} from "react-router-dom";
 
 export function Profile() {
     const user = useUser();
@@ -66,6 +67,15 @@ export function Profile() {
               }
             />
           </div>
+            <div className="flex items-center justify-between flex-wrap gap-6">
+              <Link to="/auth/sign-in" className="ml-auto">
+                <Button
+                    color="red"
+                    className="shadow-md"
+                    ripple
+                >Log out</Button>
+              </Link>
+            </div>
         </CardBody>
       </Card>
     </>
