@@ -12,20 +12,18 @@ import {
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
 import { useEffect, useState } from "react";
 import api from "@/services/api";
+import {useUser} from "@/context/LoginRequired.jsx";
 
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { openSidenav } = controller;
   const { pathname } = useLocation();
   const [projects, setProjects] = useState([]);
-  const [hardcodedToken, setHardcodedToken] = useState("");
+  const {token, userId} = useUser();
 
   useEffect(() => {
     (async () => {
-      const token = await hardcodedLogin("tudstk", "Abc123!");
       if (!token) return;
-      setHardcodedToken(token);
-      const { userId } = (await getUserWithEmail("tudorstroescu@yahoo.com", token))?.user;
       if (!userId) return;
 
       const userProjects = await getProjectsByUserId(userId, token);
@@ -53,37 +51,6 @@ export function Sidenav({ brandImg, brandName, routes }) {
       return response.data;
     } catch (error) {
       console.log(`Error while getting user projects: ${error.response.data}`);
-    }
-  }
-
-  async function hardcodedLogin(username, password) {
-    try {
-      const response = await api.post("/api/v1/Authentication/login", {
-        username,
-        password,
-      });
-      if (response.status !== 200) {
-        throw new Error(response);
-      }
-      return response.data;
-    } catch (error) {
-      console.log(`Error in hardcoded login: ${error.response.data}`);
-    }
-  }
-
-  async function getUserWithEmail(email, token) {
-    try {
-      const response = await api.get(`/api/v1/Users/ByEmail/${email}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status !== 200) {
-        throw new Error(response);
-      }
-      return response.data;
-    } catch (error) {
-      console.log(`Error while getting user id: ${error.response.data}`);
     }
   }
 

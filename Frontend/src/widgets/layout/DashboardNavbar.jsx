@@ -24,23 +24,19 @@ import {
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { toast } from "react-toastify";
+import { useUser } from "@/context/LoginRequired.jsx";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
+  const { userId, token } = useUser();
   const { openSidenav } = controller;
   const { pathname } = useLocation();
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
   const [notifications, setNotifications] = useState([]);
-  const [hardcodedToken, setHardcodedToken] = useState("");
-  
 
   useEffect(() => {
     (async () => {
-      const token = await hardcodedLogin("tudstk", "Abc123!");
-      if (!token) return;
-      setHardcodedToken(token);
-      const { userId } = (await getUserWithEmail("tudorstroescu@yahoo.com", token))?.user;
-      if (!userId) return;
+      //get notifications
       const inboxItems = await fetchNotifications(userId, token);
       inboxItems.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
 
@@ -48,39 +44,6 @@ export function DashboardNavbar() {
       console.log(inboxItems);
     })();
   }, []);
-
-
-
-  async function hardcodedLogin(username, password) {
-    try {
-      const response = await api.post("/api/v1/Authentication/login", {
-        username,
-        password,
-      });
-      if (response.status !== 200) {
-        throw new Error(response);
-      }
-      return response.data;
-    } catch (error) {
-      console.log(`Error in hardcoded login: ${error.response.data}`);
-    }
-  }
-
-  async function getUserWithEmail(email, token) {
-    try {
-      const response = await api.get(`/api/v1/Users/ByEmail/${email}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status !== 200) {
-        throw new Error(response);
-      }
-      return response.data;
-    } catch (error) {
-      console.log(`Error while getting user id: ${error.response.data}`);
-    }
-  }
 
   async function fetchNotifications(userId, token){
     try {
@@ -109,7 +72,7 @@ export function DashboardNavbar() {
         userId: notification.userId,
       }, {
         headers: {
-          Authorization: `Bearer ${hardcodedToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       if (response.status !== 200) {
