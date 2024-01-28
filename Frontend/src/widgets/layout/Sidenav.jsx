@@ -2,6 +2,9 @@ import PropTypes from "prop-types";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
+  RectangleStackIcon,
+} from "@heroicons/react/24/solid";
+import {
   Button,
   IconButton,
   Typography,
@@ -126,7 +129,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                 </Typography>
               </li>
             )}
-            {pages.map(({ icon, name, path }) => (
+            {pages.slice(0,-1).map(({ icon, name, path }) => (
               <li key={name}>
                 <NavLink to={`/${layout}${path}`}>
                   {({ isActive }) => (
@@ -152,44 +155,30 @@ export function Sidenav({ brandImg, brandName, routes }) {
             ))}
           </ul>
         ))}
-        {projects.length > 0 && (
-          <ul className="mb-4 flex flex-col gap-1">
-            <li className="mx-3.5 mt-4 mb-2">
-              <Typography
-                variant="small"
-                color={"blue-gray"}
-                className="font-black uppercase opacity-75"
+        <ul className={"list-none"}>
+        {projects.map((project) => (
+        <li key={project.projectId}>
+          <NavLink to={`/dashboard/project/${project.projectId}`}>
+            <Link to={`/dashboard/project/${project.projectId}`}>
+              <Button
+                variant="text"
+                color="blue-gray"
+                className="flex items-center gap-4 px-4 capitalize"
+                fullWidth
               >
-                Projects
-              </Typography>
-            </li>
-            {projects.map((project, index) => (
-              <li key={`project-${index}`}>
-                <NavLink to={`/project/${project.projectId}`}>
-                  {({ isActive }) => (
-                    <Button
-                      variant={isActive ? "gradient" : "text"}
-                      color={
-                        isActive ? "blue-gray" : undefined
-                      }
-                      className="flex items-center gap-4 px-4 capitalize"
-                      fullWidth
-                    >
-                      {/* You can replace the icon with your desired project icon */}
-                      {/* Example: <ProjectIcon className="h-6 w-6" /> */}
-                      <Typography
-                        color="inherit"
-                        className={`font-medium capitalize ${isActive ? 'opacity-100' : 'opacity-75'}`}
-                      >
-                        {project.projectName}
-                      </Typography>
-                    </Button>
-                  )}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        )}
+                <RectangleStackIcon className="w-5 h-5 text-inherit" />
+                <Typography
+                  color="inherit"
+                  className="font-medium capitalize"
+                >
+                  {project.projectName}
+                </Typography>
+              </Button>
+            </Link>
+          </NavLink>
+        </li>
+      ))}
+        </ul>
       </div>
     </aside>
   );
