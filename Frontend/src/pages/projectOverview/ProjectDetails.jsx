@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from "@/services/api";
 import { useUser } from "@/context/LoginRequired.jsx";
-import { Card, CardContent, Typography } from '@mui/material';
-
+import { Card, CardContent, Typography, Modal, Backdrop, Fade } from '@mui/material';
 
 const ProjectDetails = () => {
   const { projectId } = useParams();
   const [taskItems, setTaskItems] = useState([]);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const { token, userId } = useUser();
 
   useEffect(() => {
@@ -47,8 +48,10 @@ const ProjectDetails = () => {
         style={{
           marginBottom: '10px',
           backgroundColor: getCardBackgroundColor(taskItem.state),
-          opacity: 0.8, // Adjust the transparency as needed
+          opacity: 0.8,
+          cursor: 'pointer', // Add cursor pointer for interaction
         }}
+        onClick={() => handleOpenModal(taskItem)}
       >
         <CardContent>
           <Typography variant="h6" gutterBottom>
@@ -64,20 +67,28 @@ const ProjectDetails = () => {
       </Card>
     ));
   };
-  
+
   const getCardBackgroundColor = (state) => {
     switch (state) {
       case 1:
         return 'rgba(181, 106, 235, 0.5)';
       case 2:
         return 'rgba(111, 206, 237, 0.5)';
-      case 3: 
+      case 3:
         return 'rgba(144, 238, 144, 0.5)';
       default:
         return 'white';
     }
   };
-  
+
+  const handleOpenModal = (task) => {
+    setSelectedTask(task);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   return (
     <div>
@@ -97,6 +108,38 @@ const ProjectDetails = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+        closeAfterTransition
+        BackdropProps={{
+          style: {
+            outline: 'none',
+          },
+        }}
+      >
+        <Fade in={modalOpen}>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/2 max-h-80 overflow-y-auto bg-white rounded-md shadow-md p-8">
+            <h2 id="modal-title">Task Details</h2>
+            {selectedTask && (
+              <>
+                <Typography variant="h6" gutterBottom>
+                  {selectedTask.taskName}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  {selectedTask.description}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  Deadline: {selectedTask.deadline}
+                </Typography>
+              </>
+            )}
+          </div>
+        </Fade>
+      </Modal>
     </div>
   );
 };
