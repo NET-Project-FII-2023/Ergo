@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { Home, Profile } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
-import ProjectDetails from "./pages/dashboard/ProjectDetails";
+import ProjectDetails from "./pages/projectOverview/ProjectDetails";
 import ResetPassword from "./pages/auth/SendResetCode";
 import VerifyResetCode from "./pages/auth/VerifyResetCode";
 import SendResetCode from "./pages/auth/SendResetCode";
