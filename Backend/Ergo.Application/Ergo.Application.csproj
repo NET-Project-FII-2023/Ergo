@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Features\Email\Queries\" />
       <Folder Include="Features\ML\Commands\" />
     </ItemGroup>
 

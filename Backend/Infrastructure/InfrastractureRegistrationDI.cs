@@ -1,6 +1,8 @@
-﻿using Ergo.Application.Persistence;
+﻿using Ergo.Application.Contracts;
+using Ergo.Application.Persistence;
 using Infrastructure.ML;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +38,7 @@ namespace Infrastructure
             services.AddScoped<IInboxItemRepository, InboxItemRepository>();
             services.AddScoped<IPhotoRepository, PhotoRepository>();
             services.AddScoped<IPasswordResetCode, PasswordResetCodeRepository>();
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMLService, MLService>();
             return services;
         }

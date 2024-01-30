@@ -1,4 +1,5 @@
-﻿using Ergo.Application.Persistence;
+﻿using Ergo.Application.Contracts;
+using Ergo.Application.Persistence;
 using Ergo.Domain.Entities;
 using MediatR;
 using System.Security.Cryptography;
@@ -9,11 +10,13 @@ namespace Ergo.Application.Features.ResetCode.Commands.CreateResetCode
     public class CreateResetCodeCommandHandler: IRequestHandler<CreateResetCodeCommand, CreateResetCodeCommandResponse>
     {   
         private readonly IPasswordResetCode resetCodeRepository;
+        private readonly IEmailService emailService;
         private readonly IUserManager userManager;
-        public CreateResetCodeCommandHandler(IPasswordResetCode resetCodeRepository, IUserManager userManager)
+        public CreateResetCodeCommandHandler(IPasswordResetCode resetCodeRepository, IUserManager userManager, IEmailService emailService)
         {
             this.resetCodeRepository = resetCodeRepository;
             this.userManager = userManager;
+            this.emailService = emailService;
         }
 
         public async Task<CreateResetCodeCommandResponse> Handle(CreateResetCodeCommand request, CancellationToken cancellationToken)
@@ -51,6 +54,8 @@ namespace Ergo.Application.Features.ResetCode.Commands.CreateResetCode
                     ValidationsErrors = new List<string> { "Something went wrong while creating the reset code." }
                 };
             }
+            var emailBody = $"Hi. You recently requested to reset your password. Please you this code ${resetCode} to reset your password";
+            await emailService.SendEmailAsync(request.Email, "Reset Code", emailBody);
             return new CreateResetCodeCommandResponse
             {
                 Success = true,
