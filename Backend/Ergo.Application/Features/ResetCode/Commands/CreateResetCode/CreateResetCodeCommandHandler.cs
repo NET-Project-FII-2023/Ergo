@@ -54,7 +54,7 @@ namespace Ergo.Application.Features.ResetCode.Commands.CreateResetCode
                     ValidationsErrors = new List<string> { "Something went wrong while creating the reset code." }
                 };
             }
-            var emailBody = $"Hi. You recently requested to reset your password. Please you this code ${resetCode} to reset your password";
+            var emailBody = $"Hi. You recently requested to reset your password. Please you this code {resetCode} to reset your password";
             await emailService.SendEmailAsync(request.Email, "Reset Code", emailBody);
             return new CreateResetCodeCommandResponse
             {

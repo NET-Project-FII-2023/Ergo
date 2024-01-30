@@ -24,7 +24,7 @@ namespace Ergo.Application.Features.ResetCode.Queries.VerifyResetCode
                 };
                 
             }
-            await passwordResetCodeRepository.InvalidateExistingCodesAsync(request.Email);
+            //await passwordResetCodeRepository.InvalidateExistingCodesAsync(request.Email);
             return new VerifyResetCodeResponse
             {
                 Success = true

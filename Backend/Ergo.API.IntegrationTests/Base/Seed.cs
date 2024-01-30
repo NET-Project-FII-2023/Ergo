@@ -61,10 +61,10 @@ namespace Ergo.API.IntegrationTests.Base
             context.SaveChanges();
 
         }
-        public static async Task InitializeUserDbForTests(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IUserRepository userRepository)
+        public static async Task InitializeUserDbForTests(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IUserRepository userRepository, IPasswordResetCode passwordResetCode)
         {
             var configuration = new ConfigurationBuilder().Build(); 
-            var authService = new AuthService(userManager, roleManager, configuration, null, userRepository); 
+            var authService = new AuthService(userManager, roleManager, configuration, null, userRepository,passwordResetCode); 
 
             var registrationModels = new List<RegistrationModel>
         {

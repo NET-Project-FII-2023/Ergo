@@ -107,6 +107,33 @@ namespace Ergo.API.Controllers
                 Claims = claims
             };
         }
+        [HttpPost]
+        [Route("reset-password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest("Invalid payload");
+                }
+
+                var (status, message) = await _authService.ResetPassword(model);
+
+                if (status == 0)
+                {
+                    return BadRequest(message);
+                }
+
+                return Ok(message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
     }
 }

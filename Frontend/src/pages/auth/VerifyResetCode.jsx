@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useEffect,useState } from 'react'
 import { useLocation,useNavigate } from 'react-router-dom';
 import {
   Input,
@@ -22,7 +21,6 @@ const VerifyResetCode = () => {
       toast.error("Something went wrong, try again!");
       navigate("/auth/forgot-password");
     }
-    console.log(email + " " + code);
     try{
       const response = await api.post("/api/v1/ResetPassword/verify-reset-code", {
         email: email,
@@ -30,6 +28,7 @@ const VerifyResetCode = () => {
       });
       if(response.status === 200){
         toast.success("Code verified successfully");
+        navigate("/auth/reset-password", {state: {email: email, code: code}});
       }else{
         toast.error(response.data);
       }
@@ -49,6 +48,12 @@ const VerifyResetCode = () => {
       toast.error(errorMessage);
     }
   }
+  useEffect(() => {
+    if(!email){
+      toast.error("Something went wrong, try again!");
+      navigate("/auth/forgot-password");
+    }
+  }, [])
   return (
     <section className="m-8 flex gap-4">
       <div className="w-full lg:w-3/5 mt-24">
