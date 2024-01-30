@@ -10,48 +10,41 @@ const ProjectDetails = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const { token, userId } = useUser();
-
-  useEffect(() => {
-    const fetchTaskItems = async () => {
-      try {
-        if (!token || !userId) return;
-
-        const response = await api.get(`/api/v1/TaskItems/ByProject/${projectId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          setTaskItems(response.data.taskItems);
-          console.log("Tasks:");
-          console.log(response.data.taskItems);
-        } else {
-          console.error('Error fetching tasks:', response);
-        }
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-      }
-    };
-
-    fetchTaskItems();
-  }, [projectId, token, userId]);
-
   const todoTasks = taskItems.filter(taskItem => taskItem.state === 1);
   const inProgressTasks = taskItems.filter(taskItem => taskItem.state === 2);
   const doneTasks = taskItems.filter(taskItem => taskItem.state === 3);
 
+  useEffect(() => {
+    fetchTaskItems();
+  }, [projectId, token, userId]);
+
+  const fetchTaskItems = async () => {
+    try {
+      if (!token || !userId) return;
+
+      const response = await api.get(`/api/v1/TaskItems/ByProject/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setTaskItems(response.data.taskItems);
+        console.log("Tasks:");
+        console.log(response.data.taskItems);
+      } else {
+        console.error('Error fetching tasks:', response);
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  };
+
   const renderTaskCards = (tasks) => {
     return tasks.map(taskItem => (
-      <Card
-        key={taskItem.taskItemId}
-        style={{
-          marginBottom: '10px',
-          backgroundColor: getCardBackgroundColor(taskItem.state),
-          opacity: 0.8,
-          cursor: 'pointer', // Add cursor pointer for interaction
-        }}
-        onClick={() => handleOpenModal(taskItem)}
+      <Card key={taskItem.taskItemId} className={`mb-4 opacity-80 cursor-pointer`} 
+      style={{ backgroundColor: getCardBackgroundColor(taskItem.state), }}
+      onClick={() => handleOpenModal(taskItem)}       
       >
         <CardContent>
           <Typography variant="h6" gutterBottom>
@@ -71,11 +64,11 @@ const ProjectDetails = () => {
   const getCardBackgroundColor = (state) => {
     switch (state) {
       case 1:
-        return 'rgba(181, 106, 235, 0.5)';
+        return 'purple-500';
       case 2:
-        return 'rgba(111, 206, 237, 0.5)';
+        return 'cyan-300';
       case 3:
-        return 'rgba(144, 238, 144, 0.5)';
+        return 'lime-500';
       default:
         return 'white';
     }
@@ -93,17 +86,17 @@ const ProjectDetails = () => {
   return (
     <div>
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div style={{ flex: 1, marginRight: '20px' }}>
-            <h4>To Do</h4>
+        <div className="flex justify-between">
+          <div className="flex-1 mr-8">
+            <h4 className="mb-2">To Do</h4>
             {renderTaskCards(todoTasks)}
           </div>
-          <div style={{ flex: 1, marginRight: '20px' }}>
-            <h4>In Progress</h4>
+          <div className="flex-1 mr-8">
+            <h4 className="mb-2">In Progress</h4>
             {renderTaskCards(inProgressTasks)}
           </div>
-          <div style={{ flex: 1 }}>
-            <h4>Done</h4>
+          <div className="flex-1">
+            <h4 className="mb-2">Done</h4>
             {renderTaskCards(doneTasks)}
           </div>
         </div>
