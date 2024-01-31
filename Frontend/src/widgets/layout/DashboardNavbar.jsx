@@ -25,7 +25,6 @@ import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { toast } from "react-toastify";
 import { useUser } from "@/context/LoginRequired.jsx";
-import { myTheme } from "@/App";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
