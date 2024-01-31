@@ -86,7 +86,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
       </div>
       <div className="m-4">
         {routes.map(({ layout, pages }, key) => (
-          <ul key={key} className=" flex flex-col gap-1">
+          <ul key={key} className=" flex flex-col gap-1 opacity-80">
             {pages
             .filter(({ name }) => name !== "project" && layout =="dashboard" && name !== 'profile')
             .map(({ icon, name, path }) => (
@@ -94,7 +94,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                 <NavLink to={`/${layout}${path}`}>
                   {({ isActive }) => (
                     <Button
-                      className={`flex items-center gap-4 px-4 ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'} `}
+                      className={`flex items-center gap-2 px-4 hover:bg-secondary ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'} `}
                       fullWidth
                     >
                       {icon}
@@ -114,15 +114,15 @@ export function Sidenav({ brandImg, brandName, routes }) {
         ))}
         <ul className={"list-none"}>
         {projects.map((project) => (
-        <li key={project.projectId}>
-          <NavLink to={`/dashboard/project/${project.projectId}`}>
+        <li key={project.projectId} className="opacity-80">
+          <NavLink to={`/dashboard/project/${project.projectId}`} >
           {({ isActive }) => (
             <Link to={`/dashboard/project/${project.projectId}`}>
               <Button
-                className={`flex items-center gap-4 px-4 capitalize ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'} `}
+                className={`flex items-center gap-2 px-4 capitalize hover:bg-secondary ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'} `}
                 fullWidth
               >
-                 <RectangleStackIcon className={`w-4 h-4 text-inherit ${isActive ? 'text-white' : 'text-surface-light'}`} />
+                 <RectangleStackIcon className={`w-4 h-4 text-inherit text-white`} />
                 <Typography
                   color="inherit"
                   className="font-normal text-white"
