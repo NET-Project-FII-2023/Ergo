@@ -65,15 +65,15 @@ const ProjectDetails = () => {
   };
 
   const renderTaskCards = (tasks) => {
-    return tasks.map(taskItem => (
+    return tasks.map((taskItem) => (
       <Card
-      key={taskItem.taskItemId}
-      className={`mb-4 opacity-80 cursor-pointer`}
-      style={{
-        backgroundColor: getCardBackgroundColor(taskItem.state),
-      }}
-      onClick={() => handleOpenModal(taskItem)}
-    >
+        key={taskItem.taskItemId}
+        className={`mb-4 opacity-80 cursor-pointer`}
+        style={{
+          backgroundColor: getCardBackgroundColor(taskItem.state),
+        }}
+        onClick={() => handleOpenModal(taskItem)}
+      >
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {taskItem.taskName}
@@ -81,22 +81,34 @@ const ProjectDetails = () => {
           <Typography variant="body2" color="textSecondary" component="p">
             {taskItem.description}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            Deadline: {taskItem.deadline}
-          </Typography>
+          <div className='flex flex-row'>
+            <Typography variant="body2" color="textPrimary" component="p" mr={1}>
+              Deadline:
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+             {formatDeadline(taskItem.deadline)}
+            </Typography>
+          </div>
+          
         </CardContent>
       </Card>
     ));
   };
-
+  
+  const formatDeadline = (deadline) => {
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, options);
+    return formattedDeadline;
+  };
+  
   const getCardBackgroundColor = (state) => {
     switch (state) {
       case 1:
-        return 'rgba(205, 122, 235, 0.7)'; // Purple
+        return 'rgba(232, 207, 132, 0.7)';
       case 2:
-        return 'rgba(111, 206, 237, 0.7)'; // Cyan
+        return 'rgba(111, 206, 237, 0.7)';
       case 3:
-        return 'rgba(144, 238, 144, 0.7)'; // Lime
+        return 'rgba(144, 238, 144, 0.7)';
       default:
         return 'white';
     }
