@@ -54,8 +54,6 @@ const ProjectDetails = () => {
 
       if (response.status === 200) {
         setCurrentProject(response.data)
-        console.log("Project:");
-        console.log(response.data);
       } else {
         console.error('Error fetching tasks:', response);
       }
@@ -68,24 +66,24 @@ const ProjectDetails = () => {
     return tasks.map((taskItem) => (
       <Card
         key={taskItem.taskItemId}
-        className={`mb-4 opacity-80 cursor-pointer`}
+        className={`mb-4 opacity-80 cursor-pointer `}
         style={{
-          backgroundColor: getCardBackgroundColor(taskItem.state),
+          backgroundColor: "#2f2b3a",
         }}
-        onClick={() => handleOpenModal(taskItem)}
+        onClick={() => handleOpenModal(taskItem)} 
       >
         <CardContent>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h6" gutterBottom className='text-white'>
             {taskItem.taskName}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="body2" className='text-surface-light' component="p">
             {taskItem.description}
           </Typography>
           <div className='flex flex-row'>
-            <Typography variant="body2" color="textPrimary" component="p" mr={1}>
+            <Typography variant="body2" className='text-surface-light' component="p" mr={1}>
               Deadline:
             </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
+            <Typography variant="body2" className='text-surface-light' component="p">
              {formatDeadline(taskItem.deadline)}
             </Typography>
           </div>
@@ -126,33 +124,42 @@ const ProjectDetails = () => {
   return (
     <div>
       <div>
-        <Typography variant="h3">
+        <Typography variant="h3" className='text-white'>
           {currentProject.projectName}
         </Typography>
         <div className='flex flex-row'>
-          <Typography variant="body1" color="textPrimary" component="p" mr={1}>
+          <Typography component="p" mr={1} className='text-surface-light'>
             Description:   
           </Typography>
-          <Typography variant="body1" color="textSecondary" component="p">
+          <Typography variant="body1" component="p" className='text-surface-light'>
             {currentProject.description}
           </Typography>
         </div>
       </div>
       
-      <div className="border-b-2 border-gray-300 my-4"></div>
+      <div className="border-b-2 border-surface-dark my-4"></div>
   
       <div>
         <div className="flex justify-between">
           <div className="flex-1 mr-8">
-            <h4 className="mb-2">To Do</h4>
+          <div className="border-b-4 border-primary"></div>
+            <div className='px-4 py-4 bg-surface-dark mb-4 flex items-center'>
+              <h4 className="text-surface-light">TO DO</h4>
+            </div>
             {renderTaskCards(todoTasks)}
           </div>
-          <div className="flex-1 mr-8">
-            <h4 className="mb-2">In Progress</h4>
+          <div className="flex-1 mr-8 text-surface-light">
+          <div className="border-b-4 border-primary"></div>
+            <div className='px-4 py-4 bg-surface-dark mb-4 flex items-center'>
+              <h4 className="text-surface-light">IN PROGRESS</h4>
+            </div>
             {renderTaskCards(inProgressTasks)}
           </div>
-          <div className="flex-1">
-            <h4 className="mb-2">Done</h4>
+          <div className="flex-1 text-surface-light">
+          <div className="border-b-4 border-primary"></div>
+            <div className='px-4 py-4 bg-surface-dark mb-4 flex items-center'>
+              <h4 className="text-surface-light">DONE</h4>
+            </div>
             {renderTaskCards(doneTasks)}
           </div>
         </div>

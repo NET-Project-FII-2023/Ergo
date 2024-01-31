@@ -56,9 +56,9 @@ export function Sidenav({ brandImg, brandName, routes }) {
 
   return (
     <aside
-      className={`bg-white shadow-sm ${
+      className={`bg-surface-mid-dark ${
         openSidenav ? "translate-x-0" : "-translate-x-80"
-      } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100`}
+      } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-64 rounded-xl transition-transform duration-300 xl:translate-x-0`}
     >
       <div
         className={`relative`}
@@ -67,7 +67,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
           <img src={brandImg} alt="logo" className="h-12" />
             <Typography
               variant="h3"
-              color={"blue-gray"}
+              color={"white"}
               className="w-min"
             >
               {brandName}
@@ -85,37 +85,22 @@ export function Sidenav({ brandImg, brandName, routes }) {
         </IconButton>
       </div>
       <div className="m-4">
-        {routes.map(({ layout, title, pages }, key) => (
-          <ul key={key} className="mb-4 flex flex-col gap-1">
-            {title && (
-              <li className="mx-3.5 mt-4 mb-2">
-                <Typography
-                  variant="small"
-                  color={"blue-gray"}
-                  className="font-black uppercase opacity-75"
-                >
-                  {title}
-                </Typography>
-              </li>
-            )}
+        {routes.map(({ layout, pages }, key) => (
+          <ul key={key} className=" flex flex-col gap-1">
             {pages
-            .filter(({ name }) => name !== "project")
+            .filter(({ name }) => name !== "project" && layout =="dashboard" && name !== 'profile')
             .map(({ icon, name, path }) => (
               <li key={name}>
                 <NavLink to={`/${layout}${path}`}>
                   {({ isActive }) => (
                     <Button
-                      variant={isActive ? "gradient" : "text"}
-                      color={isActive ? "blue-gray" : undefined}
-                      className="flex items-center gap-4 px-4 capitalize"
+                      className={`flex items-center gap-4 px-4 ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'} `}
                       fullWidth
                     >
                       {icon}
                       <Typography
                         color="inherit"
-                        className={`font-medium capitalize ${
-                          isActive ? 'opacity-100' : 'opacity-75'
-                        }`}
+                        className={`font-medium capitalize`}
                       >
                         {name}
                       </Typography>
@@ -131,22 +116,22 @@ export function Sidenav({ brandImg, brandName, routes }) {
         {projects.map((project) => (
         <li key={project.projectId}>
           <NavLink to={`/dashboard/project/${project.projectId}`}>
+          {({ isActive }) => (
             <Link to={`/dashboard/project/${project.projectId}`}>
               <Button
-                variant="text"
-                color="blue-gray"
-                className="flex items-center gap-4 px-4 capitalize"
+                className={`flex items-center gap-4 px-4 capitalize ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'} `}
                 fullWidth
               >
-                <RectangleStackIcon className="w-5 h-5 text-inherit" />
+                 <RectangleStackIcon className={`w-4 h-4 text-inherit ${isActive ? 'text-white' : 'text-surface-light'}`} />
                 <Typography
                   color="inherit"
-                  className="font-medium capitalize"
+                  className="font-normal text-white"
                 >
                   {project.projectName}
                 </Typography>
               </Button>
             </Link>
+             )}
           </NavLink>
         </li>
       ))}
