@@ -9,10 +9,10 @@ namespace Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem
             RuleFor(p => p.TaskItemId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();
-
-            RuleFor(p => p.Photo)
+            RuleFor(p => p.CloudURL)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();
+
         }
     }
 }

@@ -5,7 +5,8 @@ namespace Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem
 {
     public class AddPhotoToTaskItemCommand : IRequest<AddPhotoToTaskItemCommandResponse>
     {
+        public IFormFile File { get; set; }
         public Guid TaskItemId { get; set; }
-        public IFormFile Photo { get; set; }
+        public string CloudURL { get; set; }
     }
 }
