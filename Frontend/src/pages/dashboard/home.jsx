@@ -29,7 +29,7 @@ import { CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
 
 export function Home() {
   return (
-    <div className="mt-12">
+    <div className="mt-12 text-surface-light">
       <div className="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
         {/*{statisticsCardsData.map(({ icon, title, footer, ...rest }) => (*/}
         {/*  <StatisticsCard*/}
@@ -66,15 +66,15 @@ export function Home() {
         {/*))}*/}
       </div>
       <div className="mb-4 grid grid-cols-1 gap-6 xl:grid-cols-3">
-        <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm">
+        <Card className="overflow-hidden xl:col-span-2 bg-surface-dark shadow-sm">
           <CardHeader
             floated={false}
             shadow={false}
             color="transparent"
             className="m-0 flex items-center justify-between p-6"
           >
-            <div>
-              <Typography variant="h6" color="blue-gray" className="mb-1">
+            <div className="text-surface-light">
+              <Typography variant="h6" className="mb-1 ">
                 Projects
               </Typography>
               {/*<Typography*/}
@@ -194,14 +194,14 @@ export function Home() {
             {/*</table>*/}
           </CardBody>
         </Card>
-        <Card className="border border-blue-gray-100 shadow-sm">
+        <Card className="bg-surface-dark shadow-sm">
           <CardHeader
             floated={false}
             shadow={false}
             color="transparent"
             className="m-0 p-6"
           >
-            <Typography variant="h6" color="blue-gray" className="mb-2">
+            <Typography variant="h6" className="mb-2 text-surface-light">
               Some Card
             </Typography>
           </CardHeader>

@@ -3,7 +3,7 @@ import routes from "@/routes";
 
 export function Auth() {
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="relative min-h-screen bg-surface-darkest w-full">
       <Routes>
         {routes.map(
           ({ layout, pages }) =>

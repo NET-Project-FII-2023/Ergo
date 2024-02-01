@@ -50,50 +50,50 @@ export function SignIn() {
   }
 
   return (
-    <section className="m-8 flex gap-4">
+    <section className="p-8 bg-surface-darkest flex gap-4 text-surface-light">
       <div className="w-full lg:w-3/5 mt-24">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-4">Sign In</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to Sign In.</Typography>
+          <Typography variant="paragraph" className="text-lg font-normal text-surface-light-dark">Enter your email and password to Sign In.</Typography>
         </div>
         <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
           <div className="mb-1 flex flex-col gap-6">
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+            <Typography variant="small" className="-mb-3 font-medium text-surface-light">
               Your username
             </Typography>
             <Input
               size="lg"
-              placeholder="name@mail.com"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              placeholder="Username"
+              className="!border-surface-mid-dark text-surface-light focus:!border-secondary"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
               onChange={(e) => setUsername(e.target.value)}
             />
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+            <Typography variant="small" className="-mb-3 font-medium text-surface-light">
               Password
             </Typography>
             <Input
               type="password"
               size="lg"
               placeholder="********"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className="!border-surface-mid-dark text-surface-light focus:!border-secondary"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button className="mt-6" fullWidth onClick={handleSignIn}>
+          <Button className="mt-6 bg-secondary hover:bg-primary" fullWidth onClick={handleSignIn}>
             Sign In
           </Button>
-          <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
+          <Typography variant="small" className="text-center text-surface-light-dark font-medium mt-4">
             Not registered?
-            <Link to="/auth/sign-up" className="text-gray-900 ml-1">Create account</Link>
+            <Link to="/auth/sign-up" className="text-secondary ml-1 hover:text-primary">Create account</Link>
           </Typography>
-          <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
+          <Typography variant="small" className="text-center text-surface-light-dark font-medium mt-4">
             Forgot password?
-            <Link to="/auth/forgot-password" className="text-gray-900 ml-1">Reset password</Link>
+            <Link to="/auth/forgot-password" className="text-secondary ml-1 hover:text-primary">Reset password</Link>
           </Typography>
         </form>
 
