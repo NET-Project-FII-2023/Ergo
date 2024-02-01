@@ -8,15 +8,15 @@ const formatDeadline = (deadline) => {
   };
 
 
-const TaskCard = ({ task, handleOpenModal }) => (
+  const TaskCard = ({ task, handleOpenModal }) => (
     <Card
-        key={task.taskItemId}
-        className={`mb-4 opacity-80 cursor-pointer `}
-        style={{
-        backgroundColor: "#2f2b3a",
-        }}
-        onClick={handleOpenModal} 
-    >
+    key={task.taskItemId}
+    className={`mb-4 opacity-80 cursor-pointer `}
+    style={{
+      backgroundColor: "#2f2b3a",
+    }}
+    onClick={() => handleOpenModal(task)}
+  >
       <CardContent>
         <Typography variant="h6" gutterBottom className='text-white'>
           {task.taskName}
@@ -35,5 +35,5 @@ const TaskCard = ({ task, handleOpenModal }) => (
       </CardContent>
     </Card>
   );
-
+  
   export default TaskCard;
