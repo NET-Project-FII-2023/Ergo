@@ -18,8 +18,10 @@ namespace YourNamespace.Controllers
             gitHubClient = new GitHubClient(new ProductHeaderValue("Ergo"));
         }
 
-        [HttpPost("commits")]
-        public async Task<IActionResult> GetCommitsFromBranch(GetProjectGithubDataQuery command)
+        [HttpPost]
+        [Route("commits")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetCommitsFromBranch(GetProjectGithubDataQuery command, string Branch)
         {
             try
             {
@@ -31,7 +33,7 @@ namespace YourNamespace.Controllers
                 gitHubClient.Credentials = new Credentials(result.GithubToken);
 
                 IReadOnlyList<GitHubCommit> commits = await gitHubClient.Repository.Commit
-                    .GetAll(result.ProjectOwner, result.ProjectRepository, new CommitRequest { Sha = command.Branch });
+                    .GetAll(result.ProjectOwner, result.ProjectRepository, new CommitRequest { Sha = Branch });
 
                 List<GitHubCommitDto> commitNames = new List<GitHubCommitDto>();
 
@@ -51,6 +53,38 @@ namespace YourNamespace.Controllers
             catch (NotFoundException ex)
             {
                 return NotFound($"Repository or branch not found: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+        [HttpPost]
+        [Route("branches")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetBranches(GetProjectGithubDataQuery command)
+        {
+            try
+            {
+                var result = await Mediator.Send(command);
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+                gitHubClient.Credentials = new Credentials(result.GithubToken);
+                IReadOnlyList<Branch> branches = await gitHubClient.Repository.Branch.GetAll(result.ProjectOwner, result.ProjectRepository);
+                //only the name of the branches
+                List<string> branchNames = new List<string>();
+                foreach (var branch in branches)
+                {
+                    branchNames.Add(branch.Name);
+                }
+                return Ok(branchNames);
+              
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound($"Repository not found: {ex.Message}");
             }
             catch (Exception ex)
             {
