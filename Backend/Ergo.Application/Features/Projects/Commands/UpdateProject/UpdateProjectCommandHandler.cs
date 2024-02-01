@@ -6,10 +6,12 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
     public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, UpdateProjectCommandResponse>
     {
         private readonly IProjectRepository projectRepository;
+        private readonly IUserManager userManager;
 
-        public UpdateProjectCommandHandler(IProjectRepository projectRepository)
+        public UpdateProjectCommandHandler(IProjectRepository projectRepository, IUserManager userManager)
         {
             this.projectRepository = projectRepository;
+            this.userManager = userManager;
         }
 
         public async Task<UpdateProjectCommandResponse> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
@@ -23,9 +25,19 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
                     ValidationsErrors = new List<string> { project.Error }
                 };
             }
+            var projectOwner = project.Value.CreatedBy;
+            if(projectOwner != request.ProjectOwner)
+            {
+                return new UpdateProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { "You are not the owner of this project" }
+                };
+            }
 
             request.ProjectName ??= project.Value.ProjectName;
             request.Description ??= project.Value.Description;
+            request.GithubToken ??= project.Value.GithubToken;
             request.GitRepository ??= project.Value.GitRepository;
             if (request.Deadline == default)
             {
@@ -47,7 +59,7 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
                 };
             }
 
-            var updateResult = project.Value.UpdateData(request.ProjectName, request.Description, request.GitRepository, request.Deadline, request.State, request.ModifiedBy);
+            var updateResult = project.Value.UpdateData(request.ProjectName, request.Description,request.GithubOwner,request.GithubToken, request.GitRepository, request.Deadline, request.State, request.ProjectOwner);
             if (!updateResult.IsSuccess)
             {
                 return new UpdateProjectCommandResponse

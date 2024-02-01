@@ -48,7 +48,7 @@ namespace Ergo.Application.Features.Projects.Commands.CreateProject
                     ValidationsErrors = new List<string> { user.Error }
                 };
             }
-            var project = Project.Create(request.ProjectName, request.Description, request.GitRepository, request.Deadline, request.FullName);
+            var project = Project.Create(request.ProjectName, request.Description,request.GithubOwner,request.GithubToken, request.GitRepository, request.Deadline, request.FullName);
             if (!project.IsSuccess)
             {
                 return new CreateProjectCommandResponse

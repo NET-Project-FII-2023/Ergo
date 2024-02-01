@@ -38,9 +38,8 @@ namespace Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem
                     ValidationsErrors = new List<string> { taskItem.Error }
                 };
             }
-            var image = await ConvertFormFileToByteArray(request.Photo);
-            //var base64Image = Convert.ToBase64String(image);
-            var photo = Photo.Create(request.TaskItemId, image);
+
+            var photo = Photo.Create(request.TaskItemId, request.CloudURL);
             if (!photo.IsSuccess)
             {
                 return new AddPhotoToTaskItemCommandResponse
@@ -55,19 +54,7 @@ namespace Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem
                 Success = true
             };
         }
-        public static async Task<byte[]> ConvertFormFileToByteArray(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-            {
-                return null;
-            }
 
-            using (var memoryStream = new MemoryStream())
-            {
-                await file.CopyToAsync(memoryStream);
-                return memoryStream.ToArray();
-            }
-        }
 
     }
     

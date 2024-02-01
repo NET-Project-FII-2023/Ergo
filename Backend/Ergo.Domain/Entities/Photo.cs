@@ -4,11 +4,11 @@ namespace Ergo.Domain.Entities
 {
     public class Photo 
     {
-        private Photo(Guid TaskItemId, byte[] ImageData)
+        private Photo(Guid TaskItemId , string cloudUrl)
         {
             PhotoId = Guid.NewGuid();
             this.TaskItemId = TaskItemId;
-            this.ImageData = ImageData;
+            CloudURL = cloudUrl;
         }
         private Photo()
         {
@@ -16,19 +16,21 @@ namespace Ergo.Domain.Entities
         }
         public Guid PhotoId { get; set; }
         public Guid TaskItemId { get; set; }
-        public byte[] ImageData { get; set; }
+        public string CloudURL { get; set; }
 
-        public static Result<Photo> Create(Guid TaskItemId, byte[] ImageData)
+        public static Result<Photo> Create(Guid TaskItemId, string cloudUrl)
         {
             if (TaskItemId == Guid.Empty)
             {
                 return Result<Photo>.Failure("TaskItemId is required");
             }
-            if (ImageData == null)
+            if (string.IsNullOrEmpty(cloudUrl))
             {
-                return Result<Photo>.Failure("Image data is required");
+                return Result<Photo>.Failure("CloudURL is required");
             }
-            return Result<Photo>.Success(new Photo(TaskItemId, ImageData));
+            
+
+            return Result<Photo>.Success(new Photo(TaskItemId, cloudUrl));
         }
 
     }

@@ -28,7 +28,7 @@ namespace Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem
             var photoDtos = photos.Select(p => new PhotoDto
             {
                 PhotoId = p.PhotoId,
-                ImageData = Convert.ToBase64String(p.ImageData)  
+                CloudURL = p.CloudURL
             }).ToList();
             return new GetPhotosForTaskItemQueryResponse
             {

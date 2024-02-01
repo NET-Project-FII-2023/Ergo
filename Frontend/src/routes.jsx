@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { Home, Profile } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
-import ProjectDetails from "./pages/projectOverview/ProjectDetails";
+import ProjectOverview from "./pages/projectOverview/ProjectOverview";
 import ResetPassword from "./pages/auth/ResetPassword";
 import VerifyResetCode from "./pages/auth/VerifyResetCode";
 import SendResetCode from "./pages/auth/SendResetCode";
@@ -37,7 +37,7 @@ export const routes = [
         name: "project",
         path: "/project/:projectId", 
         dynamic: true, 
-        element: <ProjectDetails />,
+        element: <ProjectOverview />,
       },
     ],
   },
@@ -59,8 +59,8 @@ export const routes = [
       },
       {
         icon: <InformationCircleIcon {...icon} />,
-        name: "forgot password",
-        path: "/forgot-password",
+        name: "send reset code",
+        path: "/send-reset-code",
         element: <SendResetCode />,
       },
       {

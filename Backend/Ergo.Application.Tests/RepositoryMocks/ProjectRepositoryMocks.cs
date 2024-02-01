@@ -9,8 +9,8 @@ namespace Ergo.Application.Tests.RepositoryMocks
     {
         internal readonly static List<Project> Projects =
         [
-            Project.Create("Project 1", "Description 1", "GitRepository 1", DateTime.Now.AddDays(1), "FullName 1").Value,
-            Project.Create("Project 2", "Description 2", null, DateTime.Now.AddDays(2), "FullName 2").Value
+            Project.Create("Project 1", "Description 1", null, null, "GitRepository 1", DateTime.Now.AddDays(1), "FullName 1").Value,
+            Project.Create("Project 2", "Description 2", null, null, null, DateTime.Now.AddDays(2), "FullName 2").Value
         ];
 
         public static IProjectRepository GetProjectRepository()

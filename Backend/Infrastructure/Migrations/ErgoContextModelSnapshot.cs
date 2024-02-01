@@ -112,9 +112,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<byte[]>("ImageData")
+                    b.Property<string>("CloudURL")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("TaskItemId")
                         .HasColumnType("uuid");
@@ -144,6 +144,12 @@ namespace Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("GitRepository")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GithubOwner")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GithubToken")
                         .HasColumnType("text");
 
                     b.Property<string>("LastModifiedBy")

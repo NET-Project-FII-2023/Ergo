@@ -4,10 +4,10 @@
 
 .minimal-scrollbar::-webkit-scrollbar {
   width: 5px;
-  background-color: inherit;
+  background-color: '#1a1625';
 }
 
 .minimal-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgb(191, 191, 191);
+  background-color: '#1a1625';
   border-radius: 10px;
 }
