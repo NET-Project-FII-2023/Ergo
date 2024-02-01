@@ -50,29 +50,28 @@ const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
 
 
   return (
-    <div>
+    <div className='w-[50vw]'>
       <div className="border-b-2 border-surface-dark my-4"></div>
-
       <div>
-        <div className="flex justify-between">
-          <div className="flex-1 mr-8">
+        <div className="flex justify-evenly">
+          <div className="w-[33%] mr-4">
             <div className="border-b-4 border-secondary"></div>
-            <div className='px-4 py-4 bg-surface-dark mb-4 flex items-center'>
-              <h4 className="text-surface-light">TO DO</h4>
+            <div className='p-3 bg-surface-dark mb-4 flex items-center rounded-b'>
+              <h4 className="text-surface-light">To do</h4>
             </div>
             {renderTaskCards(todoTasks)}
           </div>
-          <div className="flex-1 mr-8 text-surface-light">
+          <div className="w-[33%] mr-4">
             <div className="border-b-4 border-blue-400"></div>
-            <div className='px-4 py-4 bg-surface-dark mb-4 flex items-center'>
-              <h4 className="text-surface-light">IN PROGRESS</h4>
+            <div className='p-3 bg-surface-dark mb-4 flex items-center rounded-b'>
+              <h4 className="text-surface-light">In progress</h4>
             </div>
             {renderTaskCards(inProgressTasks)}
           </div>
-          <div className="flex-1 text-surface-light">
+          <div className="w-[33%] text-surface-light">
             <div className="border-b-4 border-teal-300"></div>
-            <div className='px-4 py-4 bg-surface-dark mb-4 flex items-center'>
-              <h4 className="text-surface-light">DONE</h4>
+            <div className='p-3 bg-surface-dark mb-4 flex items-center rounded-b'>
+              <h4 className="text-surface-light">Done</h4>
             </div>
             {renderTaskCards(doneTasks)}
           </div>
