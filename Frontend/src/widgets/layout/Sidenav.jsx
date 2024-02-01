@@ -56,7 +56,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
 
   return (
     <aside
-      className={`bg-surface-mid-dark ${
+      className={`bg-surface-mid ${
         openSidenav ? "translate-x-0" : "-translate-x-80"
       } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-64 rounded-xl transition-transform duration-300 xl:translate-x-0`}
     >
@@ -90,7 +90,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
             {pages
             .filter(({ name }) => name !== "project" && layout =="dashboard" && name !== 'profile')
             .map(({ icon, name, path }) => (
-              <li key={name}>
+              <li key={name} className="py-1">
                 <NavLink to={`/${layout}${path}`}>
                   {({ isActive }) => (
                     <Button
@@ -114,7 +114,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
         ))}
         <ul className={"list-none"}>
         {projects.map((project) => (
-        <li key={project.projectId} className="opacity-80">
+        <li key={project.projectId} className="py-1 opacity-80">
           <NavLink to={`/dashboard/project/${project.projectId}`} >
           {({ isActive }) => (
             <Link to={`/dashboard/project/${project.projectId}`}>

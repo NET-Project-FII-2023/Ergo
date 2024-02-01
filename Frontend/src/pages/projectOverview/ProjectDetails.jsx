@@ -142,21 +142,21 @@ const ProjectDetails = () => {
       <div>
         <div className="flex justify-between">
           <div className="flex-1 mr-8">
-          <div className="border-b-4 border-primary"></div>
+          <div className="border-b-4 border-secondary"></div>
             <div className='px-4 py-4 bg-surface-dark mb-4 flex items-center'>
               <h4 className="text-surface-light">TO DO</h4>
             </div>
             {renderTaskCards(todoTasks)}
           </div>
           <div className="flex-1 mr-8 text-surface-light">
-          <div className="border-b-4 border-primary"></div>
+          <div className="border-b-4 border-blue-400"></div>
             <div className='px-4 py-4 bg-surface-dark mb-4 flex items-center'>
               <h4 className="text-surface-light">IN PROGRESS</h4>
             </div>
             {renderTaskCards(inProgressTasks)}
           </div>
           <div className="flex-1 text-surface-light">
-          <div className="border-b-4 border-primary"></div>
+          <div className="border-b-4 border-teal-300"></div>
             <div className='px-4 py-4 bg-surface-dark mb-4 flex items-center'>
               <h4 className="text-surface-light">DONE</h4>
             </div>
