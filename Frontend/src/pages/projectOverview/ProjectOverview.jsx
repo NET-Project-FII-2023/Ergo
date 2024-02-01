@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from "@/services/api";
 import { useUser } from "@/context/LoginRequired.jsx";
-import { Card, CardContent, Typography, Modal, Backdrop, Fade } from '@mui/material';
+import { Typography, Modal, Fade } from '@mui/material';
+import TaskCard from './TaskCard';
 
-const ProjectDetails = () => {
+const ProjectOverview = () => {
   const { projectId } = useParams();
   const [taskItems, setTaskItems] = useState([]);
   const [currentProject, setCurrentProject] = useState([]);
@@ -64,54 +65,14 @@ const ProjectDetails = () => {
 
   const renderTaskCards = (tasks) => {
     return tasks.map((taskItem) => (
-      <Card
-        key={taskItem.taskItemId}
-        className={`mb-4 opacity-80 cursor-pointer `}
-        style={{
-          backgroundColor: "#2f2b3a",
-        }}
-        onClick={() => handleOpenModal(taskItem)} 
-      >
-        <CardContent>
-          <Typography variant="h6" gutterBottom className='text-white'>
-            {taskItem.taskName}
-          </Typography>
-          <Typography variant="body2" className='text-surface-light' component="p">
-            {taskItem.description}
-          </Typography>
-          <div className='flex flex-row'>
-            <Typography variant="body2" className='text-surface-light' component="p" mr={1}>
-              Deadline:
-            </Typography>
-            <Typography variant="body2" className='text-surface-light' component="p">
-             {formatDeadline(taskItem.deadline)}
-            </Typography>
-          </div>
-          
-        </CardContent>
-      </Card>
+      <TaskCard
+      key={taskItem.taskItemId}
+      task={taskItem}
+      handleOpenModal={() => handleOpenModal(taskItem)}
+    />
     ));
   };
   
-  const formatDeadline = (deadline) => {
-    const options = { day: 'numeric', month: 'long', year: 'numeric' };
-    const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, options);
-    return formattedDeadline;
-  };
-  
-  const getCardBackgroundColor = (state) => {
-    switch (state) {
-      case 1:
-        return 'rgba(232, 207, 132, 0.7)';
-      case 2:
-        return 'rgba(111, 206, 237, 0.7)';
-      case 3:
-        return 'rgba(144, 238, 144, 0.7)';
-      default:
-        return 'white';
-    }
-  };
-
   const handleOpenModal = (task) => {
     setSelectedTask(task);
     setModalOpen(true);
@@ -196,4 +157,4 @@ const ProjectDetails = () => {
   
 };
 
-export default ProjectDetails;
+export default ProjectOverview;
