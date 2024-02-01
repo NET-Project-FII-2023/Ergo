@@ -18,7 +18,7 @@ const formatDeadline = (deadline) => {
     onClick={() => handleOpenModal(task)}
   >
       <CardContent>
-        <Typography variant="h6" gutterBottom className='text-white'>
+        <Typography gutterBottom className='text-white'>
           {task.taskName}
         </Typography>
         <Typography variant="body2" className='text-surface-light' component="p">

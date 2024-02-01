@@ -8,7 +8,7 @@ import routes from "@/routes";
 export function Dashboard() {
 
   return (
-    <div className="min-h-screen bg-surface-darkest">
+    <div className="min-h-screen bg-gradient-to-r from-surface-darkest to-[#262133]">
         <Sidenav
             brandName={"Ergo"}
             routes={routes}
