@@ -37,6 +37,7 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
 
             request.ProjectName ??= project.Value.ProjectName;
             request.Description ??= project.Value.Description;
+            request.GithubToken ??= project.Value.GithubToken;
             request.GitRepository ??= project.Value.GitRepository;
             if (request.Deadline == default)
             {
@@ -58,7 +59,7 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
                 };
             }
 
-            var updateResult = project.Value.UpdateData(request.ProjectName, request.Description, request.GitRepository, request.Deadline, request.State, request.ProjectOwner);
+            var updateResult = project.Value.UpdateData(request.ProjectName, request.Description,request.GithubToken, request.GitRepository, request.Deadline, request.State, request.ProjectOwner);
             if (!updateResult.IsSuccess)
             {
                 return new UpdateProjectCommandResponse

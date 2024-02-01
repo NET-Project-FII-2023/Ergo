@@ -27,7 +27,7 @@ namespace Ergo.Domain.Tests
         {
             //Arrange
             var user = User.Create(Guid.NewGuid());
-            var project = Project.Create("Test", "Test", null, DateTime.UtcNow, "Test");
+            var project = Project.Create("Test", "Test", null, null, DateTime.UtcNow, "Test");
             //Act
             var result = user.Value.AssignProject(project.Value);
             //Assert
