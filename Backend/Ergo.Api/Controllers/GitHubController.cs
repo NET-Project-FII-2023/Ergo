@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Ergo.Api.Models;
+using Microsoft.AspNetCore.Mvc;
 using Octokit;
 
 namespace YourNamespace.Controllers
@@ -12,7 +13,6 @@ namespace YourNamespace.Controllers
         public GitHubController()
         {
             gitHubClient = new GitHubClient(new ProductHeaderValue("Ergo"));
-            gitHubClient.Credentials = new Credentials("-----");
         }
 
         [HttpGet("commits")]
@@ -23,14 +23,22 @@ namespace YourNamespace.Controllers
         {
             try
             {
+                gitHubClient.Credentials = new Credentials("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");
+
                 IReadOnlyList<GitHubCommit> commits = await gitHubClient.Repository.Commit
                     .GetAll(owner, repo, new CommitRequest { Sha = branch });
 
-                List<string> commitNames = new List<string>();
+                List<GitHubCommitDto> commitNames = new List<GitHubCommitDto>();
 
                 foreach (var commit in commits)
                 {
-                    commitNames.Add(commit.Commit.Message);
+                    commitNames.Add(new GitHubCommitDto
+                    {
+                        CommitName = commit.Commit.Message,
+                        Url = commit.Commit.Url,
+                        Author = commit.Commit.Author.Name,
+                        Date = commit.Commit.Author.Date.ToString()
+                    });
                 }
 
                 return Ok(commitNames);
