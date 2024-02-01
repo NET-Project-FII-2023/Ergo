@@ -16,10 +16,10 @@ namespace Ergo.API.IntegrationTests.Base
         {
             var projects = new List<Project>
             {
-                Project.Create("Ergo", ".NET", null,null, DateTime.UtcNow, "John").Value,
-                Project.Create("Labs", ".NET", null,null, DateTime.UtcNow, "George").Value,
-                Project.Create("Github", "Angular",null, null, DateTime.UtcNow, "John").Value,
-                Project.Create("LFAC", "C", null,null, DateTime.UtcNow, "Josh").Value,
+                Project.Create("Ergo", ".NET", null, null,null, DateTime.UtcNow, "John").Value,
+                Project.Create("Labs", ".NET",  null, null,null, DateTime.UtcNow, "George").Value,
+                Project.Create("Github", "Angular", null, null, null, DateTime.UtcNow, "John").Value,
+                Project.Create("LFAC", "C",  null, null,null, DateTime.UtcNow, "Josh").Value,
             };
             var tasks = new List<TaskItem>
             {

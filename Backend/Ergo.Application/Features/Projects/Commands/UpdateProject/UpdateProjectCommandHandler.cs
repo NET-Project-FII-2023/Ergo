@@ -59,7 +59,7 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
                 };
             }
 
-            var updateResult = project.Value.UpdateData(request.ProjectName, request.Description,request.GithubToken, request.GitRepository, request.Deadline, request.State, request.ProjectOwner);
+            var updateResult = project.Value.UpdateData(request.ProjectName, request.Description,request.GithubOwner,request.GithubToken, request.GitRepository, request.Deadline, request.State, request.ProjectOwner);
             if (!updateResult.IsSuccess)
             {
                 return new UpdateProjectCommandResponse

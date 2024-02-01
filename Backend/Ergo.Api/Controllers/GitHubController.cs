@@ -1,4 +1,7 @@
-﻿using Ergo.Api.Models;
+﻿using Ergo.Api.Controllers;
+using Ergo.Api.Models;
+using Ergo.Application.Features.Projects.Queries.GetProjectGithubData;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Octokit;
 
@@ -6,7 +9,7 @@ namespace YourNamespace.Controllers
 {
     [ApiController]
     [Route("api/v1/GitHub")]
-    public class GitHubController : ControllerBase
+    public class GitHubController : ApiControllerBase
     {
         private readonly GitHubClient gitHubClient;
 
@@ -15,18 +18,20 @@ namespace YourNamespace.Controllers
             gitHubClient = new GitHubClient(new ProductHeaderValue("Ergo"));
         }
 
-        [HttpGet("commits")]
-        public async Task<IActionResult> GetCommitsFromBranch(
-            [FromQuery] string owner,
-            [FromQuery] string repo,
-            [FromQuery] string branch)
+        [HttpPost("commits")]
+        public async Task<IActionResult> GetCommitsFromBranch(GetProjectGithubDataQuery command)
         {
             try
             {
-                gitHubClient.Credentials = new Credentials("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");
+                var result = await Mediator.Send(command);
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+                gitHubClient.Credentials = new Credentials(result.GithubToken);
 
                 IReadOnlyList<GitHubCommit> commits = await gitHubClient.Repository.Commit
-                    .GetAll(owner, repo, new CommitRequest { Sha = branch });
+                    .GetAll(result.ProjectOwner, result.ProjectRepository, new CommitRequest { Sha = command.Branch });
 
                 List<GitHubCommitDto> commitNames = new List<GitHubCommitDto>();
 
