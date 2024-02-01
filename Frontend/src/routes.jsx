@@ -59,8 +59,8 @@ export const routes = [
       },
       {
         icon: <InformationCircleIcon {...icon} />,
-        name: "forgot password",
-        path: "/forgot-password",
+        name: "send reset code",
+        path: "/send-reset-code",
         element: <SendResetCode />,
       },
       {

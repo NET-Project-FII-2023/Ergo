@@ -51,33 +51,34 @@ const VerifyResetCode = () => {
   useEffect(() => {
     if(!email){
       toast.error("Something went wrong, try again!");
-      navigate("/auth/forgot-password");
+      navigate("/auth/send-reset-code");
     }
   }, [])
   return (
-    <section className="m-8 flex gap-4">
+    <section className="p-8 flex gap-4 text-surface-light">
       <div className="w-full lg:w-3/5 mt-24">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-4">Reset Your Password</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter the confirmation code</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal text-surface-light-dark">Enter the confirmation code</Typography>
         </div>
         <div className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
           <div className="mb-1 flex flex-col gap-6">
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-light">
               Your code
             </Typography>
             <Input
               size="lg"
               type="text"
+              placeholder='Code'
               name="email"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className="!border-surface-mid-dark text-surface-light focus:!border-secondary"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
               onChange={(e) => setCode(e.target.value)}
             />
           </div>
-          <Button className="mt-6" fullWidth onClick={handleVerifyCode}>
+          <Button className="mt-6 bg-secondary hover:bg-primary" fullWidth onClick={handleVerifyCode}>
             Confirm
           </Button>
 

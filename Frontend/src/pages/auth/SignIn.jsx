@@ -93,7 +93,7 @@ export function SignIn() {
           </Typography>
           <Typography variant="small" className="text-center text-surface-light-dark font-medium mt-4">
             Forgot password?
-            <Link to="/auth/forgot-password" className="text-secondary ml-1 hover:text-primary">Reset password</Link>
+            <Link to="/auth/send-reset-code" className="text-secondary ml-1 hover:text-primary">Reset password</Link>
           </Typography>
         </form>
 

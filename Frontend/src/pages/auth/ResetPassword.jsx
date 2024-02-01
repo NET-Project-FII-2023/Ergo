@@ -34,7 +34,7 @@ const ResetPassword = () => {
   useEffect(() => {
     if(!email || !code){
       toast.error("Something went wrong, try again!");
-      navigate("/auth/forgot-password");
+      navigate("/auth/send-reset-code");
     }
   }, [])
   const handleClick = async () => {
@@ -49,7 +49,6 @@ const ResetPassword = () => {
       toast.error("Something went wrong, try again!");
       navigate("/auth/forgot-password");
     }
-    console.log(email + " " + code + " " + password)
     try{
       const response = await api.post("/api/v1/Authentication/reset-password", {
         email: email,
@@ -76,26 +75,27 @@ const ResetPassword = () => {
         errorMessage += ": " + error.message;
       }
       toast.error(errorMessage);
+      navigate("/auth/send-reset-code")
     }
 
   }
   return (
-    <section className="m-8 flex gap-4">
+    <section className="p-8 flex gap-4 text-surface-light">
       <div className="w-full lg:w-3/5 mt-24">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-4">Reset Your Password</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your new password</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal text-surface-light-dark">Enter your new password</Typography>
         </div>
         <div className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
           <div className="mb-1 flex flex-col gap-6">
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-light">
               Your new password
             </Typography>
             <Input
               size="lg"
               type="password"
               name="password"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className="!border-surface-mid-dark text-surface-light focus:!border-secondary"
               placeholder='********'
               labelProps={{
                 className: "before:content-none after:content-none",
@@ -104,14 +104,14 @@ const ResetPassword = () => {
             />
           </div>
           <div className="mb-1 flex flex-col gap-6">
-            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
+            <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-light">
               Cofirm password
             </Typography>
             <Input
               size="lg"
               type="password"
               name="confirm-password"
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              className="!border-surface-mid-dark text-surface-light focus:!border-secondary"
               placeholder='********'
               labelProps={{
                 className: "before:content-none after:content-none",
@@ -119,7 +119,7 @@ const ResetPassword = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
-          <Button className="mt-6" fullWidth onClick={handleClick}>
+          <Button className="mt-6 bg-secondary hover:bg-primary" fullWidth onClick={handleClick}>
             Confirm
           </Button>
 
