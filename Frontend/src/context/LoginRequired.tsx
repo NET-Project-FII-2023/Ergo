@@ -1,8 +1,17 @@
 import {Navigate, Outlet} from "react-router-dom";
-import api from "@/services/api.jsx";
+import api from "../services/api";
 import {useEffect, useState, createContext, useContext} from "react";
 
-const UserContext = createContext({
+type UserType = {
+    token: string | null;
+    userId: string | null;
+    username: string | null;
+    name: string | null;
+    email: string | null;
+    role: string | null;
+}
+
+const UserContext = createContext<UserType>({
     token: null,
     userId: null,
     username: null,
@@ -19,9 +28,17 @@ export const useUser = () => {
     return context;
 }
 
+type CurrentUserInfoResponseType = {
+    isAuthenticated: boolean;
+    userName: string;
+    claims: {
+        [key: string]: string;
+    }
+} | undefined;
+
 export default function LoginRequired() {
-    const [isAuthenticated, setIsAuthenticated] = useState(null);
-    const [user, setUser] = useState({
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+    const [user, setUser] = useState<UserType>({
         token: null,
         userId: null,
         username: null,
@@ -39,7 +56,7 @@ export default function LoginRequired() {
             }
 
             try {
-                const response = await api.get("/api/v1/Authentication/currentuserinfo", {
+                const response = await api.get<CurrentUserInfoResponseType>("/api/v1/Authentication/currentuserinfo", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
