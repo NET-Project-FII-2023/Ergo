@@ -20,11 +20,11 @@ import {
 import {
   useMaterialTailwindController,
   setOpenSidenav,
-} from "@/context";
+} from "@/context/MaterialTailwind.jsx";
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { toast } from "react-toastify";
-import { useUser } from "@/context/LoginRequired.jsx";
+import { useUser } from "@/context/LoginRequired";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -186,7 +186,7 @@ export function DashboardNavbar() {
   );
 }
 
-DashboardNavbar.displayName = "/src/widgets/layout/dashboard-navbar.jsx";
+DashboardNavbar.displayName = "/src/widgets/layout/DashboardNavbar.jsx";
 
 function formatDate(date) {
   return new Intl.DateTimeFormat("ro", {

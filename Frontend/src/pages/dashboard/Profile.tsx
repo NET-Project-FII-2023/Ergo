@@ -8,8 +8,8 @@ import {
 import {
   PencilIcon,
 } from "@heroicons/react/24/solid";
-import { ProfileInfoCard } from "@/widgets/cards";
-import {useUser} from "@/context/LoginRequired.jsx";
+import { ProfileInfoCard } from "../../widgets/cards";
+import {useUser} from "../../context/LoginRequired";
 import {Link} from "react-router-dom";
 
 export function Profile() {

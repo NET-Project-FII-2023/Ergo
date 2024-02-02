@@ -30,4 +30,4 @@ export function Dashboard() {
   );
 }
 
-Dashboard.displayName = "/src/layout/dashboard.jsx";
+Dashboard.displayName = "/src/layout/Dashboard.jsx";

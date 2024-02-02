@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Dashboard, Auth } from "@/layouts";
-import LoginRequired from "@/context/LoginRequired.jsx";
-
+import { Dashboard, Auth } from "./layouts";
+import LoginRequired from "./context/LoginRequired";
 
 function App() {
   return (
