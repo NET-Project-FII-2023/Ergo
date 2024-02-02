@@ -26,5 +26,7 @@
         public const string MessageRequired = "Message is required.";
         public const string UserIdRequired = "User id is required.";
 
+        public const string PhotoUrlRequired = "Photo url is required.";
+
     }
 }

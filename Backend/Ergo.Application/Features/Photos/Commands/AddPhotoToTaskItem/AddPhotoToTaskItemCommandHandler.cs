@@ -1,7 +1,6 @@
 ﻿using Ergo.Application.Persistence;
 using Ergo.Domain.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem
 {

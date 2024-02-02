@@ -5,7 +5,10 @@ using Ergo.Api.Models.AwsS3;
 using Ergo.Api.Services;
 using Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem;
 using Ergo.Application.Features.Photos.Commands.DeletePhoto;
+using Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto;
+using Ergo.Application.Features.UserPhotos.Commands.UpdateTaskPhoto;
 using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,24 +19,23 @@ namespace Ergo.API.Controllers
     public class CloudController : ApiControllerBase
     {
         private readonly IStorageService storageService;
-        private readonly IConfiguration configuration;
         private readonly IPhotoRepository photoRepository;
+        private readonly IUserPhotoRepository userPhotoRepository;
         private string AwsKeyEnv { get; set; }
         private string AwsSecretKeyEnv { get; set; }
 
-        public CloudController(IStorageService storageService, IConfiguration configuration, IPhotoRepository photoRepository)
+        public CloudController(IStorageService storageService, IPhotoRepository photoRepository, IUserPhotoRepository userPhotoRepository)
         {
 
             this.storageService = storageService;
-            this.configuration = configuration;
             this.photoRepository = photoRepository;
             AwsKeyEnv = DotNetEnv.Env.GetString("AWSAccessKey");
             AwsSecretKeyEnv = DotNetEnv.Env.GetString("AWSSecretKey");
-
+            this.userPhotoRepository = userPhotoRepository;
         }
 
         [HttpPost]
-        [Route("upload-photo")]
+        [Route("upload-task-photo")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> UploadFile(AddPhotoDto addPhoto)
         {
@@ -49,8 +51,6 @@ namespace Ergo.API.Controllers
                 Name = objName
             };
 
-            await Console.Out.WriteLineAsync("key" + AwsKeyEnv);
-            await Console.Out.WriteLineAsync("key" + AwsSecretKeyEnv);
             var cred = new AWSCredential()
             {
                 AwsKey = AwsKeyEnv,
@@ -65,12 +65,13 @@ namespace Ergo.API.Controllers
             var photoResult = await Mediator.Send(command);
             if (!photoResult.Success)
             {
+                await storageService.DeleteFileAsync(objName, cred);
                 return BadRequest(photoResult);
             }
             return Ok();
         }
         [HttpDelete]
-        [Route("delete-photo")]
+        [Route("delete-task-photo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteFile(DeletePhotoCommand command)
         {
@@ -81,8 +82,8 @@ namespace Ergo.API.Controllers
             }
             var cred = new AWSCredential()
             {
-                AwsKey = configuration["AwsConfiguration:AWSAccessKey"],
-                AwsSecretKey = configuration["AwsConfiguration:AWSSecretKey"]
+                AwsKey = AwsKeyEnv,
+                AwsSecretKey = AwsSecretKeyEnv
             };
             var result = await storageService.DeleteFileAsync(photo.Value.CloudURL, cred);
             if (!result)
@@ -97,6 +98,82 @@ namespace Ergo.API.Controllers
             return Ok();
 
         }
+        [HttpPost]
+        [Route("upload-user-photo")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<IActionResult> AddUserPhoto(AddUserPhotoDto addUserPhotoDto)
+        {
+            await using var memoryStr = new MemoryStream();
+            await addUserPhotoDto.File.CopyToAsync(memoryStr);
+            var fileExt = Path.GetExtension(addUserPhotoDto.File.FileName);
+            var objName = $"{Guid.NewGuid()}{fileExt}";
+            var s3Object = new S3Object()
+            {
+                BucketName = "ergo-project",
+                InputStream = memoryStr,
+                Name = objName
+            };
+            var cred = new AWSCredential()
+            {
+                AwsKey = AwsKeyEnv,
+                AwsSecretKey = AwsSecretKeyEnv
+            };
+            var result = await storageService.UploadFileAsync(s3Object, cred);
+            var command = new AddUserPhotoCommand()
+            {
+                UserId = addUserPhotoDto.UserId,
+                PhotoUrl = objName
+            };
+            var userPhotoResult = await Mediator.Send(command);
+            if (!userPhotoResult.Success)
+            {
+                await storageService.DeleteFileAsync(objName, cred);
+                return BadRequest(userPhotoResult);
+            }
+            return Ok();
+
+        }
+        [HttpPut]
+        [Route("update-user-photo")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateUserPhoto(UpdateUserPhotoDto updateUserPhotoDto)
+        {
+            await using var memoryStr = new MemoryStream();
+            await updateUserPhotoDto.File.CopyToAsync(memoryStr);
+            var fileExt = Path.GetExtension(updateUserPhotoDto.File.FileName);
+            var objName = $"{Guid.NewGuid()}{fileExt}";
+            var s3Object = new S3Object()
+            {
+                BucketName = "ergo-project",
+                InputStream = memoryStr,
+                Name = objName
+            };
+            var cred = new AWSCredential()
+            {
+                AwsKey = AwsKeyEnv,
+                AwsSecretKey = AwsSecretKeyEnv
+            };
+
+            var result = await storageService.UploadFileAsync(s3Object, cred);
+            var command = new UpdateUserPhotoCommand()
+            {
+                UserPhotoId = updateUserPhotoDto.UserPhotoId,
+                PhotoUrl = objName
+            };
+            var userPhotoResult = await Mediator.Send(command);
+            if (!userPhotoResult.Success)
+            {
+                await storageService.DeleteFileAsync(objName, cred);
+                return BadRequest(userPhotoResult);
+            }
+            var deleteOldPhoto = await storageService.DeleteFileAsync(updateUserPhotoDto.CloudUrl, cred);
+            if (!deleteOldPhoto)
+            {
+                return BadRequest(deleteOldPhoto);
+            }
+            return Ok();
+        }
+
 
     }
 
