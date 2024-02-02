@@ -18,12 +18,18 @@ namespace Ergo.API.Controllers
         private readonly IStorageService storageService;
         private readonly IConfiguration configuration;
         private readonly IPhotoRepository photoRepository;
+        private string AwsKeyEnv { get; set; }
+        private string AwsSecretKeyEnv { get; set; }
 
         public CloudController(IStorageService storageService, IConfiguration configuration, IPhotoRepository photoRepository)
         {
+
             this.storageService = storageService;
             this.configuration = configuration;
             this.photoRepository = photoRepository;
+            AwsKeyEnv = DotNetEnv.Env.GetString("AWSAccessKey");
+            AwsSecretKeyEnv = DotNetEnv.Env.GetString("AWSSecretKey");
+
         }
 
         [HttpPost]
@@ -42,10 +48,13 @@ namespace Ergo.API.Controllers
                 InputStream = memoryStr,
                 Name = objName
             };
+
+            await Console.Out.WriteLineAsync("key" + AwsKeyEnv);
+            await Console.Out.WriteLineAsync("key" + AwsSecretKeyEnv);
             var cred = new AWSCredential()
             {
-                AwsKey = configuration["AwsConfiguration:AWSAccessKey"],
-                AwsSecretKey = configuration["AwsConfiguration:AWSSecretKey"]
+                AwsKey = AwsKeyEnv,
+                AwsSecretKey = AwsSecretKeyEnv
             };
             var result = await storageService.UploadFileAsync(s3Object, cred);
             var command = new AddPhotoToTaskItemCommand()
