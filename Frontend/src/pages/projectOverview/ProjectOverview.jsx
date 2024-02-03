@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from "@/services/api";
-import { useUser } from "@/context/LoginRequired.jsx";
+import { useUser } from "@/context/LoginRequired";
 import { Typography, Modal, Fade } from '@mui/material';
 import TaskSection from './TaskSection';
 

@@ -1,2 +1,2 @@
-export * from "@/layouts/dashboard";
-export * from "@/layouts/auth";
+export * from "./Dashboard.jsx";
+export * from "./Auth.jsx";

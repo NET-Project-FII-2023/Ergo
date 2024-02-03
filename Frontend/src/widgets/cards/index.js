@@ -1,2 +1,2 @@
-export * from "@/widgets/cards/StatisticsCard";
-export * from "@/widgets/cards/ProfileInfoCard";
+export * from "./StatisticsCard";
+export * from "./ProfileInfoCard";

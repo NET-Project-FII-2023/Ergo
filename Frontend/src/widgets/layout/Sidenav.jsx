@@ -9,10 +9,10 @@ import {
   IconButton,
   Typography,
 } from "@material-tailwind/react";
-import { useMaterialTailwindController, setOpenSidenav } from "@/context";
+import { useMaterialTailwindController, setOpenSidenav } from "@/context/MaterialTailwind.jsx";
 import { useEffect, useState } from "react";
 import api from "@/services/api";
-import {useUser} from "@/context/LoginRequired.jsx";
+import {useUser} from "@/context/LoginRequired";
 
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
