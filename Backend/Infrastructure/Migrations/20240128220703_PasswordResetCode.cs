@@ -11,31 +11,27 @@ namespace Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "PasswordResetCodes");
-
-            migrationBuilder.AddColumn<string>(
-                name: "Email",
-                table: "PasswordResetCodes",
-                type: "text",
-                nullable: false,
-                defaultValue: "");
+           migrationBuilder.CreateTable(
+                name: "PasswordResetCodes",
+                columns: table => new
+                {
+                    PasswordResetCodeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: false),
+                    ExpirationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordResetCodes", x => x.PasswordResetCodeId);
+                });
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Email",
-                table: "PasswordResetCodes");
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "UserId",
-                table: "PasswordResetCodes",
-                type: "uuid",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+            migrationBuilder.DropTable(
+                name: "PasswordResetCodes");
         }
     }
 }
