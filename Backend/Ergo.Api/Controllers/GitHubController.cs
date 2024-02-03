@@ -2,6 +2,7 @@
 using Ergo.Api.Models;
 using Ergo.Application.Features.Projects.Queries.GetProjectGithubData;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Octokit;
 
@@ -18,6 +19,7 @@ namespace YourNamespace.Controllers
             gitHubClient = new GitHubClient(new ProductHeaderValue("Ergo"));
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         [Route("commits")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -59,6 +61,7 @@ namespace YourNamespace.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+        [Authorize(Roles = "User")]
         [HttpPost]
         [Route("branches")]
         [ProducesResponseType(StatusCodes.Status200OK)]

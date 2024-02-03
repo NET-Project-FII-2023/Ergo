@@ -24,7 +24,6 @@
     <ItemGroup>
       <Folder Include="Features\Email\Queries\" />
       <Folder Include="Features\ML\Commands\" />
-      <Folder Include="Features\UserPhotos\Queries\" />
     </ItemGroup>
 
 </Project>

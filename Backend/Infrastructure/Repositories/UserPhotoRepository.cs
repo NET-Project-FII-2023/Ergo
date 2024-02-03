@@ -11,7 +11,7 @@ namespace Infrastructure.Repositories
         {
         }
 
-        public async Task<Result<string>> GetUserPhotoByUserId(string userId)
+        public async Task<Result<string>> GetUserPhotoByUserIdAsync(string userId)
         {
             var userPhoto = await context.UserPhotos
                                 .Where(up => up.UserId == userId)

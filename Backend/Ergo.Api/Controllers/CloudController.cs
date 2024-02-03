@@ -10,6 +10,7 @@ using Ergo.Application.Features.UserPhotos.Commands.UpdateTaskPhoto;
 using Ergo.Application.Persistence;
 using Ergo.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ergo.API.Controllers
@@ -33,7 +34,7 @@ namespace Ergo.API.Controllers
             AwsSecretKeyEnv = DotNetEnv.Env.GetString("AWSSecretKey");
             this.userPhotoRepository = userPhotoRepository;
         }
-
+        [Authorize(Roles = "User")]
         [HttpPost]
         [Route("upload-task-photo")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -70,6 +71,7 @@ namespace Ergo.API.Controllers
             }
             return Ok();
         }
+        [Authorize(Roles = "User")]
         [HttpDelete]
         [Route("delete-task-photo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -98,6 +100,7 @@ namespace Ergo.API.Controllers
             return Ok();
 
         }
+        [Authorize(Roles = "User")]
         [HttpPost]
         [Route("upload-user-photo")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -133,6 +136,7 @@ namespace Ergo.API.Controllers
             return Ok();
 
         }
+        [Authorize(Roles = "User")]
         [HttpPut]
         [Route("update-user-photo")]
         [ProducesResponseType(StatusCodes.Status200OK)]

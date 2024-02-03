@@ -1,3 +1,4 @@
+using Ergo.Application.Features.UserPhotos.Queries.GetUserPhoto;
 using Ergo.Application.Features.Users.Commands.DeleteUser;
 using Ergo.Application.Features.Users.Commands.UpdateRole;
 using Ergo.Application.Features.Users.Commands.UpdateUser;
@@ -113,6 +114,19 @@ public class UsersController : ApiControllerBase
     public async Task<IActionResult> GetUsersByProjectId(string projectId)
     {
         var query = new GetUsersByProjectIdQuery { ProjectId = projectId };
+        var result = await Mediator.Send(query);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [Authorize(Roles = "User")]
+    [HttpGet("photo/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetPhotoByUserId(string id)
+    {
+        var query = new GetUserPhotoQuery() { UserId = id };
         var result = await Mediator.Send(query);
         if (!result.Success)
         {
