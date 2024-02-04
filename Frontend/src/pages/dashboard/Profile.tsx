@@ -67,6 +67,18 @@ export function Profile() {
               }
             />
           </div>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="p-1 m-1 flex gap-3  rounded-md bg-gray-800">
+            <Avatar src="/img/Badges/CommentsMade.png" alt="bruce-mars" className="rounded-lg shadow-lg shadow-blue-gray-500/40" size="xl" />
+            <Avatar src="/img/Badges/HoursWorked.png" alt="bruce-mars" className="rounded-lg shadow-lg shadow-blue-gray-500/40" size="xl"/>
+            <Avatar src="/img/Badges/Innovator.png" alt="bruce-mars" className="rounded-lg shadow-lg shadow-blue-gray-500/40" size="xl"/>
+            <Avatar src="/img/Badges/ProblemSolver.png" alt="bruce-mars" className="rounded-lg shadow-lg shadow-blue-gray-500/40" size="xl"/>
+            <Avatar src="/img/Badges/ProjectsMade.png" alt="bruce-mars" className="rounded-lg shadow-lg shadow-blue-gray-500/40" size="xl"/>
+            <Avatar src="/img/Badges/QualityMaster.png" alt="bruce-mars" className="rounded-lg shadow-lg shadow-blue-gray-500/40" size="xl"/>
+            <Avatar src="/img/Badges/TasksDone.png" alt="bruce-mars" className="rounded-lg shadow-lg shadow-blue-gray-500/40" size="xl"/>
+            <Avatar src="/img/Badges/TeamPlayer.png" alt="bruce-mars" className="rounded-lg shadow-lg shadow-blue-gray-500/40" size="xl"/>
+          </div>
+          </div>
             <div className="flex items-center justify-between flex-wrap gap-6">
               <Link to="/auth/sign-in" className="ml-auto">
                 <Button
