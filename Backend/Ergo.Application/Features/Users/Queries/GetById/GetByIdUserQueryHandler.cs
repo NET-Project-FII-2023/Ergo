@@ -1,11 +1,5 @@
 ﻿using Ergo.Application.Persistence;
-using Ergo.Domain.Common;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ergo.Application.Features.Users.Queries.GetById
 {
@@ -32,7 +26,12 @@ namespace Ergo.Application.Features.Users.Queries.GetById
                     Name = userDto.Name,
                     Username = userDto.Username,
                     Email = userDto.Email,
-                    Roles = userDto.Roles
+                    Bio = userDto.Bio,
+                    Mobile = userDto.Mobile,
+                    Company = userDto.Company,
+                    Location = userDto.Location,
+                    Social = userDto.Social,
+                    Roles = userDto.Roles,
                 }
             };
             
