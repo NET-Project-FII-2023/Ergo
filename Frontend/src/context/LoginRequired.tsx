@@ -1,12 +1,12 @@
 import {Navigate, Outlet} from "react-router-dom";
 import api from "../services/api";
 import {useEffect, useState, createContext, useContext} from "react";
+import {Spinner} from "@material-tailwind/react";
 
 type UserType = {
     token: string | null;
     userId: string | null;
     username: string | null;
-    name: string | null;
     email: string | null;
     role: string | null;
 }
@@ -15,7 +15,6 @@ const UserContext = createContext<UserType>({
     token: null,
     userId: null,
     username: null,
-    name: null,
     email: null,
     role: null,
 });
@@ -28,7 +27,7 @@ export const useUser = () => {
     return context;
 }
 
-type CurrentUserInfoResponseType = {
+type GetCurrentUserInfoResponseType = {
     isAuthenticated: boolean;
     userName: string;
     claims: {
@@ -42,7 +41,6 @@ export default function LoginRequired() {
         token: null,
         userId: null,
         username: null,
-        name: null,
         email: null,
         role: null,
     });
@@ -56,7 +54,7 @@ export default function LoginRequired() {
             }
 
             try {
-                const response = await api.get<CurrentUserInfoResponseType>("/api/v1/Authentication/currentuserinfo", {
+                const response = await api.get<GetCurrentUserInfoResponseType>("/api/v1/Authentication/currentuserinfo", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -68,7 +66,6 @@ export default function LoginRequired() {
                         token: token,
                         userId: response.data?.claims?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
                         username: response.data?.userName,
-                        name: response.data?.claims?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
                         email: response.data?.claims?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
                         role: response.data?.claims?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
                     })
@@ -84,7 +81,11 @@ export default function LoginRequired() {
     }, []);
 
     if(isAuthenticated === null) {
-        return <div>Loading</div>;
+        return (
+            <div className="flex min-h-screen bg-gradient-to-r from-surface-darkest to-[#262133]">
+                <Spinner className={'m-auto w-10 h-10'}/>
+            </div>
+        )
     }
 
 

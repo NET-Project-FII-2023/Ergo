@@ -75,6 +75,10 @@ public class UsersController : ApiControllerBase
         var result = await Mediator.Send(query);
         if(!result.Success)
         {
+            if(result.Message == $"User with id {id} not found")
+            {
+                return NotFound(result);
+            }
             return BadRequest(result);
         }
         return Ok(result);
