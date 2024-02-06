@@ -4,7 +4,7 @@ import api from "@/services/api";
 import { useUser } from "@/context/LoginRequired";
 import { Typography, Modal, Fade } from '@mui/material';
 import TaskSection from './TaskSection';
-import MembersList from './MembersList';
+
 
 const ProjectOverview = () => {
   const { projectId } = useParams();

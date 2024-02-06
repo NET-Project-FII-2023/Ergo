@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 import api from "@/services/api";
+import AssignMember from './AssignMember';
 
 const MembersList = ({projectId, token}) => {
     const [members, setMembers] = useState([]);
@@ -19,6 +20,7 @@ const MembersList = ({projectId, token}) => {
 
             if (response.status === 200) {
                 setMembers(response.data.users);
+                console.log("users", response.data.users)
             } else {
                 console.error('Error fetching members:', response);
             }
@@ -58,6 +60,7 @@ const MembersList = ({projectId, token}) => {
                     </CardContent>
                 </Card>
             ))}
+            <AssignMember projectId={projectId} token={token}/>
         </div>
     );
 }

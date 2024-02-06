@@ -18,20 +18,17 @@ const formatDeadline = (deadline) => {
     }}
     onClick={() => handleOpenModal(task)}
   >
-      <CardContent className='transition duration-200 ease-in-out '>
-        <Typography gutterBottom className='text-white'>
+      <CardContent className='transition duration-200  ease-in-out'>
+        <p  className='text-white mb-2 text-lg'>
           {task.taskName}
-        </Typography>
-        <Typography variant="body2" className='text-gray-200' component="p">
+        </p>
+        <p className='text-gray-200 my-1 text-sm' component="p">
           {task.description}
-        </Typography>
+        </p>
         <div className='flex flex-row'>
-          <Typography variant="body2" className='text-gray-200' component="p" mr={1}>
-            Deadline:
-          </Typography>
-          <Typography variant="body2" className='text-gray-200' component="p">
+          <p className='text-gray-200 mt-1 text-xs' component="p">
             {formatDeadline(task.deadline)}
-          </Typography>
+          </p>
         </div>
       </CardContent>
     </Card>
