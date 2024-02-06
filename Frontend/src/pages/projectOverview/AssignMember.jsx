@@ -52,14 +52,14 @@ const AssignMember = ({ projectId, token }) => {
                 toast.success('User assigned successfully');
 
             } else {
-                console.log("User id", selectedUserId);
-                console.log("project id", projectId);
                 console.error('Error assigning user:', response);
+                toast.error('Error assigning user:' +  response);
             }
         } catch (error) {
             console.log("User id", selectedUserId);
-                console.log("project id", projectId);
+            console.log("project id", projectId);
             console.error('Error assigning user:', error);
+            toast.error('Error assigning user:' +  error);
         }
     };
 
@@ -90,8 +90,8 @@ const AssignMember = ({ projectId, token }) => {
                         labelProps={{
                             className: "before:content-none after:content-none",
                         }}
-                        open={selectVisible} // Control select visibility
-                        onClose={() => setSelectVisible(false)} // Close select when closed
+                        open={selectVisible}
+                        onClose={() => setSelectVisible(false)}
                     >
                         {users.map((user) => (
                             <Option key={user.userId} value={user.userId} onClick={() => setSelectedUserId(user.userId)}>
