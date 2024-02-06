@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Modal } from '@mui/material';
 import {
-  Input,
   Button,
   Typography,
 } from "@material-tailwind/react";
@@ -12,6 +11,7 @@ import ErgoLabel from '../../widgets/form_utils/ErgoLabel';
 import ErgoDatePicker from '../../widgets/form_utils/ErgoDatePicker';
 import {toast} from "react-toastify";
 import ErgoTextarea from '../../widgets/form_utils/ErgoTextArea';
+import { Card, CardContent} from '@mui/material';
 
 
 const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
@@ -73,10 +73,19 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleOpen} >
-        Add Task
-      </Button>
-
+      <Card
+      className={`mb-4 opacity-80 cursor-pointer  `}
+      style={{
+        backgroundColor: "#2f2b3a",
+      }}
+      onClick={handleOpen}
+    >
+      <CardContent className='flex justify-center items-center transition duration-200 ease-in-out hover:bg-surface-mid'>
+        <Typography gutterBottom className='text-white'>
+          +
+        </Typography>
+      </CardContent>
+    </Card>
       <Modal open={open} onClose={handleClose}>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[25rem] bg-[#2f2b3a] shadow-lg p-4 rounded">
           <Typography variant='h4' className='text-white p-2'>
