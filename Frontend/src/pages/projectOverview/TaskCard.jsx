@@ -17,7 +17,7 @@ const formatDeadline = (deadline) => {
     }}
     onClick={() => handleOpenModal(task)}
   >
-      <CardContent>
+      <CardContent className='transition duration-200 ease-in-out hover:bg-surface-mid'>
         <Typography gutterBottom className='text-white'>
           {task.taskName}
         </Typography>
