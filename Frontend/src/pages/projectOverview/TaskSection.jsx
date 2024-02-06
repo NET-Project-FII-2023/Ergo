@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from "@/services/api";
 import TaskCard from './TaskCard';
 import AddTask from './AddTask';
+import MembersList from './MembersList';
 
 const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
     const [taskItems, setTaskItems] = useState([]);
@@ -39,23 +40,39 @@ const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
     }
   };
 
-  const renderTaskCards = (tasks) => {
+  const renderTaskCards = (tasks, column) => {
+    let color;
+    switch (column) {
+      case 'todo':
+        color = "#5e4d8c";
+        break;
+      case 'inProgress':
+        color = "#3f6da6";
+        break;
+      case 'done':
+        color = "#42a696"; 
+        break;
+      default:
+        color = "#2dd4bf";
+    }
+  
     return tasks.map((taskItem) => (
-        <TaskCard
+      <TaskCard
         key={taskItem.taskItemId}
         task={taskItem}
         handleOpenModal={() => handleOpenModal(taskItem)}
+        color={color}
       />
     ));
   };
 
 
   return (
-    <div className='w-[50vw]'>
+    <div className='w-[75vw]'>
       <div className="border-b-2 border-surface-dark my-4"></div>
       <div>
         <div className="flex justify-evenly">
-          <div className="w-[33%] mr-4">
+          <div className="w-[25%] mr-4">
             <div className="border-b-4 border-secondary"></div>
             <div className='p-3 bg-surface-dark mb-4 flex items-center rounded-b'>
               <h4 className="text-surface-light">To do</h4>
@@ -64,23 +81,30 @@ const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
               projectId={projectId}
               token={token}
               userId={userId}
-              onTaskAdded={fetchTaskItems} // This will refresh the task list after adding a task
+              onTaskAdded={fetchTaskItems}
             />
-            {renderTaskCards(todoTasks)}
+            {renderTaskCards(todoTasks, 'todo')}
           </div>
-          <div className="w-[33%] mr-4">
+          <div className="w-[25%] mr-4">
             <div className="border-b-4 border-blue-400"></div>
             <div className='p-3 bg-surface-dark mb-4 flex items-center rounded-b'>
               <h4 className="text-surface-light">In progress</h4>
             </div>
-            {renderTaskCards(inProgressTasks)}
+            {renderTaskCards(inProgressTasks, 'inProgress')}
           </div>
-          <div className="w-[33%] text-surface-light">
+          <div className="w-[25%] text-surface-light">
             <div className="border-b-4 border-teal-300"></div>
             <div className='p-3 bg-surface-dark mb-4 flex items-center rounded-b'>
               <h4 className="text-surface-light">Done</h4>
             </div>
-            {renderTaskCards(doneTasks)}
+            {renderTaskCards(doneTasks, 'done')}
+          </div>
+          <div className="w-[25%] text-surface-light bg-surface-darkest px-4 ml-3">
+
+            <MembersList
+              projectId={projectId}
+              token={token}
+            />
           </div>
         </div>
       </div>

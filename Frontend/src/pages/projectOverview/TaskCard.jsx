@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
+import { useDrag } from 'react-dnd';
 
 const formatDeadline = (deadline) => {
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -8,27 +9,27 @@ const formatDeadline = (deadline) => {
   };
 
 
-  const TaskCard = ({ task, handleOpenModal }) => (
+  const TaskCard = ({ task, handleOpenModal, color }) => (
     <Card
     key={task.taskItemId}
-    className={`mb-4 opacity-80 cursor-pointer `}
+    className={`mb-4 opacity-80 cursor-pointer hover:opacity-60`}
     style={{
-      backgroundColor: "#2f2b3a",
+      backgroundColor: color,
     }}
     onClick={() => handleOpenModal(task)}
   >
-      <CardContent className='transition duration-200 ease-in-out hover:bg-surface-mid'>
+      <CardContent className='transition duration-200 ease-in-out '>
         <Typography gutterBottom className='text-white'>
           {task.taskName}
         </Typography>
-        <Typography variant="body2" className='text-surface-light' component="p">
+        <Typography variant="body2" className='text-gray-200' component="p">
           {task.description}
         </Typography>
         <div className='flex flex-row'>
-          <Typography variant="body2" className='text-surface-light' component="p" mr={1}>
+          <Typography variant="body2" className='text-gray-200' component="p" mr={1}>
             Deadline:
           </Typography>
-          <Typography variant="body2" className='text-surface-light' component="p">
+          <Typography variant="body2" className='text-gray-200' component="p">
             {formatDeadline(task.deadline)}
           </Typography>
         </div>

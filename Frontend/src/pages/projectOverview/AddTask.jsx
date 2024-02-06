@@ -74,7 +74,7 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
   return (
     <div>
       <Card
-      className={`mb-4 opacity-80 cursor-pointer  `}
+      className={`mb-4 opacity-80 cursor-pointer`}
       style={{
         backgroundColor: "#2f2b3a",
       }}
