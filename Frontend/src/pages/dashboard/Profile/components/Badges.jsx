@@ -4,19 +4,19 @@ import {toast} from "react-toastify";
 import { useUser } from '../../../../context/LoginRequired';
 import api from '../../../../services/api';
 import { Avatar } from '@material-tailwind/react';
-const Badges = () => {
+const Badges = ({userData}) => {
   const [userBadges, setUserBadges] = useState([])
   const user = useUser()
   const getUserBadges = async () => {
     try {
-      const response = await api.get(`/api/v1/Badges/${user.userId}`,
+      const response = await api.get(`/api/v1/Badges/${userData.id}`,
         {
           headers: {
             Authorization: `Bearer ${user.token}`
           }
         })
         if(response.status === 200){
-          setUserBadges(response.data.badges)
+          setUserBadges(response.data.badges.sort((a, b) => a.type.localeCompare(b.type)))
         }
 
     } catch (error) {

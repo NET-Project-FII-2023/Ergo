@@ -14,6 +14,7 @@ type BaseResponseType = {
 
 export type UserDataType = {
   name: string,
+  id: string,
   username: string,
   bio?: string,
   email?: string,
