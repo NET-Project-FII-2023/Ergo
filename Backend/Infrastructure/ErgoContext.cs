@@ -15,4 +15,5 @@ public class ErgoContext : DbContext
     public DbSet<Photo> Photos { get; set; }
     public DbSet<PasswordResetCode> PasswordResetCodes { get; set; }
     public DbSet<UserPhoto> UserPhotos { get; set; }
+    public DbSet<Badge> Badges { get; set; }
 }
