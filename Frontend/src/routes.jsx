@@ -6,7 +6,7 @@ import {
   ServerStackIcon,
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
-import { Home, Profile } from "@/pages/dashboard";
+import { Home, Profile } from "./pages/dashboard/index";
 import { SignIn, SignUp } from "@/pages/auth";
 import ProjectOverview from "./pages/projectOverview/ProjectOverview";
 import ResetPassword from "./pages/auth/ResetPassword";
@@ -30,7 +30,8 @@ export const routes = [
       {
         icon: <UserCircleIcon {...icon} />,
         name: "profile",
-        path: "/profile",
+        path: "/profile/:userId?",
+        dynamic: true,
         element: <Profile />,
       },
       {

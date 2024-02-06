@@ -28,6 +28,11 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
             request.Name ??= user.Value.Name;
             request.Username ??= user.Value.Username;
             request.Email ??= user.Value.Email;
+            request.Bio ??= user.Value.Bio;
+            request.Mobile ??= user.Value.Mobile;
+            request.Company ??= user.Value.Company;
+            request.Location ??= user.Value.Location;
+            request.Social ??= user.Value.Social;
             var validator = new UpdateUserCommandValidator();
             var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
@@ -64,6 +69,11 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                 Name = request.Name,
                 Username = request.Username,
                 Email = request.Email,
+                Bio = request.Bio,
+                Mobile = request.Mobile,
+                Company = request.Company,
+                Location = request.Location,
+                Social = request.Social
             };
             var result = await userRepository.UpdateAsync(userDto);
             if (!result.IsSuccess)
@@ -82,6 +92,11 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                     Name = result.Value.Name,
                     Username = result.Value.Username,
                     Email = result.Value.Email,
+                    Bio = result.Value.Bio,
+                    Mobile = result.Value.Mobile,
+                    Company = result.Value.Company,
+                    Location = result.Value.Location,
+                    Social = result.Value.Social
                 }
             };
         }

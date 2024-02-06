@@ -1,4 +1,5 @@
-﻿using Ergo.Application.Features.Users.Queries;
+﻿using Ergo.Application.Features.Users;
+using Ergo.Application.Features.Users.Queries;
 using Ergo.Application.Models;
 using Ergo.Application.Persistence;
 using Ergo.Domain.Common;
@@ -122,6 +123,15 @@ namespace Ergo.Identity.Services
             user.Name = userDto.Name;
             user.UserName = userDto.Username;
             user.Email = userDto.Email;
+            user.Bio = userDto.Bio;
+            user.Mobile = userDto.Mobile;
+            user.Company = userDto.Company;
+            user.Location = userDto.Location;
+            user.Facebook = userDto.Social?.Facebook;
+            user.Instagram = userDto.Social?.Instagram;
+            user.GitHub = userDto.Social?.GitHub;
+            user.LinkedIn = userDto.Social?.LinkedIn;
+            user.TwitterX = userDto.Social?.TwitterX;
         }
         private UserDto MapToUserDto(ApplicationUser user)
         {
@@ -130,7 +140,19 @@ namespace Ergo.Identity.Services
                 UserId = user.Id,
                 Name = user.Name,
                 Username = user.UserName,
-                Email = user.Email
+                Email = user.Email,
+                Bio = user.Bio,
+                Mobile = user.Mobile,
+                Company = user.Company,
+                Location = user.Location,
+                Social = new Social
+                {
+                    Facebook = user.Facebook,
+                    Instagram = user.Instagram,
+                    GitHub = user.GitHub,
+                    LinkedIn = user.LinkedIn,
+                    TwitterX = user.TwitterX
+                }
             };
         }
 
