@@ -39,8 +39,10 @@ namespace Infrastructure
             services.AddScoped<IPhotoRepository, PhotoRepository>();
             services.AddScoped<IPasswordResetCode, PasswordResetCodeRepository>();
             services.AddScoped<IUserPhotoRepository, UserPhotoRepository>();
+            services.AddScoped<IBadgeRepository, BadgeRepository>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IMLService, MLService>();
+
             return services;
         }
     }

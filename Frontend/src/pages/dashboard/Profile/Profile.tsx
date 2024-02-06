@@ -12,6 +12,7 @@ import {toast} from "react-toastify";
 import axios from "axios";
 import {ProfileCard} from "./components/ProfileCard";
 import {GetUserByIdResponseType, UserDataType} from "./components/types";
+import Badges from "./components/Badges";
 
 export function Profile() {
   const currentUser = useUser();
@@ -66,6 +67,7 @@ export function Profile() {
           <div className="absolute inset-0 h-full w-full bg-gray-900/75"/>
         </div>
         <Card className="mx-3 -mt-48 mb-6 lg:mx-4 bg-surface-dark">
+
           <CardBody className="p-4">
             {userData ? (
                 <ProfileCard
@@ -78,6 +80,8 @@ export function Profile() {
                   <Spinner className={'h-8 w-8'}/>
                 </div>
             )}
+            <p className="text-surface-light">Achivements</p> 
+            <Badges />
             {isOwnProfile && <div className="flex items-center justify-between flex-wrap gap-6">
               <Link to="/auth/sign-in" className="ml-auto">
                 <Button
