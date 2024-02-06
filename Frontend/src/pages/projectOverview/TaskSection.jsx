@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from "@/services/api";
 import TaskCard from './TaskCard';
+import AddTask from './AddTask';
 
 const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
     const [taskItems, setTaskItems] = useState([]);
@@ -59,6 +60,12 @@ const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
             <div className='p-3 bg-surface-dark mb-4 flex items-center rounded-b'>
               <h4 className="text-surface-light">To do</h4>
             </div>
+            <AddTask
+              projectId={projectId}
+              token={token}
+              userId={userId}
+              onTaskAdded={fetchTaskItems} // This will refresh the task list after adding a task
+            />
             {renderTaskCards(todoTasks)}
           </div>
           <div className="w-[33%] mr-4">
