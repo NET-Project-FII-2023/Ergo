@@ -7,6 +7,8 @@ import ModeCommentIcon from '@mui/icons-material/ModeComment';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { Button, Typography } from '@material-tailwind/react';
 import api from '@/services/api';
+import CommentSection from './CommentSection';
+import AttachmentSection from './AttachmetSection';
 
 
 
@@ -76,75 +78,14 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) 
                   {/* {selectedTask.description} */}
                   Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores tempore voluptatum sint? Incidunt unde doloribus distinctio asperiores esse hic laudantium reprehenderit accusantium nisi ex! Quisquam, modi nulla. Beatae, perferendis nulla.
                 </p>
-                <div className='flex flex-col mt-4 pr-2'>
-                  <div className='flex flex-row items-center'> 
-                    <AttachFileIcon className='text-secondary ml-1' fontSize='extraSmall'> </AttachFileIcon>
-                    <p className='text-gray-300  text-md font-semibold'>
-                      Attachments
-                    </p>
-                  </div>
-                  <div>
-                      <Button className='flex flex-row px-3 bg-surface-darkest py-2 ml-4 hover:opacity-70' size="sm">
-                        <label htmlFor="file-upload" className="cursor-pointer text-gray-300 flex items-center">
-                          <p className='text-md text-surface-light'>Upload</p>
-                          <UploadFileIcon fontSize='small' className='ml-1'></UploadFileIcon>
-                        </label>
-                      </Button>
-                    <input
-                      id="file-upload"
-                      type="file"
-                      className="hidden"
-                      onChange={handleFileInputChange}
-                      multiple
-                    />
-                  </div>
-                </div>
+                <AttachmentSection attachedFiles={attachedFiles} handleFileInputChange={handleFileInputChange} />
+
                 {attachedFiles.map((file, index) => (
                   <Typography key={index} variant="body2" className="text-surface-light px-2 text-md">
                     {file.name}
                   </Typography>
                 ))}
-                <div className='flex flex-col mt-4 pr-2'>
-                  <div className='flex items-center mb-2'>
-                    <ModeCommentIcon className='text-secondary ml-1' fontSize='extraSmall'></ModeCommentIcon>
-                    <p className='text-gray-300 ml-1 text-md font-semibold'>
-                      Comments
-                    </p>
-                  </div>
-                  
-                  <Card className="opacity-80 cursor-pointer mb-2 rounded w-4/5">
-                    <CardContent className='p-2 rounded bg-surface-darkest'>
-                        <div className='flex'>
-                            <span className='w-1/4 h-[2.3rem] rounded-full bg-surface-light mr-3'></span>
-                            <div>
-                                <p className="text-surface-light text-xs">
-                                    Michael Jackson
-                                </p>
-                                <p className="text-surface-mid-light text-xs">
-                                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ullam fugit minus deleniti, nisi, consequatur itaque illo possimus ducimus, voluptas veniam animi provident? Quidem alias dolores cupiditate aliquam amet voluptates dignissimos?
-                                </p>
-                            </div>
-                        </div>
-                    </CardContent>
-                  </Card>
-                  <Card className="opacity-80 cursor-pointer mb-2 rounded w-4/5">
-                    <CardContent className='p-2 rounded bg-surface-darkest'>
-                        <div className='flex'>
-                            <span className='w-1/4 h-[2.3rem] rounded-full bg-surface-light mr-3'>
-                                
-                            </span>
-                            <div>
-                                <p className="text-surface-light text-xs">
-                                    Baracobama
-                                </p>
-                                <p className="text-surface-mid-light text-xs">
-                                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ullam fugit minus deleniti, nisi, consequatur itaque illo possimus ducimus, voluptas veniam animi provident? Quidem alias dolores cupiditate aliquam amet voluptates dignissimos?
-                                </p>
-                            </div>
-                        </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                <CommentSection/>
                 <div className="flex items-center  px-2 mt-6">
                   <AccessTimeIcon className="text-secondary" fontSize='extraSmall'/>
                   <p className='text-surface-light text-sm ml-1'> {formatDeadline(selectedTask.deadline)}</p>
@@ -154,7 +95,9 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) 
               <div className="border-r border-1 border-surface-mid h-auto"></div>
               {/* right section  */}
               <div className="w-1/3 ml-4">
-                  
+                <p className='text-gray-300 ml-1 text-md font-semibold'>
+                  Progress Tracking
+                </p>
               </div>
             </div>
           )}
