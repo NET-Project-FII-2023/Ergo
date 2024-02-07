@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Fade, Card, CardContent } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import { Button, Typography } from '@material-tailwind/react';
+import { Button } from '@material-tailwind/react';
 import api from '@/services/api';
 
   const AttachmentSection = ({ attachedFiles, handleFileInputChange }) => {

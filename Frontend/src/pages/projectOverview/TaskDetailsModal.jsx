@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Fade, Card, CardContent } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime'; 
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import DescriptionIcon from '@mui/icons-material/Description';
-import ModeCommentIcon from '@mui/icons-material/ModeComment';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { Button, Typography } from '@material-tailwind/react';
 import api from '@/services/api';
 import CommentSection from './CommentSection';
 import AttachmentSection from './AttachmetSection';
+import TimerSection from './TimerSection';
+import GithubSection from './GithubSection';
 
 
 
@@ -94,10 +93,9 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) 
               </div>
               <div className="border-r border-1 border-surface-mid h-auto"></div>
               {/* right section  */}
-              <div className="w-1/3 ml-4">
-                <p className='text-gray-300 ml-1 text-md font-semibold'>
-                  Progress Tracking
-                </p>
+              <div className="w-1/3 ml-4 p-4">
+                <TimerSection/>
+                <GithubSection/>
               </div>
             </div>
           )}
