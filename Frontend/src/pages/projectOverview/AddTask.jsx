@@ -12,6 +12,7 @@ import ErgoDatePicker from '../../widgets/form_utils/ErgoDatePicker';
 import {toast} from "react-toastify";
 import ErgoTextarea from '../../widgets/form_utils/ErgoTextArea';
 import { Card, CardContent} from '@mui/material';
+import AddTaskIcon from '@mui/icons-material/AddTask';
 
 
 const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
@@ -116,8 +117,9 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
               />
             </div>
             <div className='m-2 self-end'>
-              <Button className="bg-secondary hover:bg-primary" onClick={handleAddTask}>
-                Add Task
+              <Button size="sm" className="bg-secondary hover:bg-primary" onClick={handleAddTask}>
+                <AddTaskIcon fontSize='small'>
+                </AddTaskIcon>
               </Button>
             </div>
           </div>
