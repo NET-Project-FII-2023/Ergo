@@ -18,7 +18,7 @@ const formatDeadline = (deadline) => {
   return formattedDeadline;
 };
 
-const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) => {
+const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, project }) => {
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [photoUrl, setPhotoUrl] = useState(null);
 
@@ -95,7 +95,7 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) 
               <div className="border-r border-1 border-surface-mid h-auto"></div>
               <div className="w-1/3 ml-4 p-4">
                 <TimerSection/>
-                <GithubSection/>
+                <GithubSection token={token} task={selectedTask} project={project}/>
                 <AssignUserTask token={token} task={selectedTask}/>
               </div>
             </div>

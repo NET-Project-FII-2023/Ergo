@@ -1,18 +1,69 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@material-tailwind/react';
-import api from '@/services/api';
+import {React, useEffect, useState} from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import {Link} from '@mui/material';
+import api from '@/services/api';
+import { set } from 'date-fns';
 
-const GithubSection = ({}) => {
-    const githubActivity = [
-        { id: 1, message: "Added navbar" },
-        { id: 2, message: "Implemented Github integration" },
-        { id: 3, message: "Implemented register functionality" },
-        { id: 4, message: "Designed home page" },
-        { id: 5, message: "Redesigned profile page" },
-        { id: 6, message: "Added badges to profile" },
-        { id: 7, message: "Implemented a feature" },
-    ];
+
+const GithubSection = ({token, task, project}) => {
+    const [branches, setBranches] = useState([]);
+    const [commits, setCommits] = useState([]);
+
+    const fetchBranches = async () => {
+        try{
+            const response = await api.post('/api/v1/GitHub/branches', {"projectId": project.projectId }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            if(response.status = 200){
+                setBranches(response.data);
+                console.log("mydata", response.data);
+            }
+            else
+            {
+                console.error("Fail");
+            }
+
+        }catch(err){
+            console.error(err);
+        }
+    }
+
+    const fetchCommits = async () => {
+        try{
+            const response = await api.post(`/api/v1/GitHub/commits?Branch=filtering_data`, { "projectId": project.projectId},
+            {
+                headers:{
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+
+            if(response.status == 200){
+                console.log("commit result", response.data);
+                setCommits(response.data);
+            }
+            else{
+                console.err("Error")
+            }
+        }catch(err){ 
+            console.error(err);
+        }
+
+    }
+
+    useEffect(()=> {
+
+        fetchBranches();
+        fetchCommits();
+    }, [])
+
+    const modifyUrl = function(apiUrl){
+        const newUrl =  apiUrl.replace("https://api.github.com/repos/", "https://github.com/").replace("git/commits", "commit");
+        console.log("NEW URL:", newUrl);
+        return newUrl;
+    }
 
     return (
         <div className='mt-6'>    
@@ -22,11 +73,11 @@ const GithubSection = ({}) => {
                     Github Activity
                 </p>
             </div>
-            <div className="text-surface-light">
-                <ul className="list-none">
-                    {githubActivity.map(item => (
-                        <li key={item.id} className="relative pl-4 py-1">
-                            {item.message}
+            <div className="text-surface-light overflow-auto max-h-[16rem]" style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--color-surface-darkest) var(--color-surface)' }}>
+                <ul>
+                    {commits.map(item => (
+                        <li key={item.commitName} className="relative pl-4 py-2 text-sm">
+                            <a href={modifyUrl(item.url)} className='text-surface-light hover:underline' target="_blank">{item.commitName}</a>
                             <span className="absolute top-0 left-0 w-1 h-full bg-surface-mid"></span>
                         </li>
                     ))}
