@@ -64,7 +64,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
         className={`relative`}
       >
         <Link to="/" className="py-5 flex items-center justify-center">
-          <img src={brandImg} alt="logo" className="h-12" />
+          <img src={brandImg} alt="logo" className="h-12 ml-[-0.75rem]" />
             <Typography
               variant="h3"
               color={"white"}

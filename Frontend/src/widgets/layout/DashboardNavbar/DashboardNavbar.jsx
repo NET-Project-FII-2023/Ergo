@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { toast } from "react-toastify";
 import { useUser } from "@/context/LoginRequired";
+import DashboardSearch from "./DashboardSearch"
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -114,13 +115,16 @@ export function DashboardNavbar() {
           </Breadcrumbs>
         </div>
         <div className="flex items-center">
+          <div className="mr-auto md:mr-4 md:w-56">
+            <DashboardSearch />
+          </div>
           <IconButton
             variant="text"
             color="blue-gray"
             className="grid xl:hidden"
             onClick={() => setOpenSidenav(dispatch, !openSidenav)}
           >
-            <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
+            <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500"/>
           </IconButton>
           <Link to="/dashboard/profile">
             <Button
@@ -136,7 +140,7 @@ export function DashboardNavbar() {
               color="blue-gray"
               className="grid xl:hidden"
             >
-              <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
+              <UserCircleIcon className="h-5 w-5 text-blue-gray-500"/>
             </IconButton>
           </Link>
 
@@ -144,34 +148,35 @@ export function DashboardNavbar() {
           <Menu>
             <MenuHandler>
               <IconButton variant="text" color="blue-gray">
-                <BellIcon className="h-5 w-5 text-primary" />
+                <BellIcon className="h-5 w-5 text-primary"/>
               </IconButton>
             </MenuHandler>
             <MenuList className="border-0 bg-surface-dark max-w-sm max-h-[80vh] minimal-scrollbar text-surface-light">
               {notifications.length === 0 ?
                 <ListItem disabled className="text-black opacity-70">
                   <strong>No new notifications</strong>
-                </ListItem> 
-                : 
+                </ListItem>
+                :
                 notifications.map((notification, index) =>
                   <ListItem className="flex flex-col items-start w-full md:w-[20rem]" key={`notif-${index}`}>
-                    <Typography variant="small" className="mb-1 font-normal " >
+                    <Typography variant="small" className="mb-1 font-normal ">
                       <strong>{notification.message}</strong>
                     </Typography>
 
                     <div className="flex justify-between w-full">
                       <Typography variant="small" className="flex items-center gap-1 text-xs font-normal opacity-60">
-                        <ClockIcon className="h-3.5 w-3.5 text-secondary" /> {formatDate(notification.createdDate)}
+                        <ClockIcon className="h-3.5 w-3.5 text-secondary"/> {formatDate(notification.createdDate)}
                       </Typography>
                       {notification.isRead === false ?
-                        <Button variant="text" color="red" size="sm" className="text-xs px-2 py-1 opacity-70 font-normal"
-                          onClick={(e) => markAsRead(e, notification)}
+                        <Button variant="text" color="red" size="sm"
+                                className="text-xs px-2 py-1 opacity-70 font-normal"
+                                onClick={(e) => markAsRead(e, notification)}
                         >
                           Mark as read
                         </Button>
                         :
                         <Typography variant="small" className="flex items-center gap-1 text-xs font-normal opacity-60">
-                          <CheckIcon className="h-3.5 w-3.5" /> Read
+                          <CheckIcon className="h-3.5 w-3.5"/> Read
                         </Typography>
                       }
                     </div>
