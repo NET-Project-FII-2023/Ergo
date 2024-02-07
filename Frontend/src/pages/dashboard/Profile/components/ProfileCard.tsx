@@ -92,7 +92,7 @@ export function ProfileCard({userData, setUserData, isEditable = false}: Profile
             variant="small"
             className="font-normal text-surface-mid-light"
           >
-            {userData?.username || "Unknown username"}
+            {"#" + userData?.username || "Unknown username"}
           </Typography>
         </div>
       </div>
