@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@material-tailwind/react';
-import { Select, Option } from '@material-tailwind/react';
 import api from '@/services/api';
-import { toast } from "react-toastify";
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import { Select, Option} from '@material-tailwind/react';
+import { Card, CardContent } from '@mui/material';
 
-const AssignMember = ({ projectId, token }) => {
+const AssignUserTask = ({token, task, projectId}) => {
     const [showSelect, setShowSelect] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState('');
@@ -33,36 +34,6 @@ const AssignMember = ({ projectId, token }) => {
         }
     };
 
-    const handleConfirmAssign = async () => {
-        try {
-            const response = await api.post(`/api/v1/Projects/AssignUserToProject`, {
-                userId: selectedUserId,
-                projectId: projectId
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (response.status === 200) {
-                setShowSelect(false);
-                setSelectVisible(false);
-                setShowButtons(false);
-                console.log('User assigned successfully');
-                toast.success('User assigned successfully');
-
-            } else {
-                console.error('Error assigning user:', response);
-                toast.error('Error assigning user:' +  response);
-            }
-        } catch (error) {
-            console.log("User id", selectedUserId);
-            console.log("project id", projectId);
-            console.error('Error assigning user:', error);
-            toast.error('Error assigning user:' +  error);
-        }
-    };
-
     const handleUserChange = (event) => {
         setSelectedUserId(event.target.value);
         setSelectedUser(event.target.name);
@@ -75,13 +46,44 @@ const AssignMember = ({ projectId, token }) => {
         setShowButtons(false);
     };
 
-    return (
-        <div>
+    return(
+        <div className='mt-6'>    
+            <div className='flex items-center mb-3'>
+                <AssignmentIndIcon fontSize='sm' className='text-secondary mr-1'></AssignmentIndIcon>
+                <p className='text-gray-300 ml-1 text-md font-semibold'>
+                    Assigned Member
+                </p>
+            </div>
+            <div>
             {!showSelect ? (
-                <Button onClick={handleClick} className='text-gray-300 hover:text-surface-light'>
+                <>
+                 <Card className="opacity-80 cursor-pointer mb-2 rounded"
+                 style={{
+                    backgroundColor: "#1a1625",
+                  }}>
+                    <CardContent className='p-2 rounded bg-surface-darkest'>
+                        <div className='flex'>
+                            <span className='w-[2rem] h-[2rem] rounded-full bg-surface-light mr-3'>
+
+                            </span>
+                            <div>
+                                <p className="text-surface-light text-xs">
+                                    #costel
+                                </p>
+                                <p className="text-surface-mid-light text-xs">
+                                    Costel Biju
+                                </p>
+                            </div>
+                        </div>
+                
+                    </CardContent>
+                </Card>
+                
+                <Button onClick={handleClick} className='text-surface-light bg-surface-darkest hover:opacity-70'>
                     Assign Member
                 </Button>
-            ) : (
+            </>
+            ) : (  
                 <div>
                     <Select
                         value={selectedUser}
@@ -92,7 +94,6 @@ const AssignMember = ({ projectId, token }) => {
                         }}
                         open={selectVisible}
                         onClose={() => setSelectVisible(false)}
-
                     >
                         {users.map((user) => (
                             <Option key={user.userId} value={user.userId} onClick={() => setSelectedUserId(user.userId)}>
@@ -102,10 +103,10 @@ const AssignMember = ({ projectId, token }) => {
                     </Select>
                     {showButtons && (
                         <div className='flex'>
-                            <Button size="sm" className="bg-secondary hover:bg-primary mt-2" onClick={handleConfirmAssign}>
+                            <Button size="sm" className="bg-surface-darkest text-surface-light hover:opacity-70 mt-2">
                                 Confirm
                             </Button>
-                            <Button size ="sm" className="bg-gray-300 text-surface-darkest hover:bg-gray-400 ml-1 mt-2" onClick={handleCancel}>
+                            <Button size ="sm" className="bg-gray-400 text-surface-darkest hover:bg-gray-400 ml-1 mt-2 hover:opacity-70" onClick={handleCancel}>
                                 Cancel
                             </Button>
                         </div>
@@ -113,7 +114,8 @@ const AssignMember = ({ projectId, token }) => {
                 </div>
             )}
         </div>
+        </div>
     );
 };
 
-export default AssignMember;
+export default AssignUserTask;
