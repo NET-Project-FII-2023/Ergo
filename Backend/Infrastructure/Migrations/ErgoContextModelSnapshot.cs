@@ -22,6 +22,31 @@ namespace Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Ergo.Domain.Entities.Badge", b =>
+                {
+                    b.Property<Guid>("BadgeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("BadgeId");
+
+                    b.ToTable("Badges");
+                });
+
             modelBuilder.Entity("Ergo.Domain.Entities.Comment", b =>
                 {
                     b.Property<Guid>("CommentId")
@@ -235,6 +260,25 @@ namespace Infrastructure.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Ergo.Domain.Entities.UserPhoto", b =>
+                {
+                    b.Property<Guid>("UserPhotoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("UserPhotoId");
+
+                    b.ToTable("UserPhotos");
                 });
 
             modelBuilder.Entity("ProjectUser", b =>

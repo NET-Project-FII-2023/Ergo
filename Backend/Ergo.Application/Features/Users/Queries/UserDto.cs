@@ -1,11 +1,4 @@
-﻿using Ergo.Domain.Entities.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Ergo.Application.Features.Users.Queries
+﻿namespace Ergo.Application.Features.Users.Queries
 {
     public class UserDto
     {
@@ -13,6 +6,11 @@ namespace Ergo.Application.Features.Users.Queries
         public string? Username { get; set; }
         public string? Name { get; set; }
         public string? Email { get; set; }
+        public string? Bio { get; set; }
+        public string? Mobile { get; set; }
+        public string? Company { get; set; }
+        public string? Location { get; set; }
+        public Social? Social { get; set; }
         public List<string>? Roles { get; set; }
     }
 }

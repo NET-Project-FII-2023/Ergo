@@ -3,11 +3,11 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@material-tailwind/react";
-import { MaterialTailwindControllerProvider } from "@/context";
+import { MaterialTailwindControllerProvider } from "./context/MaterialTailwind";
 import { ToastContainer } from "react-toastify";
 import "../public/css/tailwind.css";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider>
@@ -23,7 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="light"
+            theme="dark"
           />
         </MaterialTailwindControllerProvider>
       </ThemeProvider>

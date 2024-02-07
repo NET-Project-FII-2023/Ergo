@@ -6,7 +6,7 @@ import {
 import {Link, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {toast} from "react-toastify";
-import api from "@/services/api.jsx";
+import api from "@/services/api";
 import axios from "axios";
 
 

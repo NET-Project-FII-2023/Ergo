@@ -9,6 +9,9 @@ using WebAPI.Services;
 using Ergo.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+DotNetEnv.Env.TraversePath().Load();
+
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddCors(options =>
 {

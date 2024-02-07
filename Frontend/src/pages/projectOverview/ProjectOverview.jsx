@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from "@/services/api";
-import { useUser } from "@/context/LoginRequired.jsx";
+import { useUser } from "@/context/LoginRequired";
 import { Typography, Modal, Fade } from '@mui/material';
 import TaskSection from './TaskSection';
+
 
 const ProjectOverview = () => {
   const { projectId } = useParams();
@@ -61,13 +62,15 @@ const ProjectOverview = () => {
         </div>
       </div>
 
-      <TaskSection
-        projectId={projectId}
-        token={token}
-        userId={userId}
-        handleOpenModal={handleOpenModal}
-      />
-      
+      <div className='flex flex-row'>
+        <TaskSection
+          projectId={projectId}
+          token={token}
+          userId={userId}
+          handleOpenModal={handleOpenModal}
+        />
+       
+      </div>
       <Modal
         open={modalOpen}
         onClose={handleCloseModal}

@@ -30,6 +30,12 @@ namespace Ergo.Identity.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Company")
+                        .HasColumnType("text");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -41,11 +47,29 @@ namespace Ergo.Identity.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Facebook")
+                        .HasColumnType("text");
+
+                    b.Property<string>("GitHub")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Instagram")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LinkedIn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Mobile")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -68,6 +92,9 @@ namespace Ergo.Identity.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TwitterX")
                         .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")

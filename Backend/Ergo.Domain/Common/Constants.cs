@@ -26,5 +26,11 @@
         public const string MessageRequired = "Message is required.";
         public const string UserIdRequired = "User id is required.";
 
+        public const string PhotoUrlRequired = "Photo url is required.";
+
+        public const string BadgeNameRequired = "Badge name is required.";
+        public const string BadgeCountRequired = "Badge count is required.";
+        public const string BadgeTypeRequired = "Badge type is required.";
+
     }
 }

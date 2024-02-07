@@ -1,5 +1,4 @@
 ﻿using Ergo.Domain.Common;
-using Ergo.Domain.Entities.Enums;
 
 namespace Ergo.Domain.Entities
 {
