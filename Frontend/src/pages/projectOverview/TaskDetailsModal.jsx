@@ -8,6 +8,7 @@ import CommentSection from './CommentSection';
 import AttachmentSection from './AttachmetSection';
 import TimerSection from './TimerSection';
 import GithubSection from './GithubSection';
+import AssignUserTask from './AssignUserTask';
 
 
 
@@ -92,10 +93,10 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) 
                 
               </div>
               <div className="border-r border-1 border-surface-mid h-auto"></div>
-              {/* right section  */}
               <div className="w-1/3 ml-4 p-4">
                 <TimerSection/>
                 <GithubSection/>
+                <AssignUserTask token={token} task={selectedTask}/>
               </div>
             </div>
           )}
