@@ -7,6 +7,7 @@ import TaskSection from './TaskSection';
 import TaskDetailsModal from './TaskDetailsModal';
 
 
+
 const ProjectOverview = () => {
   const { projectId } = useParams();
   const [currentProject, setCurrentProject] = useState([]);
@@ -70,7 +71,6 @@ const ProjectOverview = () => {
           userId={userId}
           handleOpenModal={handleOpenModal}
         />
-       
       </div>
       <TaskDetailsModal
         modalOpen={modalOpen}

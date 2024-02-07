@@ -92,6 +92,7 @@ const AssignMember = ({ projectId, token }) => {
                         }}
                         open={selectVisible}
                         onClose={() => setSelectVisible(false)}
+
                     >
                         {users.map((user) => (
                             <Option key={user.userId} value={user.userId} onClick={() => setSelectedUserId(user.userId)}>
