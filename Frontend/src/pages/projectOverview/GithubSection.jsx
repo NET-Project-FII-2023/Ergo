@@ -1,8 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { Link } from '@mui/material';
 import api from '@/services/api';
-import { set } from 'date-fns';
 
 const GithubSection = ({ token, task, project }) => {
     const [commits, setCommits] = useState([]);
