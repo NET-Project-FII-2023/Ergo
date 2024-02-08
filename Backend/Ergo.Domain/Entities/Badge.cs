@@ -11,17 +11,19 @@ namespace Ergo.Domain.Entities
             Count = count;
             UserId = userId;
             Type = type;
+            Active = false;
         }
         public Guid BadgeId { get; set; }
         public string Name { get; set; }
         public int Count { get; set; }
         public Guid UserId { get; set; }
         public string Type { get; set; }
+        public bool Active { get; set; }
         private Badge()
         {
-            
+
         }
-        public static Result<Badge> Create(string name,int count, Guid userId,string type)
+        public static Result<Badge> Create(string name, int count, Guid userId, string type)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -39,7 +41,7 @@ namespace Ergo.Domain.Entities
             {
                 return Result<Badge>.Failure(Constants.BadgeTypeRequired);
             }
-            return Result<Badge>.Success(new Badge(name, count, userId,type));
+            return Result<Badge>.Success(new Badge(name, count, userId, type));
         }
         public Result<Badge> UpdateCount(int count)
         {
@@ -48,6 +50,43 @@ namespace Ergo.Domain.Entities
                 return Result<Badge>.Failure(Constants.BadgeCountRequired);
             }
             Count = count;
+            switch (Type)
+            {
+                case "Innovator":
+                case "Quality-Master":
+                case "Problem-Solver":
+                case "Team-Player":
+                    if (count >= 5)
+                    {
+                        Active = true;
+                    }
+                    break;
+                case "TasksDone":
+                    if (count >= 100)
+                    {
+                        Active = true;
+                    }
+                    break;
+                case "CommentsMade":
+                    if (count >= 50)
+                    {
+                        Active = true;
+                    }
+                    break;
+                case "ProjectsMade":
+                    if (count >= 10)
+                    {
+                        Active = true;
+                    }
+                    break;
+                case "HoursWorked":
+                    if (count >= 100)
+                    {
+                        Active = true;
+                    }
+                    break;
+            }
+
             return Result<Badge>.Success(this);
         }
 

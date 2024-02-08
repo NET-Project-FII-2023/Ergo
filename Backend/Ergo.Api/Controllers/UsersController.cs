@@ -6,6 +6,8 @@ using Ergo.Application.Features.Users.Queries.GetAll;
 using Ergo.Application.Features.Users.Queries.GetByEmail;
 using Ergo.Application.Features.Users.Queries.GetById;
 using Ergo.Application.Features.Users.Queries.GetByProjectId;
+using Ergo.Application.Features.Users.Queries.GetUserStats;
+using Ergo.Application.Features.Users.Queries.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -83,6 +85,7 @@ public class UsersController : ApiControllerBase
         }
         return Ok(result);
     }
+
     [Authorize(Roles = "User")]
     [HttpGet("ByEmail/{email}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -96,6 +99,7 @@ public class UsersController : ApiControllerBase
         }
         return Ok(result);
     }
+
     [Authorize(Roles ="Admin")]
     [HttpPut("/role/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -112,6 +116,7 @@ public class UsersController : ApiControllerBase
         }
         return Ok(result);
     }
+
     [Authorize(Roles = "User")]
     [HttpGet("ByProjectId/{projectId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -125,6 +130,7 @@ public class UsersController : ApiControllerBase
         }
         return Ok(result);
     }
+
     [Authorize(Roles = "User")]
     [HttpGet("photo/{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -136,6 +142,29 @@ public class UsersController : ApiControllerBase
         {
             return BadRequest(result);
         }
+        return Ok(result);
+    }
+    [Authorize(Roles = "User")]
+    [HttpGet("stats/{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserStats(string userId)
+    {
+        var query = new GetUserStatsQuery() { UserId = userId };
+        var result = await Mediator.Send(query);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "User")]
+    [HttpGet("search/{searchValue}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> SearchUsers(string searchValue)
+    {
+        var query = new SearchUsersQuery { SearchValue = searchValue };
+        var result = await Mediator.Send(query);
         return Ok(result);
     }
 
