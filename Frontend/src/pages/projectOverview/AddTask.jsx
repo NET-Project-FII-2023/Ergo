@@ -157,20 +157,18 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
             <div className='m-2'>
               <ErgoLabel labelName="Repository branch" />
               <Select
-  value={selectedBranch} 
-  onChange={(value) => handleBranchSelectionChange(value)}
-  className="!border-surface-mid-dark mb-3 text-surface-light focus:!border-secondary"
-  labelProps={{
-    className: "before:content-none after:content-none",
-  }}
-  placeholder='Select branch'
->
-  {branches.map(branch => (
-    <Option key={branch} value={branch} className='text-surface-mid-light'>{branch}</Option>
-  ))}
-</Select>
-
-
+                value={selectedBranch} 
+                onChange={(value) => handleBranchSelectionChange(value)}
+                className="!border-surface-mid-dark mb-3 text-surface-light focus:!border-secondary"
+                labelProps={{
+                  className: "before:content-none after:content-none",
+                }}
+                placeholder='Select branch'
+              >
+                {branches.map(branch => (
+                  <Option key={branch} value={branch} className='text-surface-mid-light'>{branch}</Option>
+                ))}
+            </Select>
             </div>
             <div className='m-2 self-end'>
               <Button size="sm" className="bg-secondary hover:bg-primary" onClick={handleAddTask}>
