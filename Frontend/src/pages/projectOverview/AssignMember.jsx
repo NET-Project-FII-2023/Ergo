@@ -4,7 +4,7 @@ import { Select, Option } from '@material-tailwind/react';
 import api from '@/services/api';
 import { toast } from "react-toastify";
 
-const AssignMember = ({ projectId, token }) => {
+const AssignMember = ({ projectId, token, onMemberAssigned }) => {
     const [showSelect, setShowSelect] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState('');
@@ -12,7 +12,7 @@ const AssignMember = ({ projectId, token }) => {
     const [selectVisible, setSelectVisible] = useState(false);
     const [showButtons, setShowButtons] = useState(false);
 
-    const handleClick = async () => {
+    const fetchUsers = async () => {
         try {
             const response = await api.get('/api/v1/Users', {
                 headers: {
@@ -50,6 +50,8 @@ const AssignMember = ({ projectId, token }) => {
                 setShowButtons(false);
                 console.log('User assigned successfully');
                 toast.success('User assigned successfully');
+                onMemberAssigned(); // Call the onMemberAssigned function here
+                fetchUsers();
 
             } else {
                 console.error('Error assigning user:', response);
@@ -78,7 +80,7 @@ const AssignMember = ({ projectId, token }) => {
     return (
         <div>
             {!showSelect ? (
-                <Button onClick={handleClick} className='text-gray-300 hover:text-surface-light'>
+                <Button onClick={fetchUsers} className='text-gray-300 hover:text-surface-light'>
                     Assign Member
                 </Button>
             ) : (
