@@ -33,7 +33,6 @@ export function Profile() {
         if (response.status === 200) {
           setUserData({
             name: response.data.user?.name || "John Doe",
-            id: response.data.user?.userId || "Unknown id",
             username: response.data.user?.username || "Unknown username",
             email: response.data.user?.email,
             bio: response.data.user?.bio,
