@@ -69,4 +69,11 @@ public class ProjectRepository : BaseRepository<Project>, IProjectRepository
         context.SaveChanges();
         return Task.FromResult(true);
     }
+    public Task<int> GetNumberOfProjectsByUserIdAsync(Guid userId)
+    {
+        return context.Users
+            .Where(u => u.UserId == userId)
+            .SelectMany(u => u.Projects)
+            .CountAsync();
+    }
 }

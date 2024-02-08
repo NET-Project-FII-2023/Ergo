@@ -29,4 +29,18 @@ public class TaskItemRepository : BaseRepository<TaskItem>, ITaskItemRepository
         }
         return Result<string>.Success(taskItem.AssignedUser.UserId.ToString());
     }
+    public Task<int> GetNumberOfTasksByUserIdAsync(Guid userId)
+    {
+        return context.TaskItems.CountAsync(x => x.AssignedUser.UserId == userId);
+    }
+
+    public async Task<int> GetTotalHoursWorkedByUserIdAsync(Guid userId)
+    {
+        var totalHours = await context.TaskItems
+            .Where(x => x.AssignedUser.UserId == userId)
+            .Select(x => x.TotalTimeSpent.TotalHours)
+            .SumAsync();
+
+        return (int)totalHours;
+    }
 }
