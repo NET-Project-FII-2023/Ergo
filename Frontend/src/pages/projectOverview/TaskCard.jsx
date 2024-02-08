@@ -1,36 +1,32 @@
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 
-const formatDeadline = (deadline) => {
+  const formatDeadline = (deadline) => {
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
     const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, options);
     return formattedDeadline;
   };
 
-
-  const TaskCard = ({ task, handleOpenModal }) => (
+  const TaskCard = ({ task, handleOpenModal, color }) => (
     <Card
     key={task.taskItemId}
-    className={`mb-4 opacity-80 cursor-pointer `}
+    className={`mb-4 opacity-80 cursor-pointer hover:opacity-60`}
     style={{
-      backgroundColor: "#2f2b3a",
+      backgroundColor: color,
     }}
     onClick={() => handleOpenModal(task)}
   >
-      <CardContent className='transition duration-200 ease-in-out hover:bg-surface-mid'>
-        <Typography gutterBottom className='text-white'>
+      <CardContent className='transition duration-200  ease-in-out'>
+        <p  className='text-white mb-2 text-lg'>
           {task.taskName}
-        </Typography>
-        <Typography variant="body2" className='text-surface-light' component="p">
+        </p>
+        <p className='text-gray-200 my-1 text-sm' component="p">
           {task.description}
-        </Typography>
+        </p>
         <div className='flex flex-row'>
-          <Typography variant="body2" className='text-surface-light' component="p" mr={1}>
-            Deadline:
-          </Typography>
-          <Typography variant="body2" className='text-surface-light' component="p">
+          <p className='text-gray-200 mt-1 text-xs' component="p">
             {formatDeadline(task.deadline)}
-          </Typography>
+          </p>
         </div>
       </CardContent>
     </Card>
