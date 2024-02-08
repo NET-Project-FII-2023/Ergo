@@ -23,10 +23,10 @@ namespace Ergo.API.IntegrationTests.Base
             };
             var tasks = new List<TaskItem>
             {
-                TaskItem.Create("Ergo", "Create project", DateTime.UtcNow,"John",Guid.NewGuid()).Value,
-                TaskItem.Create("Labs", "Create project", DateTime.UtcNow,"George",Guid.NewGuid()).Value,
-                TaskItem.Create("Github", "Create project", DateTime.UtcNow,"John",Guid.NewGuid()).Value,
-                TaskItem.Create("LFAC", "Create project", DateTime.UtcNow,"Josh",Guid.NewGuid()).Value,
+                TaskItem.Create("Ergo", "Create project", DateTime.UtcNow,"John",Guid.NewGuid(), null).Value,
+                TaskItem.Create("Labs", "Create project", DateTime.UtcNow,"George",Guid.NewGuid(), null).Value,
+                TaskItem.Create("Github", "Create project", DateTime.UtcNow,"John",Guid.NewGuid(), null).Value,
+                TaskItem.Create("LFAC", "Create project", DateTime.UtcNow,"Josh",Guid.NewGuid(), null).Value,
 
             };
             var users = new List<User>

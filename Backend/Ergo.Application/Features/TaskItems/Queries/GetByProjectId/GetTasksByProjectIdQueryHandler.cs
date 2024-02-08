@@ -68,13 +68,13 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
                 taskItemDtos.Add(new TaskItemDto
                 {
                     TaskItemId = taskItem.TaskItemId,
-                    BranchId = taskItem.BranchId,
                     TaskName = taskItem.TaskName,
                     Description = taskItem.Description,
                     Deadline = taskItem.Deadline,
                     ProjectId = taskItem.ProjectId,
                     State = taskItem.State,
                     AssignedUser = assignedUser,
+                    Branch = taskItem.Branch
                 });
             }
 
