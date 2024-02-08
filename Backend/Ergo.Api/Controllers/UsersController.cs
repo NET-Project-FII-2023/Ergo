@@ -6,6 +6,7 @@ using Ergo.Application.Features.Users.Queries.GetAll;
 using Ergo.Application.Features.Users.Queries.GetByEmail;
 using Ergo.Application.Features.Users.Queries.GetById;
 using Ergo.Application.Features.Users.Queries.GetByProjectId;
+using Ergo.Application.Features.Users.Queries.GetUserStats;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -131,6 +132,19 @@ public class UsersController : ApiControllerBase
     public async Task<IActionResult> GetPhotoByUserId(string id)
     {
         var query = new GetUserPhotoQuery() { UserId = id };
+        var result = await Mediator.Send(query);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [Authorize(Roles = "User")]
+    [HttpGet("stats/{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserStats(string userId)
+    {
+        var query = new GetUserStatsQuery() { UserId = userId };
         var result = await Mediator.Send(query);
         if (!result.Success)
         {

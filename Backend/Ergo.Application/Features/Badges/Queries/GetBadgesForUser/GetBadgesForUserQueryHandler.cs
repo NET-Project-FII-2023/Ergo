@@ -40,7 +40,8 @@ namespace Ergo.Application.Features.Badges.Queries.GetBadgesForUser
                 {
                     Name = b.Name,
                     Count = b.Count,
-                    Type = b.Type
+                    Type = b.Type,
+                    Active = b.Active
                 }).ToArray()
             };
         }

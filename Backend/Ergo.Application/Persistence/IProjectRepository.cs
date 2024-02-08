@@ -11,6 +11,6 @@ public interface IProjectRepository : IAsyncRepository<Project>
     Task<Result<List<ProjectDto>>> GetProjectsByUserId(Guid projectId);
     Task<Result<List<UserProjectDto>>> GetUsersByProjectId(Guid projectId);
     Task<bool> DeleteUserFromProjectAsync(Guid projectId, Guid userId);
-
+    Task<int> GetNumberOfProjectsByUserIdAsync(Guid userId);
 
 }
