@@ -17,13 +17,12 @@ const CommentSection = ({ task, token }) => {
             <Card className="opacity-80 cursor-pointer mb-2 rounded w-4/5 ml-2">
                 <CardContent className='p-2 rounded bg-surface-darkest'>
                     <div className='flex'>
-                        <span className='w-1/4 h-[2.3rem] rounded-full bg-surface-light mr-3'></span>
                         <div>
                             <p className="text-surface-light text-xs">
                                 Michael Jackson
                             </p>
                             <p className="text-surface-mid-light text-xs">
-                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ullam fugit minus deleniti, nisi, consequatur itaque illo possimus ducimus, voluptas veniam animi provident? Quidem alias dolores cupiditate aliquam amet voluptates dignissimos?
+                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ullam fugit minus deleniti, nisi, consequatur itaque illo possimus ducimus.
                             </p>
                         </div>
                     </div>
@@ -32,15 +31,12 @@ const CommentSection = ({ task, token }) => {
             <Card className="opacity-80 cursor-pointer mb-2 rounded w-4/5 ml-2">
                 <CardContent className='p-2 rounded bg-surface-darkest'>
                     <div className='flex'>
-                        <span className='w-1/4 h-[2.3rem] rounded-full bg-surface-light mr-3'>
-                            
-                        </span>
                         <div>
                             <p className="text-surface-light text-xs">
                                 Baracobama
                             </p>
                             <p className="text-surface-mid-light text-xs">
-                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ullam fugit minus deleniti, nisi, consequatur itaque illo possimus ducimus, voluptas veniam animi provident? Quidem alias dolores cupiditate aliquam amet voluptates dignissimos?
+                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ullam fugit minus deleniti, nisi, consequatur itaque illo possimus ducimus.
                             </p>
                         </div>
                     </div>
