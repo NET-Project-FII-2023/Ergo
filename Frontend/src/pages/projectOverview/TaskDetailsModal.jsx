@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Fade, Card, CardContent } from '@mui/material';
+import { Modal, Fade } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime'; 
 import DescriptionIcon from '@mui/icons-material/Description';
-import { Button, Typography } from '@material-tailwind/react';
+import { Typography } from '@material-tailwind/react';
 import api from '@/services/api';
 import CommentSection from './CommentSection';
 import AttachmentSection from './AttachmetSection';
@@ -11,16 +11,17 @@ import GithubSection from './GithubSection';
 import AssignUserTask from './AssignUserTask';
 
 
-
 const formatDeadline = (deadline) => {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, options);
   return formattedDeadline;
 };
 
-const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) => {
+const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, project }) => {
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [photoUrl, setPhotoUrl] = useState(null);
+  const [branches, setBranches] = useState([]);
+
 
   const handleFileInputChange = (event) => {
     const files = event.target.files;
@@ -28,28 +29,28 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) 
   };
 
 
-  useEffect(() => {
-    if (selectedTask) {
-      const fetchData = async () => {
-        try {
-          const response = await api.get(`https://localhost:7248/api/v1/Photos/${selectedTask.taskItemId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-          if (response.status === 200 && response.data.photos && response.data.photos.length > 0) {
-            setPhotoUrl(response.data.photos[0].cloudURL);
-          } else {
-            console.error('Error fetching photo:', response);
-          }
-        } catch (error) {
-          console.error('Error fetching photo:', error);
-        }
-      };
-      fetchData();
-    }
-  }, [selectedTask]);
-
+  // useEffect(() => {
+  //   if (selectedTask) {
+  //     const fetchData = async () => {
+  //         try {
+  //           const response = await api.get(`https://localhost:7248/api/v1/Photos/${selectedTask.taskItemId}`, {
+  //             headers: {
+  //               'Authorization': `Bearer ${token}`,
+  //             },
+  //           });
+  //           if (response.status === 200 && response.data.photos && response.data.photos.length > 0) {
+  //             setPhotoUrl(response.data.photos[0].cloudURL);
+  //           } else {
+  //             console.error('Error fetching photo:', response);
+  //           }
+  //         } catch (error) {
+  //           console.error('Error fetching photo:', error);
+  //         }
+  //       };
+  //       fetchData();
+  //     }
+  //   }, [selectedTask]);
+    
   return (
     <Modal
       open={modalOpen}
@@ -75,7 +76,7 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) 
                 </div>
                 
                 <p variant="body2" className='text-surface-light pl-2 py-2 pr-12  text-md' component="p">
-                  {/* {selectedTask.description} */}
+                  {selectedTask.description}
                   Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores tempore voluptatum sint? Incidunt unde doloribus distinctio asperiores esse hic laudantium reprehenderit accusantium nisi ex! Quisquam, modi nulla. Beatae, perferendis nulla.
                 </p>
                 <AttachmentSection attachedFiles={attachedFiles} handleFileInputChange={handleFileInputChange} />
@@ -95,7 +96,7 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token }) 
               <div className="border-r border-1 border-surface-mid h-auto"></div>
               <div className="w-1/3 ml-4 p-4">
                 <TimerSection/>
-                <GithubSection/>
+                <GithubSection token={token} task={selectedTask} project={project}/>
                 <AssignUserTask token={token} task={selectedTask}/>
               </div>
             </div>

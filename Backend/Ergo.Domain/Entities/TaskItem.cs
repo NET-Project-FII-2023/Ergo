@@ -7,11 +7,10 @@ namespace Ergo.Domain.Entities
     {
 
 
-        private TaskItem(string taskName, string description, DateTime deadline, string createdBy, Guid projectId)
+        private TaskItem(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, string? branch)
         {
             TaskItemId = Guid.NewGuid();
             TaskName = taskName;
-            BranchId = Utils.GenerateBranchId();
             Description = description;
             Deadline = deadline;
             State = TaskState.ToDo;
@@ -23,6 +22,7 @@ namespace Ergo.Domain.Entities
             ProjectId = projectId;
             AssignedUser = null;
             StartTime = null;
+            Branch = branch;
         }
         private TaskItem()
         {
@@ -31,7 +31,6 @@ namespace Ergo.Domain.Entities
         public User? AssignedUser { get; private set; }
         public Guid TaskItemId { get; private set; }
         public Guid ProjectId { get; set; }
-        public string BranchId { get; set; }
         public string? TaskName { get; private set; }
         public string? Description { get; private set; }
         public DateTime Deadline { get; private set; }
@@ -40,7 +39,9 @@ namespace Ergo.Domain.Entities
         public DateTime? StartTime { get; private set; }
         public TimeSpan TotalTimeSpent { get; private set; } = TimeSpan.Zero;
 
-        public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, string createdBy, Guid projectId)
+        public string? Branch { get; private set; }
+
+        public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, string? branch)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
@@ -67,7 +68,7 @@ namespace Ergo.Domain.Entities
 
 
 
-            return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, createdBy, projectId));
+            return Result<TaskItem>.Success(new TaskItem(taskName, description, deadline, createdBy, projectId, branch));
         }
 
         public Result<TaskItem> StartOrResumeTask()
@@ -100,7 +101,7 @@ namespace Ergo.Domain.Entities
         }
 
 
-        public Result<TaskItem> UpdateData(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, TaskState state)
+        public Result<TaskItem> UpdateData(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, TaskState state, string? branch)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
@@ -134,6 +135,7 @@ namespace Ergo.Domain.Entities
             LastModifiedDate = DateTime.UtcNow;
             ProjectId = projectId;
             State = state;
+            Branch = branch;
             return Result<TaskItem>.Success(this);
         }
         public Result<TaskItem> AssignUser(User user)

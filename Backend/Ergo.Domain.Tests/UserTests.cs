@@ -48,7 +48,7 @@ namespace Ergo.Domain.Tests
         {
             //Arrange
             var user = User.Create(Guid.NewGuid());
-            var task = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid());
+            var task = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid(), null);
             //Act
             var result = user.Value.AssignTask(task.Value);
             //Assert

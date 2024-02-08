@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect ,useState } from 'react';
 import { Modal } from '@mui/material';
 import {
   Button,
@@ -13,11 +13,15 @@ import {toast} from "react-toastify";
 import ErgoTextarea from '../../widgets/form_utils/ErgoTextArea';
 import { Card, CardContent} from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
+import { Select, Option } from '@material-tailwind/react';
+
 
 
 const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
   const [open, setOpen] = useState(false);
   const user = useUser();
+  const [selectedBranch, setSelectedBranch] = useState('');
+  const [branches, setBranches] = useState([]);
   const [taskDetails, setTaskDetails] = useState({
     taskName: '',
     description: '',
@@ -25,6 +29,7 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
     createdBy: user?.username,
     projectId: projectId,
     state: 1,
+    branch: ''
   });
 
   const handleOpen = () => {
@@ -36,8 +41,29 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
       createdBy: user?.username,
       projectId: projectId,
       state: 1,
+      branch: ''
     });
   };
+
+  const fetchBranches = async () => {
+    try {
+        const response = await api.post('/api/v1/GitHub/branches', { "projectId": projectId }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        if (response.status === 200) {
+            setBranches(response.data);
+            console.log("mydata", response.data);
+        }
+        else {
+            console.error("Fail");
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
 
   const handleClose = () => {
     setOpen(false);
@@ -72,6 +98,18 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
     }
   };
 
+  const handleBranchChange = (value) => {
+    setSelectedBranch(value); 
+  }
+  
+  const handleBranchSelectionChange = (value) => {
+    setSelectedBranch(value);
+    setTaskDetails((prevDetails) => ({ ...prevDetails, branch: value }));
+  }
+
+  useEffect(() => {
+    fetchBranches();
+  }, [])
   return (
     <div>
       <Card
@@ -115,6 +153,24 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
                 selectedDate={taskDetails.deadline}
                 onChange={handleDateChange}
               />
+            </div>
+            <div className='m-2'>
+              <ErgoLabel labelName="Repository branch" />
+              <Select
+  value={selectedBranch} 
+  onChange={(value) => handleBranchSelectionChange(value)}
+  className="!border-surface-mid-dark mb-3 text-surface-light focus:!border-secondary"
+  labelProps={{
+    className: "before:content-none after:content-none",
+  }}
+  placeholder='Select branch'
+>
+  {branches.map(branch => (
+    <Option key={branch} value={branch} className='text-surface-mid-light'>{branch}</Option>
+  ))}
+</Select>
+
+
             </div>
             <div className='m-2 self-end'>
               <Button size="sm" className="bg-secondary hover:bg-primary" onClick={handleAddTask}>

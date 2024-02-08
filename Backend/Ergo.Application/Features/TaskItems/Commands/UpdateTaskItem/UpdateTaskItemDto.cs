@@ -15,5 +15,6 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
         public string? CreatedBy { get; set; }
         public Guid ProjectId { get; set; }
         public TaskState State { get; set; }
+        public string? Branch { get; set; }
     }
 }

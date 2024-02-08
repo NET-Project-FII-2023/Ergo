@@ -77,6 +77,7 @@ const ProjectOverview = () => {
         handleCloseModal={handleCloseModal}
         selectedTask={selectedTask}
         token={token}
+        project={currentProject}
       />
     </div>
   );
