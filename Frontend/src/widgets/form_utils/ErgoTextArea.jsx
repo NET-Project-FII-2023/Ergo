@@ -15,7 +15,7 @@ const ErgoTextarea = ({ placeholder, onChange, value }) => {
         }}
         onChange={handleChange}
         value={value}
-        rows={3} // Setting rows to 3
+        rows={3}
       />
     );
   };
