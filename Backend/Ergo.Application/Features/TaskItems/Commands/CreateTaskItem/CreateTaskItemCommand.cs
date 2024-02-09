@@ -11,5 +11,6 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
         public string CreatedBy { get; set; } = default!;
         public Guid ProjectId { get; set; }
         public TaskState? State { get; set; } = TaskState.ToDo;
+        public string? Branch { get; set; } = default!;
     }
 }

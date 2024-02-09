@@ -13,6 +13,7 @@ import { useMaterialTailwindController, setOpenSidenav } from "@/context/Materia
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import {useUser} from "@/context/LoginRequired";
+import AddProject from "../../pages/projectOverview/AddProject";
 
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -22,37 +23,32 @@ export function Sidenav({ brandImg, brandName, routes }) {
   const {token, userId} = useUser();
 
   useEffect(() => {
-    (async () => {
-      if (!token) return;
-      if (!userId) return;
+    fetchProjects();
+}, []);
 
-      const userProjects = await getProjectsByUserId(userId, token);
-
-      if (userProjects?.success) {
-        setProjects(userProjects.projects);
-        console.log("Projects:")
-        console.log(userProjects.projects);
-      } else {
-        console.log("Error while fetching user projects");
-      }
-    })();
-  }, []);
-
-  async function getProjectsByUserId(userId, token) {
+const fetchProjects = async () => {
     try {
-      const response = await api.get(`/api/v1/Projects/GetProjectsByUserId/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status !== 200) {
-        throw new Error(response);
-      }
-      return response.data;
+        if (!token || !userId) return;
+
+        const response = await api.get(`/api/v1/Projects/GetProjectsByUserId/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (response.status === 200) {
+            setProjects(response.data.projects);
+        } else {
+            console.error('Error fetching projects:', response);
+        }
     } catch (error) {
-      console.log(`Error while getting user projects: ${error.response.data}`);
+        console.error('Error fetching projects:', error);
     }
-  }
+};
+
+const handleProjectAdded = () => {
+    fetchProjects(); // Call fetchProjects after project added
+};
 
   return (
     <aside
@@ -64,7 +60,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
         className={`relative`}
       >
         <Link to="/" className="py-5 flex items-center justify-center">
-          <img src={brandImg} alt="logo" className="h-12" />
+          <img src={brandImg} alt="logo" className="h-12 ml-[-0.75rem]" />
             <Typography
               variant="h3"
               color={"white"}
@@ -136,6 +132,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
         </li>
       ))}
         </ul>
+        <AddProject token={token} onProjectAdded={handleProjectAdded} />
       </div>
     </aside>
   );

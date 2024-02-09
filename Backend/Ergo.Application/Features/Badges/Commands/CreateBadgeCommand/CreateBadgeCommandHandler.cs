@@ -2,7 +2,7 @@
 using Ergo.Domain.Entities;
 using MediatR;
 
-namespace Ergo.Application.Features.Badges.Commands
+namespace Ergo.Application.Features.Badges.Commands.CreateBadgeCommand
 {
     public class CreateBadgeCommandHandler : IRequestHandler<CreateBadgeCommand, CreateBadgeCommandResponse>
     {
@@ -44,8 +44,7 @@ namespace Ergo.Application.Features.Badges.Commands
                 {
                     return new CreateBadgeCommandResponse
                     {
-                        Success = false,
-                        ValidationsErrors = new List<string> { "The count of the badge is greater than the count of the request" }
+                        Success = true,
                     };
                 }
 

@@ -1,4 +1,4 @@
-﻿using Ergo.Application.Features.Badges.Commands;
+﻿using Ergo.Application.Features.Badges.Commands.CreateBadgeCommand;
 using Ergo.Application.Features.Badges.Queries.GetBadgesForUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

@@ -1,13 +1,11 @@
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
-import { useDrag } from 'react-dnd';
+import { Card, CardContent } from '@mui/material';
 
-const formatDeadline = (deadline) => {
+  const formatDeadline = (deadline) => {
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
     const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, options);
     return formattedDeadline;
   };
-
 
   const TaskCard = ({ task, handleOpenModal, color }) => (
     <Card

@@ -14,5 +14,7 @@ namespace Ergo.Application.Features.TaskItems.Queries
         public Guid ProjectId { get; set; }
         public UserTaskDto? AssignedUser { get; set; }
         public TaskState State { get; set; }
+        public string? Branch { get; set; }
+
     }
 }

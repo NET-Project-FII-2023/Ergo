@@ -9,8 +9,8 @@ public static class TaskItemRepositoryMocks
 {
     internal readonly static List<TaskItem> TaskItems =
     [
-        TaskItem.Create("TaskItem 1", "Description 1", DateTime.Now.AddDays(1), "FullName 1", Guid.NewGuid()).Value,
-        TaskItem.Create("TaskItem 2", "Description 2", DateTime.Now.AddDays(2), "FullName 2", Guid.NewGuid()).Value
+        TaskItem.Create("TaskItem 1", "Description 1", DateTime.Now.AddDays(1), "FullName 1", Guid.NewGuid(), null).Value,
+        TaskItem.Create("TaskItem 2", "Description 2", DateTime.Now.AddDays(2), "FullName 2", Guid.NewGuid(), null).Value,
     ];
     
     public static ITaskItemRepository GetTaskItemRepository()

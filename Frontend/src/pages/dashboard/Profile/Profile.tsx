@@ -33,7 +33,6 @@ export function Profile() {
         if (response.status === 200) {
           setUserData({
             name: response.data.user?.name || "John Doe",
-            id: response.data.user?.userId || "Unknown id",
             username: response.data.user?.username || "Unknown username",
             email: response.data.user?.email,
             bio: response.data.user?.bio,
@@ -81,7 +80,7 @@ export function Profile() {
                   <Spinner className={'h-8 w-8'}/>
                 </div>
             )}
-            {userData && <Badges userData={userData}/>}
+            {userData && <Badges currentViewedId={userId || currentUser.userId}/>}
             {isOwnProfile && <div className="flex items-center justify-between flex-wrap gap-6">
               <Link to="/auth/sign-in" className="ml-auto">
                 <Button

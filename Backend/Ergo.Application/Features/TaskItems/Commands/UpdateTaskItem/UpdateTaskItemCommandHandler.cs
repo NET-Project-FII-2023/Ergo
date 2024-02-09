@@ -60,7 +60,7 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
                 };
             }
 
-            var updateResult = taskItem.Value.UpdateData(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId, request.State);
+            var updateResult = taskItem.Value.UpdateData(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId, request.State, request.Branch);
             if (!updateResult.IsSuccess)
             {
                 return new UpdateTaskItemCommandResponse
@@ -80,7 +80,8 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
                     Deadline = result.Value.Deadline,
                     CreatedBy = result.Value.CreatedBy,
                     ProjectId = result.Value.ProjectId,
-                    State = result.Value.State
+                    State = result.Value.State,
+                    Branch = result.Value.Branch
                 }
             };
         }

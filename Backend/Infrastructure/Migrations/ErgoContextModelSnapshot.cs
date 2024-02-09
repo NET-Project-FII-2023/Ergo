@@ -28,6 +28,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("Count")
                         .HasColumnType("integer");
 
@@ -207,8 +210,7 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("AssignedUserUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("BranchId")
-                        .IsRequired()
+                    b.Property<string>("Branch")
                         .HasColumnType("text");
 
                     b.Property<string>("CreatedBy")

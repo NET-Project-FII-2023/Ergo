@@ -60,7 +60,8 @@ const MembersList = ({projectId, token}) => {
                     </CardContent>
                 </Card>
             ))}
-            <AssignMember projectId={projectId} token={token}/>
+            <AssignMember projectId={projectId} token={token} onMemberAssigned={fetchMembers} />
+
         </div>
     );
 }

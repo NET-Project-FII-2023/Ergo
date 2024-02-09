@@ -4,6 +4,8 @@ import api from "@/services/api";
 import { useUser } from "@/context/LoginRequired";
 import { Typography, Modal, Fade } from '@mui/material';
 import TaskSection from './TaskSection';
+import TaskDetailsModal from './TaskDetailsModal';
+
 
 
 const ProjectOverview = () => {
@@ -69,34 +71,14 @@ const ProjectOverview = () => {
           userId={userId}
           handleOpenModal={handleOpenModal}
         />
-       
       </div>
-      <Modal
-        open={modalOpen}
-        onClose={handleCloseModal}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
-        closeAfterTransition
-      >
-        <Fade in={modalOpen}>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1/2 max-h-80 overflow-y-auto bg-white rounded-md shadow-md p-8">
-            <h2 id="modal-title">Task Details</h2>
-            {selectedTask && (
-              <>
-                <Typography variant="h6" gutterBottom>
-                  {selectedTask.taskName}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {selectedTask.description}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  Deadline: {selectedTask.deadline}
-                </Typography>
-              </>
-            )}
-          </div>
-        </Fade>
-      </Modal>
+      <TaskDetailsModal
+        modalOpen={modalOpen}
+        handleCloseModal={handleCloseModal}
+        selectedTask={selectedTask}
+        token={token}
+        project={currentProject}
+      />
     </div>
   );
 };

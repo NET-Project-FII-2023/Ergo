@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Ergo.Application.Features.Badges.Commands
+namespace Ergo.Application.Features.Badges.Commands.CreateBadgeCommand
 {
     public class CreateBadgeCommandValidator : AbstractValidator<CreateBadgeCommand>
     {
@@ -11,9 +11,8 @@ namespace Ergo.Application.Features.Badges.Commands
                 .NotNull()
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
             RuleFor(p => p.Count)
-                .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
-                .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0.");
+                .GreaterThanOrEqualTo(0).WithMessage("{PropertyName} must be greater than or equal to 0.");
             RuleFor(p => p.UserId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();
