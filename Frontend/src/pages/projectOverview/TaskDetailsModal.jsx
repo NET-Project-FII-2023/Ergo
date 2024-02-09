@@ -27,29 +27,6 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
     const files = event.target.files;
     setAttachedFiles([...attachedFiles, ...files]);
   };
-
-
-  // useEffect(() => {
-  //   if (selectedTask) {
-  //     const fetchData = async () => {
-  //         try {
-  //           const response = await api.get(`https://localhost:7248/api/v1/Photos/${selectedTask.taskItemId}`, {
-  //             headers: {
-  //               'Authorization': `Bearer ${token}`,
-  //             },
-  //           });
-  //           if (response.status === 200 && response.data.photos && response.data.photos.length > 0) {
-  //             setPhotoUrl(response.data.photos[0].cloudURL);
-  //           } else {
-  //             console.error('Error fetching photo:', response);
-  //           }
-  //         } catch (error) {
-  //           console.error('Error fetching photo:', error);
-  //         }
-  //       };
-  //       fetchData();
-  //     }
-  //   }, [selectedTask]);
     
   return (
     <Modal
@@ -94,7 +71,7 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
               </div>
               <div className="border-r border-1 border-surface-mid h-auto"></div>
               <div className="w-1/3 ml-4 p-4">
-                <TimerSection/>
+                <TimerSection task={selectedTask} token={token}/>
                 <GithubSection token={token} task={selectedTask} project={project}/>
                 <AssignUserTask token={token} task={selectedTask}/>
               </div>
