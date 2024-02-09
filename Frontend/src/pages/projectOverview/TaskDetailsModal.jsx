@@ -94,7 +94,7 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
               </div>
               <div className="border-r border-1 border-surface-mid h-auto"></div>
               <div className="w-1/3 ml-4 p-4">
-                <TimerSection/>
+                <TimerSection task={selectedTask} token={token}/>
                 <GithubSection token={token} task={selectedTask} project={project}/>
                 <AssignUserTask token={token} task={selectedTask}/>
               </div>
