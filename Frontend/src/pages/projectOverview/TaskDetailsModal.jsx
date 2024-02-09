@@ -77,7 +77,6 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
                 
                 <p variant="body2" className='text-surface-light pl-2 py-2 pr-12  text-md' component="p">
                   {selectedTask.description}
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolores tempore voluptatum sint? Incidunt unde doloribus distinctio asperiores esse hic laudantium reprehenderit accusantium nisi ex! Quisquam, modi nulla. Beatae, perferendis nulla.
                 </p>
                 <AttachmentSection attachedFiles={attachedFiles} handleFileInputChange={handleFileInputChange} />
 
@@ -86,7 +85,7 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
                     {file.name}
                   </Typography>
                 ))}
-                <CommentSection/>
+                <CommentSection token={token} task={selectedTask}/>
                 <div className="flex items-center  px-2 mt-6">
                   <AccessTimeIcon className="text-secondary" fontSize='extraSmall'/>
                   <p className='text-surface-light text-sm ml-1'> {formatDeadline(selectedTask.deadline)}</p>

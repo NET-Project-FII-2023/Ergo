@@ -37,6 +37,11 @@ const GithubSection = ({ token, task, project }) => {
         const newUrl = apiUrl.replace("https://api.github.com/repos/", "https://github.com/").replace("git/commits", "commit");
         return newUrl;
     }
+    const formatTime = (deadline) => {
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, options);
+        return formattedDeadline;
+      };
 
     return (
         <div className='mt-6'>
@@ -55,6 +60,14 @@ const GithubSection = ({ token, task, project }) => {
                             {commits.map(item => (
                                 <li key={item.commitName} className="relative pl-4 py-2 text-sm">
                                     <a href={modifyUrl(item.url)} className='text-surface-light hover:underline' target="_blank">{item.commitName}</a>
+                                    <div>
+                                        <span className='text-xs text-surface-mid-light font-semibold'>
+                                            {item.author} -
+                                        </span>
+                                        <span className='text-xs text-surface-mid-light ml-1'>
+                                            {formatTime(item.date)}
+                                        </span>
+                                    </div>
                                     <span className="absolute top-0 left-0 w-1 h-full bg-surface-mid"></span>
                                 </li>
                             ))}
