@@ -5,9 +5,11 @@ import api from '@/services/api';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { Card, CardContent } from '@mui/material';
 import {toast} from "react-toastify";
+import { useUser } from '../../context/LoginRequired';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 
-const AssignUserTask = ({ token, task }) => {
+const AssignUserTask = ({ token, task, project }) => {
     const [showSelect, setShowSelect] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState('');
@@ -15,6 +17,7 @@ const AssignUserTask = ({ token, task }) => {
     const [selectVisible, setSelectVisible] = useState(false);
     const [showButtons, setShowButtons] = useState(false);
     const [loadedAssignedUser, setLoadedAssignedUser] = useState({});
+    const currentUser = useUser();
 
     const fetchCurrentTask = async () => {
         try {
@@ -111,31 +114,33 @@ const AssignUserTask = ({ token, task }) => {
             </div>
             <div>
             {!showSelect ? (
-                <>
-                 
-                {!loadedAssignedUser ? (<Button onClick={handleClick} className='text-surface-light bg-surface-darkest hover:opacity-70'>
-                    Assign Member
-                </Button>) : (<Card className="opacity-80 cursor-pointer mb-2 rounded"
-                 style={{
-                    backgroundColor: "#1a1625",
-                  }}>
-                    <CardContent className='rounded bg-surface-darkest'>
-                        <div className='flex'>
- 
-                            <div>
-                                <p className="text-surface-light text-xs">
-                                   #{loadedAssignedUser.username}
-                                </p>
-                                <p className="text-surface-mid-light text-xs">
-                                    {loadedAssignedUser.name}
-                                </p>
+                <div>   
+                    {!loadedAssignedUser ? (
+                    project.createdBy === currentUser.username &&
+                    <Button onClick={handleClick} className='text-surface-light bg-surface-darkest hover:opacity-70'>
+                        <PersonAddIcon fontSize='small'></PersonAddIcon>
+                    </Button>
+                    ) : (<Card className="opacity-80 cursor-pointer mb-2 rounded"
+                    style={{
+                        backgroundColor: "#1a1625",
+                    }}>
+                        <CardContent className='rounded bg-surface-darkest'>
+                            <div className='flex'>
+    
+                                <div>
+                                    <p className="text-surface-light text-xs">
+                                    #{loadedAssignedUser.username}
+                                    </p>
+                                    <p className="text-surface-mid-light text-xs">
+                                        {loadedAssignedUser.name}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                
-                    </CardContent>
-                </Card>)}
-                
-            </>
+                    
+                        </CardContent>
+                    </Card>)}
+                    
+                </div>
             ) : (  
                 <div>
                     <Select

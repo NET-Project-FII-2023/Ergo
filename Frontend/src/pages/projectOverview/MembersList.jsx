@@ -70,7 +70,8 @@ const MembersList = ({ project, token }) => {
                     </CardContent>
                 </Card>
             ))}
-            <AssignMember projectId={project.projectId} token={token} onMemberAssigned={fetchMembers} />
+            {currentUser.username === project.createdBy && <AssignMember project={project} token={token} onMemberAssigned={fetchMembers} />}
+            
         </div>
     );
 }

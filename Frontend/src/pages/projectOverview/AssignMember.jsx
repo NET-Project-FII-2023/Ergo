@@ -5,16 +5,16 @@ import api from '@/services/api';
 import { toast } from "react-toastify";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
-const AssignMember = ({ projectId, token, onMemberAssigned }) => {
+
+const AssignMember = ({ project, token, onMemberAssigned }) => {
     const [showSelect, setShowSelect] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState('');
     const [selectedUser, setSelectedUser] = useState('');
     const [selectVisible, setSelectVisible] = useState(false);
     const [showButtons, setShowButtons] = useState(false);
-    const [members, setMembers] = useState([]);
 
-     const fetchUsers = async () => {
+    const fetchUsers = async () => {
         try {
    
             const usersResponse = await api.get('/api/v1/Users', {
@@ -23,7 +23,7 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
                 },
             });
     
-            const membersResponse = await api.get(`/api/v1/Users/ByProjectId/${projectId}`, {
+            const membersResponse = await api.get(`/api/v1/Users/ByProjectId/${project.projectId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -46,13 +46,13 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
 
     useEffect(() => {
         fetchUsers();
-    }, [projectId])
+    }, [project.projectId])
 
     const handleConfirmAssign = async () => {
         try {
             const response = await api.post(`/api/v1/Projects/AssignUserToProject`, {
                 userId: selectedUserId,
-                projectId: projectId
+                projectId: project.projectId
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -73,8 +73,6 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
                 toast.error('Error assigning user:' +  response);
             }
         } catch (error) {
-            console.log("User id", selectedUserId);
-            console.log("project id", projectId);
             console.error('Error assigning user:', error);
             toast.error('Error assigning user:' +  error);
         }
@@ -96,7 +94,7 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
         <div>
             {users.length > 0 ? (
                 <>
-                 {!showSelect ? (
+                 {!showSelect  ? (
                     <Button onClick={() => {fetchUsers(); setShowSelect(true);}} className='w-full bg-surface-dark text-surface-light hover:opacity-70 hover:text-gray-100'>
                         <PersonAddIcon fontSize='small'></PersonAddIcon>
                     </Button>
