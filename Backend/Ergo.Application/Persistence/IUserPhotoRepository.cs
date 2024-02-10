@@ -5,7 +5,6 @@ namespace Ergo.Application.Persistence
 {
     public interface IUserPhotoRepository : IAsyncRepository<UserPhoto>
     {
-        Task<Result<string>> GetUserPhotoByUserIdAsync(string userId);
-
+        Task<Result<UserPhoto>> GetUserPhotoByUserIdAsync(string userId);
     }
 }

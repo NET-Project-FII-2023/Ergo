@@ -1,4 +1,5 @@
-﻿using Ergo.Application.Persistence;
+﻿using Ergo.Application.Features.Users;
+using Ergo.Application.Persistence;
 using Ergo.Domain.Entities;
 using MediatR;
 
@@ -7,6 +8,7 @@ namespace Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto
     public class AddUserPhotoCommandHandler : IRequestHandler<AddUserPhotoCommand, AddUserPhotoCommandResponse>
     {
         private readonly IUserPhotoRepository userPhotoRepository;
+
         public AddUserPhotoCommandHandler(IUserPhotoRepository userPhotoRepository)
         {
             this.userPhotoRepository = userPhotoRepository;
@@ -24,6 +26,7 @@ namespace Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto
                     ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
                 });
             }
+
             var userPhoto = UserPhoto.Create(request.PhotoUrl, request.UserId);
             if (!userPhoto.IsSuccess)
             {
@@ -33,13 +36,17 @@ namespace Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto
                     ValidationsErrors = new List<string> { userPhoto.Error }
                 });
             }
+
             userPhotoRepository.AddAsync(userPhoto.Value);
             return Task.FromResult(new AddUserPhotoCommandResponse
             {
-                Success = true
+                Success = true,
+                UserPhoto = new UserCloudPhotoDto
+                {
+                    UserPhotoId = userPhoto.Value.UserPhotoId,
+                    PhotoUrl = userPhoto.Value.PhotoUrl
+                }
             });
-            
         }
-
     }
 }
