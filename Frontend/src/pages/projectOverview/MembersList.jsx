@@ -4,10 +4,14 @@ import api from "@/services/api";
 import AssignMember from './AssignMember';
 import { useUser } from '../../context/LoginRequired';
 import DeleteMemberProject from './DeleteMemberProject';
+import UserAvatar from "@/common/components/UserAvatar";
+import { Tooltip } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 
 const MembersList = ({ project, token }) => {
-    const [members, setMembers] = useState([]);
     const currentUser = useUser();
+    const navigate = useNavigate();
+    const [members, setMembers] = useState([]);
 
     useEffect(() => {
         fetchMembers();
@@ -33,46 +37,58 @@ const MembersList = ({ project, token }) => {
     };
 
     return (
-        <div className='py-2'>
-            <p className='text-surface-light text-lg my-2 px-2'>
-                Assigned Members
-            </p>
-            {members.map(member => (
-                <Card
-                    style={{
-                        backgroundColor: "#2f2b3a",
-                    }}
-                    key={member.userId}
-                    className="bg-surface-darkest opacity-80 cursor-pointer mb-2 rounded"
-                >
-                    <CardContent className='p-2 rounded bg-surface-dark'>
-                        <div className='flex'>
-                            <span className='w-[2rem] h-[2rem] rounded-full bg-surface-light mr-3'>
+      <div className='py-2'>
+        <p className='text-surface-light text-lg my-2 px-2'>
+          Assigned Members
+        </p>
+        {members.map(member => (
+          <Card
+            style={{backgroundColor: "#2f2b3a"}}
+            key={member.userId}
+            className="bg-surface-darkest opacity-80 mb-2 rounded"
+          >
+            <CardContent className='p-2 rounded bg-surface-dark'>
+              <div className='flex'>
+                <Tooltip content={member.name}>
+                  <div
+                    onClick={() => navigate(`/dashboard/profile/${member.userId}`)}
+                    className={"cursor-pointer mr-3"}
+                  >
+                    <UserAvatar
+                      photoUrl={member.userPhoto.photoUrl}
+                      className={"w-[2rem] h-[2rem] rounded-full"}
+                      loadingClassName={"w-[2rem] h-[2rem] bg-surface-mid-dark rounded-full"}
+                      loadingProps={{className: "w-5 h-5"}}
+                    />
+                  </div>
+                </Tooltip>
+                <div>
+                  <p className="text-surface-light text-xs">
+                    #{member.username}
+                  </p>
+                  <p className="text-surface-mid-light text-xs">
+                    {member.email}
+                  </p>
+                </div>
+                <DeleteMemberProject
+                  project={project}
+                  token={token}
+                  currentUser={currentUser}
+                  member={member}
+                  fetchMembers={fetchMembers}/>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
 
-                            </span>
-                            <div>
-                                <p className="text-surface-light text-xs">
-                                    #{member.username}
-                                </p>
-                                <p className="text-surface-mid-light text-xs">
-                                    {member.email}
-                                </p>
-                            </div>
-                           <DeleteMemberProject
-                           project={project}
-                           token={token}
-                           currentUser={currentUser}
-                           member={member}
-                           fetchMembers={fetchMembers}/>
-                          
-                        </div>
-
-                    </CardContent>
-                </Card>
-            ))}
-            {currentUser.username === project.createdBy && <AssignMember project={project} token={token} onMemberAssigned={fetchMembers} />}
-            
-        </div>
+        {currentUser.username === project.createdBy &&
+          <AssignMember
+            project={project}
+            token={token}
+            onMemberAssigned={fetchMembers}
+          />
+        }
+      </div>
     );
 }
 
