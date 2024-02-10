@@ -120,8 +120,7 @@ const TimerSection = ({ task, token, project }) => {
                     Progress Tracking
                 </p>
             </div>
-            {task.assignedUser &&
-            (currentUser.username === project.createdBy || task.assignedUser.username === currentUser.username &&
+            {task.assignedUser && task.assignedUser.username === currentUser.username &&
                 <div className='flex'>
                     <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handleStartTimer}>
                         <p className='text-md text-surface-light'>Start</p>
@@ -132,7 +131,7 @@ const TimerSection = ({ task, token, project }) => {
                         <PauseIcon fontSize='small' className='ml-1'></PauseIcon>
                     </Button>
                 </div>
-            )}
+            }
             <div className='mt-2 flex items-center'>
                 <p className='text-surface-light mr-1 text-sm'>Elapsed Time:</p>
                 <p className='text-gray-100 text-sm'>{formatTime(elapsedTime)}</p>
