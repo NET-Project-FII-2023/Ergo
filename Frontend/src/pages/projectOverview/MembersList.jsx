@@ -55,7 +55,7 @@ const MembersList = ({ project, token }) => {
                     className={"cursor-pointer mr-3"}
                   >
                     <UserAvatar
-                      photoUrl={member.userPhoto.photoUrl}
+                      // photoUrl={member.userPhoto.photoUrl}
                       className={"w-[2rem] h-[2rem] rounded-full"}
                       loadingClassName={"w-[2rem] h-[2rem] bg-surface-mid-dark rounded-full"}
                       loadingProps={{className: "w-5 h-5"}}
