@@ -84,7 +84,7 @@ export function Profile() {
                   <Spinner className={'h-8 w-8'}/>
                 </div>
             )}
-            {userData && <Badges currentViewedId={userId || currentUser.userId}/>}
+            {userData && <Badges currentViewedId={userId || currentUser.userId} isOwnProfile={isOwnProfile} />}
             {isOwnProfile && <div className="flex items-center justify-between flex-wrap gap-6">
               <Button
                 className="shadow-md bg-secondary hover:bg-primary ml-auto"

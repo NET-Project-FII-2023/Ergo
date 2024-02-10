@@ -39,7 +39,7 @@ export function SignIn() {
       let errorMessage = "Login failed";
       if (axios.isAxiosError(error) && error.response) {
         if (error.response.data) {
-          errorMessage += ": " + error.response.data;
+          errorMessage += ": " + error.response.data.validationsErrors[0];
         }
       } else if (error instanceof Error) {
         errorMessage += ": " + error.message;

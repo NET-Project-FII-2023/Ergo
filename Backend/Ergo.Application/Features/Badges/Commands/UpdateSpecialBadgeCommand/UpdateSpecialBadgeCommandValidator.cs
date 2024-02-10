@@ -6,7 +6,7 @@ namespace Ergo.Application.Features.Badges.Commands.UpdateSpecialBadgeCommand
     {
         public UpdateSpecialBadgeCommandValidator()
         {
-            RuleFor(p => p.UserId)
+            RuleFor(p => p.VotedId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();
             RuleFor(p => p.Type)

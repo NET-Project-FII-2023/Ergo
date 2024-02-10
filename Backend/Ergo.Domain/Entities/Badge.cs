@@ -11,7 +11,15 @@ namespace Ergo.Domain.Entities
             Count = count;
             UserId = userId;
             Type = type;
-            Active = false;
+            if (type == "Innovator" || type == "Quality-Master" || type == "Problem-Solver" || type == "Team-Player")
+            {
+                Active = true;
+            }
+            else
+            {
+                Active = false;
+
+            }
         }
         public Guid BadgeId { get; set; }
         public string Name { get; set; }
@@ -41,6 +49,7 @@ namespace Ergo.Domain.Entities
             {
                 return Result<Badge>.Failure(Constants.BadgeTypeRequired);
             }
+
             return Result<Badge>.Success(new Badge(name, count, userId, type));
         }
         public Result<Badge> UpdateCount(int count)

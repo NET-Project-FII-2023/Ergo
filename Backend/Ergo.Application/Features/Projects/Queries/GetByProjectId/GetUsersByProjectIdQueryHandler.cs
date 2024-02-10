@@ -7,12 +7,15 @@ namespace Ergo.Application.Features.Users.Queries.GetByProjectId
     {
         private readonly IProjectRepository projectRepository;
         private readonly IUserManager userManager;
+        private readonly IUserPhotoRepository userPhotoRepository;
 
-        public GetUsersByProjectIdQueryHandler(IProjectRepository projectRepository, IUserManager userManager)
+        public GetUsersByProjectIdQueryHandler(IProjectRepository projectRepository, IUserManager userManager, IUserPhotoRepository userPhotoRepository)
         {
             this.projectRepository = projectRepository;
             this.userManager = userManager;
+            this.userPhotoRepository = userPhotoRepository;
         }
+
         public async Task<GetUsersByProjectIdQueryResponse> Handle(GetUsersByProjectIdQuery request, CancellationToken cancellationToken)
         {
             var project = await projectRepository.FindByIdAsync(Guid.Parse(request.ProjectId));
@@ -24,6 +27,7 @@ namespace Ergo.Application.Features.Users.Queries.GetByProjectId
                     ValidationsErrors = new List<string> { project.Error }
                 };
             }
+
             var users = await projectRepository.GetUsersByProjectId(Guid.Parse(request.ProjectId));
             if (!users.IsSuccess)
             {
@@ -33,6 +37,7 @@ namespace Ergo.Application.Features.Users.Queries.GetByProjectId
                     ValidationsErrors = new List<string> { users.Error }
                 };
             }
+
             //iterate through users and get the user by id
             var usersDto = new List<UserDto>();
             foreach (var user in users.Value)
@@ -46,15 +51,23 @@ namespace Ergo.Application.Features.Users.Queries.GetByProjectId
                         ValidationsErrors = new List<string> { userById.Error }
                     };
                 }
+
+                var userPhoto = await userPhotoRepository.GetUserPhotoByUserIdAsync(user.UserId.ToString());
                 usersDto.Add(new UserDto
                 {
                     UserId = userById.Value.UserId,
                     Name = userById.Value.Name,
                     Username = userById.Value.Username,
                     Email = userById.Value.Email,
+                    UserPhoto = userPhoto.IsSuccess ? new UserCloudPhotoDto
+                    {
+                        UserPhotoId = userPhoto.Value.UserPhotoId,
+                        PhotoUrl = userPhoto.Value.PhotoUrl
+                    } : null,
                     Roles = userById.Value.Roles
                 });
             }
+
             return new GetUsersByProjectIdQueryResponse
             {
                 Success = true,

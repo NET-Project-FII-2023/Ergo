@@ -25,7 +25,6 @@ export default function UserAvatar({photoUrl, loadingClassName, loadingProps, ..
       }, function (err, data) {
         if (err) {
           console.error("Error", err);
-          toast.error("Failed to fetch user photo")
           setHasErrors(true);
         } else if(data.Body) {
           setUserPhoto(URL.createObjectURL(new Blob([data.Body])));
