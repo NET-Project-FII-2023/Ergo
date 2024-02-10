@@ -97,10 +97,6 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
       console.error('Error adding task:', error);
     }
   };
-
-  const handleBranchChange = (value) => {
-    setSelectedBranch(value); 
-  }
   
   const handleBranchSelectionChange = (value) => {
     setSelectedBranch(value);

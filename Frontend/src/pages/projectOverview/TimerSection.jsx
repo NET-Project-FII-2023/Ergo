@@ -6,7 +6,7 @@ import PauseIcon from '@mui/icons-material/Pause';
 import MovingIcon from '@mui/icons-material/Moving';
 import { useUser } from "@/context/LoginRequired";
 
-const TimerSection = ({ task, token }) => {
+const TimerSection = ({ task, token, project }) => {
     const [startTime, setStartTime] = useState(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -23,7 +23,6 @@ const TimerSection = ({ task, token }) => {
 
                 if (response.status === 200) {
                     const { recordedTime } = response.data;
-                    // Convert recorded time to milliseconds
                     const recordedTimeMilliseconds = parseTimeToMilliseconds(recordedTime);
                     setElapsedTime(recordedTimeMilliseconds);
                 } else {
@@ -105,7 +104,6 @@ const TimerSection = ({ task, token }) => {
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     };
 
-    // Function to convert time string (HH:MM:SS) to milliseconds
     const parseTimeToMilliseconds = (timeString) => {
         const timeComponents = timeString.split(':');
         const hours = parseInt(timeComponents[0]);
@@ -122,16 +120,19 @@ const TimerSection = ({ task, token }) => {
                     Progress Tracking
                 </p>
             </div>
-            <div className='flex'>
-                <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handleStartTimer}>
-                    <p className='text-md text-surface-light'>Start</p>
-                    <TimerIcon fontSize='small' className='ml-1 text-secondary'></TimerIcon>
-                </Button>
-                <Button size="sm" className='bg-surface-darkest flex items-center' onClick={handlePauseTimer}>
-                    <p className='text-md text-surface-light'>Pause</p>
-                    <PauseIcon fontSize='small' className='ml-1'></PauseIcon>
-                </Button>
-            </div>
+            {task.assignedUser &&
+            (currentUser.username === project.createdBy || task.assignedUser.username === currentUser.username &&
+                <div className='flex'>
+                    <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handleStartTimer}>
+                        <p className='text-md text-surface-light'>Start</p>
+                        <TimerIcon fontSize='small' className='ml-1 text-secondary'></TimerIcon>
+                    </Button>
+                    <Button size="sm" className='bg-surface-darkest flex items-center' onClick={handlePauseTimer}>
+                        <p className='text-md text-surface-light'>Pause</p>
+                        <PauseIcon fontSize='small' className='ml-1'></PauseIcon>
+                    </Button>
+                </div>
+            )}
             <div className='mt-2 flex items-center'>
                 <p className='text-surface-light mr-1 text-sm'>Elapsed Time:</p>
                 <p className='text-gray-100 text-sm'>{formatTime(elapsedTime)}</p>

@@ -62,7 +62,7 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
                 <p variant="body2" className='text-surface-light pl-2 py-2 pr-12  text-md' component="p">
                   {selectedTask.description}
                 </p>
-                <AttachmentSection attachedFiles={attachedFiles} handleFileInputChange={handleFileInputChange} />
+                <AttachmentSection attachedFiles={attachedFiles} handleFileInputChange={handleFileInputChange} project={project}/>
 
                 {attachedFiles.map((file, index) => (
                   <Typography key={index} variant="body2" className="text-surface-light px-2 text-md">
@@ -78,9 +78,9 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
               </div>
               <div className="border-r border-1 border-surface-mid h-auto"></div>
               <div className="w-1/3 ml-4 p-4">
-                <TimerSection task={selectedTask} token={token} />
+                <TimerSection task={selectedTask} token={token} project={project}/>
                 <GithubSection token={token} task={selectedTask} project={project} />
-                <AssignUserTask token={token} task={selectedTask} />
+                <AssignUserTask token={token} task={selectedTask} project={project} />
               </div>
             </div>
           )}
