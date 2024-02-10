@@ -7,7 +7,7 @@ namespace Ergo.Application.Features.UserPhotos.Queries.GetUserPhoto
         public GetUserPhotoQueryResponse() : base()
         {
         }
+        public Guid UserPhotoId { get; set; }
         public string UserPhotoUrl { get; set; }
-
     }
 }

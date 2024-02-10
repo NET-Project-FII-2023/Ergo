@@ -6,6 +6,11 @@ type SocialType = {
   gitHub?: string,
 }
 
+type UserPhotoType = {
+  userPhotoId?: string,
+  photoUrl?: string,
+} | null;
+
 type BaseResponseType = {
   success: boolean,
   message: string | null,
@@ -15,6 +20,7 @@ type BaseResponseType = {
 export type UserDataType = {
   name: string,
   username: string,
+  userPhoto?: UserPhotoType,
   bio?: string,
   email?: string,
   mobile?: string,
@@ -29,6 +35,7 @@ export type GetUserByIdResponseType = {
     userId?: string,
     username?: string,
     name?: string,
+    userPhoto?: UserPhotoType,
     email?: string,
     bio?: string,
     mobile?: string,
@@ -43,6 +50,7 @@ export type PutUserResponseType = {
   user?: {
     userId?: string,
     username?: string,
+    userPhoto?: UserPhotoType,
     name?: string,
     email?: string,
     bio?: string,
@@ -51,6 +59,10 @@ export type PutUserResponseType = {
     location?: string,
     social?: SocialType,
   }
+} & BaseResponseType;
+
+export type SetUserPhotoResponseType = {
+  userPhoto?: UserPhotoType,
 } & BaseResponseType;
 
 export type ProfileCardProps = {
@@ -100,5 +112,12 @@ export type BioTextFieldProps = {
   bio?: string,
   editedBio?: string,
   onChange: (val: string) => void,
+  isInEditMode: boolean,
+}
+
+export type UserAvatarProps = {
+  photoUrl?: string,
+  editedUserPhoto: File | null,
+  setEditedUserPhoto: (file: File | null) => void,
   isInEditMode: boolean,
 }

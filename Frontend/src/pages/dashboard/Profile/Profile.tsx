@@ -34,6 +34,7 @@ export function Profile() {
           setUserData({
             name: response.data.user?.name || "John Doe",
             username: response.data.user?.username || "Unknown username",
+            userPhoto: response.data.user?.userPhoto,
             email: response.data.user?.email,
             bio: response.data.user?.bio,
             mobile: response.data.user?.mobile,

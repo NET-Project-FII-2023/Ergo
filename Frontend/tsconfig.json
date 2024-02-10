@@ -15,6 +15,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/pages/dashboard/Profile/components/Badges.jsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "vite-env.d.ts", "src/pages/dashboard/Profile/components/Badges.jsx"],
   "exclude": ["node_modules"]
 }

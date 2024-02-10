@@ -34,6 +34,7 @@ namespace Ergo.API.Controllers
             AwsSecretKeyEnv = DotNetEnv.Env.GetString("AWSSecretKey");
             this.userPhotoRepository = userPhotoRepository;
         }
+
         [Authorize(Roles = "User")]
         [HttpPost]
         [Route("upload-task-photo")]
@@ -71,6 +72,7 @@ namespace Ergo.API.Controllers
             }
             return Ok();
         }
+
         [Authorize(Roles = "User")]
         [HttpDelete]
         [Route("delete-task-photo")]
@@ -100,6 +102,7 @@ namespace Ergo.API.Controllers
             return Ok();
 
         }
+
         [Authorize(Roles = "User")]
         [HttpPost]
         [Route("upload-user-photo")]
@@ -133,9 +136,10 @@ namespace Ergo.API.Controllers
                 await storageService.DeleteFileAsync(objName, cred);
                 return BadRequest(userPhotoResult);
             }
-            return Ok();
+            return Ok(userPhotoResult);
 
         }
+
         [Authorize(Roles = "User")]
         [HttpPut]
         [Route("update-user-photo")]
@@ -175,10 +179,7 @@ namespace Ergo.API.Controllers
             {
                 return BadRequest(deleteOldPhoto);
             }
-            return Ok();
+            return Ok(userPhotoResult);
         }
-
-
     }
-
 }

@@ -7,11 +7,14 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UpdateUserCommandResponse>
     {
         private readonly IUserManager userRepository;
+        private readonly IUserPhotoRepository userPhotoRepository;
 
-        public UpdateUserCommandHandler(IUserManager userRepository)
+        public UpdateUserCommandHandler(IUserManager userRepository, IUserPhotoRepository userPhotoRepository)
         {
             this.userRepository = userRepository;
+            this.userPhotoRepository = userPhotoRepository;
         }
+
         public async Task<UpdateUserCommandResponse> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             var response = new UpdateUserCommandResponse();
@@ -25,6 +28,7 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                     ValidationsErrors = new List<string> { "User with id this does not exists" }
                 };
             }
+
             request.Name ??= user.Value.Name;
             request.Username ??= user.Value.Username;
             request.Email ??= user.Value.Email;
@@ -33,6 +37,7 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
             request.Company ??= user.Value.Company;
             request.Location ??= user.Value.Location;
             request.Social ??= user.Value.Social;
+
             var validator = new UpdateUserCommandValidator();
             var validationResult = await validator.ValidateAsync(request);
             if (!validationResult.IsValid)
@@ -43,6 +48,7 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                     ValidationsErrors = validationResult.Errors.Select(x => x.ErrorMessage).ToList()
                 };
             }
+
             var userByEmail = await userRepository.FindByEmailAsync(request.Email);
             if (userByEmail.IsSuccess && userByEmail.Value.UserId != user.Value.UserId)
             {
@@ -54,6 +60,7 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                     ValidationsErrors = new List<string> { "Email already exists" }
                 };
             }
+
             var userByUsername = await userRepository.FindByUsernameAsync(request.Username);
             if (userByUsername.IsSuccess && userByUsername.Value.UserId != user.Value.UserId)
             {
@@ -63,6 +70,8 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                     ValidationsErrors = new List<string> { "Username already exists" }
                 };
             }
+
+            var userPhoto = await userPhotoRepository.GetUserPhotoByUserIdAsync(request.Id.ToString());
             UserDto userDto = new()
             {
                 UserId = user.Value.UserId,
@@ -75,6 +84,7 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                 Location = request.Location,
                 Social = request.Social
             };
+
             var result = await userRepository.UpdateAsync(userDto);
             if (!result.IsSuccess)
             {
@@ -84,6 +94,7 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                     ValidationsErrors = new List<string> { result.Error }
                 };
             }
+
             return new UpdateUserCommandResponse
             {
                 Success = true,
@@ -91,6 +102,11 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
                 {
                     Name = result.Value.Name,
                     Username = result.Value.Username,
+                    UserPhoto = userPhoto.IsSuccess ? new UserCloudPhotoDto
+                    {
+                        UserPhotoId = userPhoto.Value.UserPhotoId,
+                        PhotoUrl = userPhoto.Value.PhotoUrl
+                    } : null,
                     Email = result.Value.Email,
                     Bio = result.Value.Bio,
                     Mobile = result.Value.Mobile,

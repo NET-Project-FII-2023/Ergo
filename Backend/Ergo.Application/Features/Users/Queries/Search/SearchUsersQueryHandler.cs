@@ -5,9 +5,12 @@ namespace Ergo.Application.Features.Users.Queries.Search
     public class SearchUsersQueryHandler : IRequestHandler<SearchUsersQuery, SearchUsersQueryResponse>
     {
         private readonly IUserManager userManager;
-        public SearchUsersQueryHandler(IUserManager userManager)
+        private readonly IUserPhotoRepository userPhotoRepository;
+
+        public SearchUsersQueryHandler(IUserManager userManager, IUserPhotoRepository userPhotoRepository)
         {
             this.userManager = userManager;
+            this.userPhotoRepository = userPhotoRepository;
         }
 
         public async Task<SearchUsersQueryResponse> Handle(SearchUsersQuery request, CancellationToken cancellationToken)
@@ -31,7 +34,15 @@ namespace Ergo.Application.Features.Users.Queries.Search
                     UserId = u.UserId,
                     Username = u.Username,
                     Name = u.Name,
-                    Email = u.Email
+                    Email = u.Email,
+                    UserPhoto = !string.IsNullOrWhiteSpace(u.UserId) &&
+                                userPhotoRepository.GetUserPhotoByUserIdAsync(u.UserId).Result.IsSuccess
+                        ? new UserCloudPhotoDto
+                        {
+                            UserPhotoId = userPhotoRepository.GetUserPhotoByUserIdAsync(u.UserId).Result.Value.UserPhotoId,
+                            PhotoUrl = userPhotoRepository.GetUserPhotoByUserIdAsync(u.UserId).Result.Value.PhotoUrl
+                        }
+                        : null
                 }).Take(25).ToArray()
             };
         }
