@@ -1,0 +1,32 @@
+export type TasksFromAllProjects = {
+  [project: string]: TaskItemDto[];
+}
+
+export type TaskItemDto = {
+  taskItemId: string;
+  branchId?: string;
+  taskName?: string;
+  description?: string;
+  deadline: Date;
+  createdBy?: string;
+  projectId: string;
+  assignedUser?: AssignedUserDto;
+  state: TaskState;
+}
+
+export type AssignedUserDto = {
+  userId?: string;
+  username?: string;
+  name?: string;
+}
+
+export enum TaskState {
+  ToDo = 1,
+  InProgress = 2,
+  Done = 3
+}
+
+export type TaskStats = {
+  count: number;
+  footerValue?: string;
+}
