@@ -1,4 +1,5 @@
 ﻿using Ergo.Application.Features.Badges.Commands.CreateBadgeCommand;
+using Ergo.Application.Features.Badges.Commands.UpdateSpecialBadgeCommand;
 using Ergo.Application.Features.Badges.Queries.GetBadgesForUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -27,6 +28,18 @@ namespace Ergo.Api.Controllers
         public async Task<IActionResult> GetByUserId(Guid id)
         {
             var result = await Mediator.Send(new GetBadgesForUserQuery { UserId = id });
+            return Ok(result);
+        }
+        [HttpPut]
+        [Authorize(Roles = "User")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateSpecialBadge(UpdateSpecialBadgeCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
             return Ok(result);
         }
     }
