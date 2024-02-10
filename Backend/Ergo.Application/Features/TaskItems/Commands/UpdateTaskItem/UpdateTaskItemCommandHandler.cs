@@ -22,7 +22,6 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
         public async Task<UpdateTaskItemCommandResponse> Handle(UpdateTaskItemCommand request,
             CancellationToken cancellationToken)
         {
-            Console.WriteLine(request.TaskItemId);
             var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
             if (!taskItem.IsSuccess)
             {

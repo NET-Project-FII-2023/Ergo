@@ -14,12 +14,14 @@ using Ergo.Domain.Common;
 public class UpdateUserCommandHandlerTests
 {
     private readonly IUserManager _userRepository;
+    private readonly IUserPhotoRepository _userPhotoRepository;
     private readonly UpdateUserCommandHandler _handler;
 
     public UpdateUserCommandHandlerTests()
     {
         _userRepository = Substitute.For<IUserManager>();
-        _handler = new UpdateUserCommandHandler(_userRepository);
+        _userPhotoRepository = Substitute.For<IUserPhotoRepository>();
+        _handler = new UpdateUserCommandHandler(_userRepository,_userPhotoRepository);
     }
 
     [Fact]
