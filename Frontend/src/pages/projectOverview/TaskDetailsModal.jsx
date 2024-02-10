@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Fade } from '@mui/material';
-import AccessTimeIcon from '@mui/icons-material/AccessTime'; 
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { Typography } from '@material-tailwind/react';
-import api from '@/services/api';
 import CommentSection from './CommentSection';
 import AttachmentSection from './AttachmetSection';
 import TimerSection from './TimerSection';
@@ -19,15 +18,12 @@ const formatDeadline = (deadline) => {
 
 const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, project }) => {
   const [attachedFiles, setAttachedFiles] = useState([]);
-  const [photoUrl, setPhotoUrl] = useState(null);
-  const [branches, setBranches] = useState([]);
-
 
   const handleFileInputChange = (event) => {
     const files = event.target.files;
     setAttachedFiles([...attachedFiles, ...files]);
   };
-    
+
   return (
     <Modal
       open={modalOpen}
@@ -36,22 +32,33 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
       aria-describedby="modal-description"
       closeAfterTransition
     >
-     <Fade in={modalOpen}>
+      <Fade in={modalOpen}>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[60rem] bg-[#2f2b3a] shadow-lg p-8 rounded outline-none">
-         
           {selectedTask && (
             <div className='flex flex-row'>
               <div className='w-2/3'>
-                <Typography variant='h4' className='text-white p-2'>
-                  {selectedTask.taskName}
-                </Typography>
+                <div className="flex flex-col px-2 mt-2">
+                <Typography variant='h4' className='text-white py-2'>
+                    {selectedTask.taskName}
+                  </Typography>
+                  {selectedTask.state === 1 && (
+                    <div className="w-[3rem] text-xs text-center rounded-md text-sm text-surface-darkest bg-secondary p-1">To Do</div>
+                  )}
+                  {selectedTask.state === 2 && (
+                    <div className="w-[5rem] text-xs text-center rounded-md text-sm text-surface-darkest bg-blue-400 p-1">In Progress</div>
+                  )}
+                  {selectedTask.state === 3 && (
+                    <div className="w-[3rem] text-xs text-center rounded-md text-sm text-surface-darkest bg-teal-300 p-1">Done</div>
+                  )}
+                  
+                </div>
                 <div className='flex flex-row mt-4 pr-2 items-center'>
                   <DescriptionIcon className='text-secondary ml-1' fontSize='extraSmall'></DescriptionIcon>
                   <p className='text-gray-300 ml-1 text-md font-semibold'>
                     Description
                   </p>
                 </div>
-                
+
                 <p variant="body2" className='text-surface-light pl-2 py-2 pr-12  text-md' component="p">
                   {selectedTask.description}
                 </p>
@@ -62,18 +69,18 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
                     {file.name}
                   </Typography>
                 ))}
-                <CommentSection token={token} task={selectedTask}/>
+                <CommentSection token={token} task={selectedTask} />
                 <div className="flex items-center  px-2 mt-6">
-                  <AccessTimeIcon className="text-secondary" fontSize='extraSmall'/>
+                  <AccessTimeIcon className="text-secondary" fontSize='extraSmall' />
                   <p className='text-surface-light text-sm ml-1'> {formatDeadline(selectedTask.deadline)}</p>
                 </div>
-                
+
               </div>
               <div className="border-r border-1 border-surface-mid h-auto"></div>
               <div className="w-1/3 ml-4 p-4">
-                <TimerSection task={selectedTask} token={token}/>
-                <GithubSection token={token} task={selectedTask} project={project}/>
-                <AssignUserTask token={token} task={selectedTask}/>
+                <TimerSection task={selectedTask} token={token} />
+                <GithubSection token={token} task={selectedTask} project={project} />
+                <AssignUserTask token={token} task={selectedTask} />
               </div>
             </div>
           )}
