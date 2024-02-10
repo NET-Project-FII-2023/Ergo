@@ -6,8 +6,8 @@ namespace Ergo.Application.Features.Users.Queries.GetByProjectId
     {
         public GetUsersByProjectIdQueryResponse() : base()
         {
-
         }
+
         public List<UserDto> Users { get; set; }
     }
 }
