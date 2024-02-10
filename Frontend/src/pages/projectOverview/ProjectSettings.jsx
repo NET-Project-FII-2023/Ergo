@@ -114,8 +114,9 @@ const ProjectSettings = ({ project, token }) => {
 
     return (
         <div className='mr-8'>
-             <Button className="w-full bg-surface-mid-dark hover:bg-surface-mid-dark" onClick={handleOpen} size="sm">
-                <SettingsIcon fontSize='extraSmall'></SettingsIcon>
+             <Button className="w-full bg-surface-dark hover:bg-surface-mid-dark flex flex-row flex items-center" onClick={handleOpen} size="sm">
+                <p className='text-center text-xs'>Settings</p>
+                <SettingsIcon fontSize='extraSmall' className='text-center text-surface-light shadow-lg ml-1'></SettingsIcon>
              </Button>
             <Modal open={open} onClose={handleClose}>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[30rem] bg-[#2f2b3a] shadow-lg p-4 rounded">

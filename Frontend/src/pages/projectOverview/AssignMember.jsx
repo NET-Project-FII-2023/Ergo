@@ -113,7 +113,7 @@ const AssignMember = ({ project, token, onMemberAssigned }) => {
                     >
                         {users.map((user) => (
                             <Option key={user.userId} value={user.userId} onClick={() => setSelectedUserId(user.userId)}>
-                                <span >{user.name}</span> (#{user.username})
+                                <span >{user.name}</span> (@{user.username})
                             </Option>
                         ))}
                     </Select>

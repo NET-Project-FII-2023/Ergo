@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from "@/services/api";
 import { useUser } from "@/context/LoginRequired";
-import { Typography, Modal, Fade } from '@mui/material';
+import { Typography } from '@mui/material';
 import TaskSection from './TaskSection';
 import TaskDetailsModal from './TaskDetailsModal';
 import ProjectSettings from './ProjectSettings';
-import SettingsIcon from '@mui/icons-material/Settings';
+
 
 
 
@@ -15,7 +15,7 @@ const ProjectOverview = () => {
   const [currentProject, setCurrentProject] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const { token, userId } = useUser();
+  const { token, userId, username } = useUser();
 
   useEffect(() => {
     fetchCurrentProject();
@@ -54,8 +54,12 @@ const ProjectOverview = () => {
     <div>
       <div className='flex justify-between items-end'>
         <div >
+          <div>
+            <span className='text-surface-light text-sm opacity-75'>Owner:</span>
+            <span className='text-surface-light text-sm opacity-50 ml-1'>@{currentProject.createdBy}</span>
+          </div>
           <Typography variant="h3" className='text-white'>
-            {currentProject.projectName}
+          {currentProject.projectName}
           </Typography>
           <div className='flex flex-row'>
             <Typography component="p" mr={1} className='text-surface-light'>
@@ -66,7 +70,9 @@ const ProjectOverview = () => {
             </Typography>
           </div>
         </div>
-        <ProjectSettings project={currentProject} token={token}/>
+        {currentProject.createdBy === username && 
+          <ProjectSettings project={currentProject} token={token}/>
+        }
       </div>
 
       <div className='flex flex-row'>

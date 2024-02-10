@@ -64,7 +64,7 @@ const MembersList = ({ project, token }) => {
                 </Tooltip>
                 <div>
                   <p className="text-surface-light text-xs">
-                    #{member.username}
+                    @{member.username}
                   </p>
                   <p className="text-surface-mid-light text-xs">
                     {member.email}
