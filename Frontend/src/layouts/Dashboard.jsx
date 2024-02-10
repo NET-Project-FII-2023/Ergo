@@ -12,7 +12,7 @@ export function Dashboard() {
         <Sidenav
             brandName={"Ergo"}
             routes={routes}
-            brandImg={"/img/logo.png"}
+            brandImg={"/img/ergo_logo.png"}
         />
       <div className="p-4 xl:ml-80">
         <DashboardNavbar />

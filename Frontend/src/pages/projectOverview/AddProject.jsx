@@ -63,8 +63,8 @@ const AddProject = ({ token, onProjectAdded }) => {
 
     return (
         <div>
-             <Button className="w-full bg-surface-mid-dark mt-2 hover:bg-surface-mid-light" onClick={handleOpen} size="sm">
-                +
+             <Button className="w-full h-12 bg-surface-mid-dark/20 mt-2 hover:bg-surface-mid-light" onClick={handleOpen} size="sm">
+                <p className='text-white opacity-100'>+</p>
              </Button>
             <Modal open={open} onClose={handleClose}>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[25rem] bg-[#2f2b3a] shadow-lg p-4 rounded">
