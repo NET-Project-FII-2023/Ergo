@@ -30,3 +30,11 @@ export type TaskStats = {
   count: number;
   footerValue?: string;
 }
+
+export type TasksStatsProps = {
+  color?: string;
+  icon: React.ReactNode;
+  title: string;
+  count: React.ReactNode;
+  footer: React.ReactNode;
+}

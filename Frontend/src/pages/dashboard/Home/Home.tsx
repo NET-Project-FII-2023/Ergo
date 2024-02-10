@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
   Typography,
   Card,
@@ -17,67 +16,17 @@ import {
   EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
 import { useUser } from "../../../context/LoginRequired";
-import { TasksStats } from "../../../widgets/cards";
 import { StatisticsChart } from "../../../widgets/charts";
 import {
   statisticsChartsData,
   projectsTableData,
 } from "../../../data";
-import { CheckBadgeIcon, CogIcon, RectangleStackIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
-import { TaskStats, TasksFromAllProjects } from "./types";
-import api from "../../../services/api";
+import TasksStats from "./components/TasksStats";
 
 export function Home() {
   const user = useUser();
   const time = new Date().getHours();
-  const [tasksFromAllProjects, setTasksFromAllProjects] = React.useState({} as TasksFromAllProjects);
-  const [tasksStats, setTasksStats] = React.useState([] as TaskStats[]);
-  const [projectsIds, setProjectsIds] = React.useState([] as string[]);
-
-  useEffect(() => {
-    (async () => {
-      //get tasks from all projects
-      try {
-        const response = await api.get(`/api/v1/TaskItems/ByProjectsOfUser/${user.userId}`, {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-        if (response.status !== 200) {
-          throw new Error(response.data.message);
-        }
-        setTasksFromAllProjects(response.data.taskItems);
-      } catch (error : any) { 
-        console.log(`Error while getting notifications: ${error.response.data}`);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    if(Object.keys(tasksFromAllProjects).length <= 0) return;
-    const projects = Object.keys(tasksFromAllProjects);
-    const stats = [{ count: 0, footerValue: `${projects.length}` }, { count: 0, footerValue: "0" }, { count: 0, footerValue: "0" }];
-    projects.forEach((project) => {
-      tasksFromAllProjects[project].forEach((task) => {
-        stats[task.state - 1].count++;
-      });
-    });
-
-    //get the number of completed projects
-    stats[2].footerValue = projects.filter((project) => {
-      return tasksFromAllProjects[project].every((task) => task.state === 3);
-    }).length.toString();
-
-    //get the next due date
-    const nextDue = tasksFromAllProjects[projects[0]].reduce((acc, task) => {
-      return acc.deadline < task.deadline ? acc : task;
-    });
-    stats[1].footerValue = `${new Date(nextDue.deadline).getDate()}th of ${new Date(nextDue.deadline).toLocaleString("en-US", { month: "long" })} ${new Date(nextDue.deadline).getFullYear()}`;
-
-    setTasksStats(stats);
-    setProjectsIds(projects);
-  }, [tasksFromAllProjects]);
   
   return (
     <div className="mt-12 text-surface-light">
@@ -91,52 +40,7 @@ export function Home() {
         <div className="xl:col-span-2">
           {/* left container */}
           <div className="grid xl:grid-cols-3 gap-x-3">
-            {tasksStats.length !== 0 && (
-              <>
-              <TasksStats
-                color="bg-[#5e4d8c]"
-                count={tasksStats[0].count}
-                title="Tasks To Do"
-                icon={React.createElement(RectangleStackIcon, {
-                  className: "w-8 h-8 text-white",
-                })}
-                footer={
-                  <Typography className="font-normal text-white">
-                    Across {projectsIds.length > 1 ? "all your" : ""} <strong>{tasksStats[0].footerValue}</strong> project{projectsIds.length != 1 ? "s" : ""}
-                  </Typography>
-                }
-              />
-              <TasksStats
-                color="bg-[#3f6da6]"
-                count={tasksStats[1].count}
-                title="Tasks In Progress"
-                icon={React.createElement(CogIcon, {
-                  className: "w-8 h-8 text-white",
-                })}
-                footer={
-                  <Typography className="font-normal text-white">
-                    Next due:&nbsp;
-                    <strong>{tasksStats[1].footerValue}</strong>
-                  </Typography>
-                }
-              />
-              <TasksStats
-                color="bg-[#42a696]"
-                count={tasksStats[2].count}
-                title="Tasks Completed"
-                icon={React.createElement(CheckBadgeIcon, {
-                  className: "w-8 h-8 text-white",
-                })}
-                footer={
-                  <Typography className="font-normal text-white">
-                    <strong>{tasksStats[2].footerValue}</strong> completed projects
-                  </Typography>
-                }
-              />
-              </>
-              )
-            } 
-
+            <TasksStats />
             <Card className="overflow-hidden mt-12 xl:col-span-3 bg-surface-dark shadow-sm">
               <CardHeader floated={false} shadow={false} color="transparent" className="m-0 flex items-center justify-between p-6">
                 <Typography variant="h5" className="mb-1 text-surface-light">

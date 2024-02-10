@@ -1,22 +1,7 @@
-import { ChevronDoubleDownIcon } from "@heroicons/react/24/outline";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Typography,
-} from "@material-tailwind/react";import React, { useState } from "react";
-;
+import {Typography} from "@material-tailwind/react";
+import { TasksStatsProps } from "./types";
 
-interface TasksStatsProps {
-  color?: string;
-  icon: React.ReactNode;
-  title: string;
-  count: React.ReactNode;
-  footer: React.ReactNode;
-}
-
-export function TasksStats({ color, icon, title, count, footer } : TasksStatsProps) {
+export function TasksStatsCard({ color, icon, title, count, footer } : TasksStatsProps) {
   return (
     <div className={`p-4 rounded-xl ${color}`}>
       <div className="flex items-center">
@@ -40,4 +25,4 @@ export function TasksStats({ color, icon, title, count, footer } : TasksStatsPro
   );
 }
 
-export default TasksStats;
+export default TasksStatsCard;
