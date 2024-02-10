@@ -8,8 +8,9 @@ export const projectsTableData = [
       { img: "/img/team-3.jpeg", name: "Jessica Doe" },
       { img: "/img/team-4.jpeg", name: "Alexander Smith" },
     ],
-    budget: "$14,000",
+    budget: "20 tasks",
     completion: 60,
+    path: "/dashboard/project/kashjfkshdfks"
   },
   {
     img: "/img/logo-atlassian.svg",
@@ -18,8 +19,9 @@ export const projectsTableData = [
       { img: "/img/team-2.jpeg", name: "Ryan Tompson" },
       { img: "/img/team-4.jpeg", name: "Alexander Smith" },
     ],
-    budget: "$3,000",
+    budget: "20 tasks",
     completion: 10,
+    path: "/dashboard/project/kashjfkshdfks"
   },
   {
     img: "/img/logo-slack.svg",
@@ -28,8 +30,9 @@ export const projectsTableData = [
       { img: "/img/team-3.jpeg", name: "Jessica Doe" },
       { img: "/img/team-1.jpeg", name: "Romina Hadid" },
     ],
-    budget: "Not set",
+    budget: "12 tasks",
     completion: 100,
+    path: "/dashboard/project/kashjfkshdfks"
   },
   {
     img: "/img/logo-spotify.svg",
@@ -40,15 +43,17 @@ export const projectsTableData = [
       { img: "/img/team-2.jpeg", name: "Ryan Tompson" },
       { img: "/img/team-1.jpeg", name: "Romina Hadid" },
     ],
-    budget: "$20,500",
+    budget: "20 tasks",
     completion: 100,
+    path: "/dashboard/project/kashjfkshdfks"
   },
   {
     img: "/img/logo-jira.svg",
     name: "Add the New Pricing Page",
     members: [{ img: "/img/team-4.jpeg", name: "Alexander Smith" }],
-    budget: "$500",
+    budget: "20 tasks",
     completion: 25,
+    path: "/dashboard/project/kashjfkshdfks"
   },
   {
     img: "/img/logo-invision.svg",
@@ -57,8 +62,20 @@ export const projectsTableData = [
       { img: "/img/team-1.jpeg", name: "Romina Hadid" },
       { img: "/img/team-4.jpeg", name: "Alexander Smith" },
     ],
-    budget: "$2,000",
+    budget: "20 tasks",
     completion: 40,
+    path: "/dashboard/project/kashjfkshdfks"
+  },
+  {
+    img: "/img/logo-slack.svg",
+    name: "Fix Platform Errors",
+    members: [
+      { img: "/img/team-3.jpeg", name: "Jessica Doe" },
+      { img: "/img/team-1.jpeg", name: "Romina Hadid" },
+    ],
+    budget: "12 tasks",
+    completion: 100,
+    path: "/dashboard/project/kashjfkshdfks"
   },
 ];
 

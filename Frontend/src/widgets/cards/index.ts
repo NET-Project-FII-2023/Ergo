@@ -1,1 +1,1 @@
-export * from "./StatisticsCard";
+export * from "./TasksStats";
