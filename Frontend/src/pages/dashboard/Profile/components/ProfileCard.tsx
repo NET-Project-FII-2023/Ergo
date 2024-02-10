@@ -13,9 +13,54 @@ export function ProfileCard({userData, setUserData, isEditable = false}: Profile
   const [editedUserData, setEditedUserData] = useState<UserDataType>(userData);
   const [editedUserPhoto, setEditedUserPhoto] = useState<File | null>(null);
 
-  const onSaveEdit = async () => {
-    setIsInEditMode(false);
+  const isFormValid = () => {
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i;
+    const urlRegex = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/i;
 
+    if (!editedUserData.name || editedUserData.name.replaceAll(" ", "").length === 0) {
+      toast.error("Name is required");
+      return false;
+    }
+
+    if (!editedUserData.email || !emailRegex.test(editedUserData.email)) {
+      toast.error("Invalid email");
+      return false;
+    }
+
+    if(editedUserData.social?.facebook && !urlRegex.test(editedUserData.social.facebook)) {
+      toast.error("Invalid Facebook URL");
+      return false;
+    }
+
+    if(editedUserData.social?.instagram && !urlRegex.test(editedUserData.social.instagram)) {
+      toast.error("Invalid Instagram URL");
+      return false;
+    }
+
+    if(editedUserData.social?.twitterX && !urlRegex.test(editedUserData.social.twitterX)) {
+      toast.error("Invalid X URL");
+      return false;
+    }
+
+    if(editedUserData.social?.linkedIn && !urlRegex.test(editedUserData.social.linkedIn)) {
+      toast.error("Invalid LinkedIn URL");
+      return false;
+    }
+
+    if(editedUserData.social?.gitHub && !urlRegex.test(editedUserData.social.gitHub)) {
+      toast.error("Invalid GitHub URL");
+      return false;
+    }
+
+    return true;
+  }
+
+  const onSaveEdit = async () => {
+    if(!isFormValid()) {
+      return;
+    }
+
+    setIsInEditMode(false);
     if(editedUserPhoto) {
       const formData = new FormData();
       formData.append('File', editedUserPhoto);
