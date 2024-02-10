@@ -5,6 +5,8 @@ import { useUser } from "@/context/LoginRequired";
 import { Typography, Modal, Fade } from '@mui/material';
 import TaskSection from './TaskSection';
 import TaskDetailsModal from './TaskDetailsModal';
+import ProjectSettings from './ProjectSettings';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 
 
@@ -50,18 +52,21 @@ const ProjectOverview = () => {
 
   return (
     <div>
-      <div>
-        <Typography variant="h3" className='text-white'>
-          {currentProject.projectName}
-        </Typography>
-        <div className='flex flex-row'>
-          <Typography component="p" mr={1} className='text-surface-light'>
-            Description:
+      <div className='flex justify-between items-end'>
+        <div >
+          <Typography variant="h3" className='text-white'>
+            {currentProject.projectName}
           </Typography>
-          <Typography variant="body1" component="p" className='text-surface-light'>
-            {currentProject.description}
-          </Typography>
+          <div className='flex flex-row'>
+            <Typography component="p" mr={1} className='text-surface-light'>
+              Description:
+            </Typography>
+            <Typography variant="body1" component="p" className='text-surface-light'>
+              {currentProject.description}
+            </Typography>
+          </div>
         </div>
+        <ProjectSettings project={currentProject}/>
       </div>
 
       <div className='flex flex-row'>

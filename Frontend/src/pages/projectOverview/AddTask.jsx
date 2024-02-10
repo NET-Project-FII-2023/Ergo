@@ -33,6 +33,7 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
   });
 
   const handleOpen = () => {
+    fetchBranches();
     setOpen(true);
     setTaskDetails({
       taskName: '',
@@ -103,9 +104,6 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
     setTaskDetails((prevDetails) => ({ ...prevDetails, branch: value }));
   }
 
-  useEffect(() => {
-    fetchBranches();
-  }, [])
   return (
     <div>
       <Card
