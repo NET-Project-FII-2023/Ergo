@@ -1,6 +1,7 @@
 using Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser;
 using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
+using Ergo.Application.Features.TaskItems.Commands.DeleteAssignedUserFromTask;
 using Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.PauseTimerTaskItem;
 using Ergo.Application.Features.TaskItems.Commands.StartTimerTaskItem;
@@ -38,7 +39,7 @@ public class TaskItemsController : ApiControllerBase
 
         if (id != Guid.Empty)
         {
-           command.TaskItemId = id;
+            command.TaskItemId = id;
         }
         else
         {
@@ -68,7 +69,6 @@ public class TaskItemsController : ApiControllerBase
         return Ok(result);
     }
 
-    [Authorize(Roles = "User")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll()
@@ -180,6 +180,19 @@ public class TaskItemsController : ApiControllerBase
 
         return Ok(result);
     }
+    //[Authorize(Roles = "User")]
+    [HttpPut("DeleteAssignedUser")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> DeleteAssignedUser(DeleteAssignedUserFromTaskCommand command)
+    {
+        var result = await Mediator.Send(command);
 
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
 
 }

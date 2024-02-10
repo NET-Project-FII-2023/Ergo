@@ -1,4 +1,5 @@
-﻿using Ergo.Application.Responses;
+﻿using Ergo.Application.Features.Users;
+using Ergo.Application.Responses;
 
 namespace Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto
 {
@@ -7,5 +8,7 @@ namespace Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto
         public AddUserPhotoCommandResponse() : base()
         {
         }
+
+        public UserCloudPhotoDto UserPhoto { get; set; }
     }
 }

@@ -5,12 +5,19 @@ import api from "../../../services/api";
 import {useUser} from "../../../context/LoginRequired";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
+import UserAvatar from "../../../common/components/UserAvatar";
+
+type UserPhotoType = {
+  userPhotoId?: string,
+  photoUrl?: string,
+} | null;
 
 type UserType = {
   userId: string,
   username: string,
   name: string,
   email: string,
+  userPhoto?: UserPhotoType,
 }
 
 type SearchUserResponseType = {
@@ -49,7 +56,7 @@ export default function UserSearch() {
         }
       } catch (error) {
         console.error(error)
-        toast("Failed to search users")
+        toast.error("Failed to search users")
         setIsMenuOpen(false)
       }
     }
@@ -117,10 +124,11 @@ export default function UserSearch() {
                 onClick={() => handleMenuItemClick(user.userId)}
               >
                 <div className={"flex items-center"}>
-                  <img
-                    src="/img/bruce-mars.jpeg"
-                    alt="bruce-mars"
+                  <UserAvatar
+                    photoUrl={user.userPhoto?.photoUrl}
                     className="h-9 w-9 rounded-full object-cover"
+                    loadingClassName="h-9 w-9 bg-surface-mid-dark"
+                    loadingProps={{className: "h-4 w-4"}}
                   />
                   <div className={'ml-2'}>
                     <p className={"text-white text-base"}>{user.name}</p>

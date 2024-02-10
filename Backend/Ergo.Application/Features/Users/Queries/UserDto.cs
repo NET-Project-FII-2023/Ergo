@@ -1,4 +1,5 @@
-﻿namespace Ergo.Application.Features.Users.Queries
+﻿using Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem;
+namespace Ergo.Application.Features.Users.Queries
 {
     public class UserDto
     {
@@ -11,6 +12,7 @@
         public string? Company { get; set; }
         public string? Location { get; set; }
         public Social? Social { get; set; }
+        public UserCloudPhotoDto? UserPhoto { get; set; }
         public List<string>? Roles { get; set; }
     }
 }

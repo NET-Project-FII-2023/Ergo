@@ -38,6 +38,8 @@ namespace Ergo.Domain.Entities
         public TaskState State { get; set; }
         public DateTime? StartTime { get; private set; }
         public TimeSpan TotalTimeSpent { get; private set; } = TimeSpan.Zero;
+        public Guid? AssignedUserUserId { get; private set; }
+
 
         public string? Branch { get; private set; }
 
@@ -145,6 +147,11 @@ namespace Ergo.Domain.Entities
                 return Result<TaskItem>.Failure("User is required");
             }
             AssignedUser = user;
+            return Result<TaskItem>.Success(this);
+        }
+        public Result<TaskItem> DeleteAssignedUser()
+        {
+            AssignedUserUserId = null;
             return Result<TaskItem>.Success(this);
         }
         public Result<TaskItem> AssignComment(Comment comment)

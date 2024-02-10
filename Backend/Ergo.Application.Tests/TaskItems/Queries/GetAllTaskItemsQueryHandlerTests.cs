@@ -11,12 +11,13 @@ namespace Ergo.Application.Tests.TaskItems.Queries;
 public class GetAllTaskItemsQueryHandlerTests
 {
     private readonly ITaskItemRepository _mockTaskItemRepository;
+    private readonly IUserManager _mockUserManager;
     private readonly GetAllTaskItemsQueryHandler _handler;
 
     public GetAllTaskItemsQueryHandlerTests()
     {
         _mockTaskItemRepository = TaskItemRepositoryMocks.GetTaskItemRepository();
-        _handler = new GetAllTaskItemsQueryHandler(_mockTaskItemRepository);
+        _handler = new GetAllTaskItemsQueryHandler(_mockTaskItemRepository,_mockUserManager);
     }
 
     [Fact]
