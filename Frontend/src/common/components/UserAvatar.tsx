@@ -13,6 +13,7 @@ type ProfileUserAvatar = {
 
 export default function UserAvatar({photoUrl, loadingClassName, loadingProps, ...props}: ProfileUserAvatar) {
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
+  const [hasErrors, setHasErrors] = useState(false);
 
   useEffect(() => {
     setUserPhoto(null)
@@ -25,6 +26,7 @@ export default function UserAvatar({photoUrl, loadingClassName, loadingProps, ..
         if (err) {
           console.error("Error", err);
           toast.error("Failed to fetch user photo")
+          setHasErrors(true);
         } else if(data.Body) {
           setUserPhoto(URL.createObjectURL(new Blob([data.Body])));
         }
@@ -32,7 +34,7 @@ export default function UserAvatar({photoUrl, loadingClassName, loadingProps, ..
     }
   }, [photoUrl]);
 
-  if (photoUrl && !userPhoto) {
+  if (photoUrl && !userPhoto && !hasErrors) {
     return (
       <div className={`flex items-center justify-center rounded-full ${loadingClassName || ""}`}>
         <Spinner color={"deep-purple"} {...loadingProps}/>

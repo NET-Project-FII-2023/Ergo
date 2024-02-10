@@ -6,10 +6,12 @@ import {UserAvatarProps} from "./types";
 
 export default function ProfileUserAvatar({photoUrl, editedUserPhoto, setEditedUserPhoto, isInEditMode = false}: UserAvatarProps) {
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
+  const [hasErrors, setHasErrors] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setUserPhoto(null)
+    setHasErrors(false)
 
     if(photoUrl) {
       s3.getObject({
@@ -19,6 +21,7 @@ export default function ProfileUserAvatar({photoUrl, editedUserPhoto, setEditedU
         if (err) {
           console.error("Error", err);
           toast.error("Failed to fetch user photo")
+          setHasErrors(true);
         } else if(data.Body) {
           setUserPhoto(URL.createObjectURL(new Blob([data.Body])));
         }
@@ -57,7 +60,7 @@ export default function ProfileUserAvatar({photoUrl, editedUserPhoto, setEditedU
     )
   }
 
-  if (photoUrl && !userPhoto) {
+  if (photoUrl && !userPhoto && !hasErrors) {
     return (
       <div className="grid h-[4.625rem] w-[4.625rem] place-items-center rounded-lg bg-surface-light">
         <Spinner color={"deep-purple"} />
