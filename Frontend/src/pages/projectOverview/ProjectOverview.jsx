@@ -66,7 +66,7 @@ const ProjectOverview = () => {
             </Typography>
           </div>
         </div>
-        <ProjectSettings project={currentProject}/>
+        <ProjectSettings project={currentProject} token={token}/>
       </div>
 
       <div className='flex flex-row'>
