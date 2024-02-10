@@ -3,6 +3,7 @@ import { Button } from '@material-tailwind/react';
 import { Select, Option } from '@material-tailwind/react';
 import api from '@/services/api';
 import { toast } from "react-toastify";
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const AssignMember = ({ projectId, token, onMemberAssigned }) => {
     const [showSelect, setShowSelect] = useState(false);
@@ -11,7 +12,7 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
     const [selectedUser, setSelectedUser] = useState('');
     const [selectVisible, setSelectVisible] = useState(false);
     const [showButtons, setShowButtons] = useState(false);
-     const [members, setMembers] = useState([]);
+    const [members, setMembers] = useState([]);
 
      const fetchUsers = async () => {
         try {
@@ -30,12 +31,8 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
     
             if (usersResponse.status === 200 && membersResponse.status === 200) {
                 const allUsers = usersResponse.data.users;
-                console.log("All USERS:", allUsers)
-
                 const assignedUserIds = membersResponse.data.users.map(user => user.userId);
-                console.log("ass user ids:", assignedUserIds)
                 const nonAssignedUsers = allUsers.filter(user => !assignedUserIds.includes(user.userId));
-                console.log("NONASSIGNED USERS:", nonAssignedUsers)
                 setUsers(nonAssignedUsers);
                 setSelectVisible(true);
                 setShowButtons(true);
@@ -101,7 +98,7 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
                 <>
                  {!showSelect ? (
                     <Button onClick={() => {fetchUsers(); setShowSelect(true);}} className='w-full bg-surface-dark text-surface-light hover:opacity-70 hover:text-gray-100'>
-                        Assign
+                        <PersonAddIcon fontSize='small'></PersonAddIcon>
                     </Button>
                  ) : (
                 <div>
@@ -135,7 +132,7 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
                 </div>
                  )}
                 </>
-            ) : (<div>pula</div>)}
+            ) : (<></>)}
         </div>
     );
     

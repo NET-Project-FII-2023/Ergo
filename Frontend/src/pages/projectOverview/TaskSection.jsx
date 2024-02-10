@@ -4,7 +4,7 @@ import TaskCard from './TaskCard';
 import AddTask from './AddTask';
 import MembersList from './MembersList';
 
-const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
+const TaskSection = ({ project, token, userId, handleOpenModal}) => {
     const [taskItems, setTaskItems] = useState([]);
     const todoTasks = taskItems.filter(taskItem => taskItem.state === 1);
     const inProgressTasks = taskItems.filter(taskItem => taskItem.state === 2);
@@ -12,17 +12,17 @@ const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
   
     useEffect(() => {
       fetchTaskItems();
-    }, [projectId, token, userId]);
+    }, [project.projectId, token, userId]);
 
   useEffect(() => {
     fetchTaskItems();
-  }, [projectId, token, userId]);
+  }, [project.projectId, token, userId]);
 
   const fetchTaskItems = async () => {
     try {
       if (!token || !userId) return;
 
-      const response = await api.get(`/api/v1/TaskItems/ByProject/${projectId}`, {
+      const response = await api.get(`/api/v1/TaskItems/ByProject/${project.projectId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -78,7 +78,7 @@ const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
               <h4 className="text-surface-light">To do</h4>
             </div>
             <AddTask
-              projectId={projectId}
+              projectId={project.projectId}
               token={token}
               userId={userId}
               onTaskAdded={fetchTaskItems}
@@ -102,7 +102,7 @@ const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
           <div className="w-[25%] text-surface-light bg-surface-darkest px-4 ml-3">
 
             <MembersList
-              projectId={projectId}
+              project={project}
               token={token}
             />
           </div>

@@ -66,7 +66,7 @@ const ProjectOverview = () => {
 
       <div className='flex flex-row'>
         <TaskSection
-          projectId={projectId}
+          project={currentProject}
           token={token}
           userId={userId}
           handleOpenModal={handleOpenModal}

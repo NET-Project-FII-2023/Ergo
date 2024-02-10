@@ -2,17 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@mui/material';
 import api from "@/services/api";
 import AssignMember from './AssignMember';
+import { useUser } from '../../context/LoginRequired';
+import DeleteMemberProject from './DeleteMemberProject';
 
-const MembersList = ({projectId, token}) => {
+const MembersList = ({ project, token }) => {
     const [members, setMembers] = useState([]);
+    const currentUser = useUser();
 
     useEffect(() => {
         fetchMembers();
-    }, [projectId, token]);
+    }, [project.projectId, token]);
 
     const fetchMembers = async () => {
         try {
-            const response = await api.get(`/api/v1/Users/ByProjectId/${projectId}`, {
+            const response = await api.get(`/api/v1/Users/ByProjectId/${project.projectId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -29,18 +32,18 @@ const MembersList = ({projectId, token}) => {
         }
     };
 
-    return(
+    return (
         <div className='py-2'>
             <p className='text-surface-light text-lg my-2 px-2'>
                 Assigned Members
             </p>
             {members.map(member => (
                 <Card
-                style={{
-                  backgroundColor: "#2f2b3a",
-                }}
-                key={member.userId} 
-                className="bg-surface-darkest opacity-80 cursor-pointer mb-2 rounded"
+                    style={{
+                        backgroundColor: "#2f2b3a",
+                    }}
+                    key={member.userId}
+                    className="bg-surface-darkest opacity-80 cursor-pointer mb-2 rounded"
                 >
                     <CardContent className='p-2 rounded bg-surface-dark'>
                         <div className='flex'>
@@ -55,13 +58,19 @@ const MembersList = ({projectId, token}) => {
                                     {member.email}
                                 </p>
                             </div>
+                           <DeleteMemberProject
+                           project={project}
+                           token={token}
+                           currentUser={currentUser}
+                           member={member}
+                           fetchMembers={fetchMembers}/>
+                          
                         </div>
-                       
+
                     </CardContent>
                 </Card>
             ))}
-            <AssignMember projectId={projectId} token={token} onMemberAssigned={fetchMembers} />
-
+            <AssignMember projectId={project.projectId} token={token} onMemberAssigned={fetchMembers} />
         </div>
     );
 }
