@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Fade } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { Typography } from '@material-tailwind/react';
-import api from '@/services/api';
 import CommentSection from './CommentSection';
 import AttachmentSection from './AttachmetSection';
 import TimerSection from './TimerSection';
@@ -19,9 +18,6 @@ const formatDeadline = (deadline) => {
 
 const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, project }) => {
   const [attachedFiles, setAttachedFiles] = useState([]);
-  const [photoUrl, setPhotoUrl] = useState(null);
-  const [branches, setBranches] = useState([]);
-
 
   const handleFileInputChange = (event) => {
     const files = event.target.files;

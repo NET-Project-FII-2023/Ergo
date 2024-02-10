@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@material-tailwind/react';
 import { Select, Option } from '@material-tailwind/react';
 import api from '@/services/api';
@@ -11,27 +11,45 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
     const [selectedUser, setSelectedUser] = useState('');
     const [selectVisible, setSelectVisible] = useState(false);
     const [showButtons, setShowButtons] = useState(false);
+     const [members, setMembers] = useState([]);
 
-    const fetchUsers = async () => {
+     const fetchUsers = async () => {
         try {
-            const response = await api.get('/api/v1/Users', {
+   
+            const usersResponse = await api.get('/api/v1/Users', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
+    
+            const membersResponse = await api.get(`/api/v1/Users/ByProjectId/${projectId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
+            if (usersResponse.status === 200 && membersResponse.status === 200) {
+                const allUsers = usersResponse.data.users;
+                console.log("All USERS:", allUsers)
 
-            if (response.status === 200) {
-                setUsers(response.data.users);
-                setShowSelect(true);
+                const assignedUserIds = membersResponse.data.users.map(user => user.userId);
+                console.log("ass user ids:", assignedUserIds)
+                const nonAssignedUsers = allUsers.filter(user => !assignedUserIds.includes(user.userId));
+                console.log("NONASSIGNED USERS:", nonAssignedUsers)
+                setUsers(nonAssignedUsers);
                 setSelectVisible(true);
                 setShowButtons(true);
             } else {
-                console.error('Error fetching users:', response);
+                console.error('Error fetching users or members');
             }
         } catch (error) {
-            console.error('Error fetching users:', error);
+            console.error('Error fetching users or members:', error);
         }
     };
+
+    useEffect(() => {
+        fetchUsers();
+    }, [projectId])
 
     const handleConfirmAssign = async () => {
         try {
@@ -50,7 +68,7 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
                 setShowButtons(false);
                 console.log('User assigned successfully');
                 toast.success('User assigned successfully');
-                onMemberAssigned(); // Call the onMemberAssigned function here
+                onMemberAssigned();
                 fetchUsers();
 
             } else {
@@ -79,11 +97,13 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
 
     return (
         <div>
-            {!showSelect ? (
-                <Button onClick={fetchUsers} className='text-gray-300 hover:text-surface-light'>
-                    Assign Member
-                </Button>
-            ) : (
+            {users.length > 0 ? (
+                <>
+                 {!showSelect ? (
+                    <Button onClick={() => {fetchUsers(); setShowSelect(true);}} className='w-full bg-surface-dark text-surface-light hover:opacity-70 hover:text-gray-100'>
+                        Assign
+                    </Button>
+                 ) : (
                 <div>
                     <Select
                         value={selectedUser}
@@ -94,7 +114,7 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
                         }}
                         open={selectVisible}
                         onClose={() => setSelectVisible(false)}
-
+    
                     >
                         {users.map((user) => (
                             <Option key={user.userId} value={user.userId} onClick={() => setSelectedUserId(user.userId)}>
@@ -102,20 +122,23 @@ const AssignMember = ({ projectId, token, onMemberAssigned }) => {
                             </Option>
                         ))}
                     </Select>
-                    {showButtons && (
-                        <div className='flex'>
+
+                        <div className='flex items-center justify-end'>
+                            <div className="text-sm text-surface-light hover:text-gray-100 hover:cursor-pointer mt-3 mr-2" onClick={handleCancel}>
+                                Cancel
+                            </div>
                             <Button size="sm" className="bg-secondary hover:bg-primary mt-2" onClick={handleConfirmAssign}>
                                 Confirm
                             </Button>
-                            <Button size ="sm" className="bg-gray-300 text-surface-darkest hover:bg-gray-400 ml-1 mt-2" onClick={handleCancel}>
-                                Cancel
-                            </Button>
+                            
                         </div>
-                    )}
                 </div>
-            )}
+                 )}
+                </>
+            ) : (<div>pula</div>)}
         </div>
     );
+    
 };
 
 export default AssignMember;
