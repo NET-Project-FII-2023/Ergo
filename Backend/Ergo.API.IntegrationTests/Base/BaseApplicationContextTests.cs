@@ -62,9 +62,10 @@ namespace Ergo.API.IntegrationTests.Base
                         var userManager = scopedServices.GetRequiredService<UserManager<ApplicationUser>>();
                         var roleManager = scopedServices.GetRequiredService<RoleManager<IdentityRole>>();
                         var userRepository = scopedServices.GetRequiredService<IUserRepository>();
+                        var badgeRepository = scopedServices.GetRequiredService<IBadgeRepository>();
                         var passwordResetCode = scopedServices.GetRequiredService<IPasswordResetCode>();
                         
-                        Seed.InitializeUserDbForTests(userManager, roleManager, userRepository,passwordResetCode);
+                        Seed.InitializeUserDbForTests(userManager, roleManager, userRepository,passwordResetCode,badgeRepository);
 
                     }
                 });

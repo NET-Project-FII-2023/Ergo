@@ -33,6 +33,7 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
   });
 
   const handleOpen = () => {
+    fetchBranches();
     setOpen(true);
     setTaskDetails({
       taskName: '',
@@ -97,19 +98,12 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
       console.error('Error adding task:', error);
     }
   };
-
-  const handleBranchChange = (value) => {
-    setSelectedBranch(value); 
-  }
   
   const handleBranchSelectionChange = (value) => {
     setSelectedBranch(value);
     setTaskDetails((prevDetails) => ({ ...prevDetails, branch: value }));
   }
 
-  useEffect(() => {
-    fetchBranches();
-  }, [])
   return (
     <div>
       <Card

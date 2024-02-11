@@ -1,11 +1,12 @@
 import {useEffect, useState} from 'react'
 import axios from "axios";
+import {PlusIcon} from "@heroicons/react/24/solid";
 import {toast} from "react-toastify";
 import { useUser } from '../../../../context/LoginRequired';
 import api from '../../../../services/api';
 import { Avatar } from '@material-tailwind/react';
 import badgesData from './badges-data'
-const Badges = ({currentViewedId}) => {
+const Badges = ({currentViewedId,isOwnProfile}) => {
   const [userBadges, setUserBadges] = useState([])
   const [userStats, setUserStats] = useState([])
   const [badgesUpdated, setBadgesUpdated] = useState(false);
@@ -95,6 +96,32 @@ const Badges = ({currentViewedId}) => {
       }
       setBadgesUpdated(true); 
     }
+    const handleVote = async (badgeType) => {
+      try{
+        const response = await api.put(`/api/v1/Badges`, {voterId: user.userId,votedId: currentViewedId, type: badgeType},
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        })
+        if(response.status === 200){
+          getUserBadges()
+          toast.success("Vote submitted")
+        } 
+      }catch (error) {
+        let errorMessage = "";
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.data) {
+            errorMessage += error.response.data.validationsErrors[0];
+          }
+        } else if (error instanceof Error) {
+          errorMessage += error.message;
+        }
+  
+        toast.error(errorMessage);
+      }
+    }
+
 
     
   useEffect(() => {
@@ -112,7 +139,12 @@ const Badges = ({currentViewedId}) => {
               <Avatar  className="rounded-full object-cover" src={badge.name} alt="badge" size="xl"/>
               <div className="flex flex-col items-center">
                 <p className="text-sm font-semibold text-gray-400 dark:text-white">{badge.type}</p>
-                <p className="text-center text-sm text-gray-200 dark:text-gray-300 border rounded-full w-8 h-5 bg-secondary ">{badge.count}</p>
+                <div className="flex flex-row items-center gap-1">
+                  <p className="text-center text-sm text-gray-200 dark:text-gray-300 border rounded-full w-8 h-5 bg-secondary ">{badge.count}</p>
+                  
+                  {(badge.type == "Innovator" || badge.type == "Quality-Master" || badge.type == "Team-Player" || badge.type == "Problem-Solver") && !isOwnProfile ? <PlusIcon className='border rounded-full bg-secondary' onClick={() => handleVote(badge.type)}/> : ""}
+                </div>
+                
               </div>
             </div>
 

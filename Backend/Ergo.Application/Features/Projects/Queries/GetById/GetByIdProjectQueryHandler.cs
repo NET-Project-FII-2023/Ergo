@@ -26,7 +26,9 @@ namespace Ergo.Application.Features.Projects.Queries.GetById
                     StartDate = project.Value.StartDate,
                     Deadline = project.Value.Deadline,
                     State = project.Value.State,
-                    Members = project.Value.Members
+                    Members = project.Value.Members,
+                    CreatedBy = project.Value.CreatedBy,
+                    GithubToken = project.Value.GithubToken
                 };
             }
 

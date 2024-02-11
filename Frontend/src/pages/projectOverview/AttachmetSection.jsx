@@ -3,8 +3,11 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { Button } from '@material-tailwind/react';
 import api from '@/services/api';
+import { useUser } from '../../context/LoginRequired';
 
-  const AttachmentSection = ({ attachedFiles, handleFileInputChange }) => {
+  const AttachmentSection = ({ attachedFiles, handleFileInputChange, project }) => {
+    const currentUser = useUser();
+
     return (
         <div className='flex flex-col mt-4 pr-2'>
             <div className='flex flex-row items-center'> 
@@ -14,12 +17,14 @@ import api from '@/services/api';
                 </p>
             </div>
             <div>
+                {project.createdBy === currentUser.username && 
                 <Button className='flex flex-row px-3 bg-surface-darkest py-2 ml-4 hover:opacity-70' size="sm">
                     <label htmlFor="file-upload" className="cursor-pointer text-gray-300 flex items-center">
                         <p className='text-md text-surface-light'>Upload</p>
                         <UploadFileIcon fontSize='small' className='ml-1'></UploadFileIcon>
                     </label>
-                </Button>
+                </Button>}
+                
                 <input
                     id="file-upload"
                     type="file"

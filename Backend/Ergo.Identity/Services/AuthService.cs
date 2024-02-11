@@ -16,11 +16,12 @@ namespace Ergo.Identity.Services
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IUserRepository userRepository;
+        private readonly IBadgeRepository badgeRepository;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly IConfiguration configuration;
         private readonly IPasswordResetCode passwordResetCodeRepository;
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, SignInManager<ApplicationUser> signInManager, IUserRepository userRepository, IPasswordResetCode passwordResetCodeRepository)
+        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, SignInManager<ApplicationUser> signInManager, IUserRepository userRepository, IPasswordResetCode passwordResetCodeRepository, IBadgeRepository badgeRepository)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
@@ -28,6 +29,7 @@ namespace Ergo.Identity.Services
             this.signInManager = signInManager;
             this.userRepository = userRepository;
             this.passwordResetCodeRepository = passwordResetCodeRepository;
+            this.badgeRepository = badgeRepository;
         }
         public async Task<(int, string)> Registeration(RegistrationModel model, string role)
         {
@@ -61,6 +63,14 @@ namespace Ergo.Identity.Services
                 await userManager.AddToRoleAsync(user, role);
             var userDomain = User.Create(Guid.Parse(user.Id));
             await userRepository.AddAsync(userDomain.Value);
+            var badgeInnovator = Badge.Create(BadgeConstants.InnovatorBadgeName,0,Guid.Parse(user.Id),BadgeConstants.InnovatorBadgeType);
+            await badgeRepository.AddAsync(badgeInnovator.Value);
+            var badgeQualityMaster = Badge.Create(BadgeConstants.QualityMasterBadgeName,0,Guid.Parse(user.Id),BadgeConstants.QualityMasterBadgeType);
+            await badgeRepository.AddAsync(badgeQualityMaster.Value);
+            var badgeProblemSolver = Badge.Create(BadgeConstants.ProblemSolverBadgeName,0,Guid.Parse(user.Id),BadgeConstants.ProblemSolverBadgeType);
+            await badgeRepository.AddAsync(badgeProblemSolver.Value);
+            var badgeTeamPlayer = Badge.Create(BadgeConstants.TeamPlayerBadgeName,0,Guid.Parse(user.Id),BadgeConstants.TeamPlayerBadgeType);
+            await badgeRepository.AddAsync(badgeTeamPlayer.Value);
             return (1, "User created successfully!");
         }
 

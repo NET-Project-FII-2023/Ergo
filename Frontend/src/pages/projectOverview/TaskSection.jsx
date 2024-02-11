@@ -3,26 +3,28 @@ import api from "@/services/api";
 import TaskCard from './TaskCard';
 import AddTask from './AddTask';
 import MembersList from './MembersList';
+import { useUser } from '../../context/LoginRequired';
 
-const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
+const TaskSection = ({ project, token, userId, handleOpenModal}) => {
     const [taskItems, setTaskItems] = useState([]);
     const todoTasks = taskItems.filter(taskItem => taskItem.state === 1);
     const inProgressTasks = taskItems.filter(taskItem => taskItem.state === 2);
     const doneTasks = taskItems.filter(taskItem => taskItem.state === 3);
+    const currentUser = useUser();
   
     useEffect(() => {
       fetchTaskItems();
-    }, [projectId, token, userId]);
+    }, [project.projectId, token, userId]);
 
   useEffect(() => {
     fetchTaskItems();
-  }, [projectId, token, userId]);
+  }, [project.projectId, token, userId]);
 
   const fetchTaskItems = async () => {
     try {
       if (!token || !userId) return;
 
-      const response = await api.get(`/api/v1/TaskItems/ByProject/${projectId}`, {
+      const response = await api.get(`/api/v1/TaskItems/ByProject/${project.projectId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -77,12 +79,14 @@ const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
             <div className='p-3 bg-surface-dark mb-4 flex items-center rounded-b'>
               <h4 className="text-surface-light">To do</h4>
             </div>
+            {currentUser.username === project.createdBy &&
             <AddTask
-              projectId={projectId}
+              projectId={project.projectId}
               token={token}
               userId={userId}
               onTaskAdded={fetchTaskItems}
             />
+            }
             {renderTaskCards(todoTasks, 'todo')}
           </div>
           <div className="w-[25%] mr-4">
@@ -102,7 +106,7 @@ const TaskSection = ({ projectId, token, userId, handleOpenModal}) => {
           <div className="w-[25%] text-surface-light bg-surface-darkest px-4 ml-3">
 
             <MembersList
-              projectId={projectId}
+              project={project}
               token={token}
             />
           </div>

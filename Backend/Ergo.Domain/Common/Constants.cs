@@ -31,6 +31,8 @@
         public const string BadgeNameRequired = "Badge name is required.";
         public const string BadgeCountRequired = "Badge count is required.";
         public const string BadgeTypeRequired = "Badge type is required.";
+        public const string VoterIdRequired = "Voter id is required.";
+        public const string VotedIdRequired = "Voted id is required.";
 
     }
 }
