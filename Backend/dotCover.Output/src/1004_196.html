@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Infrastructure\Migrations\20240131184701_Photos-To-Cloud.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Infrastructure.Migrations
+{
+    /// &lt;inheritdoc /&gt;
+    public partial class PhotosToCloud : Migration
+    {
+        /// &lt;inheritdoc /&gt;
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: &quot;ImageData&quot;,
+                table: &quot;Photos&quot;);
+
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;CloudURL&quot;,
+                table: &quot;Photos&quot;,
+                type: &quot;text&quot;,
+                nullable: false,
+                defaultValue: &quot;&quot;);
+        }
+
+        /// &lt;inheritdoc /&gt;
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: &quot;CloudURL&quot;,
+                table: &quot;Photos&quot;);
+
+            migrationBuilder.AddColumn&lt;byte[]&gt;(
+                name: &quot;ImageData&quot;,
+                table: &quot;Photos&quot;,
+                type: &quot;bytea&quot;,
+                nullable: false,
+                defaultValue: new byte[0]);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,10,0],[13,13,15,34,0],[17,13,22,35,0],[23,9,23,10,0],[27,9,27,10,0],[28,13,30,34,0],[32,13,37,44,0],[38,9,38,10,0]]);
+    </script>
+  </body>
+</html>

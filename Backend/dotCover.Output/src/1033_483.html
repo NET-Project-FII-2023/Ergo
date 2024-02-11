@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\UserRepositoryMocks.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.RepositoryMocks
+{
+    public static class UserRepositoryMocks
+    {
+        internal readonly static List&lt;User&gt; Users =
+        [
+            User.Create(new Guid()).Value,
+            User.Create(new Guid()).Value
+        ];
+
+        public static IUserRepository GetUserRepository()
+        {
+            var mockUserRepository = Substitute.For&lt;IUserRepository&gt;();
+
+            mockUserRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;User&gt;&gt;.Success(Users));
+
+            mockUserRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != Users[0].UserId &amp;&amp; id != Users[1].UserId))
+                .Returns(Result&lt;User&gt;.Failure(&quot;Not found&quot;));
+
+            return mockUserRepository;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,14,11,1],[17,9,17,10,1],[18,13,18,72,1],[20,13,20,98,1],[22,13,23,61,1],[25,13,25,39,1],[26,9,26,10,1]]);
+    </script>
+  </body>
+</html>

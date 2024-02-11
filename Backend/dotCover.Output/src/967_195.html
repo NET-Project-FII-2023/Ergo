@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Identity\Models\ApplicationUser.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Users;
+using Microsoft.AspNetCore.Identity;
+
+namespace Ergo.Identity.Models
+{
+    public class ApplicationUser : IdentityUser
+    {
+        public string? Name { get; set; }
+        public string? Bio { get; set; }
+        public string? Mobile { get; set; }
+        public string? Company { get; set; }
+        public string? Location { get; set; }
+        public string? Facebook { get; set; }
+        public string? TwitterX { get; set; }
+        public string? LinkedIn { get; set; }
+        public string? Instagram { get; set; }
+        public string? GitHub { get; set; }
+
+        public void UpdateData(string name, string email)
+        {
+            Name = name;
+            Email = email;
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,31,8,35,1],[8,36,8,40,1],[9,30,9,34,1],[9,35,9,39,0],[10,33,10,37,1],[10,38,10,42,0],[11,34,11,38,1],[11,39,11,43,0],[12,35,12,39,1],[12,40,12,44,0],[13,35,13,39,1],[13,40,13,44,0],[14,35,14,39,1],[14,40,14,44,0],[15,35,15,39,1],[15,40,15,44,0],[16,36,16,40,1],[16,41,16,45,0],[17,33,17,37,1],[17,38,17,42,0],[20,9,20,10,0],[21,13,21,25,0],[22,13,22,27,0],[23,9,23,10,0]]);
+    </script>
+  </body>
+</html>

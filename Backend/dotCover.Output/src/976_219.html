@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Infrastructure\Repositories\BadgeRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+
+namespace Infrastructure.Repositories
+{
+    public class BadgeRepository : BaseRepository&lt;Badge&gt;, IBadgeRepository
+    {
+        public BadgeRepository(ErgoContext context) : base(context)
+        {
+        }
+
+        public async Task&lt;Result&lt;Badge&gt;&gt; GetBadgeByUserIdAndType(Guid userId, string badgeType)
+        {
+            var BadgesByUserIdAndType = context.Badges
+                .Where(b =&gt; b.UserId == userId &amp;&amp; b.Type == badgeType)
+                .FirstOrDefault();
+            if (BadgesByUserIdAndType == null)
+            {
+                return Result&lt;Badge&gt;.Failure(&quot;Badge not found&quot;);
+            }
+            return Result&lt;Badge&gt;.Success(BadgesByUserIdAndType);
+        }
+
+        public Task&lt;Result&lt;List&lt;Badge&gt;&gt;&gt; GetBadgesByUserId(Guid userId)
+        {
+            var badges = context.Badges
+                .Where(b =&gt; b.UserId == userId)
+                .ToList();
+            return Task.FromResult(Result&lt;List&lt;Badge&gt;&gt;.Success(badges));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,55,9,68,1],[10,9,10,10,1],[11,9,11,10,1],[14,9,14,10,0],[15,13,17,35,0],[18,13,18,47,0],[19,13,19,14,0],[20,17,20,65,0],[22,13,22,65,0],[23,9,23,10,0],[26,9,26,10,0],[27,13,29,27,0],[30,13,30,73,0],[31,9,31,10,0]]);
+    </script>
+  </body>
+</html>

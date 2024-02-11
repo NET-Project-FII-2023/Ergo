@@ -10,7 +10,7 @@ namespace Ergo.Domain.Entities
             PhotoUrl = photoUrl;
             UserId = userId;
         }
-        private UserPhoto()
+        public UserPhoto()
         {
             
         }

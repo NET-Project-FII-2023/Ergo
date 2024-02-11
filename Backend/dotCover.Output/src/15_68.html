@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.API.IntegrationTests\Controllers\TasksControllerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.API.IntegrationTests.Base;
+using Ergo.API.IntegrationTests.Dto;
+using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
+using Ergo.Application.Features.TaskItems.Queries;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using Ergo.Domain.Entities.Enums;
+using FluentAssertions;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Security.Claims;
+
+namespace Ergo.API.IntegrationTests.Controllers
+{
+    public class TasksControllerTests : BaseApplicationContextTests
+    {
+        private const string RequestUri = &quot;/api/v1/TaskItems&quot;;
+        [Fact]
+        public async Task When_GetAllTasksQueryHandlerIsCalled_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token);
+            //Act
+            var response = await Client.GetAsync    (RequestUri);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;TasksContainer&gt;(responseString);
+            // Assert
+            result.TaskItems?.Count.Should().Be(4);
+        }
+        [Fact]
+        public async Task When_GetTaskByIdQueryHandlerIsCalledWithRightId_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token);
+            var response = await Client.GetAsync($&quot;{RequestUri}&quot;);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var tasks = JsonConvert.DeserializeObject&lt;TasksContainer&gt;(responseString);
+            var taskId = tasks.TaskItems.First().TaskItemId;
+            //Act
+            var getResponse = await Client.GetAsync($&quot;{RequestUri}/{taskId}&quot;);
+            getResponse.EnsureSuccessStatusCode();
+            responseString = await getResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;TaskItemResponse&gt;(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result.TaskItem.TaskItemId.Should().Be(taskId);
+        }
+
+       
+        
+        [Fact]
+        public async Task When_DeleteTaskQueryHandlerIsCalledWithRightId_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token);
+            var response = await Client.GetAsync($&quot;{RequestUri}&quot;);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var tasks = JsonConvert.DeserializeObject&lt;TasksContainer&gt;(responseString);
+            var taskId = tasks.TaskItems.First().TaskItemId;
+            //Act
+            var deleteResponse = await Client.DeleteAsync($&quot;{RequestUri}/{taskId}&quot;);
+            deleteResponse.EnsureSuccessStatusCode();
+            responseString = await deleteResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;TaskDeleteResponse&gt;(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result.Success.Should().BeTrue();
+        }
+
+       
+        private static string CreateToken()
+        {
+
+            return JwtTokenProvider.JwtSecurityTokenHandler.WriteToken(
+            new JwtSecurityToken(
+                JwtTokenProvider.Issuer,
+                JwtTokenProvider.Issuer,
+                new List&lt;Claim&gt; { new(ClaimTypes.Role, &quot;User&quot;) },
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: JwtTokenProvider.SigningCredentials
+            ));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[22,9,22,10,1],[24,13,24,42,1],[25,13,25,105,1],[27,13,27,66,1],[28,13,28,48,1],[29,13,29,77,1],[30,13,30,88,1],[32,13,32,52,1],[33,9,33,10,0],[36,9,36,10,1],[38,13,38,42,1],[39,13,39,105,1],[40,13,40,67,1],[41,13,41,77,1],[42,13,42,87,1],[43,13,43,61,1],[45,13,45,79,1],[46,13,46,51,1],[47,13,47,76,1],[48,13,48,90,1],[50,13,50,41,1],[51,13,51,60,1],[52,9,52,10,1],[58,9,58,10,1],[60,13,60,42,1],[61,13,61,105,1],[62,13,62,67,1],[63,13,63,77,1],[64,13,64,87,1],[65,13,65,61,1],[67,13,67,85,1],[68,13,68,54,1],[69,13,69,79,1],[70,13,70,92,1],[72,13,72,41,1],[73,13,73,46,1],[74,9,74,10,1],[78,9,78,10,1],[80,13,87,16,1],[88,9,88,10,1]]);
+    </script>
+  </body>
+</html>

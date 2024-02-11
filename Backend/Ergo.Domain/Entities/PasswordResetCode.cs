@@ -13,7 +13,7 @@ namespace Ergo.Domain.Entities
             ExpirationTime = DateTime.UtcNow.Add(DefaultExpiration);
             CreatedAt = DateTime.UtcNow;
         }
-        private PasswordResetCode()
+        public PasswordResetCode()
         {
 
         }

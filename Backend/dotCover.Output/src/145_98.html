@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Commands\UpdateProject\UpdateProjectCommand.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Entities.Enums;
+using MediatR;
+
+namespace Ergo.Application.Features.Projects.Commands.UpdateProject
+{
+    public class UpdateProjectCommand : IRequest&lt;UpdateProjectCommandResponse&gt;
+    {
+        public string? ProjectOwner { get; set; }
+        public Guid ProjectId { get; set; }
+        public string? ProjectName { get; set; }
+        public string? Description { get; set; }
+        public string? GithubOwner { get; set; }
+        public string? GithubToken { get; set; }
+        public string? GitRepository { get; set; }
+        public DateTime Deadline { get; set; }
+        public ProjectState State { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,39,8,43,0],[8,44,8,48,0],[9,33,9,37,0],[9,38,9,42,0],[10,38,10,42,0],[10,43,10,47,0],[11,38,11,42,0],[11,43,11,47,0],[12,38,12,42,0],[12,43,12,47,0],[13,38,13,42,0],[13,43,13,47,0],[14,40,14,44,0],[14,45,14,49,0],[15,36,15,40,0],[15,41,15,45,0],[16,37,16,41,0],[16,42,16,46,0]]);
+    </script>
+  </body>
+</html>

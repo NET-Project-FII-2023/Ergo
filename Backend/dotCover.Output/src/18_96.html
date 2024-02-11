@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.API.IntegrationTests\Base\HttpClientExtensions.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.Net.Http.Headers;
+
+namespace Ergo.API.IntegrationTests.Base
+{
+    public static class HttpClientExtensions
+    {
+        public static HttpClient WithJwtBearerToken(this HttpClient client, Action&lt;JwtTokenBuilder&gt; configure)
+        {
+            var token = new JwtTokenBuilder();
+            configure(token);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token.Build());
+            return client;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,9,8,10,0],[9,13,9,47,0],[10,13,10,30,0],[11,13,11,113,0],[12,13,12,27,0],[13,9,13,10,0]]);
+    </script>
+  </body>
+</html>

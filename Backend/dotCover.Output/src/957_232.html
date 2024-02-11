@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Domain\Entities\UserPhoto.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Common;
+
+namespace Ergo.Domain.Entities
+{
+    public class UserPhoto
+    {
+        private UserPhoto(string photoUrl, string userId)
+        {
+            UserPhotoId = Guid.NewGuid();
+            PhotoUrl = photoUrl;
+            UserId = userId;
+        }
+        private UserPhoto()
+        {
+            
+        }
+        public Guid UserPhotoId { get; private set; }
+        public string PhotoUrl { get; private set; }
+        public string UserId { get; private set; }
+        public static Result&lt;UserPhoto&gt; Create(string photoUrl, string userId)
+        {
+            if (string.IsNullOrWhiteSpace(photoUrl))
+            {
+                return Result&lt;UserPhoto&gt;.Failure(Constants.PhotoUrlRequired);
+            }
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return Result&lt;UserPhoto&gt;.Failure(Constants.UserIdRequired);
+            }
+            return Result&lt;UserPhoto&gt;.Success(new UserPhoto(photoUrl, userId));
+        }
+
+        public Result&lt;UserPhoto&gt; UpdatePhoto(string photoUrl)
+        {
+            if (string.IsNullOrWhiteSpace(photoUrl))
+            {
+                return Result&lt;UserPhoto&gt;.Failure(Constants.PhotoUrlRequired);
+            }
+            PhotoUrl = photoUrl;
+            return Result&lt;UserPhoto&gt;.Success(this);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,58,0],[8,9,8,10,0],[9,13,9,42,0],[10,13,10,33,0],[11,13,11,29,0],[12,9,12,10,0],[13,9,13,28,0],[14,9,14,10,0],[16,9,16,10,0],[17,35,17,39,0],[17,40,17,52,0],[18,34,18,38,0],[18,39,18,51,0],[19,32,19,36,0],[19,37,19,49,0],[21,9,21,10,0],[22,13,22,53,0],[23,13,23,14,0],[24,17,24,78,0],[26,13,26,51,0],[27,13,27,14,0],[28,17,28,76,0],[30,13,30,79,0],[31,9,31,10,0],[34,9,34,10,0],[35,13,35,53,0],[36,13,36,14,0],[37,17,37,78,0],[39,13,39,33,0],[40,13,40,52,0],[41,9,41,10,0]]);
+    </script>
+  </body>
+</html>

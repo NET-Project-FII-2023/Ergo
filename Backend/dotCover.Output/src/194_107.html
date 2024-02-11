@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\InboxItems\Commands\CreateInboxItem\CreateInboxItemCommandValidator.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using FluentValidation;
+
+namespace Ergo.Application.Features.InboxItems.Commands.CreateInboxItem
+{
+    public class CreateInboxItemCommandValidator : AbstractValidator&lt;CreateInboxItemCommand&gt;
+    {
+        public CreateInboxItemCommandValidator()
+        {
+            RuleFor(i =&gt; i.UserId).NotEmpty().NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
+                .NotNull();
+            RuleFor(i =&gt; i.Message).NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
+                .NotNull();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,49,0],[8,9,8,10,0],[9,13,10,28,0],[11,13,12,28,0],[13,9,13,10,0]]);
+    </script>
+  </body>
+</html>

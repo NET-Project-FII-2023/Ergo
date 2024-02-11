@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Domain\Entities\UserVotedBadges.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Common;
+
+namespace Ergo.Domain.Entities
+{
+    public class UserVotedBadges
+    {
+        private UserVotedBadges(Guid voterId,Guid votedId, string type)
+        {
+            UserVotedBadgesId = Guid.NewGuid();
+            VoterId = voterId;
+            VotedId = votedId;
+            Type = type;
+        }
+        public Guid UserVotedBadgesId { get; set; }
+        public Guid VoterId { get; set; }
+        public Guid VotedId { get; set; }
+        public string Type { get; set; }
+        private UserVotedBadges()
+        {
+
+        }
+        public static Result&lt;UserVotedBadges&gt; Create(Guid voterId,Guid votedId, string type)
+        {
+            if (voterId == Guid.Empty)
+            {
+                return Result&lt;UserVotedBadges&gt;.Failure(Constants.VoterIdRequired);
+            }
+            if (votedId == Guid.Empty)
+            {
+                return Result&lt;UserVotedBadges&gt;.Failure(Constants.VotedIdRequired);
+            }
+            if (string.IsNullOrWhiteSpace(type))
+            {
+                return Result&lt;UserVotedBadges&gt;.Failure(Constants.BadgeTypeRequired);
+            }
+
+            return Result&lt;UserVotedBadges&gt;.Success(new UserVotedBadges(voterId, votedId, type));
+            
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,72,0],[8,9,8,10,0],[9,13,9,48,0],[10,13,10,31,0],[11,13,11,31,0],[12,13,12,25,0],[13,9,13,10,0],[14,41,14,45,0],[14,46,14,50,0],[15,31,15,35,0],[15,36,15,40,0],[16,31,16,35,0],[16,36,16,40,0],[17,30,17,34,0],[17,35,17,39,0],[18,9,18,34,0],[19,9,19,10,0],[21,9,21,10,0],[23,9,23,10,0],[24,13,24,39,0],[25,13,25,14,0],[26,17,26,83,0],[28,13,28,39,0],[29,13,29,14,0],[30,17,30,83,0],[32,13,32,49,0],[33,13,33,14,0],[34,17,34,85,0],[37,13,37,97,0],[39,9,39,10,0]]);
+    </script>
+  </body>
+</html>

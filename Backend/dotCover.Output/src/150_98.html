@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Commands\DeleteUserFromProject\DeleteUserFromProjectCommand.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using MediatR;
+
+namespace Ergo.Application.Features.Projects.Commands.DeleteUserFromProject
+{
+    public class DeleteUserFromProjectCommand : IRequest&lt;DeleteUserFromProjectCommandResponse&gt;
+    {
+        public string OwnerUsername { get; set; }
+        public string UserId { get; set; }
+        public string ProjectId { get; set; }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,39,7,43,0],[7,44,7,48,0],[8,32,8,36,0],[8,37,8,41,0],[9,35,9,39,0],[9,40,9,44,0]]);
+    </script>
+  </body>
+</html>

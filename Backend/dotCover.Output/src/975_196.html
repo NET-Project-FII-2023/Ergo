@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Infrastructure\Services\EmailService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Contracts;
+using Ergo.Application.Models;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.Extensions.Options;
+using MimeKit;
+
+namespace Infrastructure.Services
+{
+    public class EmailService : IEmailService
+    {
+        private readonly EmailSettings emailSettings;
+
+        public EmailService(IOptions&lt;EmailSettings&gt; emailSettings)
+        {
+            this.emailSettings = emailSettings.Value;
+        }
+
+        public async Task SendEmailAsync(string to, string subject, string body)
+        {
+            var email = new MimeMessage();
+            email.From.Add(MailboxAddress.Parse(emailSettings.FromAddress)); 
+            email.To.Add(MailboxAddress.Parse(to));
+            email.Subject = subject;
+            email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
+
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(emailSettings.SmtpServer, emailSettings.SmtpPort, SecureSocketOptions.StartTls);
+            await smtp.AuthenticateAsync(emailSettings.SmtpUsername, emailSettings.SmtpPassword);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,67,0],[15,9,15,10,0],[16,13,16,54,0],[17,9,17,10,0],[20,9,20,10,0],[21,13,21,43,0],[22,13,22,77,0],[23,13,23,52,0],[24,13,24,37,0],[25,13,25,85,0],[27,13,27,47,0],[28,13,28,117,0],[29,13,29,98,0],[30,13,30,41,0],[31,13,31,46,0],[32,9,32,10,0]]);
+    </script>
+  </body>
+</html>

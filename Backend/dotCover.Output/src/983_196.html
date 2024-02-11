@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Infrastructure\Repositories\TaskItemRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+namespace Infrastructure.Repositories;
+
+public class TaskItemRepository : BaseRepository&lt;TaskItem&gt;, ITaskItemRepository
+{
+    public TaskItemRepository(ErgoContext context) : base(context)
+    {
+    }
+    public async Task&lt;bool&gt; TaskItemExists(Guid taskItemId)
+    {
+        return await context.TaskItems.AnyAsync(x =&gt; x.TaskItemId == taskItemId);
+    }
+    public async Task&lt;Result&lt;string&gt;&gt; GetAssignedUser(Guid taskItemId)
+    {
+        var taskItem = await context.TaskItems
+                  .Include(t =&gt; t.AssignedUser)
+                  .FirstOrDefaultAsync(x =&gt; x.TaskItemId == taskItemId);
+
+        if (taskItem == null)
+        {
+            return Result&lt;string&gt;.Failure($&quot;Task item with id {taskItemId} not found&quot;);
+        }
+        if (taskItem.AssignedUser == null)
+        {
+            return Result&lt;string&gt;.Failure($&quot;Task item with id {taskItemId} is not assigned to any user&quot;);
+        }
+        return Result&lt;string&gt;.Success(taskItem.AssignedUser.UserId.ToString());
+    }
+    public Task&lt;int&gt; GetNumberOfTasksByUserIdAsync(Guid userId)
+    {
+        return context.TaskItems.CountAsync(x =&gt; x.AssignedUser.UserId == userId);
+    }
+
+    public async Task&lt;int&gt; GetTotalHoursWorkedByUserIdAsync(Guid userId)
+    {
+        var totalHours = await context.TaskItems
+            .Where(x =&gt; x.AssignedUser.UserId == userId)
+            .Select(x =&gt; x.TotalTimeSpent.TotalHours)
+            .SumAsync();
+
+        return (int)totalHours;
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[9,54,9,67,1],[10,5,10,6,1],[11,5,11,6,1],[13,5,13,6,0],[14,9,14,82,0],[15,5,15,6,0],[17,5,17,6,1],[18,9,20,73,1],[22,9,22,30,1],[23,9,23,10,0],[24,13,24,88,0],[26,9,26,43,1],[27,9,27,10,1],[28,13,28,106,1],[30,9,30,80,0],[31,5,31,6,1],[33,5,33,6,0],[34,9,34,83,0],[35,5,35,6,0],[38,5,38,6,0],[39,9,42,25,0],[44,9,44,32,0],[45,5,45,6,0]]);
+    </script>
+  </body>
+</html>

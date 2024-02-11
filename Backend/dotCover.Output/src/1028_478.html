@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\TaskItems\Queries\GetAllTaskItemsQueryHandlerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.TaskItems.Queries.GetAll;
+using Ergo.Application.Persistence;
+using Ergo.Application.Tests.RepositoryMocks;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using FluentAssertions;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.TaskItems.Queries;
+
+public class GetAllTaskItemsQueryHandlerTests
+{
+    private readonly ITaskItemRepository _mockTaskItemRepository;
+    private readonly IUserManager _mockUserManager;
+    private readonly GetAllTaskItemsQueryHandler _handler;
+
+    public GetAllTaskItemsQueryHandlerTests()
+    {
+        _mockTaskItemRepository = TaskItemRepositoryMocks.GetTaskItemRepository();
+        _handler = new GetAllTaskItemsQueryHandler(_mockTaskItemRepository,_mockUserManager);
+    }
+
+    [Fact]
+    public async Task GetAllTaskItemsQueryHandler_Success()
+    {
+        // Arrange
+
+        // Act
+        var result = await _handler.Handle(new GetAllTaskItemsQuery(), CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.TaskItems.Should().NotBeEmpty();
+        result.TaskItems.Count.Should().Be(2);
+
+        result.TaskItems.Should().ContainSingle(taskItem =&gt; taskItem.TaskName == &quot;TaskItem 1&quot;);
+        result.TaskItems.Should().ContainSingle(taskItem =&gt; taskItem.TaskName == &quot;TaskItem 2&quot;);
+    }
+
+    [Fact]
+    public async Task GetAllTaskItemsQueryHandler_ReturnsEmptyList_WhenNoTaskItemsExist()
+    {
+        // Arrange
+        _mockTaskItemRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;TaskItem&gt;&gt;.Success(new List&lt;TaskItem&gt;()));
+
+        // Act
+        var result = await _handler.Handle(new GetAllTaskItemsQuery(), CancellationToken.None);
+
+        // Assert
+        result.TaskItems.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetAllTaskItemsQueryHandler_ThrowsException_WhenRepositoryFails()
+    {
+        // Arrange
+        _mockTaskItemRepository.GetAllAsync().Returns(Task.FromException&lt;Result&lt;IReadOnlyList&lt;TaskItem&gt;&gt;&gt;(new Exception(&quot;Repository failure&quot;)));
+
+        // Act &amp; Assert
+        await Assert.ThrowsAsync&lt;Exception&gt;(() =&gt; _handler.Handle(new GetAllTaskItemsQuery(), CancellationToken.None));
+    }
+
+    public void Dispose()
+    {
+    }
+    
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,5,17,46,1],[18,5,18,6,1],[19,9,19,83,1],[20,9,20,94,1],[21,5,21,6,1],[25,5,25,6,1],[29,9,29,96,1],[32,9,32,37,0],[33,9,33,48,0],[34,9,34,47,0],[36,9,36,96,0],[37,9,37,96,0],[38,5,38,6,0],[42,5,42,6,1],[44,9,44,118,1],[47,9,47,96,1],[50,9,50,45,1],[51,5,51,6,1],[55,5,55,6,1],[57,9,57,145,1],[60,9,60,51,1],[60,51,60,118,1],[60,118,60,120,1],[61,5,61,6,1],[64,5,64,6,0],[65,5,65,6,0]]);
+    </script>
+  </body>
+</html>

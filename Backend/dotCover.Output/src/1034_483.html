@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\Projects\Queries\GetAllProjectsQueryHandlerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Projects.Queries.GetAll;
+using Ergo.Application.Persistence;
+using Ergo.Application.Tests.RepositoryMocks;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using FluentAssertions;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.Projects.Queries
+{
+    public class GetAllProjectsQueryHandlerTests : IDisposable
+    {
+        private readonly IProjectRepository _mockProjectRepository;
+        private readonly GetAllProjectsQueryHandler _handler;
+
+        public GetAllProjectsQueryHandlerTests()
+        {
+            _mockProjectRepository = ProjectRepositoryMocks.GetProjectRepository();
+            _handler = new GetAllProjectsQueryHandler(_mockProjectRepository);
+        }
+
+        [Fact]
+        public async Task GetAllProjectsQueryHandler_Success()
+        {
+            // Arrange
+
+            // Act
+            var result = await _handler.Handle(new GetAllProjectsQuery(), CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Projects.Should().NotBeEmpty();
+            result.Projects.Count.Should().Be(2);
+
+            result.Projects.Should().ContainSingle(project =&gt; project.ProjectName == &quot;Project 1&quot;);
+            result.Projects.Should().ContainSingle(project =&gt; project.ProjectName == &quot;Project 2&quot;);
+        }
+
+        [Fact]
+        public async Task GetAllProjectsQueryHandler_ReturnsEmptyList_WhenNoProjectsExist()
+        {
+            // Arrange
+            _mockProjectRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;Project&gt;&gt;.Success(new List&lt;Project&gt;()));
+
+            // Act
+            var result = await _handler.Handle(new GetAllProjectsQuery(), CancellationToken.None);
+
+            // Assert
+            result.Projects.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetAllProjectsQueryHandler_ThrowsException_WhenRepositoryFails()
+        {
+            // Arrange
+            _mockProjectRepository.GetAllAsync().Returns(Task.FromException&lt;Result&lt;IReadOnlyList&lt;Project&gt;&gt;&gt;(new Exception(&quot;Repository failure&quot;)));
+
+            // Act &amp; Assert
+            await Assert.ThrowsAsync&lt;Exception&gt;(() =&gt; _handler.Handle(new GetAllProjectsQuery(), CancellationToken.None));
+        }
+
+        public void Dispose()
+        {
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,49,1],[17,9,17,10,1],[18,13,18,84,1],[19,13,19,79,1],[20,9,20,10,1],[24,9,24,10,1],[28,13,28,99,1],[31,13,31,41,1],[32,13,32,51,1],[33,13,33,50,1],[35,13,35,99,1],[36,13,36,99,1],[37,9,37,10,1],[41,9,41,10,1],[43,13,43,119,1],[46,13,46,99,1],[49,13,49,48,1],[50,9,50,10,1],[54,9,54,10,1],[56,13,56,147,1],[59,13,59,55,1],[59,55,59,121,1],[59,121,59,123,1],[60,9,60,10,1],[63,9,63,10,1],[64,9,64,10,1]]);
+    </script>
+  </body>
+</html>

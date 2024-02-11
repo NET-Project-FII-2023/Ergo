@@ -110,20 +110,7 @@ namespace Ergo.Domain.Tests
             //Assert
             updateResult.IsSuccess.Should().BeFalse();
         }
-        [Fact]
-        public void PrivateConstructorTest()
-        {
-            // Arrange
-            var paramTypes = new Type[] { typeof(string), typeof(Guid), typeof(string) }; 
-            var constructor = typeof(Comment).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, paramTypes, null);
-            var parameters = new object[] { "Test Name", Guid.NewGuid(), "Test Comment" }; 
 
-            // Act
-            var instance = constructor.Invoke(parameters);
-
-            // Assert
-            Assert.NotNull(instance);
-        }
 
         [Fact]
         public void DefaultConstructorTest()

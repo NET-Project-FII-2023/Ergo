@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Comments\Queries\GetAll\GetAllCommentsQueryHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using MediatR;
+
+namespace Ergo.Application.Features.Comments.Queries.GetAll
+{
+    public class GetAllCommentsQueryHandler :IRequestHandler&lt;GetAllCommentsQuery, GetAllCommentsResponse&gt;
+    {
+        private readonly ICommentRepository commentRepository;
+
+        public GetAllCommentsQueryHandler(ICommentRepository commentRepository)
+        {
+            this.commentRepository = commentRepository;
+        }
+
+        public async Task&lt;GetAllCommentsResponse&gt; Handle(GetAllCommentsQuery request,CancellationToken cancellation)
+        {
+            GetAllCommentsResponse response = new();
+            var result = await commentRepository.GetAllAsync();
+            if (result.IsSuccess)
+            {
+                response.Comments = result.Value.Select(u =&gt; new CommentDto{
+                    CommentId = u.CommentId,
+                    CreatedBy = u.CreatedBy,
+                    CreatedDate = u.CreatedDate,
+                    LastModifiedBy = u.LastModifiedBy,
+                    LastModifiedDate = u.LastModifiedDate,
+                    CommentText = u.CommentText,
+                    TaskId = u.TaskId
+                }).ToList();
+            }
+            return response;
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,80,1],[11,9,11,10,1],[12,13,12,56,1],[13,9,13,10,1],[16,9,16,10,1],[17,13,17,53,1],[18,13,18,64,1],[19,13,19,34,1],[20,13,20,14,1],[21,17,21,62,1],[21,62,29,18,1],[29,18,29,29,1],[30,13,30,14,1],[31,13,31,29,1],[32,9,32,10,1]]);
+    </script>
+  </body>
+</html>

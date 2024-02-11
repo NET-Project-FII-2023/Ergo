@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Users\Commands\DeleteUser\DeleteUserCommandHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using MediatR;
+
+namespace Ergo.Application.Features.Users.Commands.DeleteUser
+{
+    public class DeleteUserCommandHandler : IRequestHandler&lt;DeleteUserCommand, DeleteUserCommandResponse&gt;
+    {
+        private readonly IUserManager userRepository;
+
+        public DeleteUserCommandHandler(IUserManager userRepository) {
+            this.userRepository = userRepository;
+        }
+
+        public async Task&lt;DeleteUserCommandResponse&gt; Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        {
+            var result = await userRepository.DeleteAsync(request.UserId);
+            if (!result.IsSuccess)
+                return new DeleteUserCommandResponse { Success = false, Message = result.Error };
+            return new DeleteUserCommandResponse { Success = true };
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,69,0],[10,70,10,71,0],[11,13,11,50,0],[12,9,12,10,0],[15,9,15,10,0],[16,13,16,75,0],[17,13,17,35,0],[18,17,18,98,0],[19,13,19,69,0],[20,9,20,10,0]]);
+    </script>
+  </body>
+</html>

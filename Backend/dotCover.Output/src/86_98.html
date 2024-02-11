@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AddManualTimeTaskItem\AddManualTimeTaskItemCommandValidator.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using FluentValidation;
+
+namespace Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem
+{
+    public class AddManualTimeTaskItemCommandValidator : AbstractValidator&lt;AddManualTimeTaskItemCommand&gt;
+    {
+        public AddManualTimeTaskItemCommandValidator()
+        {
+            RuleFor(p =&gt; p.TaskItemId)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
+
+            RuleFor(p =&gt; p.UserId)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
+
+            RuleFor(p =&gt; p.TimeSpent)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,55,0],[8,9,8,10,0],[9,13,11,28,0],[13,13,15,28,0],[17,13,19,28,0],[20,9,20,10,0]]);
+    </script>
+  </body>
+</html>

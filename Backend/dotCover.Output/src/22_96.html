@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.API.IntegrationTests\Controllers\AuthenticationControllerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.API.IntegrationTests.Base;
+using Ergo.Application.Models.Identity;
+using FluentAssertions;
+using Newtonsoft.Json;
+using System.Net.Http.Json;
+
+namespace Ergo.API.IntegrationTests.Controllers
+{
+    public class AuthenticationControllerTests : BaseApplicationContextTests
+    {
+        private const string RequestUri = &quot;/api/v1/Authentication&quot;;
+        [Fact]
+        public async Task When_RegisterIsCalled_Then_Success()
+        {
+            //Arrange
+            var registrationModel = new RegistrationModel
+            {
+                Username = &quot;Johnny&quot;,
+                Name = &quot;Johnny&quot;,
+                Email = &quot;johnny@yahoo.com&quot;,
+                Password = &quot;Abc123@&quot;,
+            };
+            //Act
+            var response = await Client.PostAsJsonAsync($&quot;{RequestUri}/register&quot;, registrationModel);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;RegistrationModel&gt;(responseString);
+            // Assert
+            result?.Should().NotBeNull();
+            result?.Username.Should().Be(registrationModel.Username);
+        }
+        [Fact]
+        public async Task When_RegisterIsCalledWithExistingUsername_Then_Fail()
+        {
+            //Arrange
+            var registrationModel = new RegistrationModel
+            {
+                Username = &quot;john_doe&quot;,
+                Name = &quot;Johnny&quot;,
+                Email = &quot;john.doe@example.com&quot;,
+                Password = &quot;Abc123@&quot;,
+            };
+            //Act
+            var response = await Client.PostAsJsonAsync($&quot;{RequestUri}/register&quot;, registrationModel);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            var message = await response.Content.ReadAsStringAsync();
+            // Assert
+            message.Should().Be(&quot;User already exists&quot;);
+        }
+        [Fact]
+        public async Task When_RegisterIsCalledWithWithExisting_Then_Fail()
+        {
+            //Arrange
+            var registrationModel = new RegistrationModel
+            {
+                Username = &quot;johnny&quot;,
+                Name = &quot;Johnny&quot;,
+                Email = &quot;john.doe@example.com&quot;,
+                Password = &quot;Abc123@&quot;,
+            };
+            //Act
+            var response = await Client.PostAsJsonAsync($&quot;{RequestUri}/register&quot;, registrationModel);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            var message = await response.Content.ReadAsStringAsync();
+            // Assert
+            message.Should().Be(&quot;User with this email already exists&quot;);
+        }
+        [Fact]
+        public async Task When_RegisterIsCalledWithInvalidPassword_Then_Fail()
+        {
+            //Arrange
+            var registrationModel = new RegistrationModel
+            {
+                Username = &quot;johnny&quot;,
+                Name = &quot;Johnny&quot;,
+                Email = &quot;john@yahoo.com&quot;,
+                Password = &quot;Abc12&quot;,
+            };
+            //Act
+            var response = await Client.PostAsJsonAsync($&quot;{RequestUri}/register&quot;, registrationModel);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            var message = await response.Content.ReadAsStringAsync();
+            // Assert
+            message.Should().Be(&quot;Password is not valid! The password must have at least 7 characters and needs to include a capital letter, a symbol, a digit.&quot;);
+        }
+       
+        [Fact]
+        public async Task When_LoginIsCalled_Then_Success()
+        {
+            //Arrange
+            var loginModel = new LoginModel
+            {
+                Username = &quot;john_doe&quot;,
+                Password = &quot;ComplexPass1!&quot;,
+            };
+            //Act
+            var response = await Client.PostAsJsonAsync($&quot;{RequestUri}/login&quot;, loginModel);
+            response.EnsureSuccessStatusCode();
+            var token = await response.Content.ReadAsStringAsync();
+            // Assert
+            token?.Should().NotBeNull();
+            token.Should().NotBe(&quot;Invalid username&quot;);
+            token.Should().NotBe(&quot;Invalid password&quot;);
+        }
+        [Fact]
+        public async Task When_LoginIsCalledWithInvalidUsername_Then_Fail()
+        {
+            //Arrange
+            var loginModel = new LoginModel
+            {
+                Username = &quot;john_doe1&quot;,
+                Password = &quot;ComplexPass1!&quot;,
+            };
+            //Act
+            var response = await Client.PostAsJsonAsync($&quot;{RequestUri}/login&quot;, loginModel);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            var token = await response.Content.ReadAsStringAsync();
+            // Assert
+            token.Should().Be(&quot;Invalid username&quot;);
+        }
+        [Fact]
+        public async Task When_LoginIsCalledWithInvalidPassword_Then_Fail()
+        {
+            //Arrange
+            var loginModel = new LoginModel
+            {
+                Username = &quot;john_doe&quot;,
+                Password = &quot;ComplexPass1&quot;,
+            };
+            //Act
+            var response = await Client.PostAsJsonAsync($&quot;{RequestUri}/login&quot;, loginModel);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            var token = await response.Content.ReadAsStringAsync();
+            // Assert
+            token.Should().Be(&quot;Invalid password&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,10,1],[16,13,22,15,1],[24,13,24,102,1],[25,13,25,48,1],[26,13,26,77,0],[27,13,27,91,0],[29,13,29,42,0],[30,13,30,70,0],[31,9,31,10,0],[34,9,34,10,1],[36,13,42,15,1],[44,13,44,102,1],[45,13,45,83,1],[46,13,46,70,1],[48,13,48,56,1],[49,9,49,10,1],[52,9,52,10,1],[54,13,60,15,1],[62,13,62,102,1],[63,13,63,83,1],[64,13,64,70,0],[66,13,66,72,0],[67,9,67,10,0],[70,9,70,10,1],[72,13,78,15,1],[80,13,80,102,1],[81,13,81,83,1],[82,13,82,70,1],[84,13,84,162,1],[85,9,85,10,1],[89,9,89,10,1],[91,13,95,15,1],[97,13,97,92,1],[98,13,98,48,1],[99,13,99,68,1],[101,13,101,41,1],[102,13,102,54,1],[103,13,103,54,1],[104,9,104,10,1],[107,9,107,10,1],[109,13,113,15,1],[115,13,115,92,1],[116,13,116,83,1],[117,13,117,68,1],[119,13,119,51,1],[120,9,120,10,1],[123,9,123,10,1],[125,13,129,15,1],[131,13,131,92,1],[132,13,132,83,1],[133,13,133,68,1],[135,13,135,51,1],[136,9,136,10,1]]);
+    </script>
+  </body>
+</html>

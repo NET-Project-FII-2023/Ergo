@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Api\Services\CurrentUserService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Contracts.Interfaces;
+using System.Security.Claims;
+using Microsoft.Identity.Web;
+
+namespace WebAPI.Services
+{
+    public class CurrentUserService : ICurrentUserService
+    {
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+        {
+            this.httpContextAccessor = httpContextAccessor;
+        }
+
+        public string UserId =&gt; httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier)!;
+        public ClaimsPrincipal GetCurrentClaimsPrincipal()
+        {
+            if (httpContextAccessor.HttpContext != null &amp;&amp; httpContextAccessor.HttpContext.User != null)
+            {
+                return httpContextAccessor.HttpContext.User;
+            }
+
+            return null!;
+        }
+
+        public string GetCurrentUserId()
+        {
+            return GetCurrentClaimsPrincipal()?.GetDisplayName()!;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,76,1],[12,9,12,10,1],[13,13,13,60,1],[14,9,14,10,1],[16,33,16,114,0],[18,9,18,10,0],[19,13,19,105,0],[20,13,20,14,0],[21,17,21,61,0],[24,13,24,26,0],[25,9,25,10,0],[28,9,28,10,0],[29,13,29,67,0],[30,9,30,10,0]]);
+    </script>
+  </body>
+</html>

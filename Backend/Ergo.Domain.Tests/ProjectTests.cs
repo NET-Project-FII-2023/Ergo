@@ -158,10 +158,14 @@ namespace Ergo.Domain.Tests
         {
             //Arrange && Act
             var result = Project.Create("Test", "Test", null, null, null, DateTime.UtcNow, "Test");
-            var updateResult = result.Value.UpdateData("Test", "Test", null, null, null, DateTime.UtcNow, default, "Test");
+            var invalidState = (ProjectState)100; // Assuming 100 is an invalid enum value
+
+            var updateResult = result.Value.UpdateData("Test", "Test", null, null, null, DateTime.UtcNow, invalidState, "Test");
             //Assert
             updateResult.IsSuccess.Should().BeFalse();
+            updateResult.Error.Should().Be("A valid project state is required");
         }
+
 
         [Fact]
         public void When_AssignUserToProjectIsCalled_And_UserIsValid_Then_SuccessIsReturned()

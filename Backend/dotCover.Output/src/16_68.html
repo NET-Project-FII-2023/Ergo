@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.API.IntegrationTests\Controllers\UserControllerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.API.IntegrationTests.Base;
+using Ergo.API.IntegrationTests.Dto;
+using FluentAssertions;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+
+namespace Ergo.API.IntegrationTests.Controllers
+{
+    public class UserControllerTests : BaseApplicationContextTests
+    {
+        private const string RequestUri = &quot;/api/v1/Users&quot;;
+        [Fact]
+        public async Task When_GetAllUsersQueryHandlerIsCalled_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token);
+            //Act
+            var response = await Client.GetAsync(RequestUri);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;UsersContainer&gt;(responseString);
+            // Assert
+            result.Users?.Count.Should().Be(2);
+        }
+        [Fact]
+        public async Task When_GetUserByEmailQueryHandlerIsCalled_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token);
+            //Act
+            var response = await Client.GetAsync($&quot;{RequestUri}/ByEmail/john.doe@example.com&quot;);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;UserResponse&gt;(responseString);
+            // Assert
+            result.User.Should().NotBeNull();
+            result.User.Email.Should().Be(&quot;john.doe@example.com&quot;);
+        }
+        private static string CreateToken()
+        {
+
+            return JwtTokenProvider.JwtSecurityTokenHandler.WriteToken(
+            new JwtSecurityToken(
+                JwtTokenProvider.Issuer,
+                JwtTokenProvider.Issuer,
+                new List&lt;Claim&gt; { new(ClaimTypes.Role, &quot;User&quot;) },
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: JwtTokenProvider.SigningCredentials
+            ));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,10,1],[18,13,18,42,1],[19,13,19,105,1],[21,13,21,62,1],[22,13,22,48,1],[23,13,23,77,1],[24,13,24,88,1],[26,13,26,48,1],[27,9,27,10,0],[30,9,30,10,1],[32,13,32,42,1],[33,13,33,105,1],[35,13,35,96,1],[36,13,36,48,1],[37,13,37,77,0],[38,13,38,86,0],[40,13,40,46,0],[41,13,41,67,0],[42,9,42,10,0],[44,9,44,10,1],[46,13,53,16,1],[54,9,54,10,1]]);
+    </script>
+  </body>
+</html>

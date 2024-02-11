@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Comments\Commands\CreateComment\CreateCommentCommandHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+using Ergo.Domain.Entities.Enums;
+using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ergo.Application.Features.Comments.Commands.CreateComment
+{
+    public class CreateCommentCommandHandler : IRequestHandler&lt;CreateCommentCommand, CreateCommentCommandResponse&gt;
+    {
+        private readonly ICommentRepository commentRepository;
+        private readonly ITaskItemRepository taskItemRepository;
+        public CreateCommentCommandHandler(ICommentRepository commentRepository, ITaskItemRepository taskItemRepository)
+        {
+            this.commentRepository = commentRepository;
+            this.taskItemRepository = taskItemRepository;
+        }
+
+        public async Task&lt;CreateCommentCommandResponse&gt; Handle(CreateCommentCommand request, CancellationToken cancellationToken)
+        {
+            var validator = new CreateCommentCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+            if (!validatorResult.IsValid) 
+            {
+                return new CreateCommentCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
+                };
+            }
+
+            var taskItemExists = await taskItemRepository.TaskItemExists(request.TaskId);
+            if (!taskItemExists)
+            {
+                return new CreateCommentCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;TaskItem with the provided ID does not exist.&quot; }
+                };
+            }
+
+            var comment = Comment.Create(request.CreatedBy,request.TaskId,request.CommentText);
+            if (!comment.IsSuccess)
+            {
+                return new CreateCommentCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { comment.Error }
+                };
+            }
+            await commentRepository.AddAsync(comment.Value);
+            return new CreateCommentCommandResponse
+            {
+                Success = true,
+                Comment = new CreateCommentDto
+                {
+                    
+                    CreatedBy = request.CreatedBy,
+                    CreatedDate = request.CreatedDate,
+                    LastModifiedBy = request.LastModifiedBy,
+                    LastModifiedDate = request.LastModifiedDate,
+                    CommentText = request.CommentText,
+                    TaskId = request.TaskId
+                }
+            };
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,121,1],[18,9,18,10,1],[19,13,19,56,1],[20,13,20,58,1],[21,9,21,10,1],[24,9,24,10,1],[25,13,25,65,1],[26,13,26,93,1],[27,13,27,42,1],[28,13,28,14,1],[29,17,32,76,1],[32,76,32,90,1],[32,90,33,19,1],[36,13,36,90,1],[37,13,37,33,1],[38,13,38,14,1],[39,17,43,19,1],[46,13,46,96,1],[47,13,47,36,1],[48,13,48,14,0],[49,17,53,19,0],[55,13,55,61,1],[56,13,69,15,1],[70,9,70,10,1]]);
+    </script>
+  </body>
+</html>

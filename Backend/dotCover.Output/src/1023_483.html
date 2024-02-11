@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\Comments\Commands\CreateCommentCommandHandlerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using NSubstitute;
+using FluentAssertions;
+using Ergo.Application.Features.Comments.Commands.CreateComment;
+using Ergo.Application.Persistence;
+using System;
+using System.Threading.Tasks;
+using System.Threading;
+using Xunit;
+using FluentValidation.Results;
+using Ergo.Domain.Entities;
+using Ergo.Domain.Common;
+
+public class CreateCommentCommandHandlerTests
+{
+    private readonly ICommentRepository _commentRepository;
+    private readonly ITaskItemRepository _taskItemRepository;
+    private readonly CreateCommentCommandHandler _handler;
+    
+    public CreateCommentCommandHandlerTests()
+    {
+        _commentRepository = Substitute.For&lt;ICommentRepository&gt;();
+        _taskItemRepository = Substitute.For&lt;ITaskItemRepository&gt;();
+        _handler = new CreateCommentCommandHandler(_commentRepository, _taskItemRepository);
+    }
+
+    [Fact]
+    public async Task Handle_WithValidData_ReturnsSuccess()
+    {
+        // Arrange
+        var request = new CreateCommentCommand
+        {
+            CreatedBy = &quot;John Doe&quot;,
+            CreatedDate = DateTime.UtcNow,
+            LastModifiedBy = &quot;Jane Doe&quot;,
+            LastModifiedDate = DateTime.UtcNow,
+            CommentText = &quot;This is a sample comment&quot;,
+            TaskId = Guid.NewGuid() // Presupun&#226;nd că TaskId este un Guid
+        };
+
+        _taskItemRepository.TaskItemExists(request.TaskId).Returns(Task.FromResult(true));
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeTrue();
+        response.Comment.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task Handle_WithInvalidTaskItem_ReturnsError()
+    {
+        // Arrange
+        var request = new CreateCommentCommand
+        {
+            CreatedBy = &quot;John Doe&quot;,
+            CreatedDate = DateTime.UtcNow,
+            LastModifiedBy = &quot;Jane Doe&quot;,
+            LastModifiedDate = DateTime.UtcNow,
+            CommentText = &quot;This is a sample comment&quot;,
+            TaskId = Guid.NewGuid()
+        };
+
+        _taskItemRepository.TaskItemExists(request.TaskId).Returns(Task.FromResult(false));
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeFalse();
+        response.ValidationsErrors.Should().Contain(&quot;TaskItem with the provided ID does not exist.&quot;);
+    }
+
+
+
+    [Fact]
+    public async Task Handle_InvalidData_ReturnsValidationErrors()
+    {
+        // Arrange
+        var request = new CreateCommentCommand
+        {
+            CreatedBy = &quot;&quot;,
+            CommentText = &quot;&quot; // Date invalide
+        };
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeFalse();
+        response.ValidationsErrors.Should().NotBeEmpty();
+    }
+
+
+    [Fact]
+    public async Task Handle_ValidData_CreatesComment()
+    {
+        // Arrange
+        var request = new CreateCommentCommand
+        {
+            CreatedBy = &quot;John Doe&quot;,
+            CreatedDate = DateTime.UtcNow,
+            LastModifiedBy = &quot;Jane Doe&quot;,
+            LastModifiedDate = DateTime.UtcNow,
+            CommentText = &quot;This is a sample comment&quot;,
+            TaskId = Guid.NewGuid()
+        };
+
+        _taskItemRepository.TaskItemExists(request.TaskId).Returns(Task.FromResult(true));
+        var successfulResult = Result&lt;Comment&gt;.Success(new Comment());
+        _commentRepository.AddAsync(Arg.Any&lt;Comment&gt;()).Returns(Task.FromResult(successfulResult));
+
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeTrue();
+        await _commentRepository.Received(1).AddAsync(Arg.Is&lt;Comment&gt;(c =&gt; c.CommentText == request.CommentText));
+    }
+
+
+
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,5,19,46,1],[20,5,20,6,1],[21,9,21,67,1],[22,9,22,69,1],[23,9,23,93,1],[24,5,24,6,1],[28,5,28,6,1],[30,9,38,11,1],[40,9,40,91,1],[43,9,43,80,1],[46,9,46,44,1],[47,9,47,47,1],[48,5,48,6,1],[52,5,52,6,1],[54,9,62,11,1],[64,9,64,92,1],[67,9,67,80,1],[70,9,70,45,1],[71,9,71,102,1],[72,5,72,6,1],[78,5,78,6,1],[80,9,84,11,1],[87,9,87,80,1],[90,9,90,45,1],[91,9,91,58,1],[92,5,92,6,1],[97,5,97,6,1],[99,9,107,11,1],[109,9,109,91,1],[110,9,110,71,1],[111,9,111,100,1],[115,9,115,80,1],[118,9,118,44,1],[119,9,119,115,1],[120,5,120,6,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Domain.Tests\InboxItemTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Entities;
+using FluentAssertions;
+
+namespace Ergo.Domain.Tests
+{
+    public class InboxItemTests
+    {
+        [Fact]
+        public void DefaultConstructorTest()
+        {
+            // Arrange &amp; Act
+            var inboxItemInstance = new InboxItem();
+
+            // Assert
+            inboxItemInstance.Should().NotBeNull();
+        }
+        [Fact]
+        public void When_CreateInboxItemIsCalled_And_UserIdIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = InboxItem.Create(Guid.NewGuid(), &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateInboxItemIsCalled_And_UserIdIsEmpty_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = InboxItem.Create(Guid.Empty, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateInboxItemIsCalled_And_MessageIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = InboxItem.Create(Guid.NewGuid(), &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateInboxItemIsCalled_And_MessageIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = InboxItem.Create(Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateIsReadIsCalled_And_IsReadIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange
+            var inboxItem = InboxItem.Create(Guid.NewGuid(), &quot;Test&quot;).Value;
+            //Act
+            var result = inboxItem.UpdateIsRead(true);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,10,1],[12,13,12,53,1],[15,13,15,52,1],[16,9,16,10,1],[19,9,19,10,1],[21,13,21,67,1],[23,13,23,48,1],[24,9,24,10,1],[27,9,27,10,1],[29,13,29,63,1],[31,13,31,49,1],[32,9,32,10,1],[35,9,35,10,1],[37,13,37,67,1],[39,13,39,48,1],[40,9,40,10,1],[43,9,43,10,1],[45,13,45,65,1],[47,13,47,49,1],[48,9,48,10,1],[51,9,51,10,1],[53,13,53,76,1],[55,13,55,55,1],[57,13,57,48,1],[58,9,58,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\TaskItems\Commands\CreateTaskItemCommandHandlerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
+using Ergo.Application.Persistence;
+using Ergo.Application.Tests.RepositoryMocks;
+using Ergo.Domain.Entities.Enums;
+using FluentAssertions;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.TaskItems.Commands;
+
+public class CreateTaskItemCommandHandlerTests
+{
+    private readonly ITaskItemRepository _mockTaskItemRepository;
+    private readonly IProjectRepository _mockProjectRepository;
+    private readonly CreateTaskItemCommandHandler _handler;
+
+    public CreateTaskItemCommandHandlerTests()
+    {
+        _mockTaskItemRepository = TaskItemRepositoryMocks.GetTaskItemRepository();
+        _mockProjectRepository = ProjectRepositoryMocks.GetProjectRepository();
+        _handler = new CreateTaskItemCommandHandler(_mockTaskItemRepository, _mockProjectRepository);
+    }
+
+    [Fact]
+    public async Task Handle_WithValidData_ReturnsSuccess()
+    {
+        // Arrange
+        var request = new CreateTaskItemCommand
+        {
+            TaskName = &quot;Task 1&quot;,
+            CreatedBy = &quot;Marcel&quot;,
+            Description = &quot;This is a sample description&quot;,
+            Deadline = DateTime.UtcNow.AddDays(5),
+            ProjectId = Guid.NewGuid(),
+            State = TaskState.ToDo
+        };
+
+        _mockProjectRepository.ProjectExists(request.ProjectId).Returns(Task.FromResult(true));
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeTrue();
+        response.TaskItem.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task Handle_WithInvalidProject_ReturnsError()
+    {
+        // Arrange
+        var request = new CreateTaskItemCommand
+        {
+            TaskName = &quot;Task 1&quot;,
+            CreatedBy = &quot;Marcel&quot;,
+            Description = &quot;This is a sample description&quot;,
+            Deadline = DateTime.UtcNow.AddDays(5),
+            ProjectId = Guid.NewGuid(),
+            State = TaskState.ToDo
+        };
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeFalse();
+        response.ValidationsErrors.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task Handle_WithInvalidData_ReturnsError()
+    {
+        // Arrange
+        var request = new CreateTaskItemCommand
+        {
+            TaskName = &quot;Task 1&quot;,
+            CreatedBy = &quot;Marcel&quot;,
+            Description = &quot;This is a sample description&quot;,
+            Deadline = DateTime.UtcNow.AddDays(5),
+            ProjectId = Guid.NewGuid(),
+            State = TaskState.ToDo
+        };
+        
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeFalse();
+        response.ValidationsErrors.Should().NotBeEmpty();
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,5,16,47,1],[17,5,17,6,1],[18,9,18,83,1],[19,9,19,80,1],[20,9,20,102,1],[21,5,21,6,1],[25,5,25,6,1],[27,9,35,11,1],[37,9,37,96,1],[40,9,40,80,1],[43,9,43,44,1],[44,9,44,48,1],[45,5,45,6,1],[49,5,49,6,1],[51,9,59,11,1],[62,9,62,80,1],[65,9,65,45,1],[66,9,66,58,1],[67,5,67,6,1],[71,5,71,6,1],[73,9,81,11,1],[84,9,84,80,1],[87,9,87,45,1],[88,9,88,58,1],[89,5,89,6,1]]);
+    </script>
+  </body>
+</html>

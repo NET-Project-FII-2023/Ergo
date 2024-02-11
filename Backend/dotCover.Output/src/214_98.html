@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Comments\Commands\CreateComment\CreateCommentCommand.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using MediatR;
+
+namespace Ergo.Application.Features.Comments.Commands.CreateComment
+{
+    public class CreateCommentCommand : IRequest&lt;CreateCommentCommandResponse&gt;
+    {
+        public string CreatedBy { get; set; } = default!;
+        public DateTime CreatedDate { get; set; }
+        public string LastModifiedBy { get; set; } = default!;
+
+        public DateTime LastModifiedDate { get; set; }
+        public string CommentText { get; set; } = default!;
+        public Guid TaskId { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,35,7,39,1],[7,40,7,44,1],[7,49,7,57,1],[8,39,8,43,1],[8,44,8,48,1],[9,40,9,44,1],[9,45,9,49,1],[9,54,9,62,1],[11,44,11,48,1],[11,49,11,53,1],[12,37,12,41,1],[12,42,12,46,1],[12,51,12,59,1],[13,30,13,34,1],[13,35,13,39,1]]);
+    </script>
+  </body>
+</html>

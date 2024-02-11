@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\TaskItemDto.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Users.Queries;
+using Ergo.Domain.Entities.Enums;
+
+namespace Ergo.Application.Features.TaskItems.Queries
+{
+    public class TaskItemDto
+    {
+        public Guid TaskItemId { get; set; }
+        public string? BranchId { get; set; }
+        public string? TaskName { get; set; }
+        public string? Description { get; set; }
+        public DateTime Deadline { get; set; }
+        public string? CreatedBy { get; set; }
+        public Guid ProjectId { get; set; }
+        public UserTaskDto? AssignedUser { get; set; }
+        public TaskState State { get; set; }
+        public string? Branch { get; set; }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,34,8,38,1],[8,39,8,43,1],[9,35,9,39,1],[9,40,9,44,1],[10,35,10,39,1],[10,40,10,44,1],[11,38,11,42,1],[11,43,11,47,1],[12,36,12,40,1],[12,41,12,45,1],[13,36,13,40,1],[13,41,13,45,1],[14,33,14,37,1],[14,38,14,42,1],[15,44,15,48,1],[15,49,15,53,1],[16,34,16,38,1],[16,39,16,43,1],[17,33,17,37,1],[17,38,17,42,1]]);
+    </script>
+  </body>
+</html>

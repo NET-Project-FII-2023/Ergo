@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Commands\DeleteUserFromProject\DeleteUserFromProjectCommandHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using MediatR;
+
+namespace Ergo.Application.Features.Projects.Commands.DeleteUserFromProject
+{
+    public class DeleteUserFromProjectCommandHandler : IRequestHandler&lt;DeleteUserFromProjectCommand, DeleteUserFromProjectCommandResponse&gt;
+    {
+        private readonly IProjectRepository projectRepository;
+        private readonly IUserRepository userRepository;
+        private readonly IUserManager userManager;
+
+        public DeleteUserFromProjectCommandHandler(IProjectRepository projectRepository, IUserRepository userRepository, IUserManager userManager)
+        {
+            this.projectRepository = projectRepository;
+            this.userRepository = userRepository;
+            this.userManager = userManager;
+        }
+
+        public async Task&lt;DeleteUserFromProjectCommandResponse&gt; Handle(DeleteUserFromProjectCommand request, CancellationToken cancellationToken)
+            {
+            var project = await projectRepository.FindByIdAsync(Guid.Parse(request.ProjectId));
+            if (!project.IsSuccess)
+            {
+                return new DeleteUserFromProjectCommandResponse
+                {
+                    Success = false,
+                    Message = &quot;Project not found.&quot;
+                };
+            }
+            var user = await userManager.FindByIdAsync(Guid.Parse(request.UserId));
+            if (!user.IsSuccess)
+            {
+                return new DeleteUserFromProjectCommandResponse
+                {
+                    Success = false,
+                    Message = &quot;User not found.&quot;
+                };
+            }
+            var owner = await userManager.FindByUsernameAsync(request.OwnerUsername);
+            if (!owner.IsSuccess)
+            {
+                return new DeleteUserFromProjectCommandResponse
+                {
+                    Success = false,
+                    Message = &quot;Owner not found.&quot;
+                };
+            }
+
+            if (project.Value.CreatedBy != request.OwnerUsername)
+            {
+                return new DeleteUserFromProjectCommandResponse
+                {
+                    Success = false,
+                    Message = &quot;You are not the owner of this project.&quot;
+                };
+            }
+            if (project.Value.CreatedBy == user.Value.Username)
+            {
+                return new DeleteUserFromProjectCommandResponse
+                {
+                    Success = false,
+                    Message = &quot;You cannot delete the owner of the project.&quot;
+                };
+            }
+
+            var result = await projectRepository.DeleteUserFromProjectAsync(Guid.Parse(request.ProjectId), Guid.Parse(request.UserId));
+            if (!result)
+            {
+                return new DeleteUserFromProjectCommandResponse
+                {
+                    Success = false,
+                    Message = &quot;Failed to delete user from project.&quot;
+                };
+            }
+            return new DeleteUserFromProjectCommandResponse
+            {
+                Success = true,
+                Message = &quot;User deleted from project successfully.&quot;
+            }; 
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,147,0],[13,9,13,10,0],[14,13,14,56,0],[15,13,15,50,0],[16,13,16,44,0],[17,9,17,10,0],[20,13,20,14,0],[21,13,21,96,0],[22,13,22,36,0],[23,13,23,14,0],[24,17,28,19,0],[30,13,30,84,0],[31,13,31,33,0],[32,13,32,14,0],[33,17,37,19,0],[39,13,39,86,0],[40,13,40,34,0],[41,13,41,14,0],[42,17,46,19,0],[49,13,49,66,0],[50,13,50,14,0],[51,17,55,19,0],[57,13,57,64,0],[58,13,58,14,0],[59,17,63,19,0],[66,13,66,136,0],[67,13,67,25,0],[68,13,68,14,0],[69,17,73,19,0],[75,13,79,15,0],[80,9,80,10,0]]);
+    </script>
+  </body>
+</html>

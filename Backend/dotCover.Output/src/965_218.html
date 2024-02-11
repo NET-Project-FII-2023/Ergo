@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Identity\Services\ApplicationUserManager.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Users;
+using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Models;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Identity.Models;
+using Microsoft.AspNetCore.Identity;
+
+namespace Ergo.Identity.Services
+{
+    public class ApplicationUserManager : IUserManager
+    {
+        private readonly UserManager&lt;ApplicationUser&gt; userManager;
+        private readonly RoleManager&lt;IdentityRole&gt; roleManager;
+
+        public ApplicationUserManager(UserManager&lt;ApplicationUser&gt; userManager, RoleManager&lt;IdentityRole&gt; roleManager)
+        {
+            this.userManager = userManager;
+            this.roleManager = roleManager;
+        }
+
+        public async Task&lt;Result&lt;UserDto&gt;&gt; FindByIdAsync(Guid userId)
+        {
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if(user == null)
+            {
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userId} not found&quot;);
+            }
+            var userDtos = MapToUserDto(user);
+            var roles = await userManager.GetRolesAsync(user);
+            userDtos.Roles = roles.ToList();
+            return Result&lt;UserDto&gt;.Success(userDtos);
+        }
+        public async Task&lt;Result&lt;UserDto&gt;&gt; FindByEmailAsync(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with email {email} not found&quot;);
+            var userDtos = MapToUserDto(user);
+            var roles = await userManager.GetRolesAsync(user);
+            userDtos.Roles = roles.ToList();
+            return Result&lt;UserDto&gt;.Success(userDtos);
+        }
+        public async Task&lt;Result&lt;UserDto&gt;&gt; FindByUsernameAsync(string username)
+        {
+
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with username {username} not found&quot;);
+            var userDtos = MapToUserDto(user);
+            var roles = await userManager.GetRolesAsync(user);
+            userDtos.Roles = roles.ToList();
+            return Result&lt;UserDto&gt;.Success(userDtos);
+        }
+
+
+
+        public async Task&lt;Result&lt;List&lt;UserDto&gt;&gt;&gt; GetAllAsync()
+        {
+            var users = userManager.Users.ToList();
+            var userDtos = users.Select(u =&gt; MapToUserDto(u)).ToList();
+
+            foreach (var userDto in userDtos)
+            {
+                var appUser = await userManager.FindByIdAsync(userDto.UserId.ToString());
+                if (appUser != null)
+                {
+                    var roles = await userManager.GetRolesAsync(appUser);
+                    userDto.Roles = roles.ToList();
+                }
+            }
+
+            return Result&lt;List&lt;UserDto&gt;&gt;.Success(userDtos);
+        }
+
+
+        public async Task&lt;Result&lt;UserDto&gt;&gt; DeleteAsync(Guid userId)
+        {
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userId} not found&quot;);
+
+            var deleteResult = await userManager.DeleteAsync(user);
+            if (!deleteResult.Succeeded)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userId} not deleted&quot;);
+
+            return Result&lt;UserDto&gt;.Success(MapToUserDto(user));
+        }
+
+
+        public async Task&lt;Result&lt;UserDto&gt;&gt; UpdateAsync(UserDto userDto)
+        {
+            var userToUpdate = await userManager.FindByIdAsync(userDto.UserId.ToString());
+            if (userToUpdate == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} not found&quot;);
+
+            UpdateUserProperties(userToUpdate, userDto);
+
+            var updateResult = await userManager.UpdateAsync(userToUpdate);
+            return updateResult.Succeeded ? Result&lt;UserDto&gt;.Success(MapToUserDto(userToUpdate)) : Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} not updated&quot;);
+        }
+
+        public async Task&lt;Result&lt;UserDto&gt;&gt; UpdateRoleAsync(UserDto userDto, string role)
+        {
+            var userToUpdate = await userManager.FindByIdAsync(userDto.UserId.ToString());
+            if (userToUpdate == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} not found&quot;);
+            
+            if (role != &quot;Admin&quot; &amp;&amp; role != &quot;User&quot;)
+                return Result&lt;UserDto&gt;.Failure($&quot;Role {role} not found&quot;);
+
+            if (!await roleManager.RoleExistsAsync(role))
+                await roleManager.CreateAsync(new IdentityRole(role));
+
+            if (await userManager.IsInRoleAsync(userToUpdate, role))
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} already has role {role}&quot;);
+
+            var addToRoleResult = await userManager.AddToRoleAsync(userToUpdate, role);
+            return addToRoleResult.Succeeded ? Result&lt;UserDto&gt;.Success(MapToUserDto(userToUpdate)) : Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} not updated&quot;);
+        }
+        private void UpdateUserProperties(ApplicationUser user, UserDto userDto)
+        {
+            user.Name = userDto.Name;
+            user.UserName = userDto.Username;
+            user.Email = userDto.Email;
+            user.Bio = userDto.Bio;
+            user.Mobile = userDto.Mobile;
+            user.Company = userDto.Company;
+            user.Location = userDto.Location;
+            user.Facebook = userDto.Social?.Facebook;
+            user.Instagram = userDto.Social?.Instagram;
+            user.GitHub = userDto.Social?.GitHub;
+            user.LinkedIn = userDto.Social?.LinkedIn;
+            user.TwitterX = userDto.Social?.TwitterX;
+        }
+        private UserDto MapToUserDto(ApplicationUser user)
+        {
+            return new UserDto
+            {
+                UserId = user.Id,
+                Name = user.Name,
+                Username = user.UserName,
+                Email = user.Email,
+                Bio = user.Bio,
+                Mobile = user.Mobile,
+                Company = user.Company,
+                Location = user.Location,
+                Social = new Social
+                {
+                    Facebook = user.Facebook,
+                    Instagram = user.Instagram,
+                    GitHub = user.GitHub,
+                    LinkedIn = user.LinkedIn,
+                    TwitterX = user.TwitterX
+                }
+            };
+        }
+
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,119,1],[17,9,17,10,1],[18,13,18,44,1],[19,13,19,44,1],[20,9,20,10,1],[23,9,23,10,0],[24,13,24,75,0],[25,13,25,29,0],[26,13,26,14,0],[27,17,27,84,0],[29,13,29,47,0],[30,13,30,63,0],[31,13,31,45,0],[32,13,32,54,0],[33,9,33,10,0],[35,9,35,10,1],[36,13,36,66,1],[37,13,37,30,0],[38,17,38,86,0],[39,13,39,47,0],[40,13,40,63,0],[41,13,41,45,0],[42,13,42,54,0],[43,9,43,10,0],[45,9,45,10,1],[47,13,47,68,1],[48,13,48,30,1],[49,17,49,92,0],[50,13,50,47,1],[51,13,51,63,1],[52,13,52,45,1],[53,13,53,54,1],[54,9,54,10,1],[59,9,59,10,1],[60,13,60,52,1],[61,13,61,46,1],[61,46,61,61,1],[61,61,61,72,1],[63,13,63,20,1],[63,22,63,33,1],[63,34,63,36,1],[63,37,63,45,1],[64,13,64,14,1],[65,17,65,90,1],[66,17,66,37,1],[67,17,67,18,1],[68,21,68,74,1],[69,21,69,52,1],[70,17,70,18,1],[71,13,71,14,1],[73,13,73,60,1],[74,9,74,10,1],[78,9,78,10,0],[79,13,79,75,0],[80,13,80,30,0],[81,17,81,84,0],[83,13,83,68,0],[84,13,84,41,0],[85,17,85,86,0],[87,13,87,64,0],[88,9,88,10,0],[92,9,92,10,0],[93,13,93,91,0],[94,13,94,38,0],[95,17,95,92,0],[97,13,97,57,0],[99,13,99,76,0],[100,13,100,169,0],[101,9,101,10,0],[104,9,104,10,0],[105,13,105,91,0],[106,13,106,38,0],[107,17,107,92,0],[109,13,109,51,0],[110,17,110,74,0],[112,13,112,58,0],[113,17,113,71,0],[115,13,115,69,0],[116,17,116,106,0],[118,13,118,88,0],[119,13,119,172,0],[120,9,120,10,0],[122,9,122,10,0],[123,13,123,38,0],[124,13,124,46,0],[125,13,125,40,0],[126,13,126,36,0],[127,13,127,42,0],[128,13,128,44,0],[129,13,129,46,0],[130,13,130,54,0],[131,13,131,56,0],[132,13,132,50,0],[133,13,133,54,0],[134,13,134,54,0],[135,9,135,10,0],[137,9,137,10,1],[138,13,156,15,1],[157,9,157,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.API.IntegrationTests\Base\JwtTokenBuilder.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
+namespace Ergo.API.IntegrationTests.Base
+{
+    public class JwtTokenBuilder
+    {
+        public List&lt;Claim&gt; Claims { get; } = new();
+        public int ExpiresInMinutes { get; set; } = 30;
+
+        public JwtTokenBuilder WithRole(string roleName)
+        {
+            Claims.Add(new Claim(ClaimTypes.Role, roleName));
+            return this;
+        }
+
+        public JwtTokenBuilder WithUserName(string username)
+        {
+            Claims.Add(new Claim(ClaimTypes.Upn, username));
+            return this;
+        }
+
+        public JwtTokenBuilder WithEmail(string email)
+        {
+            Claims.Add(new Claim(ClaimTypes.Email, email));
+            return this;
+        }
+
+        public JwtTokenBuilder WithDepartment(string department)
+        {
+            Claims.Add(new Claim(&quot;department&quot;, department));
+            return this;
+        }
+
+        public JwtTokenBuilder WithExpiration(int expiresInMinutes)
+        {
+            ExpiresInMinutes = expiresInMinutes;
+            return this;
+        }
+
+        public string Build()
+        {
+            var token = new JwtSecurityToken(
+                JwtTokenProvider.Issuer,
+                JwtTokenProvider.Issuer,
+                Claims,
+                expires: DateTime.Now.AddMinutes(ExpiresInMinutes),
+                signingCredentials: JwtTokenProvider.SigningCredentials
+            );
+            return JwtTokenProvider.JwtSecurityTokenHandler.WriteToken(token);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,37,8,41,0],[8,46,8,51,0],[9,39,9,43,0],[9,44,9,48,0],[9,53,9,55,0],[12,9,12,10,0],[13,13,13,62,0],[14,13,14,25,0],[15,9,15,10,0],[18,9,18,10,0],[19,13,19,61,0],[20,13,20,25,0],[21,9,21,10,0],[24,9,24,10,0],[25,13,25,60,0],[26,13,26,25,0],[27,9,27,10,0],[30,9,30,10,0],[31,13,31,61,0],[32,13,32,25,0],[33,9,33,10,0],[36,9,36,10,0],[37,13,37,49,0],[38,13,38,25,0],[39,9,39,10,0],[42,9,42,10,0],[43,13,49,15,0],[50,13,50,79,0],[51,9,51,10,0]]);
+    </script>
+  </body>
+</html>

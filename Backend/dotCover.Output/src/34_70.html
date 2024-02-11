@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\UserPhotos\Commands\UpdateTaskPhoto\UpdateUserPhotoCommandHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Users;
+using Ergo.Application.Persistence;
+using MediatR;
+
+namespace Ergo.Application.Features.UserPhotos.Commands.UpdateTaskPhoto
+{
+    public class UpdateUserPhotoCommandHandler : IRequestHandler&lt;UpdateUserPhotoCommand, UpdateUserPhotoCommandResponse&gt;
+    {
+        private readonly IUserPhotoRepository userPhotoRepository;
+
+        public UpdateUserPhotoCommandHandler(IUserPhotoRepository userPhotoRepository)
+        {
+            this.userPhotoRepository = userPhotoRepository;
+        }
+
+        public async Task&lt;UpdateUserPhotoCommandResponse&gt; Handle(UpdateUserPhotoCommand request, CancellationToken cancellationToken)
+        {
+            var validator = new UpdateUserPhotoCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+            if (!validatorResult.IsValid)
+            {
+                return new UpdateUserPhotoCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
+                };
+            }
+
+            var userPhoto = await userPhotoRepository.FindByIdAsync(Guid.Parse(request.UserPhotoId));
+            if (!userPhoto.IsSuccess)
+            {
+                return new UpdateUserPhotoCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { userPhoto.Error }
+                };
+            }
+
+            var updateResult = userPhoto.Value.UpdatePhoto(request.PhotoUrl);
+            if (!updateResult.IsSuccess)
+            {
+                return new UpdateUserPhotoCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { updateResult.Error }
+                };
+            }
+
+            await userPhotoRepository.UpdateAsync(userPhoto.Value);
+            return new UpdateUserPhotoCommandResponse
+            {
+                Success = true,
+                UserPhoto = new UserCloudPhotoDto
+                {
+                    UserPhotoId = userPhoto.Value.UserPhotoId,
+                    PhotoUrl = userPhoto.Value.PhotoUrl
+                }
+            };
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,87,0],[12,9,12,10,0],[13,13,13,60,0],[14,9,14,10,0],[17,9,17,10,0],[18,13,18,67,0],[19,13,19,93,0],[20,13,20,42,0],[21,13,21,14,0],[22,17,25,76,0],[25,76,25,90,0],[25,90,26,19,0],[29,13,29,102,0],[30,13,30,38,0],[31,13,31,14,0],[32,17,36,19,0],[39,13,39,78,0],[40,13,40,41,0],[41,13,41,14,0],[42,17,46,19,0],[49,13,49,68,0],[50,13,58,15,0],[59,9,59,10,0]]);
+    </script>
+  </body>
+</html>

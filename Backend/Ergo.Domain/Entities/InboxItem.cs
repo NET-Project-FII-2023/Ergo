@@ -12,7 +12,7 @@ namespace Ergo.Domain.Entities
             CreatedDate = DateTime.UtcNow;
             IsRead = false;
         }
-        private InboxItem()
+        public InboxItem()
         {
             
         }

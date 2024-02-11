@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Infrastructure\Repositories\PhotoRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+
+namespace Infrastructure.Repositories
+{
+    public class PhotoRepository : BaseRepository&lt;Photo&gt;, IPhotoRepository
+    {
+        public PhotoRepository(ErgoContext context) : base(context)
+        {
+
+        }
+
+        public  Task&lt;List&lt;Photo&gt;&gt; GetByTaskItemIdAsync(Guid taskItemId)
+        {
+            return Task.FromResult(context.Photos.Where(p =&gt; p.TaskItemId == taskItemId).ToList());
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,55,8,68,0],[9,9,9,10,0],[11,9,11,10,0],[14,9,14,10,0],[15,13,15,100,0],[16,9,16,10,0]]);
+    </script>
+  </body>
+</html>

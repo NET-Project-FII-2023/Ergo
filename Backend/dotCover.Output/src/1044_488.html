@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Domain.Tests\ProjectTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Entities.Enums;
+using Ergo.Domain.Entities;
+using FluentAssertions;
+using System.Reflection;
+
+namespace Ergo.Domain.Tests
+{
+    public class ProjectTests
+    {
+        [Fact]
+        public void When_CreateProjectIsCalled_And_ProjectNameIsValid_Then_SuccessIsReturned()
+        {
+            //Assert &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null,null, DateTime.UtcNow, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateProjectIsCalled_And_ProjectNameIsNull_Then_FailureIsReturned()
+        {
+            //Assert &amp;&amp; Act
+            var result = Project.Create(null, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateProjectIsCalled_And_ProjectDescriptionIsValid_Then_SuccessIsReturned()
+        {
+            //Assert &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateProjectIsCalled_And_ProjectDescriptionIsNull_Then_FailureIsReturned()
+        {
+            //Assert &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, null, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateProjectIsCalled_And_ProjectDeadlineIsValid_Then_SuccessIsReturned()
+        {
+            //Assert &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateProjectIsCalled_And_ProjectDeadlineIsDefault_Then_FailureIsReturned()
+        {
+            //Assert &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, default, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateProjectIsCalled_And_ProjectCreatorFullNameIsValid_Then_SuccessIsReturned()
+        {
+            //Assert &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateProjectIsCalled_And_ProjectCreatorFullNameIsNull_Then_FailureIsReturned()
+        {
+            //Assert &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectNameIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, ProjectState.Production, &quot;Test&quot;);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectNameIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(null, &quot;Test&quot;, null, null, null, DateTime.UtcNow, ProjectState.Production, &quot;Test&quot;);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectDescriptionIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, ProjectState.Production, &quot;Test&quot;);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectDescriptionIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, null, null, null, null, DateTime.UtcNow, ProjectState.Production, &quot;Test&quot;);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectDeadlineIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, ProjectState.Production, &quot;Test&quot;);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectDeadlineIsDefault_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, null, null, null, default, ProjectState.Production, &quot;Test&quot;);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectCreatorFullNameIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, ProjectState.Production, &quot;Test&quot;);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectCreatorFullNameIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, ProjectState.Production, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectStateIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, ProjectState.Production, &quot;Test&quot;);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateProjectIsCalled_And_ProjectStateIsDefault_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var invalidState = (ProjectState)100; // Assuming 100 is an invalid enum value
+
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, invalidState, &quot;Test&quot;);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+            updateResult.Error.Should().Be(&quot;A valid project state is required&quot;);
+        }
+
+
+        [Fact]
+        public void When_AssignUserToProjectIsCalled_And_UserIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;);
+            var userResult = User.Create(Guid.NewGuid());
+            var assignedResult = result.Value.AssignUser(userResult.Value);
+            //Assert
+            assignedResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_AssignUserToProjectIsCalled_And_UserIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;);
+            var assignedResult = result.Value.AssignUser(null);
+            //Assert
+            assignedResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_AssignUserToProjectIsCalled_And_MembersIsNull_Then_MembersIsInitializedAndUserIsAdded()
+        {
+            // Arrange
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;);
+
+            result.Value.Members = null;
+
+            var userResult = User.Create(Guid.NewGuid());
+
+            // Act
+            var assignedResult = result.Value.AssignUser(userResult.Value);
+
+            // Assert
+            assignedResult.IsSuccess.Should().BeTrue();
+            result.Value.Members.Should().NotBeNull();
+            result.Value.Members.Should().Contain(userResult.Value);
+        }
+
+
+        [Fact]
+        public void PrivateConstructorTest()
+        {
+            //Arrange &amp;&amp; Act
+            var constructor = typeof(Project).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[0], null);
+            var instance = constructor.Invoke(null);
+            //Assert
+            Assert.NotNull(instance);
+        }
+        [Fact]
+        public void StartDateIsSetCorrectly()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Project.Create(&quot;Test&quot;, &quot;Test&quot;, null, null, null, DateTime.UtcNow, &quot;Test&quot;);
+            var project = result.Value;
+
+            var startDateField = project.GetType().GetProperty(&quot;StartDate&quot;, BindingFlags.Instance | BindingFlags.Public);
+            var startDateValue = (DateTime)startDateField.GetValue(project);
+            //Assert
+            startDateValue.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,10,1],[14,13,14,99,1],[16,13,16,48,1],[17,9,17,10,1],[20,9,20,10,1],[22,13,22,98,1],[24,13,24,49,1],[25,9,25,10,1],[28,9,28,10,1],[30,13,30,100,1],[32,13,32,48,1],[33,9,33,10,1],[36,9,36,10,1],[38,13,38,98,1],[40,13,40,49,1],[41,9,41,10,1],[44,9,44,10,1],[46,13,46,100,1],[48,13,48,48,1],[49,9,49,10,1],[52,9,52,10,1],[54,13,54,92,1],[56,13,56,49,1],[57,9,57,10,1],[60,9,60,10,1],[62,13,62,100,1],[64,13,64,48,1],[65,9,65,10,1],[68,9,68,10,1],[70,13,70,98,1],[72,13,72,49,1],[73,9,73,10,1],[76,9,76,10,1],[78,13,78,100,1],[79,13,79,140,1],[81,13,81,54,1],[82,9,82,10,1],[85,9,85,10,1],[87,13,87,100,1],[88,13,88,138,1],[90,13,90,55,1],[91,9,91,10,1],[94,9,94,10,1],[96,13,96,100,1],[97,13,97,140,1],[99,13,99,54,1],[100,9,100,10,1],[103,9,103,10,1],[105,13,105,100,1],[106,13,106,138,1],[108,13,108,55,1],[109,9,109,10,1],[112,9,112,10,1],[114,13,114,100,1],[115,13,115,140,1],[117,13,117,54,1],[118,9,118,10,1],[121,9,121,10,1],[123,13,123,100,1],[124,13,124,132,1],[126,13,126,55,1],[127,9,127,10,1],[130,9,130,10,1],[132,13,132,100,1],[133,13,133,140,1],[135,13,135,54,1],[136,9,136,10,1],[140,9,140,10,1],[142,13,142,100,1],[143,13,143,138,1],[145,13,145,55,1],[146,9,146,10,1],[149,9,149,10,1],[151,13,151,100,1],[152,13,152,140,1],[154,13,154,54,1],[155,9,155,10,1],[158,9,158,10,1],[160,13,160,100,1],[161,13,161,50,1],[163,13,163,129,1],[165,13,165,55,1],[166,13,166,81,1],[167,9,167,10,1],[172,9,172,10,1],[174,13,174,102,1],[175,13,175,58,1],[176,13,176,76,1],[178,13,178,56,1],[179,9,179,10,1],[182,9,182,10,1],[184,13,184,102,1],[185,13,185,64,1],[187,13,187,57,1],[188,9,188,10,1],[191,9,191,10,1],[193,13,193,102,1],[195,13,195,41,1],[197,13,197,58,1],[200,13,200,76,1],[203,13,203,56,1],[204,13,204,55,1],[205,13,205,69,1],[206,9,206,10,1],[211,9,211,10,1],[213,13,213,135,1],[214,13,214,53,1],[216,13,216,38,1],[217,9,217,10,1],[220,9,220,10,1],[222,13,222,100,1],[223,13,223,40,1],[225,13,225,122,1],[226,13,226,77,1],[228,13,228,89,1],[229,9,229,10,1]]);
+    </script>
+  </body>
+</html>

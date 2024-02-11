@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Users\Commands\UpdateRole\UpdateUserRoleCommandHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using MediatR;
+
+namespace Ergo.Application.Features.Users.Commands.UpdateRole
+{
+    public class UpdateUserRoleCommandHandler : IRequestHandler&lt;UpdateUserRoleCommand, UpdateUserRoleCommandResponse&gt;
+    {
+        private readonly IUserManager userRepository;
+
+        public UpdateUserRoleCommandHandler(IUserManager userRepository)
+        {
+            this.userRepository = userRepository;
+        }
+
+        public async Task&lt;UpdateUserRoleCommandResponse&gt; Handle(UpdateUserRoleCommand request, CancellationToken cancellationToken)
+        {
+            var user = await userRepository.FindByIdAsync(request.UserId);
+            if (!user.IsSuccess)
+            {
+                return new UpdateUserRoleCommandResponse
+                {
+                    Success = false,
+                    Message = user.Error
+                };
+            }
+            var validator = new UpdateUserRoleCommandValidator();
+            var validationResult = await validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                return new UpdateUserRoleCommandResponse
+                {
+                    Success = false,
+                    Message = validationResult.ToString(),
+                    ValidationsErrors = validationResult.Errors.Select(x =&gt; x.ErrorMessage).ToList()
+                };
+            }
+            var result = await userRepository.UpdateRoleAsync(user.Value, request.Role);
+            if (!result.IsSuccess)
+            {
+                return new UpdateUserRoleCommandResponse
+                {
+                    Success = false,
+                    Message = result.Error
+                };
+            }
+            return new UpdateUserRoleCommandResponse
+            {
+                Success = true
+            };
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,73,0],[11,9,11,10,0],[12,13,12,50,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,75,0],[18,13,18,33,0],[19,13,19,14,0],[20,17,24,19,0],[26,13,26,66,0],[27,13,27,75,0],[28,13,28,43,0],[29,13,29,14,0],[30,17,34,77,0],[34,77,34,91,0],[34,91,35,19,0],[37,13,37,89,0],[38,13,38,35,0],[39,13,39,14,0],[40,17,44,19,0],[46,13,49,15,0],[50,9,50,10,0]]);
+    </script>
+  </body>
+</html>

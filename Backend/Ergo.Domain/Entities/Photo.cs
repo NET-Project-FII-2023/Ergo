@@ -10,7 +10,7 @@ namespace Ergo.Domain.Entities
             this.TaskItemId = TaskItemId;
             CloudURL = cloudUrl;
         }
-        private Photo()
+        public Photo()
         {
 
         }

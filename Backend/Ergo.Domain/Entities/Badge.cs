@@ -27,7 +27,7 @@ namespace Ergo.Domain.Entities
         public Guid UserId { get; set; }
         public string Type { get; set; }
         public bool Active { get; set; }
-        private Badge()
+        public Badge()
         {
 
         }
@@ -61,15 +61,6 @@ namespace Ergo.Domain.Entities
             Count = count;
             switch (Type)
             {
-                case "Innovator":
-                case "Quality-Master":
-                case "Problem-Solver":
-                case "Team-Player":
-                    if (count >= 5)
-                    {
-                        Active = true;
-                    }
-                    break;
                 case "TasksDone":
                     if (count >= 100)
                     {

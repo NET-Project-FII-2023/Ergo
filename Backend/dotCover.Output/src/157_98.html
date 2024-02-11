@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Commands\DeleteProject\DeleteProjectCommandValidator.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using FluentValidation;
+namespace Ergo.Application.Features.Projects.Commands.DeleteProject
+{
+    public class DeleteProjectCommandValidator : AbstractValidator&lt;DeleteProjectCommand&gt;
+    {
+        public DeleteProjectCommandValidator()
+        {
+            RuleFor(p =&gt; p.ProjectId)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
+
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[6,9,6,47,1],[7,9,7,10,1],[8,13,10,28,1],[12,9,12,10,1]]);
+    </script>
+  </body>
+</html>

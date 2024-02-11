@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Domain.Tests\CommentTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Entities;
+using FluentAssertions;
+using System.Reflection;
+using System.Xml.Linq;
+
+namespace Ergo.Domain.Tests
+{
+    public class CommentTests
+    {
+        [Fact]
+        public void When_CreateCommentIsCalled_And_CommentCreatedByIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateCommentIsCalled_And_CommentCreatedByIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(null, Guid.NewGuid(), &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+
+        }
+        [Fact]
+        public void When_CreateCommentIsCalled_And_CommentTaskIdIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateCommentIsCalled_And_CommentTaskIdIsEmpty_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.Empty, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateCommentIsCalled_And_CommentTextIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateCommentIsCalled_And_CommentTextIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateCommentIsCalled_And_CommentCreatedByIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid());
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateCommentIsCalled_And_CommentCreatedByIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(null, DateTime.UtcNow, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid());
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateCommentIsCalled_And_CommentTaskIdIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid());
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateCommentIsCalled_And_CommentTaskIdIsEmpty_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.Empty);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateCommentIsCalled_And_CommentTextIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid());
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateCommentIsCalled_And_CommentTextIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, DateTime.UtcNow, null, Guid.NewGuid());
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+
+
+        [Fact]
+        public void DefaultConstructorTest()
+        {
+            // Arrange &amp; Act
+            var commentInstance = new Comment();
+
+            // Assert
+            commentInstance.Should().NotBeNull();
+        }
+
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,10,1],[14,13,14,73,1],[16,13,16,48,1],[17,9,17,10,1],[20,9,20,10,1],[22,13,22,71,1],[24,13,24,49,1],[26,9,26,10,1],[29,9,29,10,1],[31,13,31,73,1],[33,13,33,48,1],[34,9,34,10,1],[37,9,37,10,1],[39,13,39,69,1],[41,13,41,49,1],[42,9,42,10,1],[45,9,45,10,1],[47,13,47,73,1],[49,13,49,48,1],[50,9,50,10,1],[53,9,53,10,1],[55,13,55,71,1],[57,13,57,49,1],[58,9,58,10,1],[61,9,61,10,1],[63,13,63,73,1],[64,13,64,130,1],[66,13,66,54,1],[67,9,67,10,1],[70,9,70,10,1],[72,13,72,73,1],[73,13,73,128,1],[75,13,75,55,1],[76,9,76,10,1],[79,9,79,10,1],[81,13,81,73,1],[82,13,82,130,1],[84,13,84,54,1],[85,9,85,10,1],[88,9,88,10,1],[90,13,90,73,1],[91,13,91,126,1],[93,13,93,55,1],[94,9,94,10,1],[97,9,97,10,1],[99,13,99,73,1],[100,13,100,130,1],[102,13,102,54,1],[103,9,103,10,1],[106,9,106,10,1],[108,13,108,73,1],[109,13,109,128,1],[111,13,111,55,1],[112,9,112,10,1],[117,9,117,10,1],[119,13,119,49,1],[122,13,122,50,1],[123,9,123,10,1]]);
+    </script>
+  </body>
+</html>

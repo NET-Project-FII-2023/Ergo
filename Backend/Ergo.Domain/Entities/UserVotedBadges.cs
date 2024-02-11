@@ -15,7 +15,7 @@ namespace Ergo.Domain.Entities
         public Guid VoterId { get; set; }
         public Guid VotedId { get; set; }
         public string Type { get; set; }
-        private UserVotedBadges()
+        public UserVotedBadges()
         {
 
         }

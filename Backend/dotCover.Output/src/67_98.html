@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\DeleteTaskItem\DeleteTaskItemCommandHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using MediatR;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
+{
+    public class DeleteTaskItemCommandHandler : IRequestHandler&lt;DeleteTaskItemCommand, DeleteTaskItemCommandResponse&gt;
+    {
+        private readonly ITaskItemRepository repository;
+
+        public DeleteTaskItemCommandHandler(ITaskItemRepository repository)
+        {
+            this.repository = repository;
+        }
+
+        public async Task&lt;DeleteTaskItemCommandResponse&gt; Handle(DeleteTaskItemCommand request, CancellationToken cancellationToken)
+        {
+            DeleteTaskItemCommandResponse response = new();
+            var validator = new DeleteTaskItemCommandValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                response.Success = false;
+                response.ValidationsErrors = validationResult.Errors.Select(x =&gt; x.ErrorMessage).ToList();
+                return response;
+            }
+
+            var taskItemToDelete = await repository.FindByIdAsync(request.TaskItemId);
+
+            if (taskItemToDelete == null)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { &quot;TaskItem not found&quot; };
+                return response;
+            }
+
+            var result = await repository.DeleteAsync(request.TaskItemId);
+
+            if (!result.IsSuccess)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { result.Error };
+                return response;
+            }
+
+            return new DeleteTaskItemCommandResponse
+            {
+                Success = true
+            };
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,76,1],[15,9,15,10,1],[16,13,16,42,1],[17,9,17,10,1],[20,9,20,10,1],[21,13,21,60,1],[22,13,22,66,1],[23,13,23,75,1],[25,13,25,43,1],[26,13,26,14,0],[27,17,27,42,0],[28,17,28,82,0],[28,82,28,96,0],[28,96,28,107,0],[29,17,29,33,0],[32,13,32,87,1],[34,13,34,42,1],[35,13,35,14,0],[36,17,36,42,0],[37,17,37,88,0],[38,17,38,33,0],[41,13,41,75,1],[43,13,43,35,1],[44,13,44,14,0],[45,17,45,42,0],[46,17,46,80,0],[47,17,47,33,0],[50,13,53,15,1],[54,9,54,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Users\Commands\UpdateUser\UpdateUserCommandValidator.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using FluentValidation;
+
+namespace Ergo.Application.Features.Users.Commands.UpdateUser
+{
+    public class UpdateUserCommandValidator : AbstractValidator&lt;UpdateUserCommand&gt;
+    {
+        public UpdateUserCommandValidator()
+        {
+            RuleFor(x =&gt; x.Id)
+                .NotEmpty().WithMessage(&quot;Id is required&quot;)
+                .NotNull().WithMessage(&quot;Id is required&quot;);
+
+            RuleFor(x =&gt; x.Username)
+                .NotEmpty().WithMessage(&quot;Username is required&quot;)
+                .NotNull().WithMessage(&quot;Username is required&quot;);
+
+            RuleFor(x =&gt; x.Name)
+                .NotEmpty().WithMessage(&quot;Name is required&quot;)
+                .NotNull().WithMessage(&quot;Name is required&quot;);
+
+            RuleFor(x =&gt; x.Email)
+                .NotEmpty().WithMessage(&quot;Email is required&quot;)
+                .NotNull().WithMessage(&quot;Email is required&quot;);
+
+            RuleFor(x =&gt; x.Bio)
+                .MaximumLength(2000);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,44,1],[8,9,8,10,1],[9,13,11,58,1],[13,13,15,64,1],[17,13,19,60,1],[21,13,23,61,1],[25,13,26,38,1],[27,9,27,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Identity\Migrations\20240204202352_UserUpdate.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Ergo.Identity.Migrations
+{
+    /// &lt;inheritdoc /&gt;
+    public partial class UserUpdate : Migration
+    {
+        /// &lt;inheritdoc /&gt;
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;Bio&quot;,
+                table: &quot;AspNetUsers&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
+
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;Company&quot;,
+                table: &quot;AspNetUsers&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
+
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;Facebook&quot;,
+                table: &quot;AspNetUsers&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
+
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;GitHub&quot;,
+                table: &quot;AspNetUsers&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
+
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;Instagram&quot;,
+                table: &quot;AspNetUsers&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
+
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;LinkedIn&quot;,
+                table: &quot;AspNetUsers&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
+
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;Location&quot;,
+                table: &quot;AspNetUsers&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
+
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;Mobile&quot;,
+                table: &quot;AspNetUsers&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
+
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;TwitterX&quot;,
+                table: &quot;AspNetUsers&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
+        }
+
+        /// &lt;inheritdoc /&gt;
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: &quot;Bio&quot;,
+                table: &quot;AspNetUsers&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;Company&quot;,
+                table: &quot;AspNetUsers&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;Facebook&quot;,
+                table: &quot;AspNetUsers&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;GitHub&quot;,
+                table: &quot;AspNetUsers&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;Instagram&quot;,
+                table: &quot;AspNetUsers&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;LinkedIn&quot;,
+                table: &quot;AspNetUsers&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;Location&quot;,
+                table: &quot;AspNetUsers&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;Mobile&quot;,
+                table: &quot;AspNetUsers&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;TwitterX&quot;,
+                table: &quot;AspNetUsers&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,10,0],[13,13,17,33,0],[19,13,23,33,0],[25,13,29,33,0],[31,13,35,33,0],[37,13,41,33,0],[43,13,47,33,0],[49,13,53,33,0],[55,13,59,33,0],[61,13,65,33,0],[66,9,66,10,0],[70,9,70,10,0],[71,13,73,39,0],[75,13,77,39,0],[79,13,81,39,0],[83,13,85,39,0],[87,13,89,39,0],[91,13,93,39,0],[95,13,97,39,0],[99,13,101,39,0],[103,13,105,39,0],[106,9,106,10,0]]);
+    </script>
+  </body>
+</html>

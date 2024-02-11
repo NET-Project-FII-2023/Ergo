@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Comments\Queries\GetById\GetByIdCommentQueryHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using MediatR;
+
+
+namespace Ergo.Application.Features.Comments.Queries.GetById
+{
+    public class GetByIdCommentQueryHandler : IRequestHandler &lt;GetByIdCommentQuery,GetByIdCommentQueryResponse&gt;
+    {
+        private readonly ICommentRepository commentRepository;
+        
+        public GetByIdCommentQueryHandler(ICommentRepository commentRepository)
+        {
+            this.commentRepository = commentRepository;
+        }
+
+        public async Task&lt;GetByIdCommentQueryResponse&gt; Handle(GetByIdCommentQuery request, CancellationToken cancellationToken)
+        {
+            GetByIdCommentQueryResponse response = new();
+            var comment = await commentRepository.FindByIdAsync(request.CommentId);
+
+            if(!comment.IsSuccess)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { comment.Error };
+                return response;
+            }
+            return new GetByIdCommentQueryResponse
+            {
+                Success = true,
+                Comment = new CommentDto
+                {
+                    CommentId = comment.Value.CommentId,
+                    CommentText = comment.Value.CommentText,
+                    CreatedBy = comment.Value.CreatedBy,
+                    CreatedDate = comment.Value.CreatedDate,
+                    LastModifiedBy = comment.Value.LastModifiedBy,
+                    LastModifiedDate = comment.Value.LastModifiedDate,
+                    TaskId = comment.Value.TaskId
+                   
+
+                }
+            };
+           
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,11,80,1],[12,9,12,10,1],[13,13,13,56,1],[14,9,14,10,1],[17,9,17,10,1],[18,13,18,58,1],[19,13,19,84,1],[21,13,21,35,1],[22,13,22,14,0],[23,17,23,42,0],[24,17,24,81,0],[25,17,25,33,0],[27,13,42,15,1],[44,9,44,10,1]]);
+    </script>
+  </body>
+</html>

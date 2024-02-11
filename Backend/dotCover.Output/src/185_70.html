@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\InboxItems\Queries\GetByUserId\GetByUserIdQueryHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.InboxItems.Commands.CreateInboxItem;
+using Ergo.Application.Persistence;
+using MediatR;
+
+namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
+{
+    public class GetByUserIdQueryHandler : IRequestHandler&lt;GetByUserIdQuery, GetByUserIdQueryResponse&gt;
+    {
+        private readonly IInboxItemRepository inboxItemRepository;
+        private readonly IUserRepository userRepository;
+
+        public GetByUserIdQueryHandler(IInboxItemRepository inboxItemRepository, IUserRepository userRepository)
+        {
+            this.inboxItemRepository = inboxItemRepository;
+            this.userRepository = userRepository;
+        }
+
+        public async Task&lt;GetByUserIdQueryResponse&gt; Handle(GetByUserIdQuery request, CancellationToken cancellationToken)
+        {
+            var userExists = await userRepository.FindByIdAsync(request.UserId);
+            if(!userExists.IsSuccess)
+            {
+                return new GetByUserIdQueryResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;User with the provided ID does not exist.&quot; }
+                };
+            }
+            var inboxItems = await inboxItemRepository.GetByUserIdAsync(request.UserId);
+            return new GetByUserIdQueryResponse
+            {
+                Success = true,
+                InboxItems = inboxItems.Select(x =&gt; new GetByUserIdDto
+                {
+                   InboxItemId = x.InboxItemId,
+                   UserId = x.UserId,
+                   Message = x.Message,
+                   CreatedDate = x.CreatedDate,
+                   IsRead = x.IsRead,
+
+                }).ToList()
+            };
+               
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,113,0],[13,9,13,10,0],[14,13,14,60,0],[15,13,15,50,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,20,81,0],[21,13,21,38,0],[22,13,22,14,0],[23,17,27,19,0],[29,13,29,89,0],[30,13,33,53,0],[33,53,41,18,0],[41,18,42,15,0],[44,9,44,10,0]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Badges\Commands\UpdateSpecialBadgeCommand\UpdateSpecialBadgeCommandValidator.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using FluentValidation;
+
+namespace Ergo.Application.Features.Badges.Commands.UpdateSpecialBadgeCommand
+{
+    public class UpdateSpecialBadgeCommandValidator : AbstractValidator&lt;UpdateSpecialBadgeCommand&gt;
+    {
+        public UpdateSpecialBadgeCommandValidator()
+        {
+            RuleFor(p =&gt; p.VotedId)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
+            RuleFor(p =&gt; p.Type)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull()
+                .Must(x =&gt; x == &quot;Innovator&quot; || x == &quot;Quality-Master&quot; || x == &quot;Problem-Solver&quot; || x == &quot;Team-Player&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,52,0],[8,9,8,10,0],[9,13,11,28,0],[12,13,15,28,0],[15,28,15,116,0],[15,116,15,118,0],[16,9,16,10,0]]);
+    </script>
+  </body>
+</html>

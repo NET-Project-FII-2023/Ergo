@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Infrastructure\Repositories\InboxItemRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.InboxItems.Commands.UpdateInboxItemIsRead;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+
+namespace Infrastructure.Repositories
+{
+    internal class InboxItemRepository : BaseRepository&lt;InboxItem&gt;, IInboxItemRepository
+    {
+        public InboxItemRepository(ErgoContext context) : base(context)
+        {
+        }
+
+        public Task&lt;List&lt;InboxItem&gt;&gt; GetByUserIdAsync(Guid userId)
+        {
+            return Task.FromResult(context.InboxItems.Where(i =&gt; i.UserId == userId).ToList());
+
+        }
+        public async Task&lt;Result&lt;InboxItemDto&gt;&gt; UpdateIsReadAsync(InboxItem inboxItem, bool isRead)
+        {
+            inboxItem.UpdateIsRead(isRead);
+            await context.SaveChangesAsync();
+            return Result&lt;InboxItemDto&gt;.Success(new InboxItemDto
+            {
+                UserId = inboxItem.UserId,
+                Message = inboxItem.Message,
+                CreatedDate = inboxItem.CreatedDate,
+                IsRead = inboxItem.IsRead
+            });
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,59,10,72,0],[11,9,11,10,0],[12,9,12,10,0],[15,9,15,10,0],[16,13,16,96,0],[18,9,18,10,0],[20,9,20,10,0],[21,13,21,44,0],[22,13,22,46,0],[23,13,29,16,0],[30,9,30,10,0]]);
+    </script>
+  </body>
+</html>

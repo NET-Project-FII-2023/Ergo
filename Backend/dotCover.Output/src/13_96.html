@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.API.IntegrationTests\Controllers\ProjectsControllerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.API.IntegrationTests.Base;
+using Ergo.API.IntegrationTests.Dto;
+using Ergo.Application.Features.Projects.Commands.CreateProject;
+using Ergo.Application.Features.Projects.Queries;
+using FluentAssertions;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Security.Claims;
+
+namespace Ergo.API.IntegrationTests.Controllers
+{
+    public class ProjectsControllerTests : BaseApplicationContextTests
+    {
+        private const string RequestUri = &quot;/api/v1/projects&quot;;
+
+        [Fact]
+        public async Task When_GetAllProjectsQueryHandlerIsCalled_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token); 
+            //Act
+            var response = await Client.GetAsync(RequestUri);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;ProjectsContainer&gt;(responseString);
+            // Assert
+            result.Projects?.Count.Should().Be(4); 
+
+        }
+        [Fact]
+        public async Task When_PostProjectCommandHandlerIsCalledWithRightParameters_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token);
+            var project = new CreateProjectCommand
+            {
+                ProjectName = &quot;TestProject2&quot;,
+                Description = &quot;TestDescription&quot;,
+                GitRepository = &quot;TestGitRepository&quot;,
+                FullName = &quot;john_doe&quot;,
+                Deadline = DateTime.Now.AddDays(1)
+            };
+            //Act
+            var response = await Client.PostAsJsonAsync(RequestUri, project);
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;ProjectResponse&gt;(responseString);
+            result?.Should().NotBeNull();
+            result?.Project.ProjectName.Should().Be(project.ProjectName);
+
+        }
+        [Fact]
+        public async Task When_GetProjectByIdQueryHandlerIsCalledWithRightId_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token);
+            var response = await Client.GetAsync(RequestUri);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var projects = JsonConvert.DeserializeObject&lt;ProjectsContainer&gt;(responseString);
+            var projectId = projects.Projects.First().ProjectId;
+            //Act
+            var getResponse = await Client.GetAsync($&quot;{RequestUri}/{projectId}&quot;);
+            getResponse.EnsureSuccessStatusCode();
+            responseString = await getResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;ProjectDto&gt;(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result.ProjectId.Should().Be(projectId);
+        }
+        [Fact]
+        public async Task When_GetProjectByIdQueryHandlerIsCalledWithBadId_Then_Failure()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token);
+            //Act
+            var getResponse = await Client.GetAsync($&quot;{RequestUri}/{00000000 - 0000 - 0000 - 0000 - 000000000000}&quot;);
+            var responseString = await getResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;ProjectDto&gt;(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result.ProjectId.Should().Be(&quot;00000000-0000-0000-0000-000000000000&quot;);
+        }
+        [Fact]
+        public async Task When_DeleteProjectQueryHandlerIsCalledWithRightId_Then_Success()
+        {
+            //Arrange
+            string token = CreateToken();
+            Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, token);
+            var response = await Client.GetAsync(RequestUri);
+            var responseString = await response.Content.ReadAsStringAsync();
+            var projects = JsonConvert.DeserializeObject&lt;ProjectsContainer&gt;(responseString);
+            var projectId = projects.Projects.First().ProjectId;
+            //Act
+            response = await Client.DeleteAsync($&quot;{RequestUri}/{projectId}&quot;);
+            response.EnsureSuccessStatusCode();
+            responseString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject&lt;ProjectDeleteResponse&gt;(responseString);
+            // Assert
+            result.Should().NotBeNull();
+            result?.Success.Should().Be(true);
+        }
+        private static string CreateToken()
+        {
+
+            return JwtTokenProvider.JwtSecurityTokenHandler.WriteToken(
+            new JwtSecurityToken(
+                JwtTokenProvider.Issuer,
+                JwtTokenProvider.Issuer,
+                new List&lt;Claim&gt; { new(ClaimTypes.Role, &quot;User&quot;)},
+                expires: DateTime.Now.AddMinutes(30),
+                signingCredentials: JwtTokenProvider.SigningCredentials
+            ));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,9,20,10,1],[22,13,22,42,1],[23,13,23,105,1],[25,13,25,62,1],[26,13,26,48,1],[27,13,27,77,1],[28,13,28,91,1],[30,13,30,51,1],[32,9,32,10,0],[35,9,35,10,1],[37,13,37,42,1],[38,13,38,105,1],[39,13,46,15,1],[48,13,48,78,1],[51,13,51,48,1],[52,13,52,77,0],[53,13,53,89,0],[54,13,54,42,0],[55,13,55,74,0],[57,9,57,10,0],[60,9,60,10,1],[62,13,62,42,1],[63,13,63,105,1],[64,13,64,62,1],[65,13,65,77,1],[66,13,66,93,1],[67,13,67,65,1],[69,13,69,82,1],[70,13,70,51,1],[71,13,71,76,1],[72,13,72,84,1],[74,13,74,41,1],[75,13,75,53,1],[76,9,76,10,1],[79,9,79,10,1],[81,13,81,42,1],[82,13,82,105,1],[84,13,84,117,1],[85,13,85,80,1],[86,13,86,84,1],[88,13,88,41,1],[89,13,89,82,1],[90,9,90,10,1],[93,9,93,10,1],[95,13,95,42,1],[96,13,96,105,1],[97,13,97,62,1],[98,13,98,77,1],[99,13,99,93,1],[100,13,100,65,1],[102,13,102,78,1],[103,13,103,48,1],[104,13,104,73,1],[105,13,105,95,1],[107,13,107,41,1],[108,13,108,47,1],[109,9,109,10,1],[111,9,111,10,1],[113,13,120,16,1],[121,9,121,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Comments\Commands\DeleteComment\DeleteCommentCommandValidator.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using FluentValidation;
+
+namespace Ergo.Application.Features.Comments.Commands.DeleteComment
+{
+    public class DeleteCommentCommandValidator : AbstractValidator&lt;DeleteCommentCommand&gt;
+    {
+        public DeleteCommentCommandValidator()
+        {
+            RuleFor(p =&gt; p.CommentId)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
+        }
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[7,9,7,47,1],[8,9,8,10,1],[9,13,11,28,1],[12,9,12,10,1]]);
+    </script>
+  </body>
+</html>

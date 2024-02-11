@@ -261,6 +261,79 @@ namespace Ergo.Domain.Tests
             var instance = constructor.Invoke(null);
             Assert.NotNull(instance);
         }
+        [Fact]
+        public void When_DeleteAssignedUserIsCalled_Then_SuccessIsReturned()
+        {
+            //Arrange && Act
+            var result = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid(), null);
+            var userResult = User.Create(Guid.NewGuid());
+            var assignResult = result.Value.AssignUser(userResult.Value);
+            var deleteResult = result.Value.DeleteAssignedUser();
+            //Assert
+            deleteResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_StartOrResumeTaskItemIsCalled_And_TaskStateIsNotDone_Then_SuccessIsReturned()
+        {
+            //Arrange && Act
+            var result = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid(), null);
+            var startResult = result.Value.StartOrResumeTask();
+            //Assert
+            startResult.IsSuccess.Should().BeTrue();
+        }
+
+        [Fact]
+        public void When_StartOrResumeTaskIsCalled_And_TaskIsAlreadyInProgress_Then_FailureIsReturned()
+        {
+            // Arrange
+            var task = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid(), null);
+
+            task.Value.StartOrResumeTask(); // Starting the task once
+
+            // Act
+            var result = task.Value.StartOrResumeTask(); // Trying to start the task again
+
+            // Assert
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be("Task is already in progress");
+        }
+        [Fact]
+        public void When_PauseTaskIsCalled_And_TaskIsInProgress_Then_SuccessIsReturned()
+        {
+            //Arrange && Act
+            var result = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid(), null);
+            result.Value.StartOrResumeTask();
+            var pauseResult = result.Value.PauseTask();
+            //Assert
+            pauseResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_PauseTaskIsCalled_And_TaskIsNotInProgress_Then_FailureIsReturned()
+        {
+            //Arrange && Act
+            var result = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid(), null);
+            var pauseResult = result.Value.PauseTask();
+            //Assert
+            pauseResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_AddManualTimeIsCalled_And_TimeToAddIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange && Act
+            var result = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid(), null);
+            var addTimeResult = result.Value.AddManualTime(TimeSpan.FromMinutes(5));
+            //Assert
+            addTimeResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_AddManualTimeIsCalled_And_TimeToAddIsZero_Then_FailureIsReturned()
+        {
+            //Arrange && Act
+            var result = TaskItem.Create("Test", "Test", DateTime.UtcNow, "Test", Guid.NewGuid(), null);
+            var addTimeResult = result.Value.AddManualTime(TimeSpan.Zero);
+            //Assert
+            addTimeResult.IsSuccess.Should().BeFalse();
+        }
 
     }
 }
