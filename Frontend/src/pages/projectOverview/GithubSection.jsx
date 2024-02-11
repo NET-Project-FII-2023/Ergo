@@ -12,6 +12,7 @@ const GithubSection = ({ token, task, project }) => {
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
     const [isSelectVisible, setIsSelectVisible] = useState(false);
+    const [displayText, setDisplayText] = useState(`Displaying commit activity for '${task.branch}':`);
 
     const fetchBranches = async () => {
         try {
@@ -81,6 +82,7 @@ const GithubSection = ({ token, task, project }) => {
             if (response.status === 200) {
                 toast.success('Task updated successfully');
                 fetchCommitsForBranch(selectedBranch);
+                setDisplayText(`Displaying commit activity for '${selectedBranch}':`);
             } else {
                 console.error('Error updating task:', response);
                 toast.error('Failed to update task');
@@ -121,7 +123,7 @@ const GithubSection = ({ token, task, project }) => {
                             <div>
                                 <Select
                                     value={selectedBranch}
-                                    onChange={(value) => { setSelectedBranch(value) }}
+                                    onChange={(value) => { setSelectedBranch(value); }}
                                     className="!border-surface-mid-dark mb-3 text-surface-light focus:!border-secondary"
                                     labelProps={{
                                         className: "before:content-none after:content-none",
@@ -145,7 +147,7 @@ const GithubSection = ({ token, task, project }) => {
                             <Button size='sm' className='flex text-center bg-surface-darkest items-center justify-center text-surface-light hover:opacity-80 ' onClick={handleOpenModal}>Select Branch <MediationIcon className='ml-1' fontSize='extraSmall'></MediationIcon></Button>
                         }
                     </div>
-                    <p className='text-surface-light font-sm mb-2'>Displaying commit activity for '{task.branch}':</p>
+                    <p className='text-surface-light font-sm mb-2'>{displayText}</p>
                     <div className="text-surface-light overflow-auto max-h-[16rem]" style={{ scrollbarWidth: 'thin' }}>
                         <ul>
                             {commits.map(item => (
@@ -171,5 +173,6 @@ const GithubSection = ({ token, task, project }) => {
         </div>
     );
 };
+
 
 export default GithubSection;
