@@ -12,11 +12,13 @@ namespace Ergo.Identity.Services
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IUserPhotoRepository userPhotoRepository;
 
-        public ApplicationUserManager(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public ApplicationUserManager(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IUserPhotoRepository userPhotoRepository)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.userPhotoRepository = userPhotoRepository;
         }
 
         public async Task<Result<UserDto>> FindByIdAsync(Guid userId)
@@ -26,11 +28,24 @@ namespace Ergo.Identity.Services
             {
                 return Result<UserDto>.Failure($"User with id {userId} not found");
             }
+
             var userDtos = MapToUserDto(user);
             var roles = await userManager.GetRolesAsync(user);
             userDtos.Roles = roles.ToList();
+
+            var userPhoto = await userPhotoRepository.GetUserPhotoByUserIdAsync(user.Id);
+            if (userPhoto.IsSuccess)
+            {
+                userDtos.UserPhoto = new UserCloudPhotoDto
+                {
+                    UserPhotoId = userPhoto.Value.UserPhotoId,
+                    PhotoUrl = userPhoto.Value.PhotoUrl
+                };
+            }
+
             return Result<UserDto>.Success(userDtos);
         }
+
         public async Task<Result<UserDto>> FindByEmailAsync(string email)
         {
             var user = await userManager.FindByEmailAsync(email);

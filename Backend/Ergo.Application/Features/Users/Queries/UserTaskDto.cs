@@ -5,5 +5,6 @@ namespace Ergo.Application.Features.Users.Queries
         public string? UserId { get; set; }
         public string? Username { get; set; }
         public string? Name { get; set; }
+        public UserCloudPhotoDto? UserPhoto { get; set; }
     }
 }

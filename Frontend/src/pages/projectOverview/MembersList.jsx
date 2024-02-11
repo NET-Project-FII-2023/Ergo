@@ -18,6 +18,8 @@ const MembersList = ({ project, token }) => {
     }, [project.projectId, token]);
 
     const fetchMembers = async () => {
+        if(!project.projectId) return;
+
         try {
             const response = await api.get(`/api/v1/Users/ByProjectId/${project.projectId}`, {
                 headers: {

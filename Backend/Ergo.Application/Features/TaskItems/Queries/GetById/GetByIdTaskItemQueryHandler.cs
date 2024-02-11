@@ -1,4 +1,5 @@
-﻿using Ergo.Application.Features.Users.Queries;
+﻿using Ergo.Application.Features.Users;
+using Ergo.Application.Features.Users.Queries;
 using Ergo.Application.Persistence;
 using MediatR;
 
@@ -8,11 +9,13 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetById
     {
         private readonly ITaskItemRepository taskItemRepository;
         private readonly IUserManager userManager;
+        private readonly IUserPhotoRepository userPhotoRepository;
 
-        public GetByIdTaskItemQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager)
+        public GetByIdTaskItemQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager, IUserPhotoRepository userPhotoRepository)
         {
             this.taskItemRepository = taskItemRepository;
             this.userManager = userManager;
+            this.userPhotoRepository = userPhotoRepository;
         }
 
         public async Task<GetByIdTaskItemQueryResponse> Handle(GetByIdTaskItemQuery request, CancellationToken cancellationToken)
@@ -30,21 +33,24 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetById
             UserTaskDto? assignedUser = null;
             var assignedUserId = await taskItemRepository.GetAssignedUser(request.TaskItemId);
 
-            if (assignedUserId.IsSuccess)
+            if (assignedUserId.IsSuccess && Guid.TryParse(assignedUserId.Value, out var guidUserId))
             {
-                if (Guid.TryParse(assignedUserId.Value, out var guidUserId))
-                {
-                    var user = await userManager.FindByIdAsync(guidUserId);
+                var user = await userManager.FindByIdAsync(guidUserId);
 
-                    if (user.IsSuccess)
+                if (user.IsSuccess)
+                {
+                    var userPhoto = await userPhotoRepository.GetUserPhotoByUserIdAsync(user.Value.UserId);
+
+                    assignedUser = new UserTaskDto
                     {
-                        assignedUser = new UserTaskDto
-                        {
-                            UserId = user.Value.UserId,
-                            Name = user.Value.Name,
-                            Username = user.Value.Username,
-                        };
-                    }
+                        UserId = user.Value.UserId,
+                        Name = user.Value.Name,
+                        Username = user.Value.Username,
+                        UserPhoto = userPhoto.IsSuccess ? new UserCloudPhotoDto {
+                                UserPhotoId = userPhoto.Value.UserPhotoId,
+                                PhotoUrl = userPhoto.Value.PhotoUrl
+                        } : null
+                    };
                 }
             }
 
