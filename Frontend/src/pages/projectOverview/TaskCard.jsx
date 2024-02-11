@@ -15,9 +15,9 @@ const TaskCard = ({ task, handleOpenModal, color }) => {
   const navigate = useNavigate();
   const truncatedDescription = task.description.length > 100 ? `${task.description.slice(0, 150)}...` : task.description;
 
-  const handleAssignUserClick = (e, userId) => {
+  const handleUserAvatarClick = (e, userId) => {
     e.stopPropagation();
-    userId && navigate(`/dashboard/profile/${task.assignedUser?.userId}`)
+    userId && navigate(`/dashboard/profile/${userId}`)
   }
 
   return (
@@ -46,7 +46,7 @@ const TaskCard = ({ task, handleOpenModal, color }) => {
           {task?.assignedUser && (
             <Tooltip content={task.assignedUser?.name}>
               <div
-                onClick={(e) => handleAssignUserClick(e, task.assignedUser?.userId)}
+                onClick={(e) => handleUserAvatarClick(e, task.assignedUser?.userId)}
                 className={"cursor-pointer mr-3"}
               >
                 <UserAvatar

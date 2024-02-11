@@ -106,9 +106,9 @@ const AssignUserTask = ({ token, task, project }) => {
         setShowButtons(false);
     };
 
-    const handleAssignUserClick = (e, userId) => {
+    const handleAssignedUserClick = (e, userId) => {
         e.stopPropagation();
-        userId && navigate(`/dashboard/profile/${task.assignedUser?.userId}`)
+        userId && navigate(`/dashboard/profile/${userId}`)
     }
 
     return (
@@ -134,7 +134,7 @@ const AssignUserTask = ({ token, task, project }) => {
                         <CardContent className='rounded bg-surface-darkest !p-4'>
                             <div className='flex'>
                                 <UserAvatar
-                                  onClick={(e) => handleAssignUserClick(e, loadedAssignedUser?.userId)}
+                                  onClick={(e) => handleAssignedUserClick(e, loadedAssignedUser?.userId)}
                                   photoUrl={loadedAssignedUser?.userPhoto?.photoUrl}
                                   className={"w-[2.25rem] h-[2.25rem] rounded-full mr-3"}
                                   loadingClassName={"w-[2.25rem] h-[2.25rem] bg-surface-mid-dark rounded-full mr-3"}

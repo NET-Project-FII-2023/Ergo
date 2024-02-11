@@ -1,17 +1,12 @@
-﻿using Ergo.Domain.Entities;
-using Ergo.Domain.Entities.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ergo.Application.Features.Users.Queries;
+using Ergo.Domain.Entities;
 
 namespace Ergo.Application.Features.Comments.Queries
 {
     public class CommentDto
     {
         public Guid CommentId { get; set; }
-        public string? CreatedBy { get; set; }
+        public UserCommentDto? CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public string? LastModifiedBy { get; set; }
         public DateTime LastModifiedDate { get; set; }
