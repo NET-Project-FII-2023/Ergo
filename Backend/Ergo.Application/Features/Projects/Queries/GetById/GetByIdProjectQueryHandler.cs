@@ -28,7 +28,8 @@ namespace Ergo.Application.Features.Projects.Queries.GetById
                     State = project.Value.State,
                     Members = project.Value.Members,
                     CreatedBy = project.Value.CreatedBy,
-                    GithubToken = project.Value.GithubToken
+                    GithubToken = project.Value.GithubToken,
+                    GithubOwner = project.Value.GithubOwner
                 };
             }
 

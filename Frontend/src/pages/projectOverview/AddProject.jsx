@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import ErgoInput from '../../widgets/form_utils/ErgoInput';
 import ErgoTextarea from '../../widgets/form_utils/ErgoTextArea';
 import ErgoDatePicker from '../../widgets/form_utils/ErgoDatePicker';
+import ErgoLabel from '../../widgets/form_utils/ErgoLabel';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import { useUser } from "@/context/LoginRequired";
 
@@ -16,7 +17,7 @@ const AddProject = ({ token, onProjectAdded }) => {
     const [projectDetails, setProjectDetails] = useState({
         projectName: '',
         description: '',
-        githubOwner: currentUser.username,
+        githubOwner: '',
         githubToken: '',
         gitRepository: '',
         fullName: currentUser.username,
@@ -67,12 +68,13 @@ const AddProject = ({ token, onProjectAdded }) => {
                 <p className='text-white opacity-100'>+</p>
              </Button>
             <Modal open={open} onClose={handleClose}>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[25rem] bg-[#2f2b3a] shadow-lg p-4 rounded">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[30rem] bg-[#2f2b3a] shadow-lg p-4 rounded">
                     <Typography variant='h4' className='text-white p-2'>
                         Add Project
                     </Typography>
                     <div className='flex flex-col justify-between h-full'>
                         <div className='m-2'>
+                            <ErgoLabel labelName="Project name" />
                             <ErgoInput
                                 label='Project Name'
                                 placeholder="Enter Project Name"
@@ -81,6 +83,7 @@ const AddProject = ({ token, onProjectAdded }) => {
                             />
                         </div>
                         <div className='m-2'>
+                            <ErgoLabel labelName="Description" />
                             <ErgoTextarea
                                 label='Description'
                                 placeholder="Enter Description"
@@ -89,6 +92,16 @@ const AddProject = ({ token, onProjectAdded }) => {
                             />
                         </div>
                         <div className='m-2'>
+                            <ErgoLabel labelName="Github Owner" />
+                            <ErgoInput
+                                placeholder="Github Owner"
+                                label='GitHub Owner'
+                                onChange={(value) => handleInputChange('githubOwner', value)}
+                                value={projectDetails.githubOwner}
+                            />
+                        </div>
+                        <div className='m-2'>
+                            <ErgoLabel labelName="Github Owner" />
                             <ErgoInput
                                 label='GitHub Token'
                                 placeholder="Enter GitHub Token"
@@ -97,6 +110,7 @@ const AddProject = ({ token, onProjectAdded }) => {
                             />
                         </div>
                         <div className='m-2'>
+                            <ErgoLabel labelName="Git Repository" />
                             <ErgoInput
                                 label='Git Repository'
                                 placeholder="Enter Git Repository"
@@ -105,6 +119,7 @@ const AddProject = ({ token, onProjectAdded }) => {
                             />
                         </div>
                         <div className='m-2'>
+                            <ErgoLabel labelName="Deadline" />
                             <ErgoDatePicker
                                 label='Deadline'
                                 selectedDate={projectDetails.deadline}
