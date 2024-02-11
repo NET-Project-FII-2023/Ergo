@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["jest", "@testing-library/jest-dom"],
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "vite-env.d.ts", "src/pages/dashboard/Profile/components/Badges.jsx"],
   "exclude": ["node_modules"]
