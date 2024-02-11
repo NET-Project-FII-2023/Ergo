@@ -16,13 +16,9 @@ const TaskSection = ({ project, token, userId, handleOpenModal}) => {
       fetchTaskItems();
     }, [project.projectId, token, userId]);
 
-  useEffect(() => {
-    fetchTaskItems();
-  }, [project.projectId, token, userId]);
-
   const fetchTaskItems = async () => {
     try {
-      if (!token || !userId) return;
+      if (!token || !project.projectId) return;
 
       const response = await api.get(`/api/v1/TaskItems/ByProject/${project.projectId}`, {
         headers: {
