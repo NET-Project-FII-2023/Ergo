@@ -13,6 +13,7 @@ DotNetEnv.Env.TraversePath().Load();
 
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
