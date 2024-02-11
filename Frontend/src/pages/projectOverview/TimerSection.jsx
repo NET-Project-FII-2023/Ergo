@@ -10,6 +10,8 @@ const TimerSection = ({ task, token, project }) => {
     const [startTime, setStartTime] = useState(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
+    const [loadedStartTime, setLoadedStartTime] = useState();
+    const [currentTaskState, setCurrentTaskState] = useState();
     const currentUser = useUser();
 
     useEffect(() => {
@@ -20,10 +22,10 @@ const TimerSection = ({ task, token, project }) => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
+    
                 if (response.status === 200) {
                     const { recordedTime } = response.data;
-                    const recordedTimeMilliseconds = parseTimeToMilliseconds(recordedTime);
+                    const recordedTimeMilliseconds = parseTimeToMilliseconds(recordedTime); // Parse time to milliseconds
                     setElapsedTime(recordedTimeMilliseconds);
                 } else {
                     console.error('Error fetching recorded time:', response);
@@ -32,9 +34,38 @@ const TimerSection = ({ task, token, project }) => {
                 console.error('Error fetching recorded time:', error);
             }
         };
-
+    
         fetchRecordedTime();
     }, [task.taskItemId, token]);
+    
+
+    useEffect(() => {
+        const fetchCurrentTask = async () => {
+            try {
+                const response = await api.get(`/api/v1/TaskItems/${task.taskItemId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+    
+                if (response.status === 200) {
+                    const { startTime } = response.data.taskItem;
+                    setCurrentTaskState(response.data.taskItem.state);
+                    setLoadedStartTime(startTime);
+                    setIsTimerRunning(startTime !== null);
+                    if (startTime) {
+                        setStartTime(new Date(startTime).getTime());
+                    }
+                } else {
+                    console.error('Error fetching tasks:', response);
+                }
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+            }
+        };
+    
+        fetchCurrentTask();
+    }, []);
 
     useEffect(() => {
         let interval;
@@ -42,13 +73,13 @@ const TimerSection = ({ task, token, project }) => {
             interval = setInterval(() => {
                 const currentTime = new Date().getTime();
                 const timePassed = currentTime - startTime;
-                setElapsedTime(prevElapsedTime => prevElapsedTime + timePassed);
+                setElapsedTime(prevElapsedTime => prevElapsedTime + timePassed); // Update elapsed time
                 setStartTime(currentTime);
             }, 1000);
         } else {
             clearInterval(interval);
         }
-
+    
         return () => clearInterval(interval);
     }, [isTimerRunning, startTime]);
 
@@ -95,21 +126,20 @@ const TimerSection = ({ task, token, project }) => {
         }
     };
 
-    const formatTime = (milliseconds) => {
-        const totalSeconds = Math.floor(milliseconds / 1000);
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const parseTimeToMilliseconds = (timeString) => {
+        const [hoursStr, minutesStr, secondsStr] = timeString.split(':');
+        const hours = parseInt(hoursStr);
+        const minutes = parseInt(minutesStr);
+        const seconds = parseInt(secondsStr);
+        const totalMilliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000;
+        return totalMilliseconds;
     };
 
-    const parseTimeToMilliseconds = (timeString) => {
-        const timeComponents = timeString.split(':');
-        const hours = parseInt(timeComponents[0]);
-        const minutes = parseInt(timeComponents[1]);
-        const seconds = parseFloat(timeComponents[2]);
-        return (hours * 3600 + minutes * 60 + seconds) * 1000;
+    const formatElapsedTime = (milliseconds) => {
+        const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+        const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((milliseconds % (1000 * 60)) / 1000);
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
     return (
@@ -122,22 +152,28 @@ const TimerSection = ({ task, token, project }) => {
             </div>
             {task.assignedUser && task.assignedUser.username === currentUser.username &&
                 <div className='flex'>
-                    <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handleStartTimer}>
-                        <p className='text-md text-surface-light'>Start</p>
-                        <TimerIcon fontSize='small' className='ml-1 text-secondary'></TimerIcon>
-                    </Button>
-                    <Button size="sm" className='bg-surface-darkest flex items-center' onClick={handlePauseTimer}>
-                        <p className='text-md text-surface-light'>Pause</p>
-                        <PauseIcon fontSize='small' className='ml-1'></PauseIcon>
-                    </Button>
+                    {currentTaskState !== 3 && ( // Check if the current task state is not 3
+                        isTimerRunning ? (
+                            <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handlePauseTimer}>
+                                <p className='text-md text-surface-light'>Pause</p>
+                                <PauseIcon fontSize='small' className='ml-1'></PauseIcon>
+                            </Button>
+                        ) : (
+                            <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handleStartTimer}>
+                                <p className='text-md text-surface-light'>Start</p>
+                                <TimerIcon fontSize='small' className='ml-1 text-secondary'></TimerIcon>
+                            </Button>
+                        )
+                    )}
                 </div>
             }
             <div className='mt-2 flex items-center'>
-                <p className='text-surface-light mr-1 text-sm'>Elapsed Time:</p>
-                <p className='text-gray-100 text-sm'>{formatTime(elapsedTime)}</p>
+                <p className='text-surface-light mr-1 text-sm'>Time Spent:</p>
+                <p className='text-gray-100 text-sm'>{formatElapsedTime(elapsedTime)}</p>
             </div>
         </div>
     );
+    
 };
 
 export default TimerSection;

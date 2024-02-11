@@ -60,7 +60,8 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetById
                     Deadline = taskItem.Value.Deadline,
                     State = taskItem.Value.State,
                     AssignedUser = assignedUser,
-                    Branch = taskItem.Value.Branch
+                    Branch = taskItem.Value.Branch,
+                    StartTime = taskItem.Value.StartTime
                 }
             };
         }

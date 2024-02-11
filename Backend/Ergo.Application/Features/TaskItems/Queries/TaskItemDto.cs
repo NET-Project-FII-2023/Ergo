@@ -15,6 +15,8 @@ namespace Ergo.Application.Features.TaskItems.Queries
         public UserTaskDto? AssignedUser { get; set; }
         public TaskState State { get; set; }
         public string? Branch { get; set; }
+        public DateTime? StartTime { get; set; }
+
 
     }
 }
