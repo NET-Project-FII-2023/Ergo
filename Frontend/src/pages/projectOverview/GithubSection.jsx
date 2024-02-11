@@ -55,7 +55,7 @@ const GithubSection = ({ token, task, project }) => {
             {task.branch ? (
                 <>
                     <p className='text-surface-light font-sm mb-2'>Displaying commit activity for '{task.branch}':</p>
-                    <div className="text-surface-light overflow-auto max-h-[16rem]" style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--color-surface-darkest) var(--color-surface)' }}>
+                    <div className="text-surface-light overflow-auto max-h-[16rem]" style={{ scrollbarWidth: 'thin' }}>
                         <ul>
                             {commits.map(item => (
                                 <li key={item.commitName} className="relative pl-4 py-2 text-sm">
