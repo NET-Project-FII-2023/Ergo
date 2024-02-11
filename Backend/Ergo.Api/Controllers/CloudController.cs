@@ -21,18 +21,16 @@ namespace Ergo.API.Controllers
     {
         private readonly IStorageService storageService;
         private readonly IPhotoRepository photoRepository;
-        private readonly IUserPhotoRepository userPhotoRepository;
         private string AwsKeyEnv { get; set; }
         private string AwsSecretKeyEnv { get; set; }
 
-        public CloudController(IStorageService storageService, IPhotoRepository photoRepository, IUserPhotoRepository userPhotoRepository)
+        public CloudController(IStorageService storageService, IPhotoRepository photoRepository)
         {
 
             this.storageService = storageService;
             this.photoRepository = photoRepository;
             AwsKeyEnv = DotNetEnv.Env.GetString("AWSAccessKey");
             AwsSecretKeyEnv = DotNetEnv.Env.GetString("AWSSecretKey");
-            this.userPhotoRepository = userPhotoRepository;
         }
 
         [Authorize(Roles = "User")]

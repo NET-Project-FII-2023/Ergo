@@ -27,23 +27,23 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetAll
                 {
                     UserTaskDto? assignedUser = null;
                     var assignedUserId = await taskItemRepository.GetAssignedUser(taskItem.TaskItemId);
-
-                    if (assignedUserId.IsSuccess)
+                    if(assignedUserId != null && assignedUserId.IsSuccess)
                     {
-                        if (Guid.TryParse(assignedUserId.Value, out var guidUserId))
-                        {
-                            var user = await userManager.FindByIdAsync(guidUserId);
 
-                            if (user.IsSuccess)
+                            if (Guid.TryParse(assignedUserId.Value, out var guidUserId))
                             {
-                                assignedUser = new UserTaskDto
+                                var user = await userManager.FindByIdAsync(guidUserId);
+
+                                if (user.IsSuccess)
                                 {
-                                    UserId = user.Value.UserId,
-                                    Name = user.Value.Name,
-                                    Username = user.Value.Username,
-                                };
+                                    assignedUser = new UserTaskDto
+                                    {
+                                        UserId = user.Value.UserId,
+                                        Name = user.Value.Name,
+                                        Username = user.Value.Username,
+                                    };
+                                }
                             }
-                        }
                     }
                     response.TaskItems.Add(new TaskItemDto
                     {

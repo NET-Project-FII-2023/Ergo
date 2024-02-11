@@ -6,13 +6,11 @@ namespace Ergo.Application.Features.Projects.Commands.DeleteUserFromProject
     public class DeleteUserFromProjectCommandHandler : IRequestHandler<DeleteUserFromProjectCommand, DeleteUserFromProjectCommandResponse>
     {
         private readonly IProjectRepository projectRepository;
-        private readonly IUserRepository userRepository;
         private readonly IUserManager userManager;
 
-        public DeleteUserFromProjectCommandHandler(IProjectRepository projectRepository, IUserRepository userRepository, IUserManager userManager)
+        public DeleteUserFromProjectCommandHandler(IProjectRepository projectRepository, IUserManager userManager)
         {
             this.projectRepository = projectRepository;
-            this.userRepository = userRepository;
             this.userManager = userManager;
         }
 

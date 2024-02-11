@@ -72,6 +72,7 @@ namespace Ergo.Application.Features.Users.Commands.UpdateUser
             }
 
             var userPhoto = await userPhotoRepository.GetUserPhotoByUserIdAsync(request.Id.ToString());
+            
             UserDto userDto = new()
             {
                 UserId = user.Value.UserId,

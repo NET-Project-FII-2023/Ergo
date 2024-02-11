@@ -8,12 +8,10 @@ namespace Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem
     {
         private readonly ITaskItemRepository taskItemRepository;
         private readonly IPhotoRepository photoRepository;
-        private readonly IUserRepository userRepository;
-        public AddPhotoToTaskItemCommandHandler(ITaskItemRepository taskItemRepository, IPhotoRepository photoRepository, IUserRepository userRepository)
+        public AddPhotoToTaskItemCommandHandler(ITaskItemRepository taskItemRepository, IPhotoRepository photoRepository)
         {
             this.taskItemRepository = taskItemRepository;
             this.photoRepository = photoRepository;
-            this.userRepository = userRepository;
         }
 
         public async Task<AddPhotoToTaskItemCommandResponse> Handle(AddPhotoToTaskItemCommand request, CancellationToken cancellationToken)

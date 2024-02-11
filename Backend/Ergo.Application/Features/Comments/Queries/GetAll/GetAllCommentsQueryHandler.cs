@@ -12,7 +12,7 @@ namespace Ergo.Application.Features.Comments.Queries.GetAll
             this.commentRepository = commentRepository;
         }
 
-        public async Task<GetAllCommentsResponse> Handle(GetAllCommentsQuery request,CancellationToken cancellation)
+        public async Task<GetAllCommentsResponse> Handle(GetAllCommentsQuery request,CancellationToken cancellationToken)
         {
             GetAllCommentsResponse response = new();
             var result = await commentRepository.GetAllAsync();

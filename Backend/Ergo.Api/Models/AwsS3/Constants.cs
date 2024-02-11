@@ -2,7 +2,7 @@
 {
     public class Constants
     {
-        public static string AccessKey = "AccessKey";
-        public static string SecretKey = "SecretKey";
+        public static readonly string AccessKey = "AccessKey";
+        public static readonly string SecretKey = "SecretKey";
     }
 }

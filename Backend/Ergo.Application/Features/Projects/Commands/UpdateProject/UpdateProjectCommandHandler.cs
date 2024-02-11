@@ -6,12 +6,10 @@ namespace Ergo.Application.Features.Projects.Commands.UpdateProject
     public class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, UpdateProjectCommandResponse>
     {
         private readonly IProjectRepository projectRepository;
-        private readonly IUserManager userManager;
 
-        public UpdateProjectCommandHandler(IProjectRepository projectRepository, IUserManager userManager)
+        public UpdateProjectCommandHandler(IProjectRepository projectRepository)
         {
             this.projectRepository = projectRepository;
-            this.userManager = userManager;
         }
 
         public async Task<UpdateProjectCommandResponse> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)

@@ -17,6 +17,7 @@ public class GetAllTaskItemsQueryHandlerTests
     public GetAllTaskItemsQueryHandlerTests()
     {
         _mockTaskItemRepository = TaskItemRepositoryMocks.GetTaskItemRepository();
+        //_mockUserManager = UserManagerRepositoryMocks.GetUserManager();
         _handler = new GetAllTaskItemsQueryHandler(_mockTaskItemRepository,_mockUserManager);
     }
 

@@ -53,7 +53,6 @@ namespace Ergo.API.IntegrationTests.Base
                     {
                         var scopedServices = scope.ServiceProvider;
                         var db = scopedServices.GetRequiredService<ErgoContext>();
-
                         db.Database.EnsureCreated();
 
                         Seed.InitializeDbForTests(db);

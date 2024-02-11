@@ -14,7 +14,6 @@ I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\UserReposi
 I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\TaskItems\Commands\CreateTaskItemCommandHandlerTests.cs
 I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\TaskItems\Queries\GetAllTaskItemsQueryHandlerTests.cs
 I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\TaskItems\Queries\GetByIdTaskItemQueryHandlerTests.cs
-I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\UnitTest1.cs
 I:\Facultate\Ergo\Ergo\Backend\Ergo.Application.Tests\Users\Commands\UpdateUserCommandHandlerTests.cs
 C:\Users\georg\.nuget\packages\microsoft.net.test.sdk\17.6.0\build\netcoreapp3.1\Microsoft.NET.Test.Sdk.Program.cs
 C:\Users\georg\.nuget\packages\microsoft.testplatform.testhost\17.6.0\build\netcoreapp3.1\x64\testhost.exe
