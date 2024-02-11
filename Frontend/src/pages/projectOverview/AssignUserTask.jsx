@@ -129,7 +129,7 @@ const AssignUserTask = ({ token, task, project }) => {
     
                                 <div>
                                     <p className="text-surface-light text-xs">
-                                    #{loadedAssignedUser.username}
+                                    @{loadedAssignedUser.username}
                                     </p>
                                     <p className="text-surface-mid-light text-xs">
                                         {loadedAssignedUser.name}
