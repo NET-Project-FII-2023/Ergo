@@ -73,25 +73,25 @@ const CommentSection = ({ task, token }) => {
     };
 
     return (
-        <div className='flex flex-col mt-4 px-2'>
+        <div className='flex flex-col mt-4 px-1'>
             <div className='flex items-center mb-2'>
-                <ModeCommentIcon className='text-secondary ml-1' fontSize='extraSmall'></ModeCommentIcon>
+                <ModeCommentIcon className='text-secondary' fontSize='extraSmall'></ModeCommentIcon>
                 <p className='text-gray-300 ml-1 text-md font-semibold'>
                     Comments
                 </p>
             </div>
             
-            <div className="text-surface-light overflow-auto max-h-[12rem]" style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--color-surface-darkest) var(--color-surface)' }}>
+            <div className="text-surface-light overflow-auto max-h-[12rem]" style={{ scrollbarWidth: 'thin' }}>
                 {comments.map(comment => (
-                    <Card key={comment.commentId} className="cursor-pointer mb-2 rounded w-4/5 ml-2" 
+                    <Card key={comment.commentId} className="cursor-pointer mb-2 rounded w-4/5" 
                     >
                         <CardContent className='p-2 pb-0 rounded bg-surface-darkest' >
                             <div className='flex'>
                                 <div>
-                                    <p className="text-gray-300  text-sm">
+                                    <p className="text-gray-300  text-xs">
                                         #{comment.createdBy} commented:
                                     </p>
-                                    <p className="text-gray-500 text-sm mt-2">
+                                    <p className="text-gray-500 text-xs mt-2">
                                         {comment.commentText}
                                     </p>
                                     <p className="text-surface-mid-light text-xs mt-2">
@@ -121,15 +121,15 @@ const CommentSection = ({ task, token }) => {
             )}
             
             <div className="flex items-center mt-2">
-                <p className="text-secondary hover:text-primary hover:cursor-pointer" 
+                <p className="text-sm text-surface-light mt-2 hover:opacity-70 hover:cursor-pointer" 
                    onClick={() => setIsCommentVisible(!isCommentVisible)}
                 >
                     {isCommentVisible ? 'Cancel' : 'Add your comment'}
                 </p>
                 {isCommentVisible ? (
-                <Button className="bg-secondary hover:bg-primary ml-4" size="sm" onClick={handleAddComment}>
+                <p className="text-sm text-secondary hover:opacity-70 ml-2 mt-2 hover:cursor-pointer" size="sm" onClick={handleAddComment}>
                         Confirm
-                </Button>) : null}
+                </p>) : null}
                 
             </div>
         </div>

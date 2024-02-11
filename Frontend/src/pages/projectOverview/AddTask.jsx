@@ -100,7 +100,7 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
   };
   
   const handleBranchSelectionChange = (value) => {
-    setSelectedBranch(value);
+    // setSelectedBranch(value);
     setTaskDetails((prevDetails) => ({ ...prevDetails, branch: value }));
   }
 

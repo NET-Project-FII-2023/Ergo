@@ -110,7 +110,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
           <div className="mt-3">
             <p className="text-surface-light text-sm">Projects:</p>
           </div>
-       <div className="overflow-y-auto max-h-[calc(100vh-22rem)]">
+       <div className="overflow-y-auto max-h-[calc(100vh-22rem)]"  style={{ scrollbarWidth: 'thin', scrollbarColor: '#1a1625' }}>
         <ul className="list-none">
           {projects.map((project) => (
             <li key={project.projectId} className="py-1 opacity-90">

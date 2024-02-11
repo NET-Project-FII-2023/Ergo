@@ -14,7 +14,7 @@ namespace Ergo.Application.Features.Projects.Queries
         public ProjectState State { get; set; }
         public List<User>? Members { get; set; }
         public string? CreatedBy { get; set; }
-
         public string? GithubToken { get; set; }
+        public string? GithubOwner { get; set; }
     }
 }

@@ -18,6 +18,7 @@ const ProjectSettings = ({ project, token }) => {
     const [projectName, setProjectName] = useState('');
     const [projDescription, setProjDescription] = useState('');
     const [projDeadline, setProjDeadline] = useState(null);
+    const [githubOwner, setGithubOwner] = useState('');
     const currentUser = useUser();
 
     useEffect(() => {
@@ -43,6 +44,7 @@ const ProjectSettings = ({ project, token }) => {
                 setProjDeadline(new Date(data.deadline));
                 setGithubToken(data.githubToken);
                 setGitRepository(data.gitRepository);
+                setGithubOwner(data.githubOwner);
             } else {
                 console.error('Error fetching project:', response);
             }
@@ -76,6 +78,8 @@ const ProjectSettings = ({ project, token }) => {
             case 'deadline':
                 setProjDeadline(value);
                 break;
+            case 'githubOwner':
+                setGithubOwner(value);
             default:
                 break;
         }
@@ -85,7 +89,7 @@ const ProjectSettings = ({ project, token }) => {
         try {
             const response = await api.put(`/api/v1/Projects/${project.projectId}`, {
                 projectId: project.projectId,
-                githubOwner: currentUser.username,
+                githubOwner: githubOwner,
                 projectOwner: currentUser.username,
                 projectName: projectName,
                 description: projDescription,
@@ -143,7 +147,16 @@ const ProjectSettings = ({ project, token }) => {
                             />
                         </div>
                         <div className='m-2'>
-                        <ErgoLabel labelName="Github Token" />
+                            <ErgoLabel labelName="Github Owner" />
+                            <ErgoInput
+                                placeholder="Github Owner"
+                                label='GitHub Owner'
+                                onChange={(value) => handleInputChange('githubOwner', value)}
+                                value={githubOwner}
+                            />
+                        </div>
+                        <div className='m-2'>
+                            <ErgoLabel labelName="Github Token" />
                             <ErgoInput
                                 placeholder="Github Token"
                                 label='GitHub Token'
@@ -152,7 +165,7 @@ const ProjectSettings = ({ project, token }) => {
                             />
                         </div>
                         <div className='m-2'>
-                        <ErgoLabel labelName="Github Repository" />
+                            <ErgoLabel labelName="Github Repository" />
                             <ErgoInput
                                 placeholder="Github Repository"
                                 label='Git Repository'
@@ -161,7 +174,7 @@ const ProjectSettings = ({ project, token }) => {
                             />
                         </div>
                         <div className='m-2'>
-                        <ErgoLabel labelName="Deadline" />
+                            <ErgoLabel labelName="Deadline" />
                             <ErgoDatePicker
                                 label='Deadline'
                                 selectedDate={projDeadline}
