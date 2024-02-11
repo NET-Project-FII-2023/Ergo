@@ -132,7 +132,6 @@ const ProjectSettings = ({ project, token }) => {
                             <ErgoLabel labelName="Project name" />
                             <ErgoInput
                                 placeholder="Project name"
-                                label='Project Name'
                                 onChange={(value) => handleInputChange('projectName', value)}
                                 value={projectName}
                             />
@@ -141,7 +140,6 @@ const ProjectSettings = ({ project, token }) => {
                         <ErgoLabel labelName="Description" />
                             <ErgoTextarea
                                 placeholder="Description"
-                                label='Description'
                                 onChange={(value) => handleInputChange('description', value)}
                                 value={projDescription}
                             />
@@ -150,7 +148,6 @@ const ProjectSettings = ({ project, token }) => {
                             <ErgoLabel labelName="Github Owner" />
                             <ErgoInput
                                 placeholder="Github Owner"
-                                label='GitHub Owner'
                                 onChange={(value) => handleInputChange('githubOwner', value)}
                                 value={githubOwner}
                             />
@@ -159,7 +156,6 @@ const ProjectSettings = ({ project, token }) => {
                             <ErgoLabel labelName="Github Token" />
                             <ErgoInput
                                 placeholder="Github Token"
-                                label='GitHub Token'
                                 onChange={(value) => handleInputChange('githubToken', value)}
                                 value={githubToken}
                             />
@@ -168,7 +164,6 @@ const ProjectSettings = ({ project, token }) => {
                             <ErgoLabel labelName="Github Repository" />
                             <ErgoInput
                                 placeholder="Github Repository"
-                                label='Git Repository'
                                 onChange={(value) => handleInputChange('gitRepository', value)}
                                 value={gitRepository}
                             />

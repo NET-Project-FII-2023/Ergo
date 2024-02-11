@@ -9,7 +9,7 @@ const ErgoTextarea = ({ placeholder, onChange, value }) => {
     return (
       <Textarea
         placeholder={placeholder}
-        className="!border-surface-mid-dark text-surface-light focus:!border-secondary"
+        className="!border-surface-mid-dark text-surface-light placeholder-surface-mid-light focus:!border-secondary"
         labelProps={{
           className: "before:content-none after:content-none",
         }}

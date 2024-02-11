@@ -126,7 +126,7 @@ const CommentSection = ({ task, token }) => {
                   onChange={(val) => setNewCommentText(val)}
                   icon={
                       <i
-                        className={"fa-regular fa-paper-plane cursor-pointer hover:text-surface-light"}
+                        className={"fa-regular fa-paper-plane cursor-pointer text-surface-mid-light hover:text-surface-light"}
                         onClick={handleAddComment}
                       />
                   }
