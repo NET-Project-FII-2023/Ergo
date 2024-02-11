@@ -11,6 +11,7 @@ const TimerSection = ({ task, token, project }) => {
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const [loadedStartTime, setLoadedStartTime] = useState();
+    const [currentTaskState, setCurrentTaskState] = useState();
     const currentUser = useUser();
 
     useEffect(() => {
@@ -49,6 +50,7 @@ const TimerSection = ({ task, token, project }) => {
     
                 if (response.status === 200) {
                     const { startTime } = response.data.taskItem;
+                    setCurrentTaskState(response.data.taskItem.state);
                     setLoadedStartTime(startTime);
                     setIsTimerRunning(startTime !== null);
                     if (startTime) {
@@ -150,25 +152,28 @@ const TimerSection = ({ task, token, project }) => {
             </div>
             {task.assignedUser && task.assignedUser.username === currentUser.username &&
                 <div className='flex'>
-                    {isTimerRunning ? (
-                        <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handlePauseTimer}>
-                            <p className='text-md text-surface-light'>Pause</p>
-                            <PauseIcon fontSize='small' className='ml-1'></PauseIcon>
-                        </Button>
-                    ) : (
-                        <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handleStartTimer}>
-                            <p className='text-md text-surface-light'>Start</p>
-                            <TimerIcon fontSize='small' className='ml-1 text-secondary'></TimerIcon>
-                        </Button>
+                    {currentTaskState !== 3 && ( // Check if the current task state is not 3
+                        isTimerRunning ? (
+                            <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handlePauseTimer}>
+                                <p className='text-md text-surface-light'>Pause</p>
+                                <PauseIcon fontSize='small' className='ml-1'></PauseIcon>
+                            </Button>
+                        ) : (
+                            <Button size="sm" className='bg-surface-darkest flex items-center mr-2' onClick={handleStartTimer}>
+                                <p className='text-md text-surface-light'>Start</p>
+                                <TimerIcon fontSize='small' className='ml-1 text-secondary'></TimerIcon>
+                            </Button>
+                        )
                     )}
                 </div>
             }
             <div className='mt-2 flex items-center'>
-                <p className='text-surface-light mr-1 text-sm'>Elapsed Time:</p>
+                <p className='text-surface-light mr-1 text-sm'>Time Spent:</p>
                 <p className='text-gray-100 text-sm'>{formatElapsedTime(elapsedTime)}</p>
             </div>
         </div>
     );
+    
 };
 
 export default TimerSection;
