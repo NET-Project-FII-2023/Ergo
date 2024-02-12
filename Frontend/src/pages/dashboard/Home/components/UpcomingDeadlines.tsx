@@ -82,7 +82,7 @@ export function UpcomingDeadlines(){
       <StatisticsChart
         chart={chart}
         title="Upcoming Deadlines"
-        description="Tasks that are due this week"
+        description="Tasks due this week"
       />
     }
     </>

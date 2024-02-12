@@ -38,7 +38,7 @@ export function ProjectsStatsItem(props : ProjectsStatsItemProps) {
         ))}
       </td>
       <td className={className}>
-        <Typography variant="small" className="text-xs font-medium text-surface-light" >
+        <Typography variant="small" className={`text-xs font-medium text-surface-light ${new Date(deadline) < new Date() ? "text-red-300" : ""}`} >
           {new Date(deadline).toLocaleString("en-US", { month: "long" })} {new Date(deadline).getDate()}, {new Date(deadline).getFullYear()}
         </Typography>
       </td>
@@ -52,7 +52,7 @@ export function ProjectsStatsItem(props : ProjectsStatsItemProps) {
           <Typography variant="small" className="mb-1 block text-xs font-medium text-surface-light" >
             {completion}%
           </Typography>
-          <Progress value={completion} variant="gradient" className="h-1 bg-surface-mid [&>div]:from-primary [&>div]:to-secondary" />
+          <Progress value={completion} variant="gradient" className={`h-1 bg-surface-mid ${completion === 100 ? "[&>div]:from-[#42a696] [&>div]:to-[#42a696]" : "[&>div]:from-primary [&>div]:to-secondary"} `} />
         </div>
       </td>
     </tr> 

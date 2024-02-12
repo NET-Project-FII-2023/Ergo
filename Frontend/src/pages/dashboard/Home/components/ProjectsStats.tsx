@@ -9,6 +9,8 @@ import { useUser } from "../../../../context/LoginRequired";
 export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
   const user = useUser();
   const [projectsStats, setProjectsStats] = useState({} as ProjectsStatsType);
+  const [hiddenProjects, setHiddenProjects] = useState({} as ProjectsStatsType);
+  const [isProjectsHidden, setIsProjectsHidden] = useState(false);
   const [loadedUsers, setLoadedUsers] = useState({} as {[userId: string]: {name:string, img:string}});
 
   const getMemberData = async (userId : string) => {
@@ -74,6 +76,22 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
     })();
   }, [projectsTasksCount, projectsCompletion]);
 
+  const toggleHideCompletedProjects = (e : any) => {
+    e.preventDefault();
+    if(isProjectsHidden){
+      setProjectsStats((prev : ProjectsStatsType) => {
+        return {
+          ...prev,
+          ...hiddenProjects
+        }
+      });
+    } else {
+      setHiddenProjects(projectsStats);
+      setProjectsStats(Object.fromEntries(Object.entries(projectsStats).filter(([projectId, project]) => project.completion < 100)));
+    }
+    setIsProjectsHidden(!isProjectsHidden);
+  }
+
   return(
     <Card className="overflow-hidden mt-12 xl:col-span-3 bg-surface-dark shadow-sm">
       <CardHeader floated={false} shadow={false} color="transparent" className="m-0 flex items-center justify-between p-6">
@@ -87,8 +105,8 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
             </IconButton>
           </MenuHandler>
           <MenuList className="bg-surface-mid border-surface-dark text-surface-light">
-            <MenuItem>
-              Hide completed projects
+            <MenuItem onClick={toggleHideCompletedProjects}>
+              {isProjectsHidden ? "Show Completed Projects" : "Hide Completed Projects"}
             </MenuItem>
           </MenuList>
         </Menu>

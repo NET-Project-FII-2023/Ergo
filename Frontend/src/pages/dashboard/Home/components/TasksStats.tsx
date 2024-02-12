@@ -53,7 +53,8 @@ export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any)
       setProjectsCompletion((prev : any) => {
         return {
           ...prev,
-          [project]: tasksFromAllProjects[project].filter((task) => task.state === 3).length / tasksFromAllProjects[project].length * 100,
+          [project]: tasksFromAllProjects[project].length === 0 ? 0 :
+          tasksFromAllProjects[project].filter((task) => task.state === 3).length / tasksFromAllProjects[project].length * 100,
         }
       });
     });
