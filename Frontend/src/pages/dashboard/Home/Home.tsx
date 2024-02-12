@@ -1,12 +1,11 @@
+import { useState } from "react";
 import { Card } from "@material-tailwind/react";
 import { useUser } from "../../../context/LoginRequired";
-import { StatisticsChart } from "../../../widgets/charts";
-import {
-  statisticsChartsData,
-} from "../../../data";
+// import { statisticsChartsData } from "../../../data/statistics-charts-data";
+// import StatisticsChart from "./components/StatisticsChart";
 import TasksStats from "./components/TasksStats";
-import { ProjectsStats } from "./components/ProjectsStats";
-import { useState } from "react";
+import ProjectsStats from "./components/ProjectsStats";
+import { UpcomingDeadlines } from "./components/UpcomingDeadlines";
 
 export function Home() {
   const user = useUser();
@@ -33,9 +32,10 @@ export function Home() {
 
         <Card className="bg-transparent shadow-none">
           {/* right container */}
-          {statisticsChartsData.map((props) => (
+          {/* {statisticsChartsData.map((props) => (
             <StatisticsChart key={props.title} {...props}/>
-          ))}
+          ))} */}
+          <UpcomingDeadlines />
         </Card>
       </div>
     </div>

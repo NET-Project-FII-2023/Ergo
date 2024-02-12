@@ -26,7 +26,7 @@ export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any)
         }
         setTasksFromAllProjects(response.data.taskItems);
       } catch (error : any) { 
-        console.log(`Error while getting notifications: ${error.response.data}`);
+        console.error(`Error while getting tasks: ${error}`);
       }
     })();
   }, []);

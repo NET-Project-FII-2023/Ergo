@@ -22,7 +22,7 @@ export function ProjectsStatsItem(props : ProjectsStatsItemProps) {
       <td className={className}>
         {members.map(({ img, name, userId }, index) => (
           <Tooltip key={`${name}_${index}`} content={name}>
-            <>
+            <div className="inline">
               <UserAvatar
                 photoUrl={img}
                 loadingClassName="w-5 !inline-block"
@@ -33,7 +33,7 @@ export function ProjectsStatsItem(props : ProjectsStatsItemProps) {
                 variant="circular" 
                 className={`cursor-pointer border-2 border-primary ${index === 0 ? "" : "-ml-2.5"}`}
               />
-            </>
+            </div>
           </Tooltip>
         ))}
       </td>

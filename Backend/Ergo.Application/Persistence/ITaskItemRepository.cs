@@ -9,4 +9,5 @@ public interface ITaskItemRepository : IAsyncRepository<TaskItem>
     Task<Result<string>> GetAssignedUser(Guid taskItemId);
     Task<int> GetNumberOfTasksByUserIdAsync(Guid userId);
     Task<int> GetTotalHoursWorkedByUserIdAsync(Guid userId);
+    Task<Result<IReadOnlyList<TaskItem>>> GetTasksByProjectIdAsync(Guid projectId);
 }

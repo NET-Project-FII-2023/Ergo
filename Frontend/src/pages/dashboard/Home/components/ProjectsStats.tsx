@@ -32,7 +32,7 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
       });
     }
     catch (error : any) {
-      console.log(`Error while getting user data: ${error.response.data}`);
+      console.log(`Error while getting user data: ${error}`);
     } finally {
       return { name: userData.name, img: userData.userPhoto?.photoUrl, userId };
     }
@@ -69,7 +69,7 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
         };
       }
       catch (error : any) {
-        console.log(`Error while getting projects: ${error.response.data}`);
+        console.log(`Error while getting projects: ${error}`);
       }
     })();
   }, [projectsTasksCount, projectsCompletion]);

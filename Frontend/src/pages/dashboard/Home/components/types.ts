@@ -67,3 +67,9 @@ export type ProjectsStatsType = {
     path: string;
   }
 }
+
+export type StatisticsChartProps = {
+  chart: object;
+  title: React.ReactNode;
+  description: React.ReactNode;
+}

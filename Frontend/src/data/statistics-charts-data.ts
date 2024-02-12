@@ -1,4 +1,4 @@
-import { chartsConfig } from "@/configs";
+import { chartsConfig } from "../configs/charts-config";
 
 const totalTasksChart = {
   type: "line",

@@ -34,11 +34,14 @@ export const chartsConfig = {
         fontFamily: "inherit",
         fontWeight: 300,
       },
+      formatter: function(val:number) {
+        return val.toFixed(0);
+      }
     },
   },
   grid: {
     show: true,
-    borderColor: "#b4b1ba",
+    borderColor: "#352e42",
     strokeDashArray: 5,
     xaxis: {
       lines: {
@@ -56,6 +59,17 @@ export const chartsConfig = {
   tooltip: {
     theme: "dark",
   },
+  noData: {
+    text: "No tasks due this week",
+    align: 'center',
+    verticalAlign: 'middle',
+    offsetX: 0,
+    offsetY: -15,
+    style: {
+      color: "#b4b1ba",
+      fontSize: '20px',
+    }
+  }
 };
 
 export default chartsConfig;
