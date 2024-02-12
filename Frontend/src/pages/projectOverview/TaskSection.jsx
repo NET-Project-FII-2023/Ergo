@@ -66,7 +66,7 @@ const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal
 
 
   return (
-    <div className='md:w-[75vw] w-full'>
+    <div className='w-full'>
       <div className="border-b-2 border-surface-dark my-4"></div>
       <div>
         <div className="flex md:flex-row flex-col md:justify-evenly justify-center">
