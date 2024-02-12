@@ -42,7 +42,6 @@ export function DashboardNavbar() {
       inboxItems.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
 
       setNotifications(inboxItems);
-      console.log(inboxItems);
     })();
   }, []);
 
@@ -58,13 +57,12 @@ export function DashboardNavbar() {
       }
       return response.data.inboxItems;
     } catch (error) { 
-      console.log(`Error while getting notifications: ${error.response.data}`);
+      console.error(`Error while getting notifications: ${error.response.data}`);
     }
   }
 
   async function markAsRead(e, notification) {
     e.stopPropagation();
-    console.log(notification);
     try {
       const response = await api.put(`/api/v1/InboxItem/${notification.inboxItemId}`, {
         isRead: true,
@@ -82,7 +80,7 @@ export function DashboardNavbar() {
       setNotifications(prev => prev.map(notif => notif.inboxItemId === notification.inboxItemId ? {...notif, isRead: true} : notif));
       toast.success("Notification marked as read!");
     } catch (error) {
-      console.log(`Error while marking notification as read: ${error.response.data}`);
+      console.error(`Error while marking notification as read: ${error.response.data}`);
       toast.error("Couldn't update notification");
     }
   }
