@@ -143,7 +143,7 @@ const TimerSection = ({ task, token, project }) => {
     };
 
     return (
-        <div>
+        <div className='md:mt-0 mt-4'>
             <div className='flex items-center mb-3'>
                 <MovingIcon fontSize='small' className='text-secondary'></MovingIcon>
                 <p className='text-gray-300 ml-1 text-md font-semibold'>
