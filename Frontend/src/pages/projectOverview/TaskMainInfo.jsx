@@ -4,15 +4,17 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { toast } from "react-toastify";
 import api from '@/services/api';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
+import { useUser } from '@/context/LoginRequired';
 
 const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
-  const [editMode, setEditMode] = useState({taskName: false, description: false});
+  const [editMode, setEditMode] = useState({ taskName: false, description: false });
   const [updatedTaskName, setUpdatedTaskName] = useState(selectedTask.taskName);
   const [updatedDescription, setUpdatedDescription] = useState(selectedTask.description);
   const [currentTask, setCurrentTask] = useState([]);
+  const currentUser = useUser();
 
   const handleDoubleClick = (field) => {
-    setEditMode(prevState => ({...prevState, [field]: true}));
+    setEditMode(prevState => ({ ...prevState, [field]: true }));
   };
 
   const fetchCurrentTask = async () => {
@@ -70,22 +72,22 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
 
   const handleSave = () => {
     handleUpdateTask();
-    setEditMode({taskName: false, description: false});
+    setEditMode({ taskName: false, description: false });
   };
 
   return (
     <div>
       <div className="flex flex-col px-2 mt-2">
-        {editMode.taskName ? (
+        {editMode.taskName && (selectedTask.assignedUser && selectedTask.assignedUser.username === currentUser.username) ? (
           <div className='flex items-center'>
-          <input
-            type="text"
-            value={updatedTaskName}
-            onChange={(e) => setUpdatedTaskName(e.target.value)}
-            className="bg-transparent text-white text-3xl focus:outline-none mb-2"
-          />
-          <p onClick={handleSave}>
-            <SaveAsIcon fontSize='medium' className='text-surface-light hover:text-secondary ml-1 cursor-pointer'/></p>
+            <input
+              type="text"
+              value={updatedTaskName}
+              onChange={(e) => setUpdatedTaskName(e.target.value)}
+              className="bg-transparent text-white text-3xl focus:outline-none mb-2"
+            />
+            <p onClick={handleSave}>
+              <SaveAsIcon fontSize='medium' className='text-surface-light hover:text-secondary ml-1 cursor-pointer' /></p>
           </div>
 
         ) : (
@@ -104,19 +106,24 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
         )}
       </div>
       <div className='flex flex-row mt-4 pr-2 items-center'>
-        {editMode.description ? (
-          <textarea
-            value={updatedDescription}
-            onChange={(e) => setUpdatedDescription(e.target.value)}
-            className="bg-transparent text-white text-lg focus:outline-none resize-none border-2 p-4 border-surface-mid"
-            style={{ width: '80%', height: '100px', outline: 'none' }}
-          />
+        {editMode.description && selectedTask.assignedUser && selectedTask.assignedUser.username === currentUser.username ? (
+          <div className="flex flex-grow items-center">
+            <textarea
+              value={updatedDescription}
+              onChange={(e) => setUpdatedDescription(e.target.value)}
+              className="bg-transparent text-white text-lg focus:outline-none resize-none border-2 p-4 border-surface-mid flex-grow"
+              style={{ height: '100px', outline: 'none' }}
+            />
+            <button onClick={handleSave}>
+              <SaveAsIcon fontSize='medium' className='text-surface-light ml-2 cursor-pointer hover:text-secondary' />
+            </button>
+          </div>
         ) : (
           <div>
             <div className='flex flex-row items-center'>
               <DescriptionIcon className='text-secondary ml-1' fontSize='extraSmall'></DescriptionIcon>
               <p
-                className='text-gray-300 ml-1 text-md font-semibold'    
+                className='text-gray-300 ml-1 text-md font-semibold'
               >
                 Description
               </p>
@@ -127,11 +134,6 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
           </div>
         )}
       </div>
-      {editMode.taskName || editMode.description && (
-        <button onClick={handleSave}>
-          <SaveAsIcon fontSize='medium' className='text-surface-light mt-1 cursor-pointer hover:text-secondary'/>
-        </button>
-      )}
     </div>
   );
 };
