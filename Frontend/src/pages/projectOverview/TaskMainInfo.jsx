@@ -110,7 +110,8 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
               className="bg-transparent text-white text-3xl focus:outline-none mb-2"
             />
             <p onClick={handleSave}>
-              <SaveAsIcon fontSize='medium' className='text-surface-light hover:text-secondary ml-1 cursor-pointer' /></p>
+              <SaveAsIcon fontSize='medium' className='text-surface-light hover:text-secondary ml-1 cursor-pointer' />
+            </p>
           </div>
 
         ) : (
