@@ -5,20 +5,20 @@ import AddTask from './AddTask';
 import MembersList from './MembersList';
 import { useUser } from '../../context/LoginRequired';
 
-const TaskSection = ({ project, token, userId, handleOpenModal}) => {
+const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal}) => {
     const [taskItems, setTaskItems] = useState([]);
     const todoTasks = taskItems.filter(taskItem => taskItem.state === 1);
     const inProgressTasks = taskItems.filter(taskItem => taskItem.state === 2);
     const doneTasks = taskItems.filter(taskItem => taskItem.state === 3);
     const currentUser = useUser();
   
-    useEffect(() => {
-      fetchTaskItems();
-    }, [project.projectId, token, userId]);
+  useEffect(() => {
+    fetchTaskItems();
+  }, [project.projectId, token, userId, handleCloseModal]);
 
   const fetchTaskItems = async () => {
     try {
-      if (!token || !project.projectId) return;
+      if (!token || !userId) return;
 
       const response = await api.get(`/api/v1/TaskItems/ByProject/${project.projectId}`, {
         headers: {

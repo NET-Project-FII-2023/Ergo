@@ -61,7 +61,7 @@ const GithubSection = ({ token, task, project }) => {
         fetchCommitsForBranch(selectedBranch);
     };
     
-
+    
     const handleUpdateTask = async () => {
         try {
             const response = await api.put(`/api/v1/TaskItems/${task.taskItemId}`, {
@@ -144,7 +144,7 @@ const GithubSection = ({ token, task, project }) => {
                                 </div>
                             </div>
                             :
-                            <Button size='sm' className='flex text-center bg-surface-darkest items-center justify-center text-surface-light hover:opacity-80 ' onClick={handleOpenModal}>Select Branch <MediationIcon className='ml-1' fontSize='extraSmall'></MediationIcon></Button>
+                            <Button size='sm' className='flex text-center mb-2 bg-surface-darkest items-center justify-center text-surface-light hover:opacity-80 ' onClick={handleOpenModal}>Select Branch <MediationIcon className='ml-1' fontSize='extraSmall'></MediationIcon></Button>
                         }
                     </div>
                     <p className='text-surface-light font-sm mb-2'>{displayText}</p>
