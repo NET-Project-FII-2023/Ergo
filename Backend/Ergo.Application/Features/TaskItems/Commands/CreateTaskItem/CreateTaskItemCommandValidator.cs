@@ -22,12 +22,6 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
                 .NotEmpty()
                 .NotNull()
                 .MaximumLength(500).WithMessage("{PropertyName} must not exceed 500 characters.");
-
-            RuleFor(p => p.Deadline)
-                .NotEmpty()
-                .NotNull()
-                .GreaterThan(DateTime.Now).WithMessage("{PropertyName} must be greater than the current date.");
-
             RuleFor(p => p.CreatedBy)
                 .NotEmpty()
                 .NotNull()

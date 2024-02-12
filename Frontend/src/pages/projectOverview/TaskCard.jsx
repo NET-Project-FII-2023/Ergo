@@ -39,7 +39,7 @@ const TaskCard = ({ task, handleOpenModal, color }) => {
         <div className='flex flex-row justify-between mt-4'>
           <div className='flex flex-row'>
               <p className='text-gray-200 text-xs font-medium' component="p">
-                {formatDeadline(task.deadline)}
+                {task.deadline != "0001-01-01T00:00:00" ? formatDeadline(task.deadline) : "No deadline"}
               </p>
               <AccessTimeIcon className="text-gray-100 ml-1" fontSize='extraSmall'/>
           </div>
