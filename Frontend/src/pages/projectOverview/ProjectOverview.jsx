@@ -7,9 +7,6 @@ import TaskSection from './TaskSection';
 import TaskDetailsModal from './TaskDetailsModal';
 import ProjectSettings from './ProjectSettings';
 
-
-
-
 const ProjectOverview = () => {
   const { projectId } = useParams();
   const [currentProject, setCurrentProject] = useState([]);
@@ -41,6 +38,10 @@ const ProjectOverview = () => {
     }
   };
 
+  const handleModalClose = () => {
+    fetchCurrentProject(); // Fetch task items
+  };
+
   const handleOpenModal = (task) => {
     setSelectedTask(task);
     setModalOpen(true);
@@ -48,6 +49,7 @@ const ProjectOverview = () => {
 
   const handleCloseModal = () => {
     setModalOpen(false);
+    fetchCurrentProject();
   };
 
   return (
@@ -81,12 +83,14 @@ const ProjectOverview = () => {
           token={token}
           userId={userId}
           handleOpenModal={handleOpenModal}
+          handleCloseModal={handleCloseModal}
         />
       </div>
       <TaskDetailsModal
         modalOpen={modalOpen}
         handleCloseModal={handleCloseModal}
         selectedTask={selectedTask}
+        setSelectedTask={setSelectedTask}
         token={token}
         project={currentProject}
       />

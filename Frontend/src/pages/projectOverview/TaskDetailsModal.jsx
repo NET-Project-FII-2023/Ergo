@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Fade } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import DescriptionIcon from '@mui/icons-material/Description';
 import { Typography } from '@material-tailwind/react';
 import CommentSection from './CommentSection';
 import AttachmentSection from './AttachmetSection';
 import TimerSection from './TimerSection';
 import GithubSection from './GithubSection';
 import AssignUserTask from './AssignUserTask';
+import TaskMainInfo from './TaskMainInfo';
 
 
 const formatDeadline = (deadline) => {
@@ -16,13 +16,42 @@ const formatDeadline = (deadline) => {
   return formattedDeadline;
 };
 
-const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, project }) => {
+const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, project })  => {
   const [attachedFiles, setAttachedFiles] = useState([]);
+  const [currentTask, setCurrentTask] = useState([]);
+
 
   const handleFileInputChange = (event) => {
     const files = event.target.files;
     setAttachedFiles([...attachedFiles, ...files]);
   };
+
+
+  const fetchCurrentTask = async () => {
+      try {
+
+        const response = await api.get(`/api/v1/TaskItems/${selectedTask.taskItemId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          setCurrentTask(response.data.taskItem);
+          setSelectedTask(response.data.taskItem);
+          console.log(response.data.taskItem);
+          console.log(response.data.taskItem.assignedUser);
+        } else {
+          console.error('Error fetching tasks:', response);
+        }
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    useEffect(() => {
+      fetchCurrentTask();
+  }, []);
 
   return (
     <Modal
@@ -37,31 +66,8 @@ const TaskDetailsModal = ({ modalOpen, handleCloseModal, selectedTask, token, pr
           {selectedTask && (
             <div className='flex flex-row'>
               <div className='w-2/3'>
-                <div className="flex flex-col px-2 mt-2">
-                <Typography variant='h4' className='text-white py-2'>
-                    {selectedTask.taskName}
-                  </Typography>
-                  {selectedTask.state === 1 && (
-                    <div className="w-[3rem] text-xs text-center rounded-md text-sm text-surface-darkest bg-secondary p-1">To Do</div>
-                  )}
-                  {selectedTask.state === 2 && (
-                    <div className="w-[5rem] text-xs text-center rounded-md text-sm text-surface-darkest bg-blue-400 p-1">In Progress</div>
-                  )}
-                  {selectedTask.state === 3 && (
-                    <div className="w-[3rem] text-xs text-center rounded-md text-sm text-surface-darkest bg-teal-300 p-1">Done</div>
-                  )}
-                  
-                </div>
-                <div className='flex flex-row mt-4 pr-2 items-center'>
-                  <DescriptionIcon className='text-secondary ml-1' fontSize='extraSmall'></DescriptionIcon>
-                  <p className='text-gray-300 ml-1 text-md font-semibold'>
-                    Description
-                  </p>
-                </div>
-
-                <p variant="body2" className='text-surface-light pl-2 py-2 pr-12  text-md' component="p">
-                  {selectedTask.description}
-                </p>
+               <TaskMainInfo selectedTask={selectedTask} token={token}/>
+               
                 <AttachmentSection attachedFiles={attachedFiles} handleFileInputChange={handleFileInputChange} project={project}/>
 
                 {attachedFiles.map((file, index) => (

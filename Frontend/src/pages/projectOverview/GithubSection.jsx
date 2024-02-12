@@ -61,7 +61,7 @@ const GithubSection = ({ token, task, project }) => {
         fetchCommitsForBranch(selectedBranch);
     };
     
-
+    
     const handleUpdateTask = async () => {
         try {
             const response = await api.put(`/api/v1/TaskItems/${task.taskItemId}`, {
