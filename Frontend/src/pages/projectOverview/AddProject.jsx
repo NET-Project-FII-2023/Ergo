@@ -136,7 +136,7 @@ const AddProject = ({ token, onProjectAdded }) => {
              </Button>
 
                 <Modal open={open} onClose={handleClose}>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[30rem] bg-[#2f2b3a] shadow-lg p-4 rounded">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:w-[30rem] w-[90vw] bg-[#2f2b3a] shadow-lg p-4 rounded">
                     <Typography variant='h4' className='text-white p-2'>
                         Add Project
                     </Typography>
@@ -182,25 +182,28 @@ const AddProject = ({ token, onProjectAdded }) => {
                             />
                         </div>
                         <div className='m-2'>
-                            <ErgoLabel labelName="Deadline" />
-                            <ErgoDatePicker
-                                label='Deadline'
-                                selectedDate={projectDetails.deadline}
-                                onChange={handleDateChange}
-                            />
-                        </div>
-                        <div className='flex flex-row justify-between'>
-                            <div className='flex items-center gap-1'>
-                            <p className='text-surface-light mt-2'>AI Assistance</p>
-                            <TipsAndUpdatesOutlinedIcon className='text-surface-light'/>
-                            <Checkbox id="public" name="public" value="public" onChange={() => setAiActive(!aiActive)}/>
+                            <div>
+                                <ErgoLabel labelName="Deadline" />
+                                <ErgoDatePicker
+                                    label='Deadline'
+                                    selectedDate={projectDetails.deadline}
+                                    onChange={handleDateChange}
+                                />
                             </div>
+                            
+                        </div>
+                        <div className='m-2 flex justify-start'>
+                            <div className='flex items-center'>   
+                            <Checkbox id="public" name="public" value="public" onChange={() => setAiActive(!aiActive)}/>
+                               <p className='text-surface-light'>AI Assistance</p>
+                                <TipsAndUpdatesOutlinedIcon fontSize="small" className='text-surface-light text-center ml-2'/>
+                            </div>
+                        </div>  
                         <div className='m-2 self-end'>
                             <Button size="sm" className="bg-secondary hover:bg-primary" onClick={handleAddProject}>
                                 <AddTaskIcon fontSize='small'>
                                 </AddTaskIcon>
                             </Button>
-                        </div>
                         </div>
                         
                     </div>

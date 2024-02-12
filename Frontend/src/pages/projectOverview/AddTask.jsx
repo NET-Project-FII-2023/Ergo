@@ -120,7 +120,7 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
       </CardContent>
     </Card>
       <Modal open={open} onClose={handleClose}>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[25rem] bg-[#2f2b3a] shadow-lg p-4 rounded">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:w-[25rem] w-[90vw] bg-[#2f2b3a] shadow-lg p-4 rounded">
           <Typography variant='h4' className='text-white p-2'>
               Add Task
           </Typography>

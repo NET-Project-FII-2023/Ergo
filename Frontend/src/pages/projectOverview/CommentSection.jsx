@@ -88,7 +88,7 @@ const CommentSection = ({ task, token }) => {
             <div className="text-surface-light overflow-auto max-h-[14rem]" style={{scrollbarWidth: 'thin'}}>
                 {comments.map(comment => (
                   <Card
-                    className="mb-2 w-4/5 !rounded-lg"
+                    className="mb-2 md:w-4/5 !rounded-lg"
                     key={comment.commentId}
                   >
                       <CardContent className='p-2 bg-surface-darkest'>
@@ -119,7 +119,7 @@ const CommentSection = ({ task, token }) => {
                 ))}
             </div>
 
-            <div className="flex items-center flex-col mt-2 w-4/5">
+            <div className="flex items-center flex-col mt-2 md:w-4/5">
                 <ErgoInput
                   placeholder={"Comment"}
                   value={newCommentText}

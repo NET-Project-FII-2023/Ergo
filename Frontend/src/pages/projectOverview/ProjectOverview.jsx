@@ -39,7 +39,7 @@ const ProjectOverview = () => {
   };
 
   const handleModalClose = () => {
-    fetchCurrentProject(); // Fetch task items
+    fetchCurrentProject();
   };
 
   const handleOpenModal = (task) => {
@@ -54,7 +54,7 @@ const ProjectOverview = () => {
 
   return (
     <div>
-      <div className='flex justify-between items-end'>
+      <div className='flex flex-col md:flex-row justify-between items-start md:items-end'>
         <div >
           <div>
             <span className='text-surface-light text-sm opacity-75'>Owner:</span>
@@ -63,8 +63,8 @@ const ProjectOverview = () => {
           <Typography variant="h3" className='text-white'>
           {currentProject.projectName}
           </Typography>
-          <div className='flex flex-row'>
-            <Typography component="p" mr={1} className='text-surface-light'>
+          <div className='flex flex-col md:flex-row mt-2'>
+            <Typography component="p" mr={1} className='text-surface-light font-semibold'>
               Description:
             </Typography>
             <Typography variant="body1" component="p" className='text-surface-light'>

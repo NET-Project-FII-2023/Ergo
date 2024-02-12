@@ -39,7 +39,7 @@ const MembersList = ({ project, token }) => {
     };
 
     return (
-      <div className='py-2'>
+      <div className='py-2 md:px-0 px-4'>
         <p className='text-surface-light text-lg my-2 px-2'>
           Assigned Members
         </p>
