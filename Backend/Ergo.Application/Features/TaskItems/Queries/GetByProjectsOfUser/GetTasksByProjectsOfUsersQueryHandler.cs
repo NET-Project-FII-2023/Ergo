@@ -81,8 +81,8 @@ public class GetTasksByProjectsOfUsersQueryHandler : IRequestHandler<GetTasksByP
                 var taskItemDto = new TaskItemDto
                 {
                     TaskItemId = task.TaskItemId,
-                    BranchId = task.BranchId,
                     TaskName = task.TaskName,
+                    BranchId = task.Branch,
                     Description = task.Description,
                     Deadline = task.Deadline,
                     CreatedBy = task.CreatedBy,

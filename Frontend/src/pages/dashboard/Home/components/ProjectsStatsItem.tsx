@@ -1,9 +1,10 @@
 import { Typography, Tooltip, Avatar, Progress } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ProjectsStatsItemProps } from "./types";
 
 export function ProjectsStatsItem(props : ProjectsStatsItemProps) {
   const { name, members, deadline, totalTasksCount, completion, path, className } = props;
+  const navigate = useNavigate();
   return (
     <tr>
       <td className={className}>
@@ -17,9 +18,11 @@ export function ProjectsStatsItem(props : ProjectsStatsItemProps) {
         {/* </div> */}
       </td>
       <td className={className}>
-        {members.map(({ img, name }, index) => (
+        {members.map(({ img, name, userId }, index) => (
           <Tooltip key={`${name}_${index}`} content={name}>
-            <Avatar src={img} alt={name} size="xs" variant="circular" className={`cursor-pointer border-2 border-primary ${index === 0 ? "" : "-ml-2.5"}`}/>
+            <Avatar src={img} alt={name} size="xs" variant="circular" className={`cursor-pointer border-2 border-primary ${index === 0 ? "" : "-ml-2.5"}`}
+              onClick={() => navigate(`/dashboard/profile/${userId}`)}
+            />
           </Tooltip>
         ))}
       </td>

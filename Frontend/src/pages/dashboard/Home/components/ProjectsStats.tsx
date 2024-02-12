@@ -9,10 +9,38 @@ import { useUser } from "../../../../context/LoginRequired";
 export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
   const user = useUser();
   const [projectsStats, setProjectsStats] = useState({} as ProjectsStatsType);
+  const [loadedUsers, setLoadedUsers] = useState({} as {[userId: string]: {name:string, img:string}});
+
+  const getMemberData = async (userId : string) => {
+    if(loadedUsers[userId]) return { name: loadedUsers[userId], img: loadedUsers[userId] };
+    let userData = { name: "", userPhoto: ""}
+    try{
+      const response = await api.get(`/api/v1/Users/ById/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
+      userData = response.data.user;
+      setLoadedUsers((prev : any) => {
+        return {
+          ...prev,
+          [userId]: { name: userData.name, img: userData.userPhoto || "/img/bruce-mars.jpeg", userId }
+        }
+      });
+    }
+    catch (error : any) {
+      console.log(`Error while getting user data: ${error.response.data}`);
+    } finally {
+      return { name: userData.name, img: userData.userPhoto || "/img/bruce-mars.jpeg", userId };
+    }
+  }
+
   useEffect(() => {
     if(Object.keys(projectsTasksCount).length <= 0) return;
     (async () => {
-      console.log('getting projects')
       try{
         const response = await api.get(`/api/v1/Projects/GetProjectsByUserId/${user.userId}`, {
           headers: {
@@ -23,22 +51,14 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
           throw new Error(response.data.message);
         }
         const projects = response.data.projects;
-        projects.forEach((project : any) => {
+        for(const project of projects){
+          const projectMembers = await Promise.all(project.members.map((member : any) => getMemberData(member.userId)));
           setProjectsStats((prev : ProjectsStatsType) => {
             return {
               ...prev,
               [project.projectId]: {
                 name: project.projectName,
-                members: [
-                  project.members.map((member : any) => {
-                    // const img = getUserImage(member.userId);
-                    // const name = getUserNames(member.userId);
-                    return {
-                      img: "https://via.placeholder.com/150",
-                      name: "John Doe",
-                    }
-                  }),
-                ],
+                members: [...projectMembers],
                 deadline: project.deadline,
                 totalTasksCount: projectsTasksCount[project.projectId],
                 completion: projectsCompletion[project.projectId],
@@ -46,13 +66,14 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
               }
             }
           });
-        });
+        };
       }
       catch (error : any) {
         console.log(`Error while getting projects: ${error.response.data}`);
       }
     })();
   }, [projectsTasksCount, projectsCompletion]);
+
   return(
     <Card className="overflow-hidden mt-12 xl:col-span-3 bg-surface-dark shadow-sm">
       <CardHeader floated={false} shadow={false} color="transparent" className="m-0 flex items-center justify-between p-6">

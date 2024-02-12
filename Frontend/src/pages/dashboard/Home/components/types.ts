@@ -44,6 +44,7 @@ export type ProjectsStatsItemProps = {
   members: {
     img: string;
     name: string;
+    userId: string;
   }[];
   deadline: Date;
   totalTasksCount: number;
@@ -58,6 +59,7 @@ export type ProjectsStatsType = {
     members: {
       img: string;
       name: string;
+      userId: string;
     }[];
     deadline: Date;
     totalTasksCount: number;
