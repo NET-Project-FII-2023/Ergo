@@ -1,39 +1,35 @@
 ﻿using Ergo.Api.Models.OpenAi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
-using OpenAI_API;
-using OpenAI_API.Chat;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Ergo.Api.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ChatGptController : ControllerBase
+    public class OpenAiController : ApiControllerBase
     {
         private readonly HttpClient _httpClient;
 
-        public ChatGptController(HttpClient httpClient)
+        public OpenAiController(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
         [HttpPost]
+        [Authorize(Roles = "User")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Post(ChatGptRequest request)
         {
-            string messageContent = "";
-            if(request.Type != "task" && request.Type != "project-tasks")
+            if (request.Type != "task" && request.Type != "project-tasks")
             {
                 return BadRequest("Invalid type");
             }
-            messageContent = request.Type switch
+            string messageContent = request.Type switch
             {
                 "task" => $"Generate me a task description maximum 300 tokens based on this title {request.Title} and on on this phrase {request.Description}",
-                "project-tasks" => $"Generate a JSON file of type \"tasks\":[{{\"taskName\": string, \"taskDescription\": string}}] for a project named {request.Title} with the description {request.Description} where you divide the project in tasks. Include only the JSON file in the response, nothing else.",
+                "project-tasks" => $"Generate a JSON file of type \"tasks\":[{{\"taskName\": string, \"description\": string}}] with descriptive tasknames for a project named {request.Title} with the description {request.Description} where you divide the project in tasks. Include only the JSON file in the response, nothing else.",
                 _ => $"Generate me a task description maximum 300 tokens based on this phrase {request.Description}",
             };
             var requestBody = new
@@ -44,7 +40,8 @@ namespace Ergo.Api.Controllers
             };
 
             var httpContent = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "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");
+            string openAiKey = DotNetEnv.Env.GetString("OpenAiSecretKey");
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openAiKey);
 
             var response = await _httpClient.PostAsync("https://api.openai.com/v1/chat/completions", httpContent);
 

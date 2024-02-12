@@ -44,20 +44,21 @@ public class GetTasksDueThisWeekQueryHandler(
             var tasks = tasksResult.Value;
             foreach (TaskItem task in tasks)
             {
-                if (task.Deadline.Date <= DateTime.Now.AddDays(7).Date)
+                if (task.Deadline.HasValue && task.Deadline.Value.Date <= DateTime.Now.AddDays(7).Date)
                 {
                     tasksDue.Add(new TaskDueModel
                     {
                         TaskItemId = task.TaskItemId,
                         ProjectId = task.ProjectId,
-                        Deadline = task.Deadline,
+                        Deadline = task.Deadline.Value, 
                         State = task.State
                     });
                 }
             }
-            
+
+
         }
-        
+
         return new GetTasksDueThisWeekQueryResponse
         {
             Success = true,

@@ -34,10 +34,11 @@ namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
 
             request.TaskName ??= taskItem.Value.TaskName;
             request.Description ??= taskItem.Value.Description;
-            if (request.Deadline == default(DateTime))
+            if (request.Deadline == default(DateTime) && taskItem.Value.Deadline.HasValue)
             {
-                request.Deadline = taskItem.Value.Deadline;
+                request.Deadline = taskItem.Value.Deadline.Value;
             }
+
             request.CreatedBy ??= taskItem.Value.CreatedBy;
             if (request.ProjectId == default(Guid))
             {

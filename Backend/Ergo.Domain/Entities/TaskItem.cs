@@ -7,7 +7,7 @@ namespace Ergo.Domain.Entities
     {
 
 
-        private TaskItem(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, string? branch)
+        private TaskItem(string taskName, string description, DateTime? deadline, string createdBy, Guid projectId, string? branch)
         {
             TaskItemId = Guid.NewGuid();
             TaskName = taskName;
@@ -33,7 +33,7 @@ namespace Ergo.Domain.Entities
         public Guid ProjectId { get; set; }
         public string? TaskName { get; private set; }
         public string? Description { get; private set; }
-        public DateTime Deadline { get; private set; }
+        public DateTime? Deadline { get; private set; }
         public List<Comment> Comments { get; set; }
         public TaskState State { get; set; }
         public DateTime? StartTime { get; private set; }
@@ -43,7 +43,7 @@ namespace Ergo.Domain.Entities
 
         public string? Branch { get; private set; }
 
-        public static Result<TaskItem> Create(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, string? branch)
+        public static Result<TaskItem> Create(string taskName, string description, DateTime? deadline, string createdBy, Guid projectId, string? branch)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
