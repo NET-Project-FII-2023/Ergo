@@ -38,3 +38,30 @@ export type TasksStatsProps = {
   count: React.ReactNode;
   footer: React.ReactNode;
 }
+
+export type ProjectsStatsItemProps = {
+  name: string;
+  members: {
+    img: string;
+    name: string;
+  }[];
+  deadline: Date;
+  totalTasksCount: number;
+  completion: number;
+  path: string;
+  className: string;
+}
+
+export type ProjectsStatsType = {
+  [projectId: string]: {
+    name: string;
+    members: {
+      img: string;
+      name: string;
+    }[];
+    deadline: Date;
+    totalTasksCount: number;
+    completion: number;
+    path: string;
+  }
+}

@@ -6,7 +6,7 @@ import TasksStatsCard from "./TasksStatsCard";
 import { TasksFromAllProjects, TaskStats } from "./types";
 import { useUser } from "../../../../context/LoginRequired";
 
-export function TasksStats() {
+export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any) {
   const user = useUser();
   const [tasksFromAllProjects, setTasksFromAllProjects] = useState({} as TasksFromAllProjects);
   const [tasksStats, setTasksStats] = useState([] as TaskStats[]);
@@ -39,8 +39,22 @@ export function TasksStats() {
     nextDue.setFullYear(2100);
     projects.forEach((project) => {
       tasksFromAllProjects[project].forEach((task) => {
+        //compute data for the tasks stats
         stats[task.state - 1].count++;
         if(task.state === 2 && new Date(task.deadline) < nextDue) nextDue = new Date(task.deadline); 
+      });
+      //compute data for the projects stats
+      setProjectsTasksCount((prev : any) => {
+        return {
+          ...prev,
+          [project]: tasksFromAllProjects[project].length,
+        }
+      });
+      setProjectsCompletion((prev : any) => {
+        return {
+          ...prev,
+          [project]: tasksFromAllProjects[project].filter((task) => task.state === 3).length / tasksFromAllProjects[project].length * 100,
+        }
       });
     });
 
@@ -52,7 +66,7 @@ export function TasksStats() {
     if(stats[1].count === 0) {
       stats[1].footerValue = "No tasks in progress";
     } else {
-      stats[1].footerValue = `${new Date(nextDue).getDate()}th of ${new Date(nextDue).toLocaleString("en-US", { month: "long" })} ${new Date(nextDue).getFullYear()}`;
+      stats[1].footerValue = `${new Date(nextDue).toLocaleString("en-US", { month: "long" })} ${new Date(nextDue).getDate()}, ${new Date(nextDue).getFullYear()}`;
     }
 
     setTasksStats(stats);
