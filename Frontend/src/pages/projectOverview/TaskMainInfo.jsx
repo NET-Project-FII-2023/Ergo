@@ -102,7 +102,7 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
           <Button size='small'  onClick={handleOpenEditStateModal} className="w-[3rem] text-xs text-center rounded-md text-surface-darkest bg-teal-300 p-1">Done</Button>
         )}
         {editMode.taskName && (selectedTask.assignedUser && selectedTask.assignedUser.username === currentUser.username) ? (
-          <div className='flex items-center'>
+          <div className='flex md:flex-row flex-col jusitfy-center'>
             <input
               type="text"
               value={updatedTaskName}
@@ -110,7 +110,7 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
               className="bg-transparent text-white text-3xl focus:outline-none mb-2"
             />
             <p onClick={handleSave}>
-              <SaveAsIcon fontSize='medium' className='text-surface-light hover:text-secondary ml-1 cursor-pointer' />
+              <SaveAsIcon fontSize='medium' className='text-surface-light hover:text-secondary md:ml-1 cursor-pointer' />
             </p>
           </div>
 
