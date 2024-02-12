@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Typography } from '@material-tailwind/react';
+import { Typography, Select, Option, Button } from '@material-tailwind/react';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { toast } from "react-toastify";
 import api from '@/services/api';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import { useUser } from '@/context/LoginRequired';
+import EditStateModal from './EditStateModal';
 
 const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
   const [editMode, setEditMode] = useState({ taskName: false, description: false });
   const [updatedTaskName, setUpdatedTaskName] = useState(selectedTask.taskName);
   const [updatedDescription, setUpdatedDescription] = useState(selectedTask.description);
   const [currentTask, setCurrentTask] = useState([]);
+  const [selectedState, setSelectedState] = useState(selectedTask.state);
+  const [isEditStateModalOpen, setIsEditStateModalOpen] = useState(false); 
   const currentUser = useUser();
 
   const handleDoubleClick = (field) => {
@@ -27,13 +30,17 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
 
       if (response.status === 200) {
         setCurrentTask(response.data.taskItem);
-        setSelectedTask(response.data.taskItem);
+        setSelectedState(response.data.taskItem.state);
       } else {
         console.error('Error fetching tasks:', response);
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
+  };
+
+  const handleTaskStateUpdated = () => {
+    fetchCurrentTask();
   };
 
   useEffect(() => {
@@ -75,9 +82,25 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
     setEditMode({ taskName: false, description: false });
   };
 
+  const handleOpenEditStateModal = () => {
+    setIsEditStateModalOpen(true);
+  };
+
+  const handleCloseEditStateModal = () => {
+    setIsEditStateModalOpen(false);
+  };
   return (
     <div>
       <div className="flex flex-col px-2 mt-2">
+      {currentTask.state === 1 && (
+          <Button size='small' onClick={handleOpenEditStateModal} className="w-[5rem] text-xs text-center rounded-md text-surface-darkest bg-secondary p-1">To Do</Button>
+        )}
+        {currentTask.state === 2 && (
+          <Button size='small' onClick={handleOpenEditStateModal}  className="w-[7rem] text-xs text-center rounded-md text-surface-darkest bg-blue-400 p-1">In Progress</Button>
+        )}
+        {currentTask.state === 3 && (
+          <Button size='small'  onClick={handleOpenEditStateModal} className="w-[3rem] text-xs text-center rounded-md text-surface-darkest bg-teal-300 p-1">Done</Button>
+        )}
         {editMode.taskName && (selectedTask.assignedUser && selectedTask.assignedUser.username === currentUser.username) ? (
           <div className='flex items-center'>
             <input
@@ -94,15 +117,6 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
           <Typography variant='h4' className='text-white py-2' onDoubleClick={() => handleDoubleClick('taskName')}>
             {currentTask.taskName}
           </Typography>
-        )}
-        {currentTask.state === 1 && (
-          <div className="w-[3rem] text-xs text-center rounded-md text-sm text-surface-darkest bg-secondary p-1">To Do</div>
-        )}
-        {currentTask.state === 2 && (
-          <div className="w-[5rem] text-xs text-center rounded-md text-sm text-surface-darkest bg-blue-400 p-1">In Progress</div>
-        )}
-        {currentTask.state === 3 && (
-          <div className="w-[3rem] text-xs text-center rounded-md text-sm text-surface-darkest bg-teal-300 p-1">Done</div>
         )}
       </div>
       <div className='flex flex-row mt-4 pr-2 items-center'>
@@ -132,6 +146,16 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
               {currentTask.description}
             </p>
           </div>
+        )}
+        {selectedTask.assignedUser && selectedTask.assignedUser.username === currentUser.username && (
+        <EditStateModal
+            open={isEditStateModalOpen}
+            onClose={handleCloseEditStateModal}
+            projectId={selectedTask.taskItemId}
+            token={token}
+            selectedTask={selectedTask}
+            onTaskStateUpdated={handleTaskStateUpdated}
+          />
         )}
       </div>
     </div>
