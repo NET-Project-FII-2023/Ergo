@@ -16,7 +16,5 @@ namespace Ergo.Application.Features.TaskItems.Queries
         public TaskState State { get; set; }
         public string? Branch { get; set; }
         public DateTime? StartTime { get; set; }
-
-
     }
 }

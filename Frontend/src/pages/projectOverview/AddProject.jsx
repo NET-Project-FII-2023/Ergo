@@ -76,7 +76,6 @@ const AddProject = ({ token, onProjectAdded }) => {
                         <div className='m-2'>
                             <ErgoLabel labelName="Project name" />
                             <ErgoInput
-                                label='Project Name'
                                 placeholder="Enter Project Name"
                                 onChange={(value) => handleInputChange('projectName', value)}
                                 value={projectDetails.projectName}
@@ -85,7 +84,6 @@ const AddProject = ({ token, onProjectAdded }) => {
                         <div className='m-2'>
                             <ErgoLabel labelName="Description" />
                             <ErgoTextarea
-                                label='Description'
                                 placeholder="Enter Description"
                                 onChange={(value) => handleInputChange('description', value)}
                                 value={projectDetails.description}
@@ -95,7 +93,6 @@ const AddProject = ({ token, onProjectAdded }) => {
                             <ErgoLabel labelName="Github Owner" />
                             <ErgoInput
                                 placeholder="Github Owner"
-                                label='GitHub Owner'
                                 onChange={(value) => handleInputChange('githubOwner', value)}
                                 value={projectDetails.githubOwner}
                             />
@@ -103,7 +100,6 @@ const AddProject = ({ token, onProjectAdded }) => {
                         <div className='m-2'>
                             <ErgoLabel labelName="Github Owner" />
                             <ErgoInput
-                                label='GitHub Token'
                                 placeholder="Enter GitHub Token"
                                 onChange={(value) => handleInputChange('githubToken', value)}
                                 value={projectDetails.githubToken}
@@ -112,7 +108,6 @@ const AddProject = ({ token, onProjectAdded }) => {
                         <div className='m-2'>
                             <ErgoLabel labelName="Git Repository" />
                             <ErgoInput
-                                label='Git Repository'
                                 placeholder="Enter Git Repository"
                                 onChange={(value) => handleInputChange('gitRepository', value)}
                                 value={projectDetails.gitRepository}

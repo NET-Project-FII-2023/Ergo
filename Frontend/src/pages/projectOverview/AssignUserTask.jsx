@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@material-tailwind/react';
-import { Select, Option } from '@material-tailwind/react';
+import {Button, Select, Option} from '@material-tailwind/react';
 import api from '@/services/api';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { Card, CardContent } from '@mui/material';
 import {toast} from "react-toastify";
 import { useUser } from '../../context/LoginRequired';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import UserAvatar from "@/common/components/UserAvatar";
+import {useNavigate} from "react-router-dom";
 
 
 const AssignUserTask = ({ token, task, project }) => {
+    const navigate = useNavigate();
+    const currentUser = useUser();
     const [showSelect, setShowSelect] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState('');
@@ -17,7 +20,6 @@ const AssignUserTask = ({ token, task, project }) => {
     const [selectVisible, setSelectVisible] = useState(false);
     const [showButtons, setShowButtons] = useState(false);
     const [loadedAssignedUser, setLoadedAssignedUser] = useState({});
-    const currentUser = useUser();
 
     const fetchCurrentTask = async () => {
         try {
@@ -104,6 +106,11 @@ const AssignUserTask = ({ token, task, project }) => {
         setShowButtons(false);
     };
 
+    const handleAssignedUserClick = (e, userId) => {
+        e.stopPropagation();
+        userId && navigate(`/dashboard/profile/${userId}`)
+    }
+
     return (
         <div className='mt-6'>    
             <div className='flex items-center mb-3'>
@@ -124,15 +131,21 @@ const AssignUserTask = ({ token, task, project }) => {
                     style={{
                         backgroundColor: "#1a1625",
                     }}>
-                        <CardContent className='rounded bg-surface-darkest'>
+                        <CardContent className='rounded bg-surface-darkest !p-4'>
                             <div className='flex'>
-    
+                                <UserAvatar
+                                  onClick={(e) => handleAssignedUserClick(e, loadedAssignedUser?.userId)}
+                                  photoUrl={loadedAssignedUser?.userPhoto?.photoUrl}
+                                  className={"w-[2.25rem] h-[2.25rem] rounded-full mr-3"}
+                                  loadingClassName={"w-[2.25rem] h-[2.25rem] bg-surface-mid-dark rounded-full mr-3"}
+                                  loadingProps={{className: "w-5 h-5"}}
+                                />
                                 <div>
-                                    <p className="text-surface-light text-xs">
-                                    @{loadedAssignedUser.username}
+                                    <p className="text-surface-light text-sm">
+                                        {loadedAssignedUser.name}
                                     </p>
                                     <p className="text-surface-mid-light text-xs">
-                                        {loadedAssignedUser.name}
+                                        @{loadedAssignedUser.username}
                                     </p>
                                 </div>
                             </div>

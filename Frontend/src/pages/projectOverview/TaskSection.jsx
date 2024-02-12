@@ -12,13 +12,13 @@ const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal
     const doneTasks = taskItems.filter(taskItem => taskItem.state === 3);
     const currentUser = useUser();
   
-  useEffect(() => {
-    fetchTaskItems();
-  }, [project.projectId, token, userId, handleCloseModal]);
+    useEffect(() => {
+      fetchTaskItems();
+    }, [project.projectId, token, userId]);
 
   const fetchTaskItems = async () => {
     try {
-      if (!token || !userId) return;
+      if (!token || !project.projectId) return;
 
       const response = await api.get(`/api/v1/TaskItems/ByProject/${project.projectId}`, {
         headers: {

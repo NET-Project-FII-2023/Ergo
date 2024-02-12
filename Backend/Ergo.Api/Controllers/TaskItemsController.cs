@@ -9,6 +9,7 @@ using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
 using Ergo.Application.Features.TaskItems.Queries.GetAll;
 using Ergo.Application.Features.TaskItems.Queries.GetById;
 using Ergo.Application.Features.TaskItems.Queries.GetByProjectId;
+using Ergo.Application.Features.TaskItems.Queries.GetByUserId;
 using Ergo.Application.Features.TaskItems.Queries.GetTaskItemTime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -186,6 +187,21 @@ public class TaskItemsController : ApiControllerBase
     public async Task<IActionResult> DeleteAssignedUser(DeleteAssignedUserFromTaskCommand command)
     {
         var result = await Mediator.Send(command);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }    
+    [Authorize(Roles = "User")]
+    [HttpGet("ByProjectsOfUser/{userId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTasksByProjectsOfUser(Guid userId)
+    {
+        var query = new GetTasksByProjectsOfUsersQuery { UserId = userId };
+        var result = await Mediator.Send(query);
 
         if (!result.Success)
         {

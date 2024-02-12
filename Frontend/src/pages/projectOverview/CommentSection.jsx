@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Fade, Card, CardContent } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 import ModeCommentIcon from '@mui/icons-material/ModeComment';
-import { Button, Typography } from '@material-tailwind/react';
 import api from '@/services/api';
 import { useUser } from "@/context/LoginRequired";
 import { toast } from "react-toastify";
-import { Textarea } from '@material-tailwind/react';
+import ErgoInput from "@/widgets/form_utils/ErgoInput";
+import UserAvatar from "@/common/components/UserAvatar";
+import {useNavigate} from "react-router-dom";
 
 const CommentSection = ({ task, token }) => {
+    const currentUser = useUser();
+    const navigate = useNavigate();
     const [comments, setComments] = useState([]);
     const [newCommentText, setNewCommentText] = useState('');
-    const [isCommentVisible, setIsCommentVisible] = useState(false);
-    const currentUser = useUser();
 
     const formatTime = (deadline) => {
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
@@ -57,11 +58,9 @@ const CommentSection = ({ task, token }) => {
             });
 
             if (response.status === 200) {
-                setComments([...comments, response.data]);
                 setNewCommentText('');
                 toast.success("Added comment successfully!")
                 fetchComments();
-                setIsCommentVisible(!isCommentVisible)
             } else {
                 console.error('Error adding comment:', response);
                 toast.error(response);
@@ -72,6 +71,11 @@ const CommentSection = ({ task, token }) => {
         }
     };
 
+    const handleOnUserAvatarClick = (e, userId) => {
+        e.stopPropagation();
+        userId && navigate(`/dashboard/profile/${userId}`)
+    }
+
     return (
         <div className='flex flex-col mt-4 px-1'>
             <div className='flex items-center mb-2'>
@@ -80,57 +84,53 @@ const CommentSection = ({ task, token }) => {
                     Comments
                 </p>
             </div>
-            
-            <div className="text-surface-light overflow-auto max-h-[12rem]" style={{ scrollbarWidth: 'thin' }}>
+
+            <div className="text-surface-light overflow-auto max-h-[14rem]" style={{scrollbarWidth: 'thin'}}>
                 {comments.map(comment => (
-                    <Card key={comment.commentId} className="cursor-pointer mb-2 rounded w-4/5" 
-                    >
-                        <CardContent className='p-2 pb-0 rounded bg-surface-darkest' >
-                            <div className='flex'>
-                                <div>
-                                    <p className="text-gray-300  text-xs">
-                                        #{comment.createdBy} commented:
-                                    </p>
-                                    <p className="text-gray-500 text-xs mt-2">
-                                        {comment.commentText}
-                                    </p>
-                                    <p className="text-surface-mid-light text-xs mt-2">
-                                        {formatTime(comment.createdDate)}
-                                    </p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                  <Card
+                    className="mb-2 w-4/5 !rounded-lg"
+                    key={comment.commentId}
+                  >
+                      <CardContent className='p-2 bg-surface-darkest'>
+                          <div className={'flex items-center'}>
+                              <div
+                                className={'flex items-center cursor-pointer'}
+                                onClick={(e) => handleOnUserAvatarClick(e, comment.createdBy?.userId)}
+                              >
+                                  <UserAvatar
+                                    photoUrl={comment.createdBy?.userPhoto?.photoUrl}
+                                    className={"w-[1.75rem] h-[1.75rem] rounded-full"}
+                                    loadingClassName={"w-[1.75rem] h-[1.75rem] bg-surface-mid-dark rounded-full"}
+                                    loadingProps={{className: "w-5 h-5"}}
+                                  />
+                                  <p className="text-gray-300 text-sm ml-2.5">
+                                      {comment.createdBy.name}
+                                  </p>
+                              </div>
+                              <p className="text-surface-mid-light text-xs ml-auto">
+                                  {formatTime(comment.createdDate)}
+                              </p>
+                          </div>
+                          <p className="text-gray-500 text-xs mt-4">
+                              {comment.commentText}
+                          </p>
+                      </CardContent>
+                  </Card>
                 ))}
             </div>
-            
-            {isCommentVisible && (
-                <div className="flex items-center flex-col mt-4">
-                    <Textarea
-                        placeholder="Comment"
-                        className="!border-surface-mid-dark text-surface-light focus:!border-secondary"
-                        labelProps={{
-                            className: "before:content-none after:content-none",
-                        }}
-                        onChange={(e) => setNewCommentText(e.target.value)}
-                        value={newCommentText}
-                        rows={1}
-                    />
-                    
-                </div>
-            )}
-            
-            <div className="flex items-center mt-2">
-                <p className="text-sm text-surface-light mt-2 hover:opacity-70 hover:cursor-pointer" 
-                   onClick={() => setIsCommentVisible(!isCommentVisible)}
-                >
-                    {isCommentVisible ? 'Cancel' : 'Add your comment'}
-                </p>
-                {isCommentVisible ? (
-                <p className="text-sm text-secondary hover:opacity-70 ml-2 mt-2 hover:cursor-pointer" size="sm" onClick={handleAddComment}>
-                        Confirm
-                </p>) : null}
-                
+
+            <div className="flex items-center flex-col mt-2 w-4/5">
+                <ErgoInput
+                  placeholder={"Comment"}
+                  value={newCommentText}
+                  onChange={(val) => setNewCommentText(val)}
+                  icon={
+                      <i
+                        className={"fa-regular fa-paper-plane cursor-pointer text-surface-mid-light hover:text-surface-light"}
+                        onClick={handleAddComment}
+                      />
+                  }
+                />
             </div>
         </div>
     );

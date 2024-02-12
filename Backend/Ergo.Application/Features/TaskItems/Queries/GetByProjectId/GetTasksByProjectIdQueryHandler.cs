@@ -6,12 +6,12 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
     public class GetTasksByProjectIdQueryHandler : IRequestHandler<GetTasksByProjectIdQuery, GetTasksByProjectIdQueryResponse>
     {
         private readonly ITaskItemRepository _taskItemRepository;
-        private readonly IUserManager userManager;
+        private readonly IUserManager _userManager;
 
         public GetTasksByProjectIdQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager)
         {
             _taskItemRepository = taskItemRepository;
-            this.userManager = userManager;
+            _userManager = userManager;
         }
 
         public async Task<GetTasksByProjectIdQueryResponse> Handle(GetTasksByProjectIdQuery request, CancellationToken cancellationToken)
@@ -51,7 +51,7 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
                 {
                     if (Guid.TryParse(assignedUserId.Value, out var guidUserId))
                     {
-                        var user = await userManager.FindByIdAsync(guidUserId);
+                        var user = await _userManager.FindByIdAsync(guidUserId);
 
                         if (user.IsSuccess)
                         {
@@ -60,6 +60,7 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
                                 UserId = user.Value.UserId,
                                 Name = user.Value.Name,
                                 Username = user.Value.Username,
+                                UserPhoto = user.Value.UserPhoto
                             };
                         }
                     }
