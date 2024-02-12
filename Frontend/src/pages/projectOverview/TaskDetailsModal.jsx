@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 
 
 
+
 const formatDeadline = (deadline) => {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, options);
@@ -24,8 +25,6 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
   const [currentTask, setCurrentTask] = useState([]);
   const [updatedDeadline, setUpdatedDeadline] = useState();
   const [editMode, setEditMode] = useState(false);
-
-
   const handleFileInputChange = (event) => {
     const files = event.target.files;
     setAttachedFiles([...attachedFiles, ...files]);
@@ -75,7 +74,6 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
         if (response.status === 200) {
           setCurrentTask(response.data.taskItem);
           setUpdatedDeadline(response.data.taskItem.deadline);
-          console.log("PENIS: ", response.data.taskItem.deadline);
           console.log(response.data.taskItem);
           console.log(response.data.taskItem.assignedUser);
         } else {
@@ -117,6 +115,7 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
                     <AccessTimeIcon className="text-secondary mr-2" fontSize='extraSmall' />
                     <Typography className='text-surface-light text-sm ml-1'>{formatDeadline(selectedTask.deadline)}</Typography>
                   </div>
+
 
               </div>
               <div className="border-r border-1 border-surface-mid h-auto"></div>
