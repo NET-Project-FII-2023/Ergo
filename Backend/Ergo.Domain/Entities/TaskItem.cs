@@ -103,7 +103,7 @@ namespace Ergo.Domain.Entities
         }
 
 
-        public Result<TaskItem> UpdateData(string taskName, string description, DateTime deadline, string createdBy, Guid projectId, TaskState state, string? branch)
+        public Result<TaskItem> UpdateData(string taskName, string description, DateTime? deadline, string createdBy, Guid projectId, TaskState state, string? branch)
         {
             if (string.IsNullOrWhiteSpace(taskName))
             {
