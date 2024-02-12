@@ -10,8 +10,7 @@ import AssignUserTask from './AssignUserTask';
 import TaskMainInfo from './TaskMainInfo';
 import api from '@/services/api';
 import { toast } from "react-toastify";
-import DatePicker from 'react-datepicker';
-import SaveAsIcon from '@mui/icons-material/SaveAs';
+
 
 
 
@@ -26,9 +25,6 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
   const [currentTask, setCurrentTask] = useState([]);
   const [updatedDeadline, setUpdatedDeadline] = useState();
   const [editMode, setEditMode] = useState(false);
-  const deadlineDate = new Date(currentTask.deadline);
-  const formattedDeadline = deadlineDate.toISOString().split('T')[0];
-
   const handleFileInputChange = (event) => {
     const files = event.target.files;
     setAttachedFiles([...attachedFiles, ...files]);
@@ -78,7 +74,6 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
         if (response.status === 200) {
           setCurrentTask(response.data.taskItem);
           setUpdatedDeadline(response.data.taskItem.deadline);
-          // setSelectedTask(response.data.taskItem);
           console.log(response.data.taskItem);
           console.log(response.data.taskItem.assignedUser);
         } else {
@@ -116,31 +111,10 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
                   </Typography>
                 ))}
                 <CommentSection token={token} task={selectedTask} />
-                {editMode ? (
-  <div className="flex items-center px-2 mt-6">
-    <AccessTimeIcon className="text-secondary mr-2" fontSize='extraSmall'/>
-    <input
-      type="date"
-      defaultValue={formattedDeadline}
-      onChange={(e) => setUpdatedDeadline(e.target.value)}
-      className="bg-transparent text-surface-light text-md text-center focus:outline-none"
-    />
-    <div className="ml-2">
-      
-      <SaveAsIcon fontSize='medium' className='text-surface-light hover:text-secondary cursor-pointer' onClick={() => { handleUpdateDeadline(); setEditMode(false); }} />
-    </div>
-  </div>
-) : (
-  <div className="flex items-center px-2 mt-6">
-    <AccessTimeIcon className="text-secondary mr-2" fontSize='extraSmall' />
-    <Typography
-      className='text-surface-light text-sm ml-4'
-      onDoubleClick={() => setEditMode(true)} // Enter edit mode on double-click
-    >
-      {formatDeadline(currentTask.deadline)}
-    </Typography>
-  </div>
-)}
+                  <div className="flex items-center px-2 mt-6">
+                    <AccessTimeIcon className="text-secondary mr-2" fontSize='extraSmall' />
+                    <Typography className='text-surface-light text-sm ml-1'>{formatDeadline(selectedTask.deadline)}</Typography>
+                  </div>
 
 
               </div>
