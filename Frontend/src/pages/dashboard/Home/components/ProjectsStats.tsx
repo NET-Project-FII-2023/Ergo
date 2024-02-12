@@ -13,7 +13,7 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
 
   const getMemberData = async (userId : string) => {
     if(loadedUsers[userId]) return { name: loadedUsers[userId], img: loadedUsers[userId] };
-    let userData = { name: "", userPhoto: ""}
+    let userData = { name: "", userPhoto: {photoUrl: ""}, userId: ""}
     try{
       const response = await api.get(`/api/v1/Users/ById/${userId}`, {
         headers: {
@@ -27,14 +27,14 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
       setLoadedUsers((prev : any) => {
         return {
           ...prev,
-          [userId]: { name: userData.name, img: userData.userPhoto || "/img/bruce-mars.jpeg", userId }
+          [userId]: { name: userData.name, img: userData.userPhoto?.photoUrl, userId }
         }
       });
     }
     catch (error : any) {
       console.log(`Error while getting user data: ${error.response.data}`);
     } finally {
-      return { name: userData.name, img: userData.userPhoto || "/img/bruce-mars.jpeg", userId };
+      return { name: userData.name, img: userData.userPhoto?.photoUrl, userId };
     }
   }
 
