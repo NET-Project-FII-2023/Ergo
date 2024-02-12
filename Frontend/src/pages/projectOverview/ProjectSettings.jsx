@@ -117,7 +117,7 @@ const ProjectSettings = ({ project, token }) => {
     };
 
     return (
-        <div className='mr-8'>
+        <div className='mr-8 md:mt-0 mt-3'>
              <Button className="w-full bg-surface-dark hover:bg-surface-mid-dark flex flex-row flex items-center" onClick={handleOpen} size="sm">
                 <p className='text-center text-xs'>Settings</p>
                 <SettingsIcon fontSize='extraSmall' className='text-center text-surface-light shadow-lg ml-1'></SettingsIcon>
