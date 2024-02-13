@@ -9,9 +9,13 @@ import { toast } from "react-toastify";
 import SettingsIcon from '@mui/icons-material/Settings';
 import ErgoLabel from '../../widgets/form_utils/ErgoLabel';
 import { useUser } from '../../context/LoginRequired';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {useNavigate} from "react-router-dom";
+
 
 
 const ProjectSettings = ({ project, token }) => {
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [githubToken, setGithubToken] = useState('');
     const [gitRepository, setGitRepository] = useState('');
@@ -20,6 +24,7 @@ const ProjectSettings = ({ project, token }) => {
     const [projDeadline, setProjDeadline] = useState(null);
     const [githubOwner, setGithubOwner] = useState('');
     const currentUser = useUser();
+    
 
     useEffect(() => {
         if (open) {
@@ -115,6 +120,32 @@ const ProjectSettings = ({ project, token }) => {
             toast.error('Failed to save project settings');
         }
     };
+    const handleDeleteProject = async () => {
+        try{
+            const response = await api.delete(`/api/v1/Projects/${project.projectId}`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+                data:{
+                    projectId: project.projectId,
+                    owner: currentUser.username
+                },
+            });
+
+            if (response.status === 200) {
+                console.log('Project deleted successfully');
+                toast.success('Project deleted successfully!');
+                handleClose();
+                navigate('/dashboard/home');
+            } else {
+                console.error('Error deleting project:', response);
+                toast.error(response);
+            }
+        }catch (error) {
+            console.error('Error deleting project:', error);
+            toast.error('Error deleting project:' + error);
+        }
+    }
 
     return (
         <div className='mr-8 md:mt-0 mt-3'>
@@ -124,9 +155,14 @@ const ProjectSettings = ({ project, token }) => {
              </Button>
             <Modal open={open} onClose={handleClose}>
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:w-[30rem] w-[90vw] bg-[#2f2b3a] shadow-lg p-4 rounded">
+                    <div className='flex justify-between items-center'>
                     <Typography variant='h4' className='text-white p-2'>
                         Project Settings
                     </Typography>
+                <DeleteIcon className="text-secondary hover:text-red-900" fontSize='medium' onClick={handleDeleteProject}/>
+                    </div>
+                    
+
                     <div className='flex flex-col justify-between h-full'>
                          <div className='m-2'>
                             <ErgoLabel labelName="Project name" />
@@ -176,12 +212,14 @@ const ProjectSettings = ({ project, token }) => {
                                 onChange={(value) => handleInputChange('deadline', value)}
                             />
                         </div>
+
                         <div className='m-2 self-end'>
                             <Button size="sm" className="bg-secondary hover:bg-primary" onClick={handleSaveSettings}>
                                 Save
                             </Button>
                         </div>
                     </div>
+
                 </div>
             </Modal>
         </div>

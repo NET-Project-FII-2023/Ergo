@@ -61,9 +61,12 @@ public class ProjectsController : ApiControllerBase
     [Authorize(Roles = "User")]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, DeleteProjectCommand command)
     {
-        var command = new DeleteProjectCommand { ProjectId = id };
+        if (id != command.ProjectId)
+        {
+            return BadRequest("Input id's doesn't match!");
+        }
         var result = await Mediator.Send(command);
         if (!result.Success)
         {

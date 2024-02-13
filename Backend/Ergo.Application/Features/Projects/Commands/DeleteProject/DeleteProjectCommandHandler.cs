@@ -6,6 +6,7 @@ namespace Ergo.Application.Features.Projects.Commands.DeleteProject
     public class DeleteProjectCommandHandler :IRequestHandler<DeleteProjectCommand, DeleteProjectCommandResponse>
     {
         private readonly IProjectRepository repository;
+
         public DeleteProjectCommandHandler(IProjectRepository repository)
         {
             this.repository = repository;
@@ -28,6 +29,12 @@ namespace Ergo.Application.Features.Projects.Commands.DeleteProject
             {
                 response.Success = false;
                 response.ValidationsErrors = new List<string> { "Project not found" };
+                return response;
+            }
+            if(projectToDelete.Value.CreatedBy != request.Owner)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List<string> { "You are not the owner of this project" };
                 return response;
             }
             var result = await repository.DeleteAsync(request.ProjectId);
