@@ -13,7 +13,7 @@ import TipsAndUpdatesOutlinedIcon from '@mui/icons-material/TipsAndUpdatesOutlin
 import { useUser } from "@/context/LoginRequired";
 
 
-const AddProject = ({ token, onProjectAdded }) => {
+const AddProject = ({ onProjectAdded }) => {
     const [open, setOpen] = useState(false);
     const currentUser = useUser()
     const [aiActive, setAiActive] = useState(false);
@@ -52,7 +52,7 @@ const AddProject = ({ token, onProjectAdded }) => {
                 type: "project-tasks" 
             }, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${currentUser.token}`,
                 },
                 });
             if (response.status === 200) {
@@ -72,7 +72,7 @@ const AddProject = ({ token, onProjectAdded }) => {
         try {
           const response = await api.post('/api/v1/TaskItems', taskWithProjectId, {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${currentUser.token}`,
             },
           });
     
@@ -108,7 +108,7 @@ const AddProject = ({ token, onProjectAdded }) => {
         try {
             const response = await api.post('/api/v1/Projects', projectDetails, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${currentUser.token}`,
                 },
             });
 

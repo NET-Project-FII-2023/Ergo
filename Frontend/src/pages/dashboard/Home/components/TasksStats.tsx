@@ -9,12 +9,12 @@ import { useUser } from "../../../../context/LoginRequired";
 export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any) {
   const user = useUser();
   const [tasksFromAllProjects, setTasksFromAllProjects] = useState({} as TasksFromAllProjects);
-  const [tasksStats, setTasksStats] = useState([] as TaskStats[]);
+  const [tasksStats, setTasksStats] = useState([{ count: 0, footerValue: "0" }, { count: 0, footerValue: "0" }, { count: 0, footerValue: "0" }] as TaskStats[]);
   const [projectsIds, setProjectsIds] = useState([] as string[]);
 
+  //get tasks from all projects
   useEffect(() => {
     (async () => {
-      //get tasks from all projects
       try {
         const response = await api.get(`/api/v1/TaskItems/ByProjectsOfUser/${user.userId}`, {
           headers: {
@@ -31,10 +31,14 @@ export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any)
     })();
   }, []);
 
+  //compute the tasks stats
   useEffect(() => {
-    if(Object.keys(tasksFromAllProjects).length <= 0) return;
     const projects = Object.keys(tasksFromAllProjects);
-    const stats = [{ count: 0, footerValue: `${projects.length}` }, { count: 0, footerValue: "0" }, { count: 0, footerValue: "0" }];
+    const stats = tasksStats.slice();
+    if(projects.length == 0){
+      setTasksStats(stats);
+      return;
+    }
     let nextDue = new Date();
     nextDue.setFullYear(2100);
     projects.forEach((project) => {
@@ -43,7 +47,7 @@ export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any)
         stats[task.state - 1].count++;
         if(task.state === 2 && new Date(task.deadline) < nextDue) nextDue = new Date(task.deadline); 
       });
-      //compute data for the projects stats
+      //compute data for the projects stats (next section of the dashboard)
       setProjectsTasksCount((prev : any) => {
         return {
           ...prev,
@@ -61,14 +65,19 @@ export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any)
 
     //get the number of completed projects
     stats[2].footerValue = projects.filter((project) => {
+      if(tasksFromAllProjects[project].length === 0) return false;
       return tasksFromAllProjects[project].every((task) => task.state === 3);
     }).length.toString();
 
+    //get the next due date
     if(stats[1].count === 0) {
       stats[1].footerValue = "No tasks in progress";
     } else {
       stats[1].footerValue = `${new Date(nextDue).toLocaleString("en-US", { month: "long" })} ${new Date(nextDue).getDate()}, ${new Date(nextDue).getFullYear()}`;
     }
+
+    //get the number of projects
+    stats[0].footerValue = projects.length.toString();
 
     setTasksStats(stats);
     setProjectsIds(projects);
@@ -76,8 +85,6 @@ export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any)
 
   return(
     <>
-    {tasksStats.length !== 0 && (
-      <>
       <TasksStatsCard
         color="bg-[#5e4d8c]"
         count={tasksStats[0].count}
@@ -87,7 +94,13 @@ export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any)
         })}
         footer={
           <Typography className="font-normal text-white">
-            Across {projectsIds.length > 1 ? "all your" : ""} <strong>{tasksStats[0].footerValue}</strong> project{projectsIds.length != 1 ? "s" : ""}
+            {tasksStats[0].count > 0 ?
+              <>
+                Across {projectsIds.length > 1 ? "all your" : ""} <strong>{tasksStats[0].footerValue}</strong> project{projectsIds.length != 1 ? "s" : ""}
+              </>
+            :
+              "You have no projects"
+            }
           </Typography>
         }
       />
@@ -118,9 +131,6 @@ export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any)
           </Typography>
         }
       />
-      </>
-      )
-    }
     </>
   )
 }

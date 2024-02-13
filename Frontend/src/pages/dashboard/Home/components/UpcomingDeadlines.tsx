@@ -42,6 +42,7 @@ export function UpcomingDeadlines(){
               ...chartsConfig.xaxis,
               categories: getDaysInOrder(),
             },
+            grid: tasks.length > 0 ? chartsConfig.grid : {show: false},
           },
         }
         setChart(chartData);
@@ -52,14 +53,21 @@ export function UpcomingDeadlines(){
   }, []);
 
   function getTasksInOrder(tasks: any) {
+    if(!tasks.length) return [];
+    const now = new Date();
     const todayIndex = new Date().getDay();
     const result = Array(7).fill(0);
     tasks.forEach((task: any) => {
       if(task.state === 3) return;
-      const dueDay = new Date(task.deadline).getDay();
-      const daysUntilDue = (dueDay - todayIndex + 7) % 7;
-      result[daysUntilDue] += 1;
+      const taskDate = new Date(task.deadline);
+      if(taskDate >= now && taskDate <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)) {
+        const dueDay = taskDate.getDay();
+        const daysUntilDue = (dueDay - todayIndex + 7) % 7;
+        result[daysUntilDue] += 1;
+      }
     });
+    //return empty array if no tasks due this week
+    if(result.every((val: any) => val === 0)) return [];
     return result;
   }
 

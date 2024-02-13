@@ -133,7 +133,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
           ))}
         </ul>
       </div>
-      <AddProject token={token} onProjectAdded={handleProjectAdded} />
+      <AddProject onProjectAdded={handleProjectAdded} />
     </aside>
   );
 }

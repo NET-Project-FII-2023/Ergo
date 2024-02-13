@@ -73,3 +73,13 @@ export type StatisticsChartProps = {
   title: React.ReactNode;
   description: React.ReactNode;
 }
+
+export type ProjectMember = {
+  name: string;
+  img: string;
+  userId: string;
+}
+
+export type LoadedUsers = {
+  [userId: string]: ProjectMember;
+}
