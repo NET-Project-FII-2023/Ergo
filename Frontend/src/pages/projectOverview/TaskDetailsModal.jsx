@@ -134,7 +134,6 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
             <>
               <div className='hidden md:visible md:flex md:flex-row'>
                 <div className='w-2/3'>
-
                   <TaskMainInfo
                     selectedTask={selectedTask}
                     token={token}

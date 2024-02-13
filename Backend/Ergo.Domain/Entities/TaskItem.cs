@@ -149,6 +149,15 @@ namespace Ergo.Domain.Entities
             AssignedUser = user;
             return Result<TaskItem>.Success(this);
         }
+        public Result<TaskItem> UnassignUser()
+        {
+            if (AssignedUser == null)
+            {
+                return Result<TaskItem>.Failure("Task is not assigned to any user");
+            }
+            AssignedUser = null;
+            return Result<TaskItem>.Success(this);
+        }
         public Result<TaskItem> DeleteAssignedUser()
         {
             AssignedUserUserId = null;

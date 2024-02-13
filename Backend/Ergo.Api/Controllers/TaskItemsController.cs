@@ -111,6 +111,20 @@ public class TaskItemsController : ApiControllerBase
 
         return Ok(result);
     }
+    [Authorize(Roles ="User")]
+    [HttpPost("UnassignUser")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> UnassignUser(DeleteAssignedUserFromTaskCommand command)
+    {
+        var result = await Mediator.Send(command);
+
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
 
     [Authorize(Roles = "User")]
     [HttpGet("ByProject/{projectId}")]

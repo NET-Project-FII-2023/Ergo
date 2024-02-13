@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Button from '@material-tailwind/react';
+import {Button,Select,Option} from '@material-tailwind/react';
 import api from '@/services/api';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { Card, CardContent } from '@mui/material';
@@ -8,6 +8,7 @@ import { useUser } from '../../context/LoginRequired';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import UserAvatar from "@/common/components/UserAvatar";
 import {useNavigate} from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 const AssignUserTask = ({ token, task, project }) => {
@@ -23,7 +24,7 @@ const AssignUserTask = ({ token, task, project }) => {
 
     const fetchCurrentTask = async () => {
         try {
-    
+            console.log('fetching task:', task.taskItemId);
           const response = await api.get(`/api/v1/TaskItems/${task.taskItemId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -110,6 +111,31 @@ const AssignUserTask = ({ token, task, project }) => {
         e.stopPropagation();
         userId && navigate(`/dashboard/profile/${userId}`)
     }
+    const handleUnassignUser = async () => {
+        try{
+            const response = await api.post(`/api/v1/TaskItems/UnassignUser`, {
+                taskItemId: task.taskItemId,
+                owner: currentUser.username
+
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (response.status === 200) {
+                console.log('User unassigned successfully');
+                toast.success('User unassigned successfully!');
+                fetchCurrentTask();
+            } else {
+                console.error('Error unassigning user:', response);
+                toast.error(response);
+            }
+        }catch (error) {
+            console.error('Error unassigning user:', error);
+            toast.error('Error unassigning user:' + error);
+        }
+    }
 
     return (
         <div className='mt-6'>    
@@ -132,7 +158,8 @@ const AssignUserTask = ({ token, task, project }) => {
                         backgroundColor: "#1a1625",
                     }}>
                         <CardContent className='rounded bg-surface-darkest !p-4'>
-                            <div className='flex'>
+                            <div className='flex justify-between items-center'>
+                                <div className='flex'>
                                 <UserAvatar
                                   onClick={(e) => handleAssignedUserClick(e, loadedAssignedUser?.userId)}
                                   photoUrl={loadedAssignedUser?.userPhoto?.photoUrl}
@@ -148,8 +175,10 @@ const AssignUserTask = ({ token, task, project }) => {
                                         @{loadedAssignedUser.username}
                                     </p>
                                 </div>
+                                </div>
+                                
+                            {project.createdBy === currentUser.username && <DeleteIcon className="text-secondary hover:text-red-900" onClick={handleUnassignUser}/>}
                             </div>
-                    
                         </CardContent>
                     </Card>)}
                     
