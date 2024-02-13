@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
   RectangleStackIcon,
@@ -18,7 +18,6 @@ import AddProject from "../../pages/projectOverview/AddProject";
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
   const { openSidenav } = controller;
-  const { pathname } = useLocation();
   const [projects, setProjects] = useState([]);
   const { token, userId } = useUser();
 
@@ -88,7 +87,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
                   <NavLink to={`/${layout}${path}`}>
                     {({ isActive }) => (
                       <Button
-                        className={`flex items-center gap-2 px-4 hover:bg-secondary ${isActive ? 'bg-primary' : 'bg-secondary shadow-none'} `}
+                        className={`flex items-center gap-2 px-4 hover:bg-secondary ${isActive ? 'bg-primary' : 'bg-surface-dark shadow-none'} `}
                         fullWidth
                       >
                         {icon}
@@ -105,42 +104,36 @@ export function Sidenav({ brandImg, brandName, routes }) {
               ))}
           </ul>
         ))}
-        </div>
-        <hr className="border-t border-surface-mid  mt-2" />
-          <div className="mt-3">
-            <p className="text-surface-light text-sm">Projects:</p>
-          </div>
-       <div className="overflow-y-auto max-h-[calc(100vh-22rem)]"  style={{ scrollbarWidth: 'thin', scrollbarColor: '#1a1625' }}>
+      </div>
+      <hr className="border-t border-surface-mid  mt-2" />
+      <div className="mt-3">
+        <p className="text-surface-light text-sm">Projects:</p>
+      </div>
+      <div className="overflow-y-auto max-h-[calc(100vh-22rem)]"  style={{ scrollbarWidth: 'thin', scrollbarColor: '#1a1625' }}>
         <ul className="list-none">
           {projects.map((project) => (
             <li key={project.projectId} className="py-1 opacity-90">
               <NavLink to={`/dashboard/project/${project.projectId}`}>
                 {({ isActive }) => (
-                  <Link to={`/dashboard/project/${project.projectId}`}>
-                    <Button
-                      className={`flex items-center gap-2 px-4 capitalize hover:bg-secondary ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'}`}
-                      fullWidth
+                  <Button
+                    className={`flex items-center gap-2 px-4 capitalize hover:bg-secondary ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'}`}
+                    fullWidth
+                  >
+                    <RectangleStackIcon className={`w-4 h-4 text-inherit text-white`} />
+                    <Typography
+                      color="inherit"
+                      className={`font-normal text-sm text-gray-200 ${isActive ? 'text-gray-100' : 'text-gray-300'}`}
                     >
-                      <RectangleStackIcon className={`w-4 h-4 text-inherit text-white`} />
-                      <Typography
-                        color="inherit"
-                        className={`font-normal text-sm text-gray-200 ${isActive ? 'text-gray-100' : 'text-gray-300'}`}
-                      >
-                        {project.projectName}
-                      </Typography>
-                    </Button>
-                  </Link>
+                      {project.projectName}
+                    </Typography>
+                  </Button>
                 )}
               </NavLink>
             </li>
           ))}
         </ul>
       </div>
-
-        <AddProject token={token} onProjectAdded={handleProjectAdded} />
-
-     
-      
+      <AddProject onProjectAdded={handleProjectAdded} />
     </aside>
   );
 }

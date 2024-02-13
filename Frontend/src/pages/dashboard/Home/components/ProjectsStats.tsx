@@ -1,20 +1,22 @@
 import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { Card, CardHeader, Typography, Menu, MenuHandler, IconButton, MenuList, MenuItem, CardBody } from "@material-tailwind/react";
 import { ProjectsStatsItem } from "./ProjectsStatsItem";
-import { ProjectsStatsType } from "./types";
+import { LoadedUsers, ProjectMember, ProjectsStatsType } from "./types";
 import { useEffect, useState } from "react";
 import api from "../../../../services/api";
 import { useUser } from "../../../../context/LoginRequired";
+import AddProject from "../../../projectOverview/AddProject";
 
 export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
   const user = useUser();
   const [projectsStats, setProjectsStats] = useState({} as ProjectsStatsType);
   const [hiddenProjects, setHiddenProjects] = useState({} as ProjectsStatsType);
   const [isProjectsHidden, setIsProjectsHidden] = useState(false);
-  const [loadedUsers, setLoadedUsers] = useState({} as {[userId: string]: {name:string, img:string}});
+  const [loadedUsers, setLoadedUsers] = useState({} as LoadedUsers);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const getMemberData = async (userId : string) => {
-    if(loadedUsers[userId]) return { name: loadedUsers[userId], img: loadedUsers[userId] };
+  const getMemberData = async (userId : string) : Promise<ProjectMember> => { //putin bors aici
+    if(loadedUsers[userId]) return loadedUsers[userId];
     let userData = { name: "", userPhoto: {photoUrl: ""}, userId: ""}
     try{
       const response = await api.get(`/api/v1/Users/ById/${userId}`, {
@@ -26,24 +28,26 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
         throw new Error(response.data.message);
       }
       userData = response.data.user;
-      setLoadedUsers((prev : any) => {
-        return {
-          ...prev,
-          [userId]: { name: userData.name, img: userData.userPhoto?.photoUrl, userId }
-        }
-      });
+      setLoadedUsers((prev : LoadedUsers) => ({
+        ...prev,
+        [userId]: { name: userData.name, img: userData.userPhoto?.photoUrl, userId}
+      }));
     }
     catch (error : any) {
-      console.log(`Error while getting user data: ${error}`);
+      console.error(`Error while getting user data: ${error}`);
     } finally {
       return { name: userData.name, img: userData.userPhoto?.photoUrl, userId };
     }
   }
 
   useEffect(() => {
-    if(Object.keys(projectsTasksCount).length <= 0) return;
+    if(Object.keys(projectsTasksCount).length <= 0) {
+      setIsLoading(false);
+      return;
+    }
     (async () => {
-      try{
+      setIsLoading(true);
+      try {
         const response = await api.get(`/api/v1/Projects/GetProjectsByUserId/${user.userId}`, {
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -53,8 +57,8 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
           throw new Error(response.data.message);
         }
         const projects = response.data.projects;
-        for(const project of projects){
-          const projectMembers = await Promise.all(project.members.map((member : any) => getMemberData(member.userId)));
+        for(const project of projects) {
+          const projectMembers = await Promise.all(project.members.map(async (member : ProjectMember) : Promise<ProjectMember> => await getMemberData(member.userId)));
           setProjectsStats((prev : ProjectsStatsType) => {
             return {
               ...prev,
@@ -69,16 +73,17 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
             }
           });
         };
-      }
-      catch (error : any) {
+      } catch (error : any) {
         console.log(`Error while getting projects: ${error}`);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, [projectsTasksCount, projectsCompletion]);
 
   const toggleHideCompletedProjects = (e : any) => {
     e.preventDefault();
-    if(isProjectsHidden){
+    if(isProjectsHidden) {
       setProjectsStats((prev : ProjectsStatsType) => {
         return {
           ...prev,
@@ -93,7 +98,7 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
   }
 
   return(
-    <Card className="overflow-hidden mt-12 xl:col-span-3 bg-surface-dark shadow-sm">
+    <Card className="overflow-hidden mt-12 xl:col-span-3 bg-surface-dark shadow-sm" id="projects-stats">
       <CardHeader floated={false} shadow={false} color="transparent" className="m-0 flex items-center justify-between p-6">
         <Typography variant="h5" className="mb-1 text-surface-light">
           Your Projects
@@ -113,19 +118,21 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
       </CardHeader>
       <CardBody className="px-0 pt-0 pb-2">
         <table className="w-full min-w-[640px] table-auto">
-          <thead>
-            <tr>
-              {["project", "members", "deadline", "total tasks", "completion"].map((headerItem) => (
-                <th key={headerItem} className="border-b border-primary py-3 px-6 text-left">
-                  <Typography variant="small"className="text-[11px] font-medium uppercase text-surface-light">
-                    {headerItem}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
+          {(isLoading || Object.keys(projectsStats).length != 0) &&
+            <thead>
+              <tr>
+                {["project", "members", "deadline", "total tasks", "completion"].map((headerItem) => (
+                  <th key={headerItem} className="border-b border-primary py-3 px-6 text-left">
+                    <Typography variant="small"className="text-[11px] font-medium uppercase text-surface-light">
+                      {headerItem}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          }
           <tbody>
-            {projectsStats && Object.keys(projectsStats).map((projectId, index) => {
+            { Object.keys(projectsStats).length > 0 ? Object.keys(projectsStats).map((projectId, index) => {
               const className = `py-3 px-5 ${index === Object.keys(projectsStats).length - 1 ? "" : "border-b border-secondary border-opacity-10"}`;
               const project = projectsStats[projectId];
               return (
@@ -139,7 +146,20 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
                   path={project.path} 
                   className={className} />
               );
-            })
+              })
+            : !isLoading && 
+              <tr>
+                <td colSpan={5} className="py-3 px-5 text-center text-surface-light">
+                  <Typography variant="h6">
+                    No projects found
+                  </Typography>
+                  <div className="w-[200px] mx-auto">
+                    <AddProject onProjectAdded={() => {
+                      window.location.reload(); //too lazy to refetch the projects plm
+                    }}/>
+                  </div>
+                </td>
+              </tr>
             }
           </tbody>
         </table>
