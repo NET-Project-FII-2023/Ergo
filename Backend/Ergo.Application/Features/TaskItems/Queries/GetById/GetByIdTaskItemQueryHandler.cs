@@ -10,12 +10,14 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetById
         private readonly ITaskItemRepository taskItemRepository;
         private readonly IUserManager userManager;
         private readonly IUserPhotoRepository userPhotoRepository;
+        private readonly IPhotoRepository photoRepository;
 
-        public GetByIdTaskItemQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager, IUserPhotoRepository userPhotoRepository)
+        public GetByIdTaskItemQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager, IUserPhotoRepository userPhotoRepository, IPhotoRepository photoRepository)
         {
             this.taskItemRepository = taskItemRepository;
             this.userManager = userManager;
             this.userPhotoRepository = userPhotoRepository;
+            this.photoRepository = photoRepository;
         }
 
         public async Task<GetByIdTaskItemQueryResponse> Handle(GetByIdTaskItemQuery request, CancellationToken cancellationToken)
@@ -54,6 +56,7 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetById
                 }
             }
 
+            var taskFiles = await photoRepository.GetByTaskItemIdAsync(request.TaskItemId);
             return new GetByIdTaskItemQueryResponse
             {
                 Success = true,
@@ -66,6 +69,11 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetById
                     Deadline = taskItem.Value.Deadline,
                     State = taskItem.Value.State,
                     AssignedUser = assignedUser,
+                    TaskFiles = taskFiles.Select(photo => new TaskFileDto
+                    {
+                        TaskFileId = photo.PhotoId,
+                        FileUrl = photo.CloudURL
+                    }).ToArray(),
                     Branch = taskItem.Value.Branch,
                     StartTime = taskItem.Value.StartTime
                 }

@@ -4,10 +4,10 @@ namespace Ergo.Domain.Entities
 {
     public class Photo 
     {
-        private Photo(Guid TaskItemId , string cloudUrl)
+        private Photo(Guid taskItemId , string cloudUrl)
         {
             PhotoId = Guid.NewGuid();
-            this.TaskItemId = TaskItemId;
+            TaskItemId = taskItemId;
             CloudURL = cloudUrl;
         }
         public Photo()

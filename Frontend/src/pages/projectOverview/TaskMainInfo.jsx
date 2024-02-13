@@ -93,13 +93,13 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
     <div>
       <div className="flex flex-col px-2 mt-2">
       {currentTask.state === 1 && (
-          <Button size='small' onClick={handleOpenEditStateModal} className="w-[5rem] text-xs text-center rounded-md text-surface-darkest bg-secondary p-1">To Do</Button>
+          <Button size='sm' onClick={handleOpenEditStateModal} className="w-[5rem] text-xs text-center rounded-md text-surface-darkest bg-secondary p-1">To Do</Button>
         )}
         {currentTask.state === 2 && (
-          <Button size='small' onClick={handleOpenEditStateModal}  className="w-[7rem] text-xs text-center rounded-md text-surface-darkest bg-blue-400 p-1">In Progress</Button>
+          <Button size='sm' onClick={handleOpenEditStateModal}  className="w-[7rem] text-xs text-center rounded-md text-surface-darkest bg-blue-400 p-1">In Progress</Button>
         )}
         {currentTask.state === 3 && (
-          <Button size='small'  onClick={handleOpenEditStateModal} className="w-[3rem] text-xs text-center rounded-md text-surface-darkest bg-teal-300 p-1">Done</Button>
+          <Button size='sm'  onClick={handleOpenEditStateModal} className="w-[3rem] text-xs text-center rounded-md text-surface-darkest bg-teal-300 p-1">Done</Button>
         )}
         {editMode.taskName && (selectedTask.assignedUser && selectedTask.assignedUser.username === currentUser.username) ? (
           <div className='flex md:flex-row flex-col justify-center'>
