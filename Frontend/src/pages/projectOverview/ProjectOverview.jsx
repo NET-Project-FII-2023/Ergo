@@ -2,16 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from "@/services/api";
 import { useUser } from "@/context/LoginRequired";
+import {Button, Select, Option} from '@material-tailwind/react';
 import { Typography } from '@mui/material';
 import TaskSection from './TaskSection';
 import TaskDetailsModal from './TaskDetailsModal';
 import ProjectSettings from './ProjectSettings';
+import { MachineLearning } from 'aws-sdk';
+import MachineLearningModal from './MachineLearningModal';
 
 const ProjectOverview = () => {
   const { projectId } = useParams();
   const [currentProject, setCurrentProject] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalMLOpen, setModalMLOpen] = useState(false);
   const { token, userId, username } = useUser();
 
   useEffect(() => {
@@ -39,6 +43,12 @@ const ProjectOverview = () => {
 
   const handleModalClose = () => {
     fetchCurrentProject();
+  };
+  const handleOpenMLModal = () => {
+    setModalMLOpen(true);
+  };
+  const handleCloseMLModal = () => {
+    setModalMLOpen(false);
   };
 
   const handleOpenModal = (task) => {
@@ -70,10 +80,16 @@ const ProjectOverview = () => {
               {currentProject.description}
             </Typography>
           </div>
+          
         </div>
+        <div className='flex gap-2'>
+        <Button className="bg-surface-dark hover:bg-surface-mid-dark" onClick={handleOpenMLModal}  size="sm" ripple="light">
+        <p className='text-center text-xs'>Predict</p></Button>
         {currentProject.createdBy === username && 
           <ProjectSettings project={currentProject} token={token}/>
         }
+        </div>
+        
       </div>
 
       <div className='flex flex-row'>
@@ -94,6 +110,8 @@ const ProjectOverview = () => {
         token={token}
         project={currentProject}
       />
+      {modalMLOpen && <MachineLearningModal modalOpen={modalMLOpen}
+      handleCloseMLModal={handleCloseMLModal} token={token}/>}
     </div>
   );
 };
