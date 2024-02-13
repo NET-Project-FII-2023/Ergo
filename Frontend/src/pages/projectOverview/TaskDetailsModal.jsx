@@ -19,7 +19,7 @@ const formatDeadline = (deadline) => {
   return formattedDeadline;
 };
 
-const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, project })  => {
+const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, project,fetchCurrentProject })  => {
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [currentTask, setCurrentTask] = useState([]);
   const [updatedDeadline, setUpdatedDeadline] = useState();
@@ -108,7 +108,7 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
             <>
               <div className='hidden md:visible md:flex md:flex-row'>
                 <div className='w-2/3'>
-                  <TaskMainInfo selectedTask={selectedTask} token={token}/>
+                  <TaskMainInfo selectedTask={selectedTask} token={token} onClose={handleCloseModal}/>
                   <AttachmentSection attachedFiles={attachedFiles} handleFileInputChange={handleFileInputChange} project={project}/>
                   {attachedFiles.map((file, index) => (
                     <Typography key={index} variant="body2" className="text-surface-light px-2 text-md">
@@ -170,7 +170,9 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
                   <AccessTimeIcon className="text-secondary mr-2" fontSize='extraSmall' />
                   <Typography className='text-surface-light text-sm ml-1'>{formatDeadline(selectedTask.deadline)}</Typography>
                 </div>
+                
               </div>
+
             </>
           )}
         </div>

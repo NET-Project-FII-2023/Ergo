@@ -6,8 +6,10 @@ import api from '@/services/api';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import { useUser } from '@/context/LoginRequired';
 import EditStateModal from './EditStateModal';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
+
+const TaskMainInfo = ({ selectedTask, setSelectedTask, token,onClose }) => {
   const [editMode, setEditMode] = useState({ taskName: false, description: false });
   const [updatedTaskName, setUpdatedTaskName] = useState(selectedTask.taskName);
   const [updatedDescription, setUpdatedDescription] = useState(selectedTask.description);
@@ -89,9 +91,36 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
   const handleCloseEditStateModal = () => {
     setIsEditStateModalOpen(false);
   };
+  const handleDeleteTask = async () => {
+    console.log(selectedTask);
+    try {
+      const response = await api.delete(`/api/v1/TaskItems/${selectedTask.taskItemId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: { 
+          taskItemId: selectedTask.taskItemId,
+          userId: currentUser.userId
+        }
+      });
+
+      if (response.status === 200) {
+        toast.success('Task deleted successfully');
+        onClose();
+      } else {
+        console.error('Error deleting task:', response);
+        toast.error('Failed to delete task');
+      }
+      
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      toast.error('Failed to delete task');
+    }
+  }
   return (
     <div>
       <div className="flex flex-col px-2 mt-2">
+      <div className='flex align-items gap-2'>
       {currentTask.state === 1 && (
           <Button size='small' onClick={handleOpenEditStateModal} className="w-[5rem] text-xs text-center rounded-md text-surface-darkest bg-secondary p-1">To Do</Button>
         )}
@@ -101,6 +130,10 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token }) => {
         {currentTask.state === 3 && (
           <Button size='small'  onClick={handleOpenEditStateModal} className="w-[3rem] text-xs text-center rounded-md text-surface-darkest bg-teal-300 p-1">Done</Button>
         )}
+        <DeleteIcon className="text-secondary hover:text-red-900" fontSize='medium' onClick={handleDeleteTask}/>
+      </div>
+      
+
         {editMode.taskName && (selectedTask.assignedUser && selectedTask.assignedUser.username === currentUser.username) ? (
           <div className='flex md:flex-row flex-col justify-center'>
             <input

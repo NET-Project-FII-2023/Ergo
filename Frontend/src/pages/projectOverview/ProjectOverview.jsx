@@ -83,6 +83,7 @@ const ProjectOverview = () => {
           userId={userId}
           handleOpenModal={handleOpenModal}
           handleCloseModal={handleCloseModal}
+          modalOpen={modalOpen}
         />
       </div>
       <TaskDetailsModal

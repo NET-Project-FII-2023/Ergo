@@ -5,27 +5,22 @@ import AddTask from './AddTask';
 import MembersList from './MembersList';
 import { useUser } from '../../context/LoginRequired';
 
-const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal }) => {
+const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal,modalOpen }) => {
   const [taskItems, setTaskItems] = useState([]);
   const todoTasks = taskItems.filter(taskItem => taskItem.state === 1);
   const inProgressTasks = taskItems.filter(taskItem => taskItem.state === 2);
   const doneTasks = taskItems.filter(taskItem => taskItem.state === 3);
   const currentUser = useUser();
 
-  const lastProjectIdRef = useRef();
 
   useEffect(() => {
-    if (project.projectId !== lastProjectIdRef.current) {
-      fetchTaskItems();
-      lastProjectIdRef.current = project.projectId; 
-    }
-  }, [project.projectId, token, userId, handleCloseModal]);
+    fetchTaskItems();
+  }, [project.projectId,modalOpen]);
 
   const fetchTaskItems = async () => {
-    if (!token || !userId) return;
+    if (!token || !userId || !project.projectId) return;
     console.log('fetching tasks:', project.projectId);
 
-    const currentProjectId = project.projectId;
     try {
       
       const response = await api.get(`/api/v1/TaskItems/ByProject/${project.projectId}`, {
@@ -33,7 +28,7 @@ const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal
           Authorization: `Bearer ${token}`,
         },
       });
-      if (currentProjectId === lastProjectIdRef.current) {
+      
       if (response.status === 200) {
         setTaskItems(response.data.taskItems);
         console.log("Tasks:");
@@ -41,7 +36,6 @@ const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal
       } else {
         console.error('Error fetching tasks:', response);
       }
-    }
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }

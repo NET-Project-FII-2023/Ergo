@@ -78,6 +78,10 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
   };
 
   const handleDateChange = (date) => {
+    if (date < new Date()) {
+      toast.error('The deadline must be at least tomorrow');
+      return;
+    }
     setTaskDetails((prevDetails) => ({ ...prevDetails, deadline: date }));
   };
   const fetchAiTaskDescription = async () => {
@@ -93,7 +97,6 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
       });
   if (response.status === 200) {
       setAiActive(false);
-
       return response.data;;
   }else{
       console.error('Error creating AI Task:', response);
@@ -110,7 +113,6 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
       let updatedTaskDetails = taskDetails; 
       if(aiActive){
         const description = await fetchAiTaskDescription();
-        console.log("descriere",description);
         updatedTaskDetails = { ...updatedTaskDetails, description: description };
       }
       const response = await api.post('/api/v1/TaskItems', updatedTaskDetails, {
