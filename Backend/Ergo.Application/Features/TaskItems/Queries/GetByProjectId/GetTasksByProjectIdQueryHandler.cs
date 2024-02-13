@@ -7,11 +7,13 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
     {
         private readonly ITaskItemRepository _taskItemRepository;
         private readonly IUserManager _userManager;
+        private readonly IPhotoRepository _photoRepository;
 
-        public GetTasksByProjectIdQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager)
+        public GetTasksByProjectIdQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager, IPhotoRepository photoRepository)
         {
             _taskItemRepository = taskItemRepository;
             _userManager = userManager;
+            _photoRepository = photoRepository;
         }
 
         public async Task<GetTasksByProjectIdQueryResponse> Handle(GetTasksByProjectIdQuery request, CancellationToken cancellationToken)
@@ -66,6 +68,7 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
                     }
                 }
 
+                var taskFiles = await _photoRepository.GetByTaskItemIdAsync(taskItem.TaskItemId);
                 taskItemDtos.Add(new TaskItemDto
                 {
                     TaskItemId = taskItem.TaskItemId,
@@ -75,6 +78,11 @@ namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
                     ProjectId = taskItem.ProjectId,
                     State = taskItem.State,
                     AssignedUser = assignedUser,
+                    TaskFiles = taskFiles.Select(photo => new TaskFileDto
+                    {
+                        TaskFileId = photo.PhotoId,
+                        FileUrl = photo.CloudURL
+                    }).ToArray(),
                     Branch = taskItem.Branch
                 });
             }
