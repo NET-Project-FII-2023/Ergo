@@ -21,7 +21,6 @@ const ProjectOverview = () => {
   const fetchCurrentProject = async () => {
     try {
       if (!token || !userId) return;
-
       const response = await api.get(`/api/v1/Projects/${projectId}`, {
         headers: {
           Authorization: `Bearer ${token}`,

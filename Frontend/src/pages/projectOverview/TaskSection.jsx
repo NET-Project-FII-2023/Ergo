@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import api from "@/services/api";
 import TaskCard from './TaskCard';
 import AddTask from './AddTask';
@@ -12,20 +12,28 @@ const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal
   const doneTasks = taskItems.filter(taskItem => taskItem.state === 3);
   const currentUser = useUser();
 
+  const lastProjectIdRef = useRef();
+
   useEffect(() => {
-    fetchTaskItems();
+    if (project.projectId !== lastProjectIdRef.current) {
+      fetchTaskItems();
+      lastProjectIdRef.current = project.projectId; 
+    }
   }, [project.projectId, token, userId, handleCloseModal]);
 
   const fetchTaskItems = async () => {
-    try {
-      if (!token || !userId) return;
+    if (!token || !userId) return;
+    console.log('fetching tasks:', project.projectId);
 
+    const currentProjectId = project.projectId;
+    try {
+      
       const response = await api.get(`/api/v1/TaskItems/ByProject/${project.projectId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+      if (currentProjectId === lastProjectIdRef.current) {
       if (response.status === 200) {
         setTaskItems(response.data.taskItems);
         console.log("Tasks:");
@@ -33,9 +41,11 @@ const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal
       } else {
         console.error('Error fetching tasks:', response);
       }
+    }
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
+
   };
 
   const renderTaskCards = (tasks, column) => {
