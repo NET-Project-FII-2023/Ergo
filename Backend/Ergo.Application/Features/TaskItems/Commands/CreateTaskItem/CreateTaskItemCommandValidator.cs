@@ -21,7 +21,7 @@ namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
             RuleFor(p => p.Description)
                 .NotEmpty()
                 .NotNull()
-                .MaximumLength(500).WithMessage("{PropertyName} must not exceed 500 characters.");
+                .MaximumLength(1500).WithMessage("{PropertyName} must not exceed 1500 characters.");
             RuleFor(p => p.CreatedBy)
                 .NotEmpty()
                 .NotNull()

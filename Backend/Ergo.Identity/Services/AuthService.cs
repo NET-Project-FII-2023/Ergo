@@ -121,6 +121,7 @@ namespace Ergo.Identity.Services
             return (1, "Password reset successfully!");
 
         }
+
         public async Task<(int, string)> Logout()
         {
             await signInManager.SignOutAsync();

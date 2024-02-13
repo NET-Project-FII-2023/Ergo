@@ -3,6 +3,7 @@ import { Modal } from '@mui/material';
 import {
   Button,
   Typography,
+  Checkbox
 } from "@material-tailwind/react";
 import api from '@/services/api';
 import { useUser } from '../../context/LoginRequired';
@@ -13,6 +14,7 @@ import {toast} from "react-toastify";
 import ErgoTextarea from '../../widgets/form_utils/ErgoTextArea';
 import { Card, CardContent} from '@mui/material';
 import AddTaskIcon from '@mui/icons-material/AddTask';
+import TipsAndUpdatesOutlinedIcon from '@mui/icons-material/TipsAndUpdatesOutlined';
 import { Select, Option } from '@material-tailwind/react';
 
 
@@ -22,6 +24,7 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
   const user = useUser();
   const [selectedBranch, setSelectedBranch] = useState('');
   const [branches, setBranches] = useState([]);
+  const [aiActive, setAiActive] = useState(false);
   const [taskDetails, setTaskDetails] = useState({
     taskName: '',
     description: '',
@@ -77,10 +80,40 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
   const handleDateChange = (date) => {
     setTaskDetails((prevDetails) => ({ ...prevDetails, deadline: date }));
   };
+  const fetchAiTaskDescription = async () => {
+  try{
+    const response = await api.post("api/v1/OpenAi", {
+      title: taskDetails.taskName,
+      description: taskDetails.description,
+      type: "task" 
+  }, {
+      headers: {
+          Authorization: `Bearer ${token}`,
+      },
+      });
+  if (response.status === 200) {
+      setAiActive(false);
+
+      return response.data;;
+  }else{
+      console.error('Error creating AI Task:', response);
+      toast.error(response);
+  }
+  }catch (error) {
+    console.error('Error creating AI Task:', error);
+    toast.error(error.message);
+}   
+  }
 
   const handleAddTask = async () => {
     try {
-      const response = await api.post('/api/v1/TaskItems', taskDetails, {
+      let updatedTaskDetails = taskDetails; 
+      if(aiActive){
+        const description = await fetchAiTaskDescription();
+        console.log("descriere",description);
+        updatedTaskDetails = { ...updatedTaskDetails, description: description };
+      }
+      const response = await api.post('/api/v1/TaskItems', updatedTaskDetails, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -136,7 +169,7 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
             <div className='m-2'>
               <ErgoLabel labelName="Description" />
               <ErgoTextarea
-                placeholder="Enter Description"
+                placeholder={aiActive ? "Enter a phrase for AI to generate a description":"Enter Description"}
                 onChange={(value) => handleInputChange('description', value)}
                 value={taskDetails.description}
               />
@@ -164,6 +197,13 @@ const AddTask = ({ projectId, token, userId, onTaskAdded }) => {
                 ))}
             </Select>
             </div>
+            <div className='m-2 flex justify-start'>
+                            <div className='flex items-center'>   
+                            <Checkbox id="public" name="public" value="public" onChange={() => setAiActive(!aiActive)}/>
+                               <p className='text-surface-light'>AI Assistance</p>
+                                <TipsAndUpdatesOutlinedIcon fontSize="small" className='text-surface-light text-center ml-2'/>
+                            </div>
+                        </div>  
             <div className='m-2 self-end'>
               <Button size="sm" className="bg-secondary hover:bg-primary" onClick={handleAddTask}>
                 <AddTaskIcon fontSize='small'>

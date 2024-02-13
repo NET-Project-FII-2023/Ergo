@@ -28,10 +28,11 @@ namespace Ergo.Api.Controllers
             }
             string messageContent = request.Type switch
             {
-                "task" => $"Generate me a task description maximum 300 tokens based on this title {request.Title} and on on this phrase {request.Description}",
+                "task" => $"Based on the title {request.Title} and the descriptive phrase {request.Description}, generate a comprehensive and insightful description. This description should delve into the key aspects, implications, and functionalities related to the title and phrase. Please ensure that the resulting description is concise, not exceeding 500 characters. The response should contain only the description, with no additional text or explanations. The focus is on clarity and depth, within the 500-character limit.",
                 "project-tasks" => $"Generate a JSON file of type \"tasks\":[{{\"taskName\": string, \"description\": string}}] with descriptive tasknames for a project named {request.Title} with the description {request.Description} where you divide the project in tasks. Include only the JSON file in the response, nothing else.",
                 _ => $"Generate me a task description maximum 300 tokens based on this phrase {request.Description}",
             };
+            
             var requestBody = new
             {
                 model = "gpt-3.5-turbo",
