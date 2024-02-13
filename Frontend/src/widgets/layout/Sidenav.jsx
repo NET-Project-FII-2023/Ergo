@@ -14,12 +14,19 @@ import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { useUser } from "@/context/LoginRequired";
 import AddProject from "../../pages/projectOverview/AddProject";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { toast } from "react-toastify";
+import {useNavigate} from "react-router-dom";
+
+
+
 
 export function Sidenav({ brandImg, brandName, routes }) {
+  const navigate = useNavigate();
   const [controller, dispatch] = useMaterialTailwindController();
   const { openSidenav } = controller;
   const [projects, setProjects] = useState([]);
-  const { token, userId } = useUser();
+  const { token, userId, username } = useUser();
 
   useEffect(() => {
     fetchProjects();
@@ -48,6 +55,32 @@ export function Sidenav({ brandImg, brandName, routes }) {
   const handleProjectAdded = () => {
     fetchProjects();
   };
+  const handleDeleteProject = async (projectId) => {
+    try{
+        const response = await api.delete(`/api/v1/Projects/${projectId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            data:{
+                projectId: projectId,
+                owner: username
+            },
+        });
+
+        if (response.status === 200) {
+            console.log('Project deleted successfully');
+            toast.success('Project deleted successfully!');
+            fetchProjects();
+            navigate('/dashboard/home');
+        } else {
+            console.error('Error deleting project:', response);
+            toast.error(response);
+        }
+    }catch (error) {
+        console.error('Error deleting project:', error);
+        toast.error('Error deleting project:' + error);
+    }
+}
 
   return (
     <aside
@@ -112,7 +145,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
       <div className="overflow-y-auto max-h-[calc(100vh-22rem)]"  style={{ scrollbarWidth: 'thin', scrollbarColor: '#1a1625' }}>
         <ul className="list-none">
           {projects.map((project) => (
-            <li key={project.projectId} className="py-1 opacity-90">
+            <li key={project.projectId} className="py-1 opacity-90 flex items-center">
               <NavLink to={`/dashboard/project/${project.projectId}`}>
                 {({ isActive }) => (
                   <Button
@@ -125,9 +158,14 @@ export function Sidenav({ brandImg, brandName, routes }) {
                       className={`font-normal text-sm text-gray-200 ${isActive ? 'text-gray-100' : 'text-gray-300'}`}
                     >
                       {project.projectName}
+
                     </Typography>
+                    {project.createdBy === username && <DeleteIcon className="text-surface-light hover:text-red-900" fontSize='medium' onClick={() => handleDeleteProject(project.projectId)}/>}
+
                   </Button>
+                  
                 )}
+                
               </NavLink>
             </li>
           ))}

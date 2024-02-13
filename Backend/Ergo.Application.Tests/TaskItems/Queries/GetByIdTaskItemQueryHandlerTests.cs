@@ -13,6 +13,7 @@ public class GetByIdTaskItemQueryHandlerTests : IDisposable
     private readonly ITaskItemRepository _mockTaskItemRepository;
     private readonly IUserPhotoRepository _mockUserPhotoRepository;
     private readonly IUserManager _mockUserManager;
+    private readonly IPhotoRepository _mockPhotoRepository;
     private readonly GetByIdTaskItemQueryHandler _handler;
 
     public GetByIdTaskItemQueryHandlerTests()
@@ -20,7 +21,8 @@ public class GetByIdTaskItemQueryHandlerTests : IDisposable
         _mockTaskItemRepository = TaskItemRepositoryMocks.GetTaskItemRepository();
         _mockUserPhotoRepository = Substitute.For<IUserPhotoRepository>();
         _mockUserManager = Substitute.For<IUserManager>();
-        _handler = new GetByIdTaskItemQueryHandler(_mockTaskItemRepository, _mockUserManager, _mockUserPhotoRepository);
+        _mockPhotoRepository = Substitute.For<IPhotoRepository>();
+        _handler = new GetByIdTaskItemQueryHandler(_mockTaskItemRepository, _mockUserManager, _mockUserPhotoRepository,_mockPhotoRepository);
     }
     
     /*[Fact]

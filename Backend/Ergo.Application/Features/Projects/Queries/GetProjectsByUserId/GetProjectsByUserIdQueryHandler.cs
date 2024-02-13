@@ -44,6 +44,7 @@ namespace Ergo.Application.Features.Projects.Queries.GetProjectsByUserId
                     ProjectName = p.ProjectName,
                     Description = p.Description,
                     StartDate = p.StartDate,
+                    CreatedBy = p.CreatedBy,
                     Deadline = p.Deadline,
                     State = p.State,
                     GitRepository = p.GitRepository,
