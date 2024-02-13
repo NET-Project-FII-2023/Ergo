@@ -13,6 +13,7 @@ namespace Ergo.Application.Features.TaskItems.Queries
         public string? CreatedBy { get; set; }
         public Guid ProjectId { get; set; }
         public UserTaskDto? AssignedUser { get; set; }
+        public TaskFileDto[] TaskFiles { get; set; }
         public TaskState State { get; set; }
         public string? Branch { get; set; }
         public DateTime? StartTime { get; set; }

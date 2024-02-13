@@ -12,7 +12,6 @@ import api from '@/services/api';
 import { toast } from "react-toastify";
 import {Select, Option} from "@material-tailwind/react";
 
-
 const formatDeadline = (deadline) => {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   const formattedDeadline = new Date(deadline).toLocaleDateString(undefined, options);
@@ -20,20 +19,46 @@ const formatDeadline = (deadline) => {
 };
 
 const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, project })  => {
-  const [attachedFiles, setAttachedFiles] = useState([]);
-  const [currentTask, setCurrentTask] = useState([]);
+  const [currentTask, setCurrentTask] = useState(selectedTask);
   const [updatedDeadline, setUpdatedDeadline] = useState();
-  const [editMode, setEditMode] = useState(false);
   const [selectedSection, setSelectedSection] = useState('TaskMainInfo');
 
    const handleSectionChange = (value) => {
     setSelectedSection(value);
   };
 
-
   const handleFileInputChange = (event) => {
     const files = event.target.files;
-    setAttachedFiles([...attachedFiles, ...files]);
+
+    if (files.length > 0 && selectedTask.taskItemId) {
+      const uploadPromises = Array.from(files).map((file) => {
+        const formData = new FormData();
+        formData.append('File', file);
+
+        return api.post(`/api/v1/Cloud/upload-task-photo?TaskItemId=${selectedTask.taskItemId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': undefined
+            }
+          })
+      });
+
+      Promise.all(uploadPromises)
+        .then((responses) => {
+          toast.success(`File${responses.length > 1 ? "s" : ""} uploaded successfully`);
+        })
+        .catch((error) => {
+          // At least one file failed to upload
+          console.error('Error uploading one or more files:', error);
+          toast.error('Failed to upload one or more files');
+        })
+        .finally(() => {
+          fetchCurrentTask();
+          event.target.value = null;
+        });
+    }
   };
 
   const handleUpdateDeadline = async () => {
@@ -66,33 +91,33 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
       toast.error('Failed to update deadline');
     }
   };
-  
 
   const fetchCurrentTask = async () => {
-      try {
+    if (!selectedTask) return;
 
-        const response = await api.get(`/api/v1/TaskItems/${selectedTask.taskItemId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    try {
+      const response = await api.get(`/api/v1/TaskItems/${selectedTask.taskItemId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (response.status === 200) {
-          setCurrentTask(response.data.taskItem);
-          setUpdatedDeadline(response.data.taskItem.deadline);
-          console.log(response.data.taskItem);
-          console.log(response.data.taskItem.assignedUser);
-        } else {
-          console.error('Error fetching tasks:', response);
-        }
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
+      if (response.status === 200) {
+        setCurrentTask(response.data.taskItem);
+        setUpdatedDeadline(response.data.taskItem.deadline);
+        console.log(response.data.taskItem);
+        console.log(response.data.taskItem.assignedUser);
+      } else {
+        console.error('Error fetching tasks:', response);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  };
 
-    useEffect(() => {
-      fetchCurrentTask();
-  }, []);
+  useEffect(() => {
+    fetchCurrentTask();
+  }, [selectedTask?.taskItemId]);
 
   return (
     <Modal
@@ -108,13 +133,14 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
             <>
               <div className='hidden md:visible md:flex md:flex-row'>
                 <div className='w-2/3'>
-                  <TaskMainInfo selectedTask={selectedTask} token={token}/>
-                  <AttachmentSection attachedFiles={attachedFiles} handleFileInputChange={handleFileInputChange} project={project}/>
-                  {attachedFiles.map((file, index) => (
-                    <Typography key={index} variant="body2" className="text-surface-light px-2 text-md">
-                      {file.name}
-                    </Typography>
-                  ))}
+                  <TaskMainInfo
+                    selectedTask={selectedTask}
+                    token={token}
+                  />
+                  <AttachmentSection
+                    attachedFiles={currentTask?.taskFiles || []}
+                    handleFileInputChange={handleFileInputChange}
+                  />
                   <CommentSection token={token} task={selectedTask} />
                   <div className="flex items-center px-2 mt-6">
                     <AccessTimeIcon className="text-secondary mr-2" fontSize='extraSmall' />
@@ -152,12 +178,10 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
                 {selectedSection === 'Comments' && <CommentSection token={token} task={selectedTask} />}
                 {selectedSection === 'Attachments' && (
                   <>
-                    <AttachmentSection attachedFiles={attachedFiles} handleFileInputChange={handleFileInputChange} project={project}/>
-                    {attachedFiles.map((file, index) => (
-                      <Typography key={index} variant="body2" className="text-surface-light px-2 text-md">
-                        {file.name}
-                      </Typography>
-                    ))}
+                    <AttachmentSection
+                      attachedFiles={currentTask?.taskFiles || []}
+                      handleFileInputChange={handleFileInputChange}
+                    />
                   </>
                 )}
                 {selectedSection === 'ProgressTracking' && (
