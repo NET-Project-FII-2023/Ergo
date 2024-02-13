@@ -57,9 +57,12 @@ public class TaskItemsController : ApiControllerBase
     [Authorize(Roles = "User")]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeleteTaskItem(Guid id)
+    public async Task<IActionResult> DeleteTaskItem(Guid id,DeleteTaskItemCommand command)
     {
-        var command = new DeleteTaskItemCommand { TaskItemId = id };
+        if(id != command.TaskItemId)
+        {
+            return BadRequest("Input id's doesn't match!");
+        }
         var result = await Mediator.Send(command);
 
         if (!result.Success)

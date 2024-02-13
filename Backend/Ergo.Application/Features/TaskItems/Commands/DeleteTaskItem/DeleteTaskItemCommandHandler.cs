@@ -1,4 +1,6 @@
-﻿using Ergo.Application.Persistence;
+﻿using Ergo.Application.Features.Projects.Commands.DeleteUserFromProject;
+using Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser;
+using Ergo.Application.Persistence;
 using MediatR;
 using System;
 using System.Linq;
@@ -9,11 +11,17 @@ namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
 {
     public class DeleteTaskItemCommandHandler : IRequestHandler<DeleteTaskItemCommand, DeleteTaskItemCommandResponse>
     {
-        private readonly ITaskItemRepository repository;
+        private readonly ITaskItemRepository taskRepository;
+        private readonly IUserManager userManager;
+        private readonly IProjectRepository projectRepository;
 
-        public DeleteTaskItemCommandHandler(ITaskItemRepository repository)
+
+
+        public DeleteTaskItemCommandHandler(ITaskItemRepository repository, IUserManager userManager, IProjectRepository projectRepository)
         {
-            this.repository = repository;
+            this.taskRepository = repository;
+            this.userManager = userManager;
+            this.projectRepository = projectRepository;
         }
 
         public async Task<DeleteTaskItemCommandResponse> Handle(DeleteTaskItemCommand request, CancellationToken cancellationToken)
@@ -29,16 +37,36 @@ namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
                 return response;
             }
 
-            var taskItemToDelete = await repository.FindByIdAsync(request.TaskItemId);
+            var taskItemToDelete = await taskRepository.FindByIdAsync(request.TaskItemId);
 
-            if (taskItemToDelete == null)
+            if (!taskItemToDelete.IsSuccess)
             {
                 response.Success = false;
                 response.ValidationsErrors = new List<string> { "TaskItem not found" };
                 return response;
             }
+            var project = await projectRepository.FindByIdAsync(taskItemToDelete.Value.ProjectId);
+            if (!project.IsSuccess)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List<string> { "Project not found" };
+                return response;
+            }
+            var user = await userManager.FindByIdAsync(request.UserId);
+            if (!user.IsSuccess)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List<string> { "User not found" };
+                return response;
+            }
+            if(project.Value.CreatedBy != user.Value.Username)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List<string> { "You are not the owner of this project." };
+                return response;
+            }
 
-            var result = await repository.DeleteAsync(request.TaskItemId);
+            var result = await taskRepository.DeleteAsync(request.TaskItemId);
 
             if (!result.IsSuccess)
             {
