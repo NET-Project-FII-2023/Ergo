@@ -14,14 +14,16 @@ namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
         private readonly ITaskItemRepository taskRepository;
         private readonly IUserManager userManager;
         private readonly IProjectRepository projectRepository;
+        private readonly ICommentRepository commentRepository;
 
 
 
-        public DeleteTaskItemCommandHandler(ITaskItemRepository repository, IUserManager userManager, IProjectRepository projectRepository)
+        public DeleteTaskItemCommandHandler(ITaskItemRepository repository, IUserManager userManager, IProjectRepository projectRepository, ICommentRepository commentRepository)
         {
             this.taskRepository = repository;
             this.userManager = userManager;
             this.projectRepository = projectRepository;
+            this.commentRepository = commentRepository;
         }
 
         public async Task<DeleteTaskItemCommandResponse> Handle(DeleteTaskItemCommand request, CancellationToken cancellationToken)
@@ -65,6 +67,14 @@ namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
                 response.ValidationsErrors = new List<string> { "You are not the owner of this project." };
                 return response;
             }
+            var comments = await commentRepository.GetCommentByTaskIdAsync(request.TaskItemId);
+            if (!comments.IsSuccess)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List<string> { comments.Error };
+                return response;
+            }
+
 
             var result = await taskRepository.DeleteAsync(request.TaskItemId);
 
@@ -73,6 +83,16 @@ namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
                 response.Success = false;
                 response.ValidationsErrors = new List<string> { result.Error };
                 return response;
+            }
+            foreach (var comment in comments.Value)
+            {
+                var commentResult = await commentRepository.DeleteAsync(comment.CommentId);
+                if (!result.IsSuccess)
+                {
+                    response.Success = false;
+                    response.ValidationsErrors = new List<string> { result.Error };
+                    return response;
+                }
             }
 
             return new DeleteTaskItemCommandResponse

@@ -7,8 +7,11 @@ import api from '../../../../services/api';
 import { Avatar } from '@material-tailwind/react';
 import badgesData from './badges-data';
 import confetti from 'canvas-confetti';
+import { useNavigate} from "react-router-dom";
+
 
 const Badges = ({currentViewedId,isOwnProfile}) => {
+  const navigate = useNavigate();
   const [userBadges, setUserBadges] = useState([])
   const [userStats, setUserStats] = useState([])
   const [badgesUpdated, setBadgesUpdated] = useState(false);
@@ -42,6 +45,7 @@ const Badges = ({currentViewedId,isOwnProfile}) => {
     }
   const getUserStats = async () => {
     try {
+      console.log("current",currentViewedId)
       const response = await api.get(`api/v1/Users/stats/${currentViewedId}`,
         {
           headers: {

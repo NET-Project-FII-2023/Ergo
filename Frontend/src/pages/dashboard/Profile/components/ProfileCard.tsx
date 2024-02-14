@@ -215,7 +215,7 @@ export function ProfileCard({userData, setUserData, isEditable = false}: Profile
           <Typography variant="h5" className="mb-4 text-surface-light ml-6">
             Badges
           </Typography>
-          <Badges currentViewedId={currentUser.userId} isOwnProfile={isOwnProfile} />
+          <Badges currentViewedId={isOwnProfile ? currentUser.userId : userId} isOwnProfile={isOwnProfile} />
         </div>
       }
     </div>
