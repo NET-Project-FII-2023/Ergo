@@ -98,7 +98,7 @@ export function ProjectsStats({ projectsTasksCount, projectsCompletion } : any){
   }
 
   return(
-    <Card className="overflow-hidden mt-12 xl:col-span-3 bg-surface-dark shadow-sm" id="projects-stats">
+    <Card className="overflow-x-scroll lg:overflow-hidden mt-12 col-span-3 bg-surface-dark shadow-sm" id="projects-stats">
       <CardHeader floated={false} shadow={false} color="transparent" className="m-0 flex items-center justify-between p-6">
         <Typography variant="h5" className="mb-1 text-surface-light">
           Your Projects
