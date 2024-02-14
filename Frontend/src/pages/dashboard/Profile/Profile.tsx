@@ -7,13 +7,12 @@ import {
 } from "@material-tailwind/react";
 import {useUser} from "../../../context/LoginRequired";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import api from "../../../services/api";
 import {toast} from "react-toastify";
 import axios from "axios";
 import {ProfileCard} from "./components/ProfileCard";
 import {GetUserByIdResponseType, UserDataType} from "./components/types";
-import Badges from "./components/Badges";
 import {DialogActions, DialogTitle} from "@mui/material";
 
 export function Profile() {
@@ -71,7 +70,6 @@ export function Profile() {
           <div className="absolute inset-0 h-full w-full bg-gray-900/75"/>
         </div>
         <Card className="mx-3 -mt-48 mb-6 lg:mx-4 bg-surface-dark">
-
           <CardBody className="p-4">
             {userData ? (
                 <ProfileCard
@@ -84,7 +82,6 @@ export function Profile() {
                   <Spinner className={'h-8 w-8'}/>
                 </div>
             )}
-            {userData && <Badges currentViewedId={userId || currentUser.userId} isOwnProfile={isOwnProfile} />}
             {isOwnProfile && <div className="flex items-center justify-between flex-wrap gap-6">
               <Button
                 className="shadow-md bg-secondary hover:bg-primary ml-auto"

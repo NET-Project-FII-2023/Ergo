@@ -6,6 +6,8 @@ import {useUser} from "../../../../context/LoginRequired";
 import {toast} from "react-toastify";
 import {ProfileCardProps, PutUserResponseType, SetUserPhotoResponseType, UserDataType} from "./types";
 import ProfileUserAvatar from "./ProfileUserAvatar";
+import Badges from "./Badges";
+import { useParams } from "react-router-dom";
 
 const isFormValid = (editedUserData: UserDataType) => {
   const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i;
@@ -51,6 +53,8 @@ const isFormValid = (editedUserData: UserDataType) => {
 
 export function ProfileCard({userData, setUserData, isEditable = false}: ProfileCardProps) {
   const currentUser = useUser();
+  const {userId} = useParams();
+  const isOwnProfile = userId === currentUser.userId || !userId;
   const [isInEditMode, setIsInEditMode] = useState(false);
   const [editedUserData, setEditedUserData] = useState<UserDataType>(userData);
   const [editedUserPhoto, setEditedUserPhoto] = useState<File | null>(null);
@@ -188,8 +192,7 @@ export function ProfileCard({userData, setUserData, isEditable = false}: Profile
         </div>
       </div>
     </div>
-    <div
-      className="gird-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3 text-surface-darkest">
+    <div className="grid-cols-1 mb-12 grid gap-12 px-4 lg:grid-cols-2 xl:grid-cols-3 text-surface-darkest">
       <ProfileInfoCard
         bio={userData?.bio}
         details={{
@@ -207,6 +210,14 @@ export function ProfileCard({userData, setUserData, isEditable = false}: Profile
         onSaveEdit={onSaveEdit}
         onCancelEdit={onCancelEdit}
       />
+      {userData && 
+        <div className="col-span-1 xl:col-span-2 lg:border-l border-surface-mid">
+          <Typography variant="h5" className="mb-4 text-surface-light ml-6">
+            Badges
+          </Typography>
+          <Badges currentViewedId={currentUser.userId} isOwnProfile={isOwnProfile} />
+        </div>
+      }
     </div>
   </>
 }
