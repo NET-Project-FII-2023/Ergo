@@ -14,7 +14,50 @@ export function SignIn() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const handleCallbackResponse = async(response) => {
+    if(response.credential) {
+    try{
+      const responseLogin = await api.post("/api/v1/Authentication/google-login", 
+        response.credential,
+      );
 
+      if(responseLogin.status === 200) {
+        localStorage.setItem("token", responseLogin.data.token);
+        toast.success("Login Successful");
+        navigate('/');
+      }
+    }catch (error) {
+      let errorMessage = "Login failed";
+      if (axios.isAxiosError(error) && error.response) {
+        if (error.response.data) {
+          if(error.response.data.validationsErrors)
+            errorMessage += ": " + error.response.data.validationsErrors[0];
+          else
+            errorMessage += ": " + error.response.data;
+        }
+      } else if (error instanceof Error) {
+        errorMessage += ": " + error.message;
+      }
+
+      toast.error(errorMessage);
+    }
+  }
+}
+  useEffect(() => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleCallbackResponse
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("signInDiv"),
+      {
+        type: "icon",
+        theme: "filled_black",
+        size: "large",
+      }
+    )
+  },[]);
   useEffect(() => {
     localStorage.removeItem("token");
   }, []);
@@ -52,6 +95,7 @@ export function SignIn() {
     }
   }
 
+
   return (
     <section className="p-8 bg-surface-darkest flex gap-4 text-surface-light">
       <div className="w-full lg:w-3/5 mt-24">
@@ -87,9 +131,15 @@ export function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          <div className="flex flex-col items-center gap-2">
           <Button className="mt-6 bg-secondary hover:bg-primary" fullWidth onClick={handleSignIn}>
             Sign In
           </Button>
+          <div id="signInDiv"></div>
+          </div>
+          
+          
+
           <Typography variant="small" className="text-center text-surface-light-dark font-medium mt-4">
             Not registered?
             <Link to="/auth/sign-up" className="text-secondary ml-1 hover:text-primary">Create account</Link>

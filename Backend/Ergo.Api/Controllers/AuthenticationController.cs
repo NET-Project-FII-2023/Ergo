@@ -134,6 +134,24 @@ namespace Ergo.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        [HttpPost]
+        [Route("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] string token)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid payload");
+            }
+
+            var (status, message) = await _authService.LoginWithGoogle(token);
+
+            if (status == 0)
+            {
+                return BadRequest(message);
+            }
+
+            return Ok(new { Token = message });
+        }
 
     }
 }

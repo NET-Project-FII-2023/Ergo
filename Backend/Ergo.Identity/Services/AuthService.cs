@@ -3,6 +3,7 @@ using Ergo.Application.Models.Identity;
 using Ergo.Application.Persistence;
 using Ergo.Domain.Entities;
 using Ergo.Identity.Models;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -96,6 +97,62 @@ namespace Ergo.Identity.Services
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole));
             }
             string token = GenerateToken(authClaims);
+            return (1, token);
+        }
+        public async Task<(int, string)> LoginWithGoogle(string googleToken)
+        {
+            GoogleJsonWebSignature.Payload payload;
+            try
+            {
+                payload = await GoogleJsonWebSignature.ValidateAsync(googleToken);
+            }
+            catch (Exception)
+            {
+                return (0, "Invalid Google Token");
+            }
+
+            var user = await userManager.FindByEmailAsync(payload.Email);
+            if (user == null)
+            {
+                var usernameToSearch = payload.Email.Split("@")[0];
+                var userName = userManager.Users.FirstOrDefault(u => u.UserName == usernameToSearch);
+                if (userName != null)
+                {
+                    usernameToSearch += new Random().Next(1000, 9999);
+                }
+                user = new ApplicationUser
+                {
+                    UserName = usernameToSearch,
+                    Name = payload.Email.Split("@")[0],
+                    Email = payload.Email,
+                };
+
+                var result = await userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                {
+                    return (0, "Failed to create user");
+                }
+                var userDomain = User.Create(Guid.Parse(user.Id));
+                await userRepository.AddAsync(userDomain.Value);
+
+                await userManager.AddToRoleAsync(user, "User");
+            }
+            var userRoles = await userManager.GetRolesAsync(user);
+            var authClaims = new List<Claim>
+            {
+               new Claim(ClaimTypes.Name, user.UserName!),
+               new Claim(ClaimTypes.Email, user.Email!),
+               new Claim(ClaimTypes.NameIdentifier, user.Id!),
+               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+
+            var token = GenerateToken(authClaims);
+
             return (1, token);
         }
         public async Task<(int, string)> ResetPassword(ResetPasswordModel model)

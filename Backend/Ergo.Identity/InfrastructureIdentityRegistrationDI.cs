@@ -55,6 +55,17 @@ namespace Ergo.Identity
                                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
                             };
                         });
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                    .AddGoogle(googleOptions =>
+                    {
+                        googleOptions.ClientId = "<Google-Client-ID>";
+                        googleOptions.ClientSecret = "<Google-Client-Secret>";
+                    });
             services.AddScoped<IUserManager, ApplicationUserManager>();
             services.AddScoped
                <IAuthService, AuthService>();

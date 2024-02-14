@@ -8,5 +8,7 @@ namespace Ergo.Application.Contracts.Identity
         Task<(int, string)> Login(LoginModel model);
         Task<(int, string)> Logout();
         Task<(int,string)> ResetPassword(ResetPasswordModel model);
+        Task<(int, string)> LoginWithGoogle(string googleToken);
+
     }
 }
