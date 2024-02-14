@@ -17,21 +17,21 @@ export function Home() {
     <div className="mt-12 text-surface-light">
       <div className="mb-16">
         <h2 className="text-5xl font-bold">
-          Good {(time < 4 || time >= 18) ? "evening" : time <= 12 ? "morning" : "afternoon"}, {user?.username}!
+          Good {(time < 4 || time >= 18) ? "evening" : time <= 12 ? "morning" : "afternoon"}, <span className="text-white">{user?.username}</span>!
         </h2>
       </div>
-      <div className="grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
-        {/* main container */}
-        <div className="xl:col-span-2">
-          {/* left container */}
-          <div className="grid xl:grid-cols-3 gap-x-3">
+      {/* main container */}
+      <div className="grid gap-y-10 2xl:gap-x-6 grid-cols-2 2xl:grid-cols-3">
+        {/* left container */}
+        <div className="col-span-3 2xl:col-span-2">
+          <div className="grid grid-cols-3 gap-x-3">
             <TasksStats setProjectsTasksCount={setProjectsTasksCount} setProjectsCompletion={setProjectsCompletion} />
             <ProjectsStats projectsTasksCount={projectsTasksCount} projectsCompletion={projectsCompletion} />
           </div>
         </div>
 
-        <Card className="bg-transparent shadow-none">
-          {/* right container */}
+        {/* right container */}
+        <Card className="bg-transparent shadow-none col-span-2 lg:col-span-1">
           {/* {statisticsChartsData.map((props) => (
             <StatisticsChart key={props.title} {...props}/>
           ))} */}

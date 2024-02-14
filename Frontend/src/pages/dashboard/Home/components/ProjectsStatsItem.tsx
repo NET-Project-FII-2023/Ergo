@@ -13,8 +13,8 @@ export function ProjectsStatsItem(props : ProjectsStatsItemProps) {
         {/* <div className="flex items-center gap-4"> */}
           {/* <Avatar src={img} alt={name} size="sm" /> */}
         <Typography variant="small" className="font-bold text-white">
-          <Link to={path} className="hover:text-primary duration-200">
-            {name}
+          <Link to={path} className="hover:text-primary duration-200 whitespace-nowrap">
+            {name.length > 25 ? name.slice(0, 25) + "..." : name}
           </Link>
         </Typography>
         {/* </div> */}
@@ -38,7 +38,7 @@ export function ProjectsStatsItem(props : ProjectsStatsItemProps) {
         ))}
       </td>
       <td className={className}>
-        <Typography variant="small" className={`text-xs font-medium text-surface-light ${new Date(deadline) < new Date() ? "text-red-300" : ""}`} >
+        <Typography variant="small" className={`text-xs font-medium text-surface-light whitespace-nowrap ${new Date(deadline) < new Date() ? "text-red-300" : ""}`} >
           {new Date(deadline).toLocaleString("en-US", { month: "long" })} {new Date(deadline).getDate()}, {new Date(deadline).getFullYear()}
         </Typography>
       </td>

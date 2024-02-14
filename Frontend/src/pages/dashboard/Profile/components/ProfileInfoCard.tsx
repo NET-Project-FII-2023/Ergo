@@ -44,14 +44,14 @@ export function ProfileInfoCard({
         floated={false}
         className="mx-0 mt-0 flex items-center justify-between gap-4"
       >
-        <Typography variant="h6" className="text-surface-light">
+        <Typography variant="h5" className="text-surface-light">
           Profile Information
         </Typography>
         {isEditable && !isInEditMode && (
           <Tooltip content="Edit Profile">
             <PencilIcon
               onClick={onEnterEditMode}
-              className="h-4 w-4 cursor-pointer text-surface-mid-dark"
+              className="h-4 w-4 cursor-pointer text-surface-light"
             />
           </Tooltip>
         )}

@@ -130,92 +130,89 @@ const AddProject = ({ onProjectAdded }) => {
     };
 
     return (
-        <div>
-             <Button className="w-full h-12 bg-surface-mid-dark/20 mt-2 hover:bg-surface-mid-light" onClick={handleOpen} size="sm">
-                <p className='text-white opacity-100'>+</p>
-             </Button>
-
-                <Modal open={open} onClose={handleClose}>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:w-[30rem] w-[90vw] bg-[#2f2b3a] shadow-lg p-4 rounded">
-                    <Typography variant='h4' className='text-white p-2'>
-                        Add Project
-                    </Typography>
-                    <div className='flex flex-col justify-between h-full'>
-                        <div className='m-2'>
-                            <ErgoLabel labelName="Project name" />
-                            <ErgoInput
-                                placeholder="Enter Project Name"
-                                onChange={(value) => handleInputChange('projectName', value)}
-                                value={projectDetails.projectName}
-                            />
-                        </div>
-                        <div className='m-2'>
-                            <ErgoLabel labelName="Description" />
-                            <ErgoTextarea
-                                placeholder="Enter Description"
-                                onChange={(value) => handleInputChange('description', value)}
-                                value={projectDetails.description}
-                            />
-                        </div>
-                        <div className='m-2'>
-                            <ErgoLabel labelName="Github Owner" />
-                            <ErgoInput
-                                placeholder="Github Owner"
-                                onChange={(value) => handleInputChange('githubOwner', value)}
-                                value={projectDetails.githubOwner}
-                            />
-                        </div>
-                        <div className='m-2'>
-                            <ErgoLabel labelName="Github Owner" />
-                            <ErgoInput
-                                placeholder="Enter GitHub Token"
-                                onChange={(value) => handleInputChange('githubToken', value)}
-                                value={projectDetails.githubToken}
-                            />
-                        </div>
-                        <div className='m-2'>
-                            <ErgoLabel labelName="Git Repository" />
-                            <ErgoInput
-                                placeholder="Enter Git Repository"
-                                onChange={(value) => handleInputChange('gitRepository', value)}
-                                value={projectDetails.gitRepository}
-                            />
-                        </div>
-                        <div className='m-2'>
-                            <div>
-                                <ErgoLabel labelName="Deadline" />
-                                <ErgoDatePicker
-                                    label='Deadline'
-                                    selectedDate={projectDetails.deadline}
-                                    onChange={handleDateChange}
-                                />
-                            </div>
-                            
-                        </div>
-                        <div className='m-2 flex justify-start'>
-                            <div className='flex items-center'>   
-                            <Checkbox id="public" name="public" value="public" onChange={() => setAiActive(!aiActive)}/>
-                               <p className='text-surface-light'>AI Assistance</p>
-                                <TipsAndUpdatesOutlinedIcon fontSize="small" className='text-surface-light text-center ml-2'/>
-                            </div>
-                        </div>  
-                        <div className='m-2 self-end'>
-                            <Button size="sm" className="bg-secondary hover:bg-primary" onClick={handleAddProject}>
-                                <AddTaskIcon fontSize='small'>
-                                </AddTaskIcon>
-                            </Button>
-                        </div>
-                        
-                    </div>
+      <div>
+        <Button className="w-full h-12 bg-surface-mid-dark/20 mt-2 hover:bg-surface-mid-light" onClick={handleOpen} size="sm" title="Create a new project">
+          <p className='text-white opacity-100'>+</p>
+        </Button>
+        <Modal open={open} onClose={handleClose}>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:w-[30rem] w-[90vw] bg-[#2f2b3a] shadow-lg p-4 rounded">
+            <Typography variant='h4' className='text-white p-2'>
+              Add Project
+            </Typography>
+            <div className='flex flex-col justify-between h-full'>
+              <div className='m-2'>
+                <ErgoLabel labelName="Project name" />
+                <ErgoInput
+                  placeholder="Enter Project Name"
+                  onChange={(value) => handleInputChange('projectName', value)}
+                  value={projectDetails.projectName}
+                />
+              </div>
+              <div className='m-2'>
+                <ErgoLabel labelName="Description" />
+                <ErgoTextarea
+                  placeholder="Enter Description"
+                  onChange={(value) => handleInputChange('description', value)}
+                  value={projectDetails.description}
+                />
+              </div>
+              <div className='m-2'>
+                <ErgoLabel labelName="Github Owner" />
+                <ErgoInput
+                  placeholder="Github Owner"
+                  onChange={(value) => handleInputChange('githubOwner', value)}
+                  value={projectDetails.githubOwner}
+                />
+              </div>
+              <div className='m-2'>
+                <ErgoLabel labelName="Github Owner" />
+                <ErgoInput
+                  placeholder="Enter GitHub Token"
+                  onChange={(value) => handleInputChange('githubToken', value)}
+                  value={projectDetails.githubToken}
+                />
+              </div>
+              <div className='m-2'>
+                <ErgoLabel labelName="Git Repository" />
+                <ErgoInput
+                  placeholder="Enter Git Repository"
+                  onChange={(value) => handleInputChange('gitRepository', value)}
+                  value={projectDetails.gitRepository}
+                />
+              </div>
+              <div className='m-2'>
+                <div>
+                  <ErgoLabel labelName="Deadline" />
+                  <ErgoDatePicker
+                    label='Deadline'
+                    selectedDate={projectDetails.deadline}
+                    onChange={handleDateChange}
+                  />
                 </div>
-            </Modal>
-            {openAiIsLoading && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col  justify-center items-center">
-                    <CircularProgress />
-                    <p className='text-surface-light mt-2'>Project loading...</p>
+              </div>
+              <div className='m-2 flex justify-start'>
+                <div className='flex items-center'>   
+                <Checkbox id="public" name="public" value="public" onChange={() => setAiActive(!aiActive)}/>
+                  <p className='text-surface-light'>AI Assistance</p>
+                  <TipsAndUpdatesOutlinedIcon fontSize="small" className='text-surface-light text-center ml-2'/>
                 </div>
-            )}
-        </div>
+              </div>  
+              <div className='m-2 self-end'>
+                <Button size="sm" className="bg-secondary hover:bg-primary" onClick={handleAddProject}>
+                  <AddTaskIcon fontSize='small'>
+                  </AddTaskIcon>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Modal>
+        {openAiIsLoading && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex flex-col  justify-center items-center">
+            <CircularProgress />
+            <p className='text-surface-light mt-2'>Project loading...</p>
+          </div>
+        )}
+      </div>
     );
 };
 

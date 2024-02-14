@@ -22,7 +22,7 @@ export function DataField({label, value, isInEditMode, editedValue, onChangeEdit
         </>
       ) : (
         <Input
-          value={editedValue}
+          value={editedValue || ""}
           onChange={(e) => onChangeEditedValue(e.target.value)}
           type={"text"}
           variant={"outlined"}
@@ -43,7 +43,7 @@ export function SocialField ({social, onChangeSocial, isInEditMode}: SocialField
       <>
         <li className="flex items-center gap-4">
           <Input
-            value={social?.facebook}
+            value={social?.facebook ? social?.facebook : ""}
             onChange={(e) => onChangeSocial({...social, facebook: e.target.value})}
             label={"Facebook"}
             color={"deep-purple"}
@@ -54,7 +54,7 @@ export function SocialField ({social, onChangeSocial, isInEditMode}: SocialField
         </li>
         <li className="flex items-center gap-4">
           <Input
-            value={social?.instagram}
+            value={social?.instagram ? social?.instagram : ""}
             onChange={(e) => onChangeSocial({...social, instagram: e.target.value})}
             label={"Instagram"}
             color={"deep-purple"}
@@ -65,7 +65,7 @@ export function SocialField ({social, onChangeSocial, isInEditMode}: SocialField
         </li>
         <li className="flex items-center gap-4">
           <Input
-            value={social?.twitterX}
+            value={social?.twitterX ? social?.twitterX : ""}
             onChange={(e) => onChangeSocial({...social, twitterX: e.target.value})}
             label={"X"}
             color={"deep-purple"}
@@ -76,7 +76,7 @@ export function SocialField ({social, onChangeSocial, isInEditMode}: SocialField
         </li>
         <li className="flex items-center gap-4">
           <Input
-            value={social?.linkedIn}
+            value={social?.linkedIn ? social?.linkedIn : ""}
             onChange={(e) => onChangeSocial({...social, linkedIn: e.target.value})}
             label={"LinkedIn"}
             color={"deep-purple"}
@@ -87,7 +87,7 @@ export function SocialField ({social, onChangeSocial, isInEditMode}: SocialField
         </li>
         <li>
           <Input
-            value={social?.gitHub}
+            value={social?.gitHub ? social?.gitHub : ""}
             onChange={(e) => onChangeSocial({...social, gitHub: e.target.value})}
             label={"GitHub"}
             color={"deep-purple"}
@@ -145,7 +145,7 @@ export function BioTextField({bio, editedBio, onChange, isInEditMode}: BioTextFi
   if (isInEditMode) {
     return (
       <Textarea
-        value={editedBio}
+        value={editedBio || ""}
         onChange={(e) => onChange(e.target.value)}
         label={"Bio"}
         color={'deep-purple'}

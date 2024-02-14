@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import {
   RectangleStackIcon,
+  TrashIcon
 } from "@heroicons/react/24/solid";
 import {
   Button,
@@ -14,12 +15,9 @@ import { useEffect, useState } from "react";
 import api from "@/services/api";
 import { useUser } from "@/context/LoginRequired";
 import AddProject from "../../pages/projectOverview/AddProject";
-import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from "react-toastify";
 import {useNavigate} from "react-router-dom";
-
-
-
+import DeleteProjectModal from "../../common/components/DeleteProjectModal";
 
 export function Sidenav({ brandImg, brandName, routes }) {
   const navigate = useNavigate();
@@ -27,6 +25,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
   const { openSidenav } = controller;
   const [projects, setProjects] = useState([]);
   const { token, userId, username } = useUser();
+  const [deletingProject, setDeletingProject] = useState({});
+  const [isDeleteProjectModalOpen, setIsDeleteProjectModalOpen] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -110,17 +110,17 @@ export function Sidenav({ brandImg, brandName, routes }) {
           <XMarkIcon strokeWidth={2.5} className="h-5 w-5 text-white" />
         </IconButton>
       </div>
-      <div className="m-4">
+      <div className="my-4">
         {routes.map(({ layout, pages }, key) => (
-          <ul key={key} className=" flex flex-col gap-1 opacity-80">
+          <ul key={key} className="flex flex-col gap-1 opacity-80">
             {pages
-              .filter(({ name }) => name !== "project" && layout === "dashboard" && name !== 'profile')
+              .filter(({ name }) => layout === "dashboard" && !["project", "profile"].includes(name))
               .map(({ icon, name, path }) => (
-                <li key={name} className="py-1">
-                  <NavLink to={`/${layout}${path}`}>
+                <li key={name} className="py-1 ![&>a]:flex-1">
+                  <NavLink to={`/${layout}${path}`} className={"flex-1"}>
                     {({ isActive }) => (
                       <Button
-                        className={`flex items-center gap-2 px-4 hover:bg-secondary ${isActive ? 'bg-primary' : 'bg-surface-dark shadow-none'} `}
+                        className={`flex gap-2 items-center px-4 hover:bg-secondary ${isActive ? 'bg-primary' : 'bg-surface-dark shadow-none'} `}
                         fullWidth
                       >
                         {icon}
@@ -139,39 +139,49 @@ export function Sidenav({ brandImg, brandName, routes }) {
         ))}
       </div>
       <hr className="border-t border-surface-mid  mt-2" />
-      <div className="mt-3">
-        <p className="text-surface-light text-sm">Projects:</p>
-      </div>
+      <h5 className="text-surface-light font-bold my-2">Projects</h5>
       <div className="overflow-y-auto max-h-[calc(100vh-22rem)]"  style={{ scrollbarWidth: 'thin', scrollbarColor: '#1a1625' }}>
         <ul className="list-none">
           {projects.map((project) => (
             <li key={project.projectId} className="py-1 opacity-90 flex items-center">
-              <NavLink to={`/dashboard/project/${project.projectId}`}>
+              <NavLink to={`/dashboard/project/${project.projectId}`} className={`flex-1`}>
                 {({ isActive }) => (
                   <Button
-                    className={`flex items-center gap-2 px-4 capitalize hover:bg-secondary ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'}`}
+                    className={`flex items-center gap-2 px-4 capitalize hover:bg-secondary group ${isActive ? 'bg-secondary' : 'bg-transparent shadow-none'}`}
                     fullWidth
                   >
-                    <RectangleStackIcon className={`w-4 h-4 text-inherit text-white`} />
+                    <RectangleStackIcon className={`w-5 h-5 text-inherit text-white`} />
                     <Typography
                       color="inherit"
                       className={`font-normal text-sm text-gray-200 ${isActive ? 'text-gray-100' : 'text-gray-300'}`}
                     >
-                      {project.projectName}
-
+                      {project.projectName.length > 25 ? project.projectName.substring(0, 22) + '...' : project.projectName}
                     </Typography>
-                    {project.createdBy === username && <DeleteIcon className="text-surface-light hover:text-red-900" fontSize='medium' onClick={() => handleDeleteProject(project.projectId)}/>}
-
+                    {project.createdBy === username && 
+                      <TrashIcon 
+                        className="text-white !hidden w-5 duration-150 h-5 group-hover:!block ml-auto hover:text-red-400" 
+                        title="Delete Project"
+                        onClick={(e) => {
+                          e.preventDefault(); 
+                          setDeletingProject({id:project.projectId, name: project.projectName}); 
+                          setIsDeleteProjectModalOpen(true);
+                        }} 
+                      />
+                    }
                   </Button>
-                  
                 )}
-                
               </NavLink>
             </li>
           ))}
         </ul>
       </div>
       <AddProject onProjectAdded={handleProjectAdded}/>
+      <DeleteProjectModal
+        open={isDeleteProjectModalOpen}
+        onClose={() => setIsDeleteProjectModalOpen(false)}
+        onConfirm={(projectId) => handleDeleteProject(projectId)}
+        projectData={{id: deletingProject?.id, name: deletingProject?.name}}
+      />
     </aside>
   );
 }

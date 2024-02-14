@@ -34,7 +34,7 @@ export function TasksStats({setProjectsTasksCount, setProjectsCompletion} : any)
   //compute the tasks stats
   useEffect(() => {
     const projects = Object.keys(tasksFromAllProjects);
-    const stats = tasksStats.slice();
+    const stats = [{ count: 0, footerValue: "0" }, { count: 0, footerValue: "0" }, { count: 0, footerValue: "0" }] as TaskStats[];
     if(projects.length == 0){
       setTasksStats(stats);
       return;

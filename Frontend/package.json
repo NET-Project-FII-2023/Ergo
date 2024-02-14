@@ -21,6 +21,7 @@
     "apexcharts": "3.44.0",
     "aws-sdk": "^2.1553.0",
     "axios": "^1.6.7",
+    "canvas-confetti": "^1.9.2",
     "dayjs": "^1.11.10",
     "prop-types": "15.8.1",
     "react": "18.2.0",
@@ -35,6 +36,7 @@
     "typescript": "^5.3.3"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.6.4",
     "@types/react": "^18.2.31",
     "@types/react-dom": "^18.2.14",
     "@vitejs/plugin-react": "4.1.0",

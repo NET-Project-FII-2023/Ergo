@@ -7,8 +7,9 @@ type ErgoInputProps = {
 } & Omit<InputProps, "onChange" | "ref">
 
 const ErgoInput = ({ onChange, ...props }: ErgoInputProps) => {
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) : string => {
       onChange && onChange(e.target.value);
+      return e.target.value;
     };
   
     return (
