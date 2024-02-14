@@ -22,6 +22,7 @@ namespace Ergo.Identity.Services
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly IConfiguration configuration;
         private readonly IPasswordResetCode passwordResetCodeRepository;
+        private readonly IUserPhotoRepository _userPhotoRepository;
         public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, SignInManager<ApplicationUser> signInManager, IUserRepository userRepository, IPasswordResetCode passwordResetCodeRepository, IBadgeRepository badgeRepository)
         {
             this.userManager = userManager;
@@ -118,13 +119,13 @@ namespace Ergo.Identity.Services
                 var userName = userManager.Users.FirstOrDefault(u => u.UserName == usernameToSearch);
                 if (userName != null)
                 {
-                    usernameToSearch += new Random().Next(1000, 9999);
+                    usernameToSearch += new Random().Next(10, 99);
                 }
                 user = new ApplicationUser
                 {
                     UserName = usernameToSearch,
-                    Name = payload.Email.Split("@")[0],
-                    Email = payload.Email,
+                    Name = payload.Name,
+                    Email = payload.Email
                 };
 
                 var result = await userManager.CreateAsync(user);
