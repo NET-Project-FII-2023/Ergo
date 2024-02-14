@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import ErgoInput from "@/widgets/form_utils/ErgoInput";
 import UserAvatar from "@/common/components/UserAvatar";
 import {useNavigate} from "react-router-dom";
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 const CommentSection = ({ task, token }) => {
     const currentUser = useUser();
@@ -75,7 +77,29 @@ const CommentSection = ({ task, token }) => {
         e.stopPropagation();
         userId && navigate(`/dashboard/profile/${userId}`)
     }
-
+    const handleDeleteComment = async (commentId) => {
+        try{
+            const response = await api.delete(`/api/v1/Comments/${commentId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                data:{
+                    commentId: commentId,
+                    owner: currentUser.username
+                }
+            });
+            if (response.status === 200) {
+                toast.success('Comment deleted successfully');
+                fetchComments();
+            } else {
+                console.error('Error deleting comment:', response);
+                toast.error('Failed to delete comment');
+            } 
+        }catch (error) {
+            console.error('Error deleting comment:', error);
+            toast.error('Failed to delete comment');
+        }
+    }
     return (
         <div className='flex flex-col mt-4 px-1'>
             <div className='flex items-center mb-2'>
@@ -110,6 +134,8 @@ const CommentSection = ({ task, token }) => {
                               <p className="text-surface-mid-light text-xs ml-auto">
                                   {formatTime(comment.createdDate)}
                               </p>
+                          {comment.createdBy.name === currentUser.username && <DeleteIcon className="text-secondary hover:text-red-900" fontSize='medium' onClick={() => handleDeleteComment(comment.commentId)}/>}
+
                           </div>
                           <p className="text-gray-500 text-xs mt-4">
                               {comment.commentText}

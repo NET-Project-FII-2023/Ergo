@@ -30,6 +30,12 @@ namespace Ergo.Application.Features.Comments.Commands.DeleteComment
                 response.ValidationsErrors = new List<string> { "Comment not found" };
                 return response;
             }
+            if(request.Owner != commentToDelete.Value.CreatedBy)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List<string> { "You didn't post this comment" };
+                return response;
+            }
             var result = await repository.DeleteAsync(request.CommentId);
             if (!result.IsSuccess)
             {

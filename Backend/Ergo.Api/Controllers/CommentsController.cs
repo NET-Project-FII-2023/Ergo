@@ -54,9 +54,12 @@ namespace Ergo.Api.Controllers
         [Authorize(Roles = "User")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id,DeleteCommentCommand command)
         {
-            var command = new DeleteCommentCommand { CommentId = id };
+            if (id != command.CommentId)
+            {
+                return BadRequest("The ids must be the same!");
+            }
             var result = await Mediator.Send(command);
             if (!result.Success)
             {
