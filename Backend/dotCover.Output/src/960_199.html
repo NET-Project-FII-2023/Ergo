@@ -2,67 +2,32 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\InboxItemController.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\ApiControllerBase.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.InboxItems.Commands.CreateInboxItem;
-using Ergo.Application.Features.InboxItems.Commands.UpdateInboxItemIsRead;
-using Ergo.Application.Features.InboxItems.Queries.GetByUserId;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ergo.Api.Controllers
 {
-
-    public class InboxItemController : ApiControllerBase
+    [Route(&quot;api/v1/[controller]&quot;)]
+    [ApiController]
+    public class ApiControllerBase : ControllerBase
     {
-        [Authorize(Roles = &quot;User&quot;)]
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task&lt;IActionResult&gt; Create(CreateInboxItemCommand command)
-        {
-            var result = await Mediator.Send(command);
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-            return Ok(result);
-        }
-        [Authorize(Roles = &quot;User&quot;)]
-        [HttpGet(&quot;{userId}&quot;)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task&lt;IActionResult&gt; GetByUserId(Guid userId)
-        {
-            var result = await Mediator.Send(new GetByUserIdQuery { UserId = userId });
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-            return Ok(result);
-        }
-        [Authorize(Roles = &quot;User&quot;)]
-        [HttpPut(&quot;{inboxItemId}&quot;)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task&lt;IActionResult&gt; UpdateIsRead(Guid inboxItemId)
-        {
-            var result = await Mediator.Send(new UpdateInboxItemIsReadCommand { InboxItemId = inboxItemId });
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
-            return Ok(result);
-        }
+        private ISender mediator = null!;
+
+        protected ISender Mediator =&gt; mediator
+        ??= HttpContext.RequestServices
+            .GetRequiredService&lt;ISender&gt;();
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[18,9,18,10,0],[19,13,19,55,0],[20,13,20,33,0],[21,13,21,14,0],[22,17,22,43,0],[24,13,24,31,0],[25,9,25,10,0],[30,9,30,10,0],[31,13,31,88,0],[32,13,32,33,0],[33,13,33,14,0],[34,17,34,43,0],[36,13,36,31,0],[37,9,37,10,0],[42,9,42,10,0],[43,13,43,110,0],[44,13,44,33,0],[45,13,45,14,0],[46,17,46,43,0],[48,13,48,31,0],[49,9,49,10,0]]);
+      highlightRanges([[10,9,10,42,1],[12,39,14,43,1]]);
     </script>
   </body>
 </html>

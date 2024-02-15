@@ -2,32 +2,28 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AddManualTimeTaskItem\AddManualTimeTaskItemCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AssignTaskItemToUser\AssignTaskItemToUserCommand.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
 using MediatR;
-using System.ComponentModel.DataAnnotations;
-using Swashbuckle.AspNetCore.Annotations;
 
-namespace Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser
 {
-    public class AddManualTimeTaskItemCommand : IRequest&lt;AddManualTimeTaskItemCommandResponse&gt;
+    public class AssignTaskItemToUserCommand : IRequest&lt;AssignTaskItemToUserCommandResponse&gt;
     {
         public Guid TaskItemId { get; set; }
         public Guid UserId { get; set; }
 
-        [SwaggerSchema(Format = &quot;time-span&quot;)]
-        [DataType(DataType.Duration)]
-        public TimeSpan TimeSpent { get; set; }
     }
+
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[9,34,9,38,0],[9,39,9,43,0],[10,30,10,34,0],[10,35,10,39,0],[14,37,14,41,0],[14,42,14,46,0]]);
+      highlightRanges([[7,34,7,38,0],[7,39,7,43,0],[8,30,8,34,0],[8,35,8,39,0]]);
     </script>
   </body>
 </html>

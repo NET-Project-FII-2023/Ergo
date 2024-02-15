@@ -2,28 +2,25 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Social.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\ResetCode\Commands\CreateResetCode\CreateResetCodeCommand.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Application.Features.Users
-{
-    public class Social
-    {
-        public string? Facebook { get; set; }
-        public string? TwitterX { get; set; }
-        public string? LinkedIn { get; set; }
-        public string? Instagram { get; set; }
-        public string? GitHub { get; set; }
+using MediatR;
 
+namespace Ergo.Application.Features.ResetCode.Commands.CreateResetCode
+{
+    public class CreateResetCodeCommand : IRequest&lt;CreateResetCodeCommandResponse&gt;
+    {
+        public string Email { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,35,5,39,0],[5,40,5,44,1],[6,35,6,39,0],[6,40,6,44,1],[7,35,7,39,0],[7,40,7,44,1],[8,36,8,40,0],[8,41,8,45,1],[9,33,9,37,0],[9,38,9,42,1]]);
+      highlightRanges([[7,31,7,35,0],[7,36,7,40,0]]);
     </script>
   </body>
 </html>

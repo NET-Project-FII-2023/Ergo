@@ -2,25 +2,26 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Queries\GetAll\GetAllCommentsResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Queries\GetById\GetByIdCommentQuery.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.Comments.Queries.GetAll
+using MediatR;
+
+namespace Ergo.Application.Features.Comments.Queries.GetById
 {
-    public class GetAllCommentsResponse : BaseResponse
+    public class GetByIdCommentQuery : IRequest&lt;GetByIdCommentQueryResponse&gt;
     {
-        public List&lt;CommentDto&gt; Comments { get; set; }
+        public Guid CommentId { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,44,7,48,1],[7,49,7,53,1]]);
+      highlightRanges([[8,33,8,37,0],[8,38,8,42,0]]);
     </script>
   </body>
 </html>

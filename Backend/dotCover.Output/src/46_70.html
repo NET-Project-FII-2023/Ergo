@@ -2,27 +2,24 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\GetTaskItemTime\GetTaskItemTimeQueryResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\TaskFileDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
-
-namespace Ergo.Application.Features.TaskItems.Queries.GetTaskItemTime
+namespace Ergo.Application.Features.TaskItems.Queries
 {
-    public class GetTaskItemTimeQueryResponse : BaseResponse
+    public class TaskFileDto
     {
-        public GetTaskItemTimeQueryResponse() : base()
-        {
-        }
-        public TimeSpan RecordedTime { get; set; }
+        public Guid TaskFileId { get; set; }
+        public string FileUrl { get; set; }
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,49,7,55,0],[8,9,8,10,0],[9,9,9,10,0],[10,40,10,44,0],[10,45,10,49,0]]);
+      highlightRanges([[5,34,5,38,0],[5,39,5,43,0],[6,33,6,37,0],[6,38,6,42,0]]);
     </script>
   </body>
 </html>

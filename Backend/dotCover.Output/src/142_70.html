@@ -2,93 +2,28 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetByProjectId\GetUsersByProjectIdQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetByEmail\GetByEmailUserQueryReponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
-using MediatR;
+using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.Users.Queries.GetByProjectId
+namespace Ergo.Application.Features.Users.Queries.GetByEmail
 {
-    internal class GetUsersByProjectIdQueryHandler : IRequestHandler&lt;GetUsersByProjectIdQuery, GetUsersByProjectIdQueryResponse&gt;
+    public class GetByEmailUserQueryReponse : BaseResponse
     {
-        private readonly IProjectRepository projectRepository;
-        private readonly IUserManager userManager;
-        private readonly IUserPhotoRepository userPhotoRepository;
-
-        public GetUsersByProjectIdQueryHandler(IProjectRepository projectRepository, IUserManager userManager, IUserPhotoRepository userPhotoRepository)
+        public GetByEmailUserQueryReponse() : base()
         {
-            this.projectRepository = projectRepository;
-            this.userManager = userManager;
-            this.userPhotoRepository = userPhotoRepository;
+            
         }
-
-        public async Task&lt;GetUsersByProjectIdQueryResponse&gt; Handle(GetUsersByProjectIdQuery request, CancellationToken cancellationToken)
-        {
-            var project = await projectRepository.FindByIdAsync(Guid.Parse(request.ProjectId));
-            if (!project.IsSuccess)
-            {
-                return new GetUsersByProjectIdQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { project.Error }
-                };
-            }
-
-            var users = await projectRepository.GetUsersByProjectId(Guid.Parse(request.ProjectId));
-            if (!users.IsSuccess)
-            {
-                return new GetUsersByProjectIdQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { users.Error }
-                };
-            }
-
-            //iterate through users and get the user by id
-            var usersDto = new List&lt;UserDto&gt;();
-            foreach (var user in users.Value)
-            {
-                var userById = await userManager.FindByIdAsync(Guid.Parse(user.UserId.ToString()));
-                if (!userById.IsSuccess)
-                {
-                    return new GetUsersByProjectIdQueryResponse
-                    {
-                        Success = false,
-                        ValidationsErrors = new List&lt;string&gt; { userById.Error }
-                    };
-                }
-
-                var userPhoto = await userPhotoRepository.GetUserPhotoByUserIdAsync(user.UserId.ToString());
-                usersDto.Add(new UserDto
-                {
-                    UserId = userById.Value.UserId,
-                    Name = userById.Value.Name,
-                    Username = userById.Value.Username,
-                    Email = userById.Value.Email,
-                    UserPhoto = userPhoto.IsSuccess ? new UserCloudPhotoDto
-                    {
-                        UserPhotoId = userPhoto.Value.UserPhotoId,
-                        PhotoUrl = userPhoto.Value.PhotoUrl
-                    } : null,
-                    Roles = userById.Value.Roles
-                });
-            }
-
-            return new GetUsersByProjectIdQueryResponse
-            {
-                Success = true,
-                Users = usersDto
-            };
-        }
+        public UserDto User { get; set; }
     }
 }
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,9,12,153,0],[13,9,13,10,0],[14,13,14,56,0],[15,13,15,44,0],[16,13,16,60,0],[17,9,17,10,0],[20,9,20,10,0],[21,13,21,96,0],[22,13,22,36,0],[23,13,23,14,0],[24,17,28,19,0],[31,13,31,100,0],[32,13,32,34,0],[33,13,33,14,0],[34,17,38,19,0],[42,13,42,48,0],[43,13,43,20,0],[43,22,43,30,0],[43,31,43,33,0],[43,34,43,45,0],[44,13,44,14,0],[45,17,45,100,0],[46,17,46,41,0],[47,17,47,18,0],[48,21,52,23,0],[55,17,55,109,0],[56,17,68,20,0],[69,13,69,14,0],[71,13,75,15,0],[76,9,76,10,0]]);
+      highlightRanges([[7,47,7,53,0],[8,9,8,10,0],[10,9,10,10,0],[11,31,11,35,0],[11,36,11,40,0]]);
     </script>
   </body>
 </html>

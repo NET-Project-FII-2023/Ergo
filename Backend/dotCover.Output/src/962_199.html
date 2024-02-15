@@ -2,15 +2,15 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\PhotosController.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\BadgesController.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem;
-using Ergo.Application.Features.Photos.Commands.DeletePhoto;
-using Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem;
+using Ergo.Application.Features.Badges.Commands.CreateBadgeCommand;
+using Ergo.Application.Features.Badges.Commands.UpdateSpecialBadgeCommand;
+using Ergo.Application.Features.Badges.Queries.GetBadgesForUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +18,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Ergo.Api.Controllers
 {
 
-    public class PhotosController : ApiControllerBase
+    public class BadgesController : ApiControllerBase
     {
-        [Authorize(Roles = &quot;User&quot;)]
         [HttpPost]
+        [Authorize(Roles = &quot;User&quot;)]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task&lt;IActionResult&gt; AddPhotoToTaskItem([FromForm] AddPhotoToTaskItemCommand command)
+        public async Task&lt;IActionResult&gt; Create(CreateBadgeCommand command)
         {
             var result = await Mediator.Send(command);
             if (!result.Success)
@@ -32,24 +32,20 @@ namespace Ergo.Api.Controllers
             }
             return Ok(result);
         }
+        [HttpGet(&quot;{id}&quot;)]
         [Authorize(Roles = &quot;User&quot;)]
-        [HttpGet(&quot;{taskItemId}&quot;)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task&lt;IActionResult&gt; GetPhotosForTaskItem(Guid taskItemId)
+        public async Task&lt;IActionResult&gt; GetByUserId(Guid id)
         {
-            var result = await Mediator.Send(new GetPhotosForTaskItemQuery { TaskItemId = taskItemId });
-            if (!result.Success)
-            {
-                return BadRequest(result);
-            }
+            var result = await Mediator.Send(new GetBadgesForUserQuery { UserId = id });
             return Ok(result);
         }
+        [HttpPut]
         [Authorize(Roles = &quot;User&quot;)]
-        [HttpDelete(&quot;{photoId}&quot;)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task&lt;IActionResult&gt; DeletePhoto(Guid photoId)
+        public async Task&lt;IActionResult&gt; UpdateSpecialBadge(UpdateSpecialBadgeCommand command)
         {
-            var result = await Mediator.Send(new DeletePhotoCommand { PhotoId = photoId });
+            var result = await Mediator.Send(command);
             if (!result.Success)
             {
                 return BadRequest(result);
@@ -61,7 +57,7 @@ namespace Ergo.Api.Controllers
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[17,9,17,10,0],[18,13,18,55,0],[19,13,19,33,0],[20,13,20,14,0],[21,17,21,43,0],[23,13,23,31,0],[24,9,24,10,0],[29,9,29,10,0],[30,13,30,105,0],[31,13,31,33,0],[32,13,32,14,0],[33,17,33,43,0],[35,13,35,31,0],[36,9,36,10,0],[41,9,41,10,0],[42,13,42,92,0],[43,13,43,33,0],[44,13,44,14,0],[45,17,45,43,0],[47,13,47,31,0],[48,9,48,10,0]]);
+      highlightRanges([[17,9,17,10,0],[18,13,18,55,0],[19,13,19,33,0],[20,13,20,14,0],[21,17,21,43,0],[23,13,23,31,0],[24,9,24,10,0],[29,9,29,10,0],[30,13,30,89,0],[31,13,31,31,0],[32,9,32,10,0],[37,9,37,10,0],[38,13,38,55,0],[39,13,39,33,0],[40,13,40,14,0],[41,17,41,43,0],[43,13,43,31,0],[44,9,44,10,0]]);
     </script>
   </body>
 </html>

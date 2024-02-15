@@ -2,102 +2,97 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.API.IntegrationTests\Base\Seed.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.API.IntegrationTests\Base\BaseApplicationContextTests.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Models.Identity;
 using Ergo.Application.Persistence;
-using Ergo.Domain.Entities;
 using Ergo.Identity;
 using Ergo.Identity.Models;
-using Ergo.Identity.Services;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace Ergo.API.IntegrationTests.Base
 {
-    public class Seed
+    public class BaseApplicationContextTests
     {
-        public static void InitializeDbForTests(ErgoContext context)
+        protected readonly WebApplicationFactory&lt;Program&gt; Application;
+        protected readonly HttpClient Client;
+        protected BaseApplicationContextTests()
         {
-            var projects = new List&lt;Project&gt;
+            Application = new WebApplicationFactory&lt;Program&gt;();
+            Application = Application.WithWebHostBuilder(builder =&gt;
             {
-                Project.Create(&quot;Ergo&quot;, &quot;.NET&quot;, null, null,null, DateTime.UtcNow, &quot;John&quot;).Value,
-                Project.Create(&quot;Labs&quot;, &quot;.NET&quot;,  null, null,null, DateTime.UtcNow, &quot;George&quot;).Value,
-                Project.Create(&quot;Github&quot;, &quot;Angular&quot;, null, null, null, DateTime.UtcNow, &quot;John&quot;).Value,
-                Project.Create(&quot;LFAC&quot;, &quot;C&quot;,  null, null,null, DateTime.UtcNow, &quot;Josh&quot;).Value,
-            };
-            var tasks = new List&lt;TaskItem&gt;
-            {
-                TaskItem.Create(&quot;Ergo&quot;, &quot;Create project&quot;, DateTime.UtcNow,&quot;John&quot;,Guid.NewGuid(), null).Value,
-                TaskItem.Create(&quot;Labs&quot;, &quot;Create project&quot;, DateTime.UtcNow,&quot;George&quot;,Guid.NewGuid(), null).Value,
-                TaskItem.Create(&quot;Github&quot;, &quot;Create project&quot;, DateTime.UtcNow,&quot;John&quot;,Guid.NewGuid(), null).Value,
-                TaskItem.Create(&quot;LFAC&quot;, &quot;Create project&quot;, DateTime.UtcNow,&quot;Josh&quot;,Guid.NewGuid(), null).Value,
-
-            };
-            var users = new List&lt;User&gt;
-            {
-                User.Create(Guid.NewGuid()).Value,
-                User.Create(Guid.NewGuid()).Value,
-                User.Create(Guid.NewGuid()).Value,
-                User.Create(Guid.NewGuid()).Value,
-            };
-            var comments = new List&lt;Comment&gt;
-            {
-                Comment.Create(&quot;Mihai&quot;,Guid.NewGuid(),&quot;comment&quot;).Value,
-                Comment.Create(&quot;Mihai2&quot;,Guid.NewGuid(),&quot;comment2&quot;).Value,
-                Comment.Create(&quot;Mihai3&quot;,Guid.NewGuid(),&quot;comment3&quot;).Value,
-                Comment.Create(&quot;Mihai4&quot;,Guid.NewGuid(),&quot;comment4&quot;).Value,
-
-            };
-            var inboxItem = new List&lt;InboxItem&gt;
-            {
-                InboxItem.Create(Guid.NewGuid(),&quot;mesaj&quot;).Value,
-                InboxItem.Create(Guid.NewGuid(),&quot;mesaj2&quot;).Value,
-                InboxItem.Create(Guid.NewGuid(),&quot;mesaj3&quot;).Value,
-                InboxItem.Create(Guid.NewGuid(),&quot;mesaj4&quot;).Value,
-                
-
-            };
-
-            context.TaskItems.AddRange(tasks);
-            context.Projects.AddRange(projects);
-            context.Users.AddRange(users);
-            context.Comments.AddRange(comments);
-            context.SaveChanges();
-
-        }
-        public static async Task InitializeUserDbForTests(UserManager&lt;ApplicationUser&gt; userManager, RoleManager&lt;IdentityRole&gt; roleManager, IUserRepository userRepository, IPasswordResetCode passwordResetCode, IBadgeRepository badgeRepository)
-        {
-            var configuration = new ConfigurationBuilder().Build(); 
-            var authService = new AuthService(userManager, roleManager, configuration, null, userRepository,passwordResetCode, badgeRepository); 
-
-            var registrationModels = new List&lt;RegistrationModel&gt;
-        {
-            new RegistrationModel{ Username = &quot;john_doe&quot;, Email = &quot;john.doe@example.com&quot;, Name = &quot;John Doe&quot;, Password = &quot;ComplexPass1!&quot;},
-            new RegistrationModel{ Username = &quot;jane_doe&quot;, Email = &quot;jane_doe@example.com&quot;, Name = &quot;Jane Doe&quot;, Password = &quot;ComplexPass1!&quot;},
-
-        };
-
-            foreach (var model in registrationModels)
-            {
-                var (status, message) = await authService.Registeration(model, UserRoles.User);
-                if (status == 0)
+                builder.ConfigureServices(services =&gt;
                 {
-                    Console.WriteLine($&quot;Failed to create user: {message}&quot;);
-                }
-            }
+                    services.RemoveAll(typeof(DbContextOptions&lt;ErgoContext&gt;));
+                    services.AddDbContext&lt;ErgoContext&gt;(options =&gt;
+                    {
+                        options.UseInMemoryDatabase(&quot;ErgoDbForTesting&quot;);
+                    });
+
+                    services.Configure&lt;JwtBearerOptions&gt;(
+                        JwtBearerDefaults.AuthenticationScheme,
+                        options =&gt;
+                        {
+                            options.Configuration = new OpenIdConnectConfiguration
+                            {
+                                Issuer = JwtTokenProvider.Issuer,
+                            };
+                            options.TokenValidationParameters.ValidIssuer = JwtTokenProvider.Issuer;
+                            options.TokenValidationParameters.ValidAudience = JwtTokenProvider.Issuer;
+                            options.Configuration.SigningKeys.Add(JwtTokenProvider.SecurityKey);
+                        }
+                    );
+                    services.RemoveAll(typeof(DbContextOptions&lt;ApplicationDbContext&gt;));
+                    services.AddDbContext&lt;ApplicationDbContext&gt;(options =&gt;
+                    {
+                        options.UseInMemoryDatabase(&quot;ErgoUserDbForTesting&quot;);
+                    });
+                    var sp = services.BuildServiceProvider();
+                    using (var scope = sp.CreateScope())
+                    {
+                        var scopedServices = scope.ServiceProvider;
+                        var db = scopedServices.GetRequiredService&lt;ErgoContext&gt;();
+                        db.Database.EnsureCreated();
+
+                        Seed.InitializeDbForTests(db);
+                        var ergoUserDb = scopedServices.GetRequiredService&lt;ApplicationDbContext&gt;();
+                        ergoUserDb.Database.EnsureCreated();
+                        var userManager = scopedServices.GetRequiredService&lt;UserManager&lt;ApplicationUser&gt;&gt;();
+                        var roleManager = scopedServices.GetRequiredService&lt;RoleManager&lt;IdentityRole&gt;&gt;();
+                        var userRepository = scopedServices.GetRequiredService&lt;IUserRepository&gt;();
+                        var badgeRepository = scopedServices.GetRequiredService&lt;IBadgeRepository&gt;();
+                        var passwordResetCode = scopedServices.GetRequiredService&lt;IPasswordResetCode&gt;();
+                        
+                        Seed.InitializeUserDbForTests(userManager, roleManager, userRepository,passwordResetCode,badgeRepository);
+
+                    }
+                });
+            });
+            Client = Application.CreateClient();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            GC.SuppressFinalize(this);
+            await Application.DisposeAsync();
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[16,9,16,10,1],[17,13,23,15,1],[24,13,31,15,1],[32,13,38,15,1],[39,13,46,15,1],[47,13,55,15,1],[57,13,57,47,1],[58,13,58,49,1],[59,13,59,43,1],[60,13,60,49,1],[61,13,61,35,1],[63,9,63,10,1],[65,9,65,10,1],[66,13,66,68,1],[67,13,67,145,1],[69,13,74,11,1],[76,13,76,20,1],[76,22,76,31,1],[76,32,76,34,1],[76,35,76,53,1],[77,13,77,14,1],[78,17,78,96,1],[79,17,79,33,1],[80,17,80,18,1],[81,21,81,76,1],[82,17,82,18,1],[83,13,83,14,1],[84,9,84,10,1]]);
+      highlightRanges([[20,9,20,48,1],[21,9,21,10,1],[22,13,22,64,1],[23,13,24,13,1],[24,13,24,14,1],[24,14,25,17,1],[25,17,26,17,1],[26,17,26,18,1],[26,18,27,21,1],[27,21,27,79,1],[27,79,28,21,1],[28,21,29,21,1],[29,21,29,22,1],[29,22,30,25,1],[30,25,30,73,1],[30,73,31,21,1],[31,21,31,22,1],[31,22,31,24,1],[31,24,33,21,1],[33,21,36,25,1],[36,25,36,26,1],[36,26,37,29,1],[37,29,40,31,1],[40,31,41,29,1],[41,29,41,101,1],[41,101,42,29,1],[42,29,42,103,1],[42,103,43,29,1],[43,29,43,97,1],[43,97,44,25,1],[44,25,44,26,1],[44,26,45,23,1],[45,23,46,21,1],[46,21,46,88,1],[46,88,47,21,1],[47,21,48,21,1],[48,21,48,22,1],[48,22,49,25,1],[49,25,49,77,1],[49,77,50,21,1],[50,21,50,22,1],[50,22,50,24,1],[50,24,51,21,1],[51,21,51,62,1],[51,62,52,28,1],[52,28,52,56,1],[52,56,53,21,1],[53,21,53,22,1],[53,22,54,25,1],[54,25,54,68,1],[54,68,55,25,1],[55,25,55,83,1],[55,83,56,25,1],[56,25,56,53,1],[56,53,58,25,1],[58,25,58,55,1],[58,55,59,25,1],[59,25,59,100,1],[59,100,60,25,1],[60,25,60,61,1],[60,61,61,25,1],[61,25,61,109,1],[61,109,62,25,1],[62,25,62,106,1],[62,106,63,25,1],[63,25,63,99,1],[63,99,64,25,1],[64,25,64,101,1],[64,101,65,25,1],[65,25,65,105,1],[65,105,67,25,1],[67,25,67,131,1],[67,131,69,21,1],[69,21,69,22,1],[69,22,70,17,1],[70,17,70,18,1],[70,18,70,20,1],[70,20,71,13,1],[71,13,71,14,1],[71,14,71,16,1],[72,13,72,49,1],[73,9,73,10,1],[76,9,76,10,0],[77,13,77,39,0],[78,13,78,46,0],[79,9,79,10,0]]);
     </script>
   </body>
 </html>

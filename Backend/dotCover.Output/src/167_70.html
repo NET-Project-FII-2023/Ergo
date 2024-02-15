@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Commands\DeleteProject\DeleteProjectCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Commands\DeleteUserFromProject\DeleteUserFromProjectCommand.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,19 +10,18 @@
     <pre id="content" class="source-code">
 using MediatR;
 
-namespace Ergo.Application.Features.Projects.Commands.DeleteProject
+namespace Ergo.Application.Features.Projects.Commands.DeleteUserFromProject
 {
-    public class DeleteProjectCommand : IRequest&lt;DeleteProjectCommandResponse&gt;
+    public class DeleteUserFromProjectCommand : IRequest&lt;DeleteUserFromProjectCommandResponse&gt;
     {
-        public Guid ProjectId { get; set; }
-        public string Owner { get; set; }
-
+        public string OwnerUsername { get; set; }
+        public string UserId { get; set; }
+        public string ProjectId { get; set; }
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,33,7,37,0],[7,38,7,42,0],[8,31,8,35,0],[8,36,8,40,0]]);
+      highlightRanges([[7,39,7,43,0],[7,44,7,48,0],[8,32,8,36,0],[8,37,8,41,0],[9,35,9,39,0],[9,40,9,44,0]]);
     </script>
   </body>
 </html>

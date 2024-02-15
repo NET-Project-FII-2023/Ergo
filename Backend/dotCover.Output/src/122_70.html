@@ -2,27 +2,35 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\UserCommentDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Commands\UpdateRole\UpdateUserRoleCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Application.Features.Users.Queries
+using FluentValidation;
+
+namespace Ergo.Application.Features.Users.Commands.UpdateRole
 {
-    public class UserCommentDto
+    public class UpdateUserRoleCommandValidator : AbstractValidator&lt;UpdateUserRoleCommand&gt;
     {
-        public string? UserId { get; set; }
-        public string? Username { get; set; }
-        public string? Name { get; set; }
-        public string? Email { get; set; }
-        public UserCloudPhotoDto? UserPhoto { get; set; }
+        public UpdateUserRoleCommandValidator()
+        {
+            RuleFor(u =&gt; u.UserId)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
+            RuleFor(u =&gt; u.Role)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull()
+                .Must(role =&gt; role == &quot;Admin&quot; || role == &quot;User&quot;)
+                .WithMessage(&quot;{PropertyName} must be Admin or User&quot;);
+        }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,33,5,37,0],[5,38,5,42,0],[6,35,6,39,0],[6,40,6,44,0],[7,31,7,35,0],[7,36,7,40,0],[8,32,8,36,0],[8,37,8,41,0],[9,47,9,51,0],[9,52,9,56,0]]);
+      highlightRanges([[7,9,7,48,1],[8,9,8,10,1],[9,13,11,28,1],[12,13,15,31,1],[15,31,15,64,1],[15,64,16,70,1],[17,9,17,10,1]]);
     </script>
   </body>
 </html>

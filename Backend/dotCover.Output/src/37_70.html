@@ -2,33 +2,28 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\UserPhotos\Commands\UpdateTaskPhoto\UpdateUserPhotoCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\UserPhotos\Queries\GetUserPhoto\GetUserPhotoQueryResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
+using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.UserPhotos.Commands.UpdateTaskPhoto
+namespace Ergo.Application.Features.UserPhotos.Queries.GetUserPhoto
 {
-    public class UpdateUserPhotoCommandValidator : AbstractValidator&lt;UpdateUserPhotoCommand&gt;
+    public class GetUserPhotoQueryResponse : BaseResponse
     {
-        public UpdateUserPhotoCommandValidator()
+        public GetUserPhotoQueryResponse() : base()
         {
-            RuleFor(p =&gt; p.UserPhotoId)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull();
-            RuleFor(p =&gt; p.PhotoUrl)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull();
         }
+        public Guid UserPhotoId { get; set; }
+        public string UserPhotoUrl { get; set; }
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,49,0],[8,9,8,10,0],[9,13,11,28,0],[12,13,14,28,0],[15,9,15,10,0]]);
+      highlightRanges([[7,46,7,52,0],[8,9,8,10,0],[9,9,9,10,0],[10,35,10,39,0],[10,40,10,44,0],[11,38,11,42,0],[11,43,11,47,0]]);
     </script>
   </body>
 </html>

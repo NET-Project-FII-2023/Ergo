@@ -2,13 +2,12 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240202152318_UserPhoto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240201121418_Project-GithubToken.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -16,37 +15,31 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// &lt;inheritdoc /&gt;
-    public partial class UserPhoto : Migration
+    public partial class ProjectGithubToken : Migration
     {
         /// &lt;inheritdoc /&gt;
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: &quot;UserPhotos&quot;,
-                columns: table =&gt; new
-                {
-                    UserPhotoId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
-                    PhotoUrl = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
-                    UserId = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false)
-                },
-                constraints: table =&gt;
-                {
-                    table.PrimaryKey(&quot;PK_UserPhotos&quot;, x =&gt; x.UserPhotoId);
-                });
+            migrationBuilder.AddColumn&lt;string&gt;(
+                name: &quot;GithubToken&quot;,
+                table: &quot;Projects&quot;,
+                type: &quot;text&quot;,
+                nullable: true);
         }
 
         /// &lt;inheritdoc /&gt;
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: &quot;UserPhotos&quot;);
+            migrationBuilder.DropColumn(
+                name: &quot;GithubToken&quot;,
+                table: &quot;Projects&quot;);
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[13,9,13,10,0],[14,13,16,35,0],[16,35,21,18,0],[21,18,23,17,0],[23,17,23,18,0],[23,18,24,21,0],[24,21,24,75,0],[24,75,25,17,0],[25,17,25,18,0],[25,18,25,20,0],[26,9,26,10,0],[30,9,30,10,0],[31,13,32,37,0],[33,9,33,10,0]]);
+      highlightRanges([[12,9,12,10,0],[13,13,17,33,0],[18,9,18,10,0],[22,9,22,10,0],[23,13,25,36,0],[26,9,26,10,0]]);
     </script>
   </body>
 </html>

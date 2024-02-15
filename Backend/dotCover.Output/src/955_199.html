@@ -2,24 +2,25 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\AwsS3\S3ResponseDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\OpenAi\Usage.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Api.Models.AwsS3
+namespace Ergo.Api.Models.OpenAi
 {
-    public class S3ResponseDto
+    public class Usage
     {
-        public int StatusCode { get; set; } = 200;
-        public string Message { get; set; } = &quot;&quot;;
+        public int PromptTokens { get; set; }
+        public int CompletionTokens { get; set; }
+        public int TotalTokens { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,33,5,37,0],[5,38,5,42,0],[5,47,5,50,0],[6,33,6,37,0],[6,38,6,42,0],[6,47,6,49,0]]);
+      highlightRanges([[5,35,5,39,0],[5,40,5,44,0],[6,39,6,43,0],[6,44,6,48,0],[7,34,7,38,0],[7,39,7,43,0]]);
     </script>
   </body>
 </html>

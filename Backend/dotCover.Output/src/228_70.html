@@ -2,88 +2,69 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\CreateComment\CreateCommentCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\DeleteComment\DeleteCommentCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
 using Ergo.Application.Persistence;
-using Ergo.Domain.Entities;
-using Ergo.Domain.Entities.Enums;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ergo.Application.Features.Comments.Commands.CreateComment
+namespace Ergo.Application.Features.Comments.Commands.DeleteComment
 {
-    public class CreateCommentCommandHandler : IRequestHandler&lt;CreateCommentCommand, CreateCommentCommandResponse&gt;
+    public class DeleteCommentCommandHandler : IRequestHandler&lt;DeleteCommentCommand, DeleteCommentCommandResponse&gt;
     {
-        private readonly ICommentRepository commentRepository;
-        private readonly ITaskItemRepository taskItemRepository;
-        public CreateCommentCommandHandler(ICommentRepository commentRepository, ITaskItemRepository taskItemRepository)
+        private readonly ICommentRepository repository;
+        public DeleteCommentCommandHandler(ICommentRepository repository)
         {
-            this.commentRepository = commentRepository;
-            this.taskItemRepository = taskItemRepository;
+            this.repository = repository;
         }
 
-        public async Task&lt;CreateCommentCommandResponse&gt; Handle(CreateCommentCommand request, CancellationToken cancellationToken)
+        public async Task&lt;DeleteCommentCommandResponse&gt; Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateCommentCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-            if (!validatorResult.IsValid) 
+            DeleteCommentCommandResponse response = new();
+            var validator = new DeleteCommentCommandValidator();
+            var validationResult = await validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
             {
-                return new CreateCommentCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
-                };
+                response.Success = false;
+                response.ValidationsErrors = validationResult.Errors.Select(x =&gt; x.ErrorMessage).ToList();
+                return response;
             }
+            var commentToDelete = await repository.FindByIdAsync(request.CommentId);
 
-            var taskItemExists = await taskItemRepository.TaskItemExists(request.TaskId);
-            if (!taskItemExists)
+            if (commentToDelete == null)
             {
-                return new CreateCommentCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;TaskItem with the provided ID does not exist.&quot; }
-                };
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { &quot;Comment not found&quot; };
+                return response;
             }
-
-            var comment = Comment.Create(request.CreatedBy,request.TaskId,request.CommentText);
-            if (!comment.IsSuccess)
+            if(request.Owner != commentToDelete.Value.CreatedBy)
             {
-                return new CreateCommentCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { comment.Error }
-                };
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { &quot;You didn&#39;t post this comment&quot; };
+                return response;
             }
-            await commentRepository.AddAsync(comment.Value);
-            return new CreateCommentCommandResponse
+            var result = await repository.DeleteAsync(request.CommentId);
+            if (!result.IsSuccess)
             {
-                Success = true,
-                Comment = new CreateCommentDto
-                {
-                    
-                    CreatedBy = request.CreatedBy,
-                    CreatedDate = request.CreatedDate,
-                    LastModifiedBy = request.LastModifiedBy,
-                    LastModifiedDate = request.LastModifiedDate,
-                    CommentText = request.CommentText,
-                    TaskId = request.TaskId
-                }
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { result.Error };
+                return response;
+            }
+            return new DeleteCommentCommandResponse
+            {
+                Success = true
             };
+
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[17,9,17,121,1],[18,9,18,10,1],[19,13,19,56,1],[20,13,20,58,1],[21,9,21,10,1],[24,9,24,10,1],[25,13,25,65,1],[26,13,26,93,1],[27,13,27,42,1],[28,13,28,14,1],[29,17,32,76,1],[32,76,32,90,1],[32,90,33,19,1],[36,13,36,90,1],[37,13,37,33,1],[38,13,38,14,1],[39,17,43,19,1],[46,13,46,96,1],[47,13,47,36,1],[48,13,48,14,0],[49,17,53,19,0],[55,13,55,61,1],[56,13,69,15,1],[70,9,70,10,1]]);
+      highlightRanges([[9,9,9,74,1],[10,9,10,10,1],[11,13,11,42,1],[12,9,12,10,1],[15,9,15,10,1],[16,13,16,59,1],[17,13,17,65,1],[18,13,18,75,1],[19,13,19,43,1],[20,13,20,14,1],[21,17,21,42,1],[22,17,22,82,1],[22,82,22,96,1],[22,96,22,107,1],[23,17,23,33,1],[25,13,25,85,1],[27,13,27,41,1],[28,13,28,14,0],[29,17,29,42,0],[30,17,30,87,0],[31,17,31,33,0],[33,13,33,65,1],[34,13,34,14,0],[35,17,35,42,0],[36,17,36,98,0],[37,17,37,33,0],[39,13,39,74,1],[40,13,40,35,1],[41,13,41,14,1],[42,17,42,42,1],[43,17,43,80,1],[44,17,44,33,1],[46,13,49,15,1],[51,9,51,10,1]]);
     </script>
   </body>
 </html>

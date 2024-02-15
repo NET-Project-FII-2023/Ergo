@@ -2,43 +2,83 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\PhotoRepositoryMocks.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\UserPhotos\Commands\UpdateUserPhotoCommandHandlerTests.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using Ergo.Application.Features.UserPhotos.Commands.UpdateTaskPhoto;
 using Ergo.Application.Persistence;
 using Ergo.Domain.Common;
 using Ergo.Domain.Entities;
+using FluentAssertions;
 using NSubstitute;
 
-namespace Ergo.Application.Tests.RepositoryMocks
+namespace Ergo.Application.Tests.UserPhotos.Commands
 {
-    public static class PhotoRepositoryMocks
+    public class UpdateUserPhotoCommandHandlerTests
     {
-        internal readonly static List&lt;Photo&gt; Photos =
-            [
-                Photo.Create(Guid.Parse(&quot;00000000-0000-0000-0000-000000000000&quot;), &quot;token&quot;).Value,
-                Photo.Create(Guid.Parse(&quot;00000000-0000-0000-0000-000000000000&quot;), &quot;token&quot;).Value,
-            ];
-        public static IPhotoRepository GetPhotoRepository()
+        private readonly IUserPhotoRepository _mockUserPhotoRepository;
+        private readonly UpdateUserPhotoCommandHandler _handler;
+        public UpdateUserPhotoCommandHandlerTests()
         {
-            var mockPhotoRepository = Substitute.For&lt;IPhotoRepository&gt;();
-            mockPhotoRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;Photo&gt;&gt;.Success(Photos));
-            mockPhotoRepository.FindByIdAsync(Photos[0].PhotoId).Returns(Result&lt;Photo&gt;.Success(Photos[0]));
-            mockPhotoRepository.FindByIdAsync(Photos[1].PhotoId).Returns(Result&lt;Photo&gt;.Success(Photos[1]));
-            mockPhotoRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != Photos[0].PhotoId &amp;&amp; id != Photos[1].PhotoId)).Returns(Result&lt;Photo&gt;.Failure(&quot;Not found&quot;));
-            return mockPhotoRepository;
-
-
+            _mockUserPhotoRepository = Substitute.For&lt;IUserPhotoRepository&gt;();  
+            _handler = new UpdateUserPhotoCommandHandler(_mockUserPhotoRepository);
+        }
+        [Fact]
+        public async Task Handle_SuccessfulUpdate()
+        {
+            // Arrange
+            var command = new UpdateUserPhotoCommand
+            {
+                UserPhotoId = Guid.NewGuid().ToString(),
+                PhotoUrl = &quot;https://example.com/photo.jpg&quot;
+            };
+            var userPhoto = UserPhoto.Create(&quot;https://example.com/photo.jpg&quot;, Guid.NewGuid().ToString());
+            _mockUserPhotoRepository.FindByIdAsync(Guid.Parse(command.UserPhotoId)).Returns(Result&lt;UserPhoto&gt;.Success(userPhoto.Value));
+            // Act
+            var response = await _handler.Handle(command, new CancellationToken());
+            // Assert
+            response.Success.Should().BeTrue();
+        }
+        [Fact]
+        public async Task Handle_InvalidPhotoUrl_ReturnsErrorResponse()
+        {
+            // Arrange
+            var command = new UpdateUserPhotoCommand
+            {
+                UserPhotoId = Guid.NewGuid().ToString(),
+                PhotoUrl = &quot; &quot;
+            };
+            var userPhoto = UserPhoto.Create(&quot;https://example.com/photo.jpg&quot;, Guid.NewGuid().ToString());
+            _mockUserPhotoRepository.FindByIdAsync(Guid.Parse(command.UserPhotoId)).Returns(Result&lt;UserPhoto&gt;.Success(userPhoto.Value));
+            // Act
+            var response = await _handler.Handle(command, new CancellationToken());
+            // Assert
+            response.Success.Should().BeFalse();
+        }
+        [Fact]
+        public async Task Handle_InvalidUserPhotoId_ReturnsErrorResponse()
+        {
+            // Arrange
+            var command = new UpdateUserPhotoCommand
+            {
+                UserPhotoId = Guid.NewGuid().ToString(),
+                PhotoUrl = &quot;https://example.com/photo.jpg&quot;
+            };
+            _mockUserPhotoRepository.FindByIdAsync(Guid.Parse(command.UserPhotoId)).Returns(Result&lt;UserPhoto&gt;.Failure(&quot;Not found&quot;));
+            // Act
+            var response = await _handler.Handle(command, new CancellationToken());
+            // Assert
+            response.Success.Should().BeFalse();
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,14,15,0],[16,9,16,10,0],[17,13,17,74,0],[18,13,18,101,0],[19,13,19,108,0],[20,13,20,108,0],[21,13,21,163,0],[22,13,22,40,0],[25,9,25,10,0]]);
+      highlightRanges([[14,9,14,52,1],[15,9,15,10,1],[16,13,16,79,1],[17,13,17,84,1],[18,9,18,10,1],[21,9,21,10,1],[23,13,27,15,1],[28,13,28,106,1],[29,13,29,137,1],[31,13,31,84,1],[33,13,33,48,1],[34,9,34,10,1],[37,9,37,10,1],[39,13,43,15,1],[44,13,44,106,1],[45,13,45,137,1],[47,13,47,84,1],[49,13,49,49,1],[50,9,50,10,1],[53,9,53,10,1],[55,13,59,15,1],[60,13,60,133,1],[62,13,62,84,1],[64,13,64,49,1],[65,9,65,10,1]]);
     </script>
   </body>
 </html>

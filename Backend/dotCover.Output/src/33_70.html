@@ -2,28 +2,36 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\UserPhotos\Queries\GetUserPhoto\GetUserPhotoQueryResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Models\Identity\RegistrationModel.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
+using System.ComponentModel.DataAnnotations;
 
-namespace Ergo.Application.Features.UserPhotos.Queries.GetUserPhoto
+namespace Ergo.Application.Models.Identity
 {
-    public class GetUserPhotoQueryResponse : BaseResponse
+    public class RegistrationModel
     {
-        public GetUserPhotoQueryResponse() : base()
-        {
-        }
-        public Guid UserPhotoId { get; set; }
-        public string UserPhotoUrl { get; set; }
+        [Required(ErrorMessage = &quot;User Name is required&quot;)]
+        public string? Username { get; set; }
+
+        [Required(ErrorMessage = &quot;Name is required&quot;)]
+        public string? Name { get; set; }
+
+        [EmailAddress]
+        [Required(ErrorMessage = &quot;Email is required&quot;)]
+        public string? Email { get; set; }
+
+        [Required(ErrorMessage = &quot;Password is required&quot;)]
+        public string? Password { get; set; }
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,46,7,52,0],[8,9,8,10,0],[9,9,9,10,0],[10,35,10,39,0],[10,40,10,44,0],[11,38,11,42,0],[11,43,11,47,0]]);
+      highlightRanges([[8,35,8,39,1],[8,40,8,44,1],[11,31,11,35,1],[11,36,11,40,1],[15,32,15,36,1],[15,37,15,41,1],[18,35,18,39,1],[18,40,18,44,1]]);
     </script>
   </body>
 </html>

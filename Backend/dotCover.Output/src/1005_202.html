@@ -2,31 +2,34 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Repositories\UserRepository.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Repositories\PhotoRepository.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Domain.Entities;
 using Ergo.Application.Persistence;
-using Ergo.Domain.Common;
-using Microsoft.EntityFrameworkCore;
+using Ergo.Domain.Entities;
 
-namespace Infrastructure.Repositories;
-
-public class UserRepository : BaseRepository&lt;User&gt;, IUserRepository
+namespace Infrastructure.Repositories
 {
-    public UserRepository(ErgoContext context) : base(context)
+    public class PhotoRepository : BaseRepository&lt;Photo&gt;, IPhotoRepository
     {
+        public PhotoRepository(ErgoContext context) : base(context)
+        {
 
+        }
+
+        public  Task&lt;List&lt;Photo&gt;&gt; GetByTaskItemIdAsync(Guid taskItemId)
+        {
+            return Task.FromResult(context.Photos.Where(p =&gt; p.TaskItemId == taskItemId).ToList());
+        }
     }
-
-
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,50,10,63,1],[11,5,11,6,1],[13,5,13,6,1]]);
+      highlightRanges([[8,55,8,68,1],[9,9,9,10,1],[11,9,11,10,1],[14,9,14,10,1],[15,13,15,100,1],[16,9,16,10,1]]);
     </script>
   </body>
 </html>

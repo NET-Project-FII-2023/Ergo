@@ -2,96 +2,105 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\StartTimerTaskItem\StartTimerTaskItemCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\UnassignUserFromTaskItem\UnassignUserFromTaskItemCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser;
 using Ergo.Application.Persistence;
-using Ergo.Domain.Entities.Enums;
 using MediatR;
 
-namespace Ergo.Application.Features.TaskItems.Commands.StartTimerTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.UnassignUserFromTaskItem
 {
-    public class StartTimerTaskItemCommandHandler : IRequestHandler&lt;StartTimerTaskItemCommand, StartTimerTaskItemCommandResponse&gt;
+    public class UnassignUserFromTaskItemCommandHandler : IRequestHandler&lt;UnassignUserFromTaskItemCommand, UnassignUserFromTaskItemCommandResponse&gt;
     {
         private readonly ITaskItemRepository taskItemRepository;
-
-        public StartTimerTaskItemCommandHandler(ITaskItemRepository taskItemRepository)
+        private readonly IUserRepository userRepository;
+        private readonly IProjectRepository projectRepository;
+        public UnassignUserFromTaskItemCommandHandler(ITaskItemRepository taskItemRepository, IUserRepository userRepository, IProjectRepository projectRepository)
         {
             this.taskItemRepository = taskItemRepository;
+            this.userRepository = userRepository;
+            this.projectRepository = projectRepository;
         }
-        public async Task&lt;StartTimerTaskItemCommandResponse&gt; Handle(StartTimerTaskItemCommand request, CancellationToken cancellationToken)
+
+        public async Task&lt;UnassignUserFromTaskItemCommandResponse&gt; Handle(UnassignUserFromTaskItemCommand request, CancellationToken cancellationToken)
         {
-            var validator = new StartTimerTaskItemCommandValidator();
-            var validatorResult = validator.Validate(request);
-            if(!validatorResult.IsValid)
+            var validationResult = new UnassignUserFromTaskItemCommandValidator().Validate(request);
+            if (!validationResult.IsValid)
             {
-                return new StartTimerTaskItemCommandResponse
+                return new UnassignUserFromTaskItemCommandResponse
                 {
                     Success = false,
-                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
+                    ValidationsErrors = validationResult.Errors.Select(x =&gt; x.ErrorMessage).ToList()
                 };
             }
             var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
             if (!taskItem.IsSuccess)
             {
-                return new StartTimerTaskItemCommandResponse
+                return new UnassignUserFromTaskItemCommandResponse
                 {
                     Success = false,
                     ValidationsErrors = new List&lt;string&gt; { taskItem.Error }
-                }; 
-            }
-            if (taskItem.Value.State == TaskState.Done)
-            {
-                return new StartTimerTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item is already done&quot; }
                 };
             }
-            var assignedUserId = await taskItemRepository.GetAssignedUser(request.TaskItemId);
-            if(!assignedUserId.IsSuccess)
+            var user = await userRepository.FindByIdAsync(request.UserId);
+            if (!user.IsSuccess)
             {
-                return new StartTimerTaskItemCommandResponse
+                return new UnassignUserFromTaskItemCommandResponse
                 {
                     Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { assignedUserId.Error }
+                    ValidationsErrors = new List&lt;string&gt; { user.Error }
                 };
             }
-            if(Guid.Parse(assignedUserId.Value) != request.UserId)
+            var project = await projectRepository.FindByIdAsync(taskItem.Value.ProjectId);
+            if (!project.IsSuccess)
             {
-                return new StartTimerTaskItemCommandResponse
+                return new UnassignUserFromTaskItemCommandResponse
                 {
                     Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item is not assigned to this user&quot; }
+                    ValidationsErrors = new List&lt;string&gt; { project.Error }
                 };
             }
-            
-            var response = taskItem.Value.StartOrResumeTask();
-            if (!response.IsSuccess)
+            if(request.OwnerUsername != project.Value.CreatedBy)
             {
-                return new StartTimerTaskItemCommandResponse
+                return new UnassignUserFromTaskItemCommandResponse
                 {
                     Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { response.Error }
+                    ValidationsErrors = new List&lt;string&gt; { &quot;You are not the owner of this project.&quot; }
+                };
+            }
+            var unassignResult = taskItem.Value.UnassignUser();
+            if (!unassignResult.IsSuccess)
+            {
+                return new UnassignUserFromTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { unassignResult.Error }
                 };
             }
             var result = await taskItemRepository.UpdateAsync(taskItem.Value);
-            return new StartTimerTaskItemCommandResponse
+            if(!result.IsSuccess)
             {
-                Success = result.IsSuccess,
-                StartTime = taskItem.Value.StartTime.Value
+                return new UnassignUserFromTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { result.Error }
+                };
+            }
+            return new UnassignUserFromTaskItemCommandResponse
+            {
+                Success = true
             };
         }
     }
+
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,9,12,88,0],[13,9,13,10,0],[14,13,14,58,0],[15,9,15,10,0],[17,9,17,10,0],[18,13,18,70,0],[19,13,19,63,0],[20,13,20,41,0],[21,13,21,14,0],[22,17,25,76,0],[25,76,25,90,0],[25,90,26,19,0],[28,13,28,87,0],[29,13,29,37,0],[30,13,30,14,0],[31,17,35,19,0],[37,13,37,56,0],[38,13,38,14,0],[39,17,43,19,0],[45,13,45,95,0],[46,13,46,42,0],[47,13,47,14,0],[48,17,52,19,0],[54,13,54,67,0],[55,13,55,14,0],[56,17,60,19,0],[63,13,63,63,0],[64,13,64,37,0],[65,13,65,14,0],[66,17,70,19,0],[72,13,72,79,0],[73,13,77,15,0],[78,9,78,10,0]]);
+      highlightRanges([[11,9,11,164,0],[12,9,12,10,0],[13,13,13,58,0],[14,13,14,50,0],[15,13,15,56,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,20,101,0],[21,13,21,43,0],[22,13,22,14,0],[23,17,26,77,0],[26,77,26,91,0],[26,91,27,19,0],[29,13,29,87,0],[30,13,30,37,0],[31,13,31,14,0],[32,17,36,19,0],[38,13,38,75,0],[39,13,39,33,0],[40,13,40,14,0],[41,17,45,19,0],[47,13,47,91,0],[48,13,48,36,0],[49,13,49,14,0],[50,17,54,19,0],[56,13,56,65,0],[57,13,57,14,0],[58,17,62,19,0],[64,13,64,64,0],[65,13,65,43,0],[66,13,66,14,0],[67,17,71,19,0],[73,13,73,79,0],[74,13,74,34,0],[75,13,75,14,0],[76,17,80,19,0],[82,13,85,15,0],[86,9,86,10,0]]);
     </script>
   </body>
 </html>

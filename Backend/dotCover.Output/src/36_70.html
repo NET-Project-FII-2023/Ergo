@@ -2,29 +2,53 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\UserPhotos\Commands\UpdateTaskPhoto\UpdateUserPhotoCommandResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\UserPhotos\Queries\GetUserPhoto\GetUserPhotoQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Users;
-using Ergo.Application.Responses;
+using Ergo.Application.Persistence;
+using MediatR;
 
-namespace Ergo.Application.Features.UserPhotos.Commands.UpdateTaskPhoto
+namespace Ergo.Application.Features.UserPhotos.Queries.GetUserPhoto
 {
-    public class UpdateUserPhotoCommandResponse : BaseResponse
+    public class GetUserPhotoQueryHandler : IRequestHandler&lt;GetUserPhotoQuery, GetUserPhotoQueryResponse&gt;
     {
-        public UpdateUserPhotoCommandResponse() : base()
+        private readonly IUserPhotoRepository userPhotoRepository;
+
+        public GetUserPhotoQueryHandler(IUserPhotoRepository userPhotoRepository)
         {
+            this.userPhotoRepository = userPhotoRepository;
         }
 
-        public UserCloudPhotoDto UserPhoto { get; set; }
+        public async Task&lt;GetUserPhotoQueryResponse&gt; Handle(GetUserPhotoQuery request, CancellationToken cancellationToken)
+        {
+            var userPhoto = await userPhotoRepository.GetUserPhotoByUserIdAsync(request.UserId);
+            if (!userPhoto.IsSuccess)
+            {
+                return new GetUserPhotoQueryResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { userPhoto.Error }
+                };
+            }
+
+            return new GetUserPhotoQueryResponse
+            {
+                Success = true,
+                UserPhotoId = userPhoto.Value.UserPhotoId,
+                UserPhotoUrl = userPhoto.Value.PhotoUrl
+            };
+
+        }
+
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[8,51,8,57,0],[9,9,9,10,0],[10,9,10,10,0],[12,46,12,50,0],[12,51,12,55,0]]);
+      highlightRanges([[10,9,10,82,0],[11,9,11,10,0],[12,13,12,60,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,97,0],[18,13,18,38,0],[19,13,19,14,0],[20,17,24,19,0],[27,13,32,15,0],[34,9,34,10,0]]);
     </script>
   </body>
 </html>

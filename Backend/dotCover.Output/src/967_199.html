@@ -2,51 +2,45 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\UsersController.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\ProjectsController.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.UserPhotos.Queries.GetUserPhoto;
-using Ergo.Application.Features.Users.Commands.DeleteUser;
-using Ergo.Application.Features.Users.Commands.UpdateRole;
-using Ergo.Application.Features.Users.Commands.UpdateUser;
-using Ergo.Application.Features.Users.Queries.GetAll;
-using Ergo.Application.Features.Users.Queries.GetByEmail;
-using Ergo.Application.Features.Users.Queries.GetById;
-using Ergo.Application.Features.Users.Queries.GetByProjectId;
-using Ergo.Application.Features.Users.Queries.GetUserStats;
-using Ergo.Application.Features.Users.Queries.Search;
+ using Ergo.Application.Features.Projects.Commands.CreateProject;
+using Ergo.Application.Features.Projects.Commands.UpdateProject;
+using Ergo.Application.Features.Projects.Commands.DeleteProject;
+using Ergo.Application.Features.Projects.Queries.GetAll;
+using Ergo.Application.Features.Projects.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Ergo.Application.Features.Projects.Commands.AssignUserToProject;
+using Ergo.Application.Features.Projects.Queries.GetProjectsByUserId;
+using Ergo.Application.Features.Projects.Commands.DeleteUserFromProject;
 
 namespace Ergo.Api.Controllers;
 
-public class UsersController : ApiControllerBase
+public class ProjectsController : ApiControllerBase
 {
-    //[Authorize(Roles = &quot;User&quot;)]
-    //[HttpPost]
-    //[ProducesResponseType(StatusCodes.Status201Created)]
-    //public async Task&lt;IActionResult&gt; Create(CreateUserCommand command)
-    //{
-    //    var result = await Mediator.Send(command);
-    //    if (!result.Success)
-    //    {
-    //        return BadRequest(result);
-    //    }
-    //    return Ok(result);
-    //}
-
-    //[Authorize(Roles = &quot;User&quot;)]
-    [HttpPut(&quot;{id}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; Update(Guid id, UpdateUserCommand command)
+    [Authorize(Roles = &quot;User&quot;)]
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task&lt;IActionResult&gt; Create(CreateProjectCommand command)
     {
-        if (id != command.Id)
+        var result = await Mediator.Send(command);
+        if (!result.Success)
         {
-            return BadRequest(&quot;The ids must be the same!&quot;);
+            return BadRequest(result);
         }
+        return Ok(result);
+    }
+
+    [Authorize(Roles = &quot;User&quot;)]
+    [HttpPut (&quot;{id}&quot;)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task&lt;IActionResult&gt; Update(UpdateProjectCommand command)
+    {
         var result = await Mediator.Send(command);
         if (!result.Success)
         {
@@ -60,16 +54,54 @@ public class UsersController : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task&lt;IActionResult&gt; GetAll()
     {
-        var result = await Mediator.Send(new GetAllUsersQuery());
+        var result = await Mediator.Send(new GetAllProjectsQuery());
         return Ok(result);
     }
 
-    [Authorize(Roles = &quot;Admin&quot;)]
+    [Authorize(Roles = &quot;User&quot;)]
+    [HttpGet(&quot;{id}&quot;)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task&lt;IActionResult&gt; GetById(Guid id)
+    {
+        var query = new GetByIdProjectQuery (id);
+        var result = await Mediator.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = &quot;User&quot;)]
     [HttpDelete(&quot;{id}&quot;)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; Delete(Guid id)
+    public async Task&lt;IActionResult&gt; Delete(Guid id, DeleteProjectCommand command)
     {
-        var command = new DeleteUserCommand { UserId = id };
+        if (id != command.ProjectId)
+        {
+            return BadRequest(&quot;Input id&#39;s doesn&#39;t match!&quot;);
+        }
+        var result = await Mediator.Send(command);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [Authorize(Roles = &quot;User&quot;)]
+    [HttpPost]
+    [Route(&quot;AssignUserToProject&quot;)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task&lt;IActionResult&gt; AssignUserToProject(AssignUserToProjectCommand command)
+    {
+        var result = await Mediator.Send(command);
+        if (!result.Success)
+        {
+            return BadRequest(result);
+        }
+        return Ok(result);
+    }
+    [Authorize(Roles = &quot;User&quot;)]
+    [HttpPost(&quot;DeleteUserFromProject&quot;)] // Specify the route for the POST action
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    public async Task&lt;IActionResult&gt; DeleteUserFromProject(DeleteUserFromProjectCommand command)
+    {
         var result = await Mediator.Send(command);
         if (!result.Success)
         {
@@ -79,122 +111,20 @@ public class UsersController : ApiControllerBase
     }
 
     [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;ById/{id}&quot;)]
+    [HttpGet]
+    [Route(&quot;GetProjectsByUserId/{userId}&quot;)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetUserById(string id)
+    public async Task&lt;IActionResult&gt; GetProjectsByUserId(string userId)
     {
-        var query = new GetByIdUserQuery { UserId = id };
-        var result = await Mediator.Send(query);
-        if(!result.Success)
-        {
-            if(result.Message == $&quot;User with id {id} not found&quot;)
-            {
-                return NotFound(result);
-            }
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
-
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;ByEmail/{email}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetUserByEmail(string email)
-    {
-        var query = new GetByEmailUserQuery { Email = email };
-        var result = await Mediator.Send(query);
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
-
-    [Authorize(Roles =&quot;Admin&quot;)]
-    [HttpPut(&quot;/role/{id}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; UpdateRole(Guid id, UpdateUserRoleCommand command)
-    {
-        if (id != command.UserId)
-        {
-            return BadRequest(&quot;The ids must be the same!&quot;);
-        }
-        var result = await Mediator.Send(command);
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
-
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;ByProjectId/{projectId}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetUsersByProjectId(string projectId)
-    {
-        var query = new GetUsersByProjectIdQuery { ProjectId = projectId };
-        var result = await Mediator.Send(query);
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
-
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;photo/{id}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetPhotoByUserId(string id)
-    {
-        var query = new GetUserPhotoQuery() { UserId = id };
-        var result = await Mediator.Send(query);
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;stats/{userId}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetUserStats(string userId)
-    {
-        var query = new GetUserStatsQuery() { UserId = userId };
-        var result = await Mediator.Send(query);
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
-
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;search/{searchValue}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; SearchUsers(string searchValue)
-    {
-        var query = new SearchUsersQuery { SearchValue = searchValue };
+        var query = new GetProjectsByUserIdQuery { UserId = userId};
         var result = await Mediator.Send(query);
         return Ok(result);
     }
-
-    //[HttpPost]
-    //[Route(&quot;reset-code&quot;)]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //public async Task&lt;IActionResult&gt; ResetCode(ResetCodeCommand command)
-    //{
-    //    var result = await Mediator.Send(command);
-    //    if (!result.Success)
-    //    {
-    //        return BadRequest(result);
-    //    }
-    //    return Ok(result);
-    //}
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[35,5,35,6,0],[36,9,36,30,0],[37,9,37,10,0],[38,13,38,60,0],[40,9,40,51,0],[41,9,41,29,0],[42,9,42,10,0],[43,13,43,39,0],[45,9,45,27,0],[46,5,46,6,0],[52,5,52,6,1],[53,9,53,66,1],[54,9,54,27,1],[55,5,55,6,1],[61,5,61,6,0],[62,9,62,61,0],[63,9,63,51,0],[64,9,64,29,0],[65,9,65,10,0],[66,13,66,39,0],[68,9,68,27,0],[69,5,69,6,0],[75,5,75,6,0],[76,9,76,58,0],[77,9,77,49,0],[78,9,78,28,0],[79,9,79,10,0],[80,13,80,65,0],[81,13,81,14,0],[82,17,82,41,0],[84,13,84,39,0],[86,9,86,27,0],[87,5,87,6,0],[93,5,93,6,1],[94,9,94,63,1],[95,9,95,49,1],[96,9,96,29,0],[97,9,97,10,0],[98,13,98,39,0],[100,9,100,27,0],[101,5,101,6,0],[107,5,107,6,0],[108,9,108,34,0],[109,9,109,10,0],[110,13,110,60,0],[112,9,112,51,0],[113,9,113,29,0],[114,9,114,10,0],[115,13,115,39,0],[117,9,117,27,0],[118,5,118,6,0],[124,5,124,6,0],[125,9,125,76,0],[126,9,126,49,0],[127,9,127,29,0],[128,9,128,10,0],[129,13,129,39,0],[131,9,131,27,0],[132,5,132,6,0],[138,5,138,6,0],[139,9,139,61,0],[140,9,140,49,0],[141,9,141,29,0],[142,9,142,10,0],[143,13,143,39,0],[145,9,145,27,0],[146,5,146,6,0],[151,5,151,6,0],[152,9,152,65,0],[153,9,153,49,0],[154,9,154,29,0],[155,9,155,10,0],[156,13,156,39,0],[158,9,158,27,0],[159,5,159,6,0],[165,5,165,6,0],[166,9,166,72,0],[167,9,167,49,0],[168,9,168,27,0],[169,5,169,6,0]]);
+      highlightRanges([[20,5,20,6,1],[21,9,21,51,1],[22,9,22,29,1],[23,9,23,10,1],[24,13,24,39,1],[26,9,26,27,0],[27,5,27,6,1],[33,5,33,6,0],[34,9,34,51,0],[35,9,35,29,0],[36,9,36,10,0],[37,13,37,39,0],[39,9,39,27,0],[40,5,40,6,0],[46,5,46,6,1],[47,9,47,69,1],[48,9,48,27,1],[49,5,49,6,1],[55,5,55,6,1],[56,9,56,50,1],[57,9,57,49,1],[58,9,58,27,1],[59,5,59,6,1],[65,5,65,6,0],[66,9,66,37,0],[67,9,67,10,0],[68,13,68,60,0],[70,9,70,51,0],[71,9,71,29,0],[72,9,72,10,0],[73,13,73,39,0],[75,9,75,27,0],[76,5,76,6,0],[82,5,82,6,0],[83,9,83,51,0],[84,9,84,29,0],[85,9,85,10,0],[86,13,86,39,0],[88,9,88,27,0],[89,5,89,6,0],[94,5,94,6,0],[95,9,95,51,0],[96,9,96,29,0],[97,9,97,10,0],[98,13,98,39,0],[100,9,100,27,0],[101,5,101,6,0],[108,5,108,6,0],[109,9,109,69,0],[110,9,110,49,0],[111,9,111,27,0],[112,5,112,6,0]]);
     </script>
   </body>
 </html>

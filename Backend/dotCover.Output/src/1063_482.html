@@ -2,64 +2,46 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\Projects\Queries\GetProjectsByUserIdQueryHandlerTests.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\TaskItemRepositoryMocks.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Projects.Queries.GetProjectsByUserId;
 using Ergo.Application.Persistence;
-using Ergo.Application.Tests.RepositoryMocks;
 using Ergo.Domain.Common;
 using Ergo.Domain.Entities;
-using FluentAssertions;
 using NSubstitute;
 
-namespace Ergo.Application.Tests.Projects.Queries
+namespace Ergo.Application.Tests.RepositoryMocks;
+
+public static class TaskItemRepositoryMocks
 {
-    public class GetProjectsByUserIdQueryHandlerTests : IDisposable
+    internal readonly static List&lt;TaskItem&gt; TaskItems =
+    [
+        TaskItem.Create(&quot;TaskItem 1&quot;, &quot;Description 1&quot;, DateTime.Now.AddDays(1), &quot;FullName 1&quot;, Guid.NewGuid(), null).Value,
+        TaskItem.Create(&quot;TaskItem 2&quot;, &quot;Description 2&quot;, DateTime.Now.AddDays(2), &quot;FullName 2&quot;, Guid.NewGuid(), null).Value,
+    ];
+    
+    public static ITaskItemRepository GetTaskItemRepository()
     {
-        private readonly IProjectRepository _mockProjectRepository;
-        private readonly IUserRepository _mockUserRepository;
-        private readonly GetProjectsByUserIdQueryHandler _handler;
+        var mockTaskItemRepository = Substitute.For&lt;ITaskItemRepository&gt;();
 
-        public GetProjectsByUserIdQueryHandlerTests()
-        {
-            _mockProjectRepository = ProjectRepositoryMocks.GetProjectRepository();
-            _mockUserRepository = UserRepositoryMocks.GetUserRepository();
-            _handler = new GetProjectsByUserIdQueryHandler(_mockProjectRepository, _mockUserRepository);
-        }
+        mockTaskItemRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;TaskItem&gt;&gt;.Success(TaskItems));
+        mockTaskItemRepository.FindByIdAsync(TaskItems[0].TaskItemId)
+            .Returns(Result&lt;TaskItem&gt;.Success(TaskItems[0]));
+        mockTaskItemRepository.FindByIdAsync(TaskItems[1].TaskItemId)
+            .Returns(Result&lt;TaskItem&gt;.Success(TaskItems[1]));
 
-        [Fact]
-        public async Task Handle_ReturnsError_WhenUserDoesNotExist()
-        {
-            // Arrange
-            var nonExistingUserId = Guid.NewGuid();
-            var query = new GetProjectsByUserIdQuery { UserId = nonExistingUserId.ToString() };
+        mockTaskItemRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != TaskItems[0].TaskItemId &amp;&amp; id != TaskItems[1].TaskItemId))
+            .Returns(Result&lt;TaskItem&gt;.Failure(&quot;Not found&quot;));
 
-            _mockUserRepository.FindByIdAsync(nonExistingUserId)
-                .Returns(Task.FromResult(Result&lt;User&gt;.Failure(&quot;Not found&quot;)));
-
-            // Act
-            var response = await _handler.Handle(query, CancellationToken.None);
-
-            // Assert
-            response.Should().NotBeNull();
-            response.Success.Should().BeFalse();
-            response.ValidationsErrors.Should().ContainSingle().Which.Should().Be(&quot;Not found&quot;);
-        }
-
-        public void Dispose()
-        {
-
-        }
+        return mockTaskItemRepository;
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[17,9,17,54,1],[18,9,18,10,1],[19,13,19,84,1],[20,13,20,75,1],[21,13,21,105,1],[22,9,22,10,1],[26,9,26,10,1],[28,13,28,52,1],[29,13,29,96,1],[31,13,32,78,1],[35,13,35,81,1],[38,13,38,43,1],[39,13,39,49,1],[40,13,40,96,1],[41,9,41,10,1],[44,9,44,10,1],[46,9,46,10,1]]);
+      highlightRanges([[10,5,14,7,1],[17,5,17,6,1],[18,9,18,76,1],[20,9,20,106,1],[21,9,22,62,1],[23,9,24,62,1],[26,9,27,61,1],[29,9,29,39,1],[30,5,30,6,1]]);
     </script>
   </body>
 </html>

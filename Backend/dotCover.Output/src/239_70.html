@@ -2,34 +2,27 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Badges\Commands\UpdateSpecialBadgeCommand\UpdateSpecialBadgeCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Badges\Queries\GetBadgesForUser\GetBadgesForUserQueryResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
+using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.Badges.Commands.UpdateSpecialBadgeCommand
+namespace Ergo.Application.Features.Badges.Queries.GetBadgesForUser
 {
-    public class UpdateSpecialBadgeCommandValidator : AbstractValidator&lt;UpdateSpecialBadgeCommand&gt;
+    public class GetBadgesForUserQueryResponse : BaseResponse
     {
-        public UpdateSpecialBadgeCommandValidator()
+        public GetBadgesForUserQueryResponse() : base()
         {
-            RuleFor(p =&gt; p.VotedId)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull();
-            RuleFor(p =&gt; p.Type)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull()
-                .Must(x =&gt; x == &quot;Innovator&quot; || x == &quot;Quality-Master&quot; || x == &quot;Problem-Solver&quot; || x == &quot;Team-Player&quot;);
         }
+        public BadgeDto[] Badges { get; set; }
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,52,0],[8,9,8,10,0],[9,13,11,28,0],[12,13,15,28,0],[15,28,15,116,0],[15,116,15,118,0],[16,9,16,10,0]]);
+      highlightRanges([[7,50,7,56,0],[8,9,8,10,0],[9,9,9,10,0],[10,36,10,40,0],[10,41,10,45,0]]);
     </script>
   </body>
 </html>

@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubData\GetProjectGithubDataQueryResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectsByUserId\GetProjectsByUserIdQueryResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,21 +10,20 @@
     <pre id="content" class="source-code">
 using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
+namespace Ergo.Application.Features.Projects.Queries.GetProjectsByUserId
 {
-    public class GetProjectGithubDataQueryResponse : BaseResponse
+    public class GetProjectsByUserIdQueryResponse : BaseResponse
     {
-        public GetProjectGithubDataQueryResponse() : base()
+        public GetProjectsByUserIdQueryResponse() : base()
         {
+            
         }
-        public string ProjectOwner { get; set; }
-        public string ProjectRepository { get; set; }
-        public string GithubToken { get; set; }
+        public List&lt;ProjectDto&gt; Projects { get; set; }
     }
 }
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,54,7,60,0],[8,9,8,10,0],[9,9,9,10,0],[10,38,10,42,0],[10,43,10,47,0],[11,43,11,47,0],[11,48,11,52,0],[12,37,12,41,0],[12,42,12,46,0]]);
+      highlightRanges([[7,53,7,59,1],[8,9,8,10,1],[10,9,10,10,1],[11,44,11,48,0],[11,49,11,53,0]]);
     </script>
   </body>
 </html>

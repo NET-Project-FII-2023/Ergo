@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Commands\DeleteUser\DeleteUserCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Commands\UpdateRole\UpdateUserRoleCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -11,29 +11,59 @@
 using Ergo.Application.Persistence;
 using MediatR;
 
-namespace Ergo.Application.Features.Users.Commands.DeleteUser
+namespace Ergo.Application.Features.Users.Commands.UpdateRole
 {
-    public class DeleteUserCommandHandler : IRequestHandler&lt;DeleteUserCommand, DeleteUserCommandResponse&gt;
+    public class UpdateUserRoleCommandHandler : IRequestHandler&lt;UpdateUserRoleCommand, UpdateUserRoleCommandResponse&gt;
     {
         private readonly IUserManager userRepository;
 
-        public DeleteUserCommandHandler(IUserManager userRepository) {
+        public UpdateUserRoleCommandHandler(IUserManager userRepository)
+        {
             this.userRepository = userRepository;
         }
 
-        public async Task&lt;DeleteUserCommandResponse&gt; Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task&lt;UpdateUserRoleCommandResponse&gt; Handle(UpdateUserRoleCommand request, CancellationToken cancellationToken)
         {
-            var result = await userRepository.DeleteAsync(request.UserId);
+            var user = await userRepository.FindByIdAsync(request.UserId);
+            if (!user.IsSuccess)
+            {
+                return new UpdateUserRoleCommandResponse
+                {
+                    Success = false,
+                    Message = user.Error
+                };
+            }
+            var validator = new UpdateUserRoleCommandValidator();
+            var validationResult = await validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                return new UpdateUserRoleCommandResponse
+                {
+                    Success = false,
+                    Message = validationResult.ToString(),
+                    ValidationsErrors = validationResult.Errors.Select(x =&gt; x.ErrorMessage).ToList()
+                };
+            }
+            var result = await userRepository.UpdateRoleAsync(user.Value, request.Role);
             if (!result.IsSuccess)
-                return new DeleteUserCommandResponse { Success = false, Message = result.Error };
-            return new DeleteUserCommandResponse { Success = true };
+            {
+                return new UpdateUserRoleCommandResponse
+                {
+                    Success = false,
+                    Message = result.Error
+                };
+            }
+            return new UpdateUserRoleCommandResponse
+            {
+                Success = true
+            };
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,10,69,1],[10,70,10,71,1],[11,13,11,50,1],[12,9,12,10,1],[15,9,15,10,1],[16,13,16,75,1],[17,13,17,35,1],[18,17,18,98,1],[19,13,19,69,1],[20,9,20,10,1]]);
+      highlightRanges([[10,9,10,73,1],[11,9,11,10,1],[12,13,12,50,1],[13,9,13,10,1],[16,9,16,10,1],[17,13,17,75,1],[18,13,18,33,1],[19,13,19,14,0],[20,17,24,19,0],[26,13,26,66,1],[27,13,27,75,1],[28,13,28,43,1],[29,13,29,14,0],[30,17,34,77,0],[34,77,34,91,0],[34,91,35,19,0],[37,13,37,89,1],[38,13,38,35,1],[39,13,39,14,1],[40,17,44,19,1],[46,13,49,15,1],[50,9,50,10,1]]);
     </script>
   </body>
 </html>

@@ -2,25 +2,33 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Badges\Queries\GetBadgesForUser\GetBadgesForUserQuery.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\CreateComment\CreateCommentCommandResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using MediatR;
+using Ergo.Application.Responses;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Ergo.Application.Features.Badges.Queries.GetBadgesForUser
+namespace Ergo.Application.Features.Comments.Commands.CreateComment
 {
-    public class GetBadgesForUserQuery : IRequest&lt;GetBadgesForUserQueryResponse&gt;
+    public class CreateCommentCommandResponse : BaseResponse
     {
-        public Guid UserId { get; set; }
+        public CreateCommentCommandResponse():base()
+        {
+        }
+        public CreateCommentDto Comment { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,30,7,34,0],[7,35,7,39,0]]);
+      highlightRanges([[12,47,12,53,1],[13,9,13,10,1],[14,9,14,10,1],[15,43,15,47,1],[15,48,15,52,1]]);
     </script>
   </body>
 </html>

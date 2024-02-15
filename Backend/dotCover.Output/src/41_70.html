@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\UserPhotos\Commands\AddUserPhoto\AddUserPhotoCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\UserPhotos\Commands\UpdateTaskPhoto\UpdateUserPhotoCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,23 +10,25 @@
     <pre id="content" class="source-code">
 using FluentValidation;
 
-namespace Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto
+namespace Ergo.Application.Features.UserPhotos.Commands.UpdateTaskPhoto
 {
-    public class AddUserPhotoCommandValidator : AbstractValidator&lt;AddUserPhotoCommand&gt;
+    public class UpdateUserPhotoCommandValidator : AbstractValidator&lt;UpdateUserPhotoCommand&gt;
     {
-        public AddUserPhotoCommandValidator()
+        public UpdateUserPhotoCommandValidator()
         {
-            RuleFor(p =&gt; p.UserId)
-                .NotEmpty().WithMessage(&quot;UserId is required.&quot;);
+            RuleFor(p =&gt; p.UserPhotoId)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
             RuleFor(p =&gt; p.PhotoUrl)
-                .NotEmpty().WithMessage(&quot;PhotoUrl is required.&quot;);
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,46,0],[8,9,8,10,0],[9,13,10,64,0],[11,13,12,66,0],[13,9,13,10,0]]);
+      highlightRanges([[7,9,7,49,1],[8,9,8,10,1],[9,13,11,28,1],[12,13,14,28,1],[15,9,15,10,1]]);
     </script>
   </body>
 </html>

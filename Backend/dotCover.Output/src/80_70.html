@@ -2,92 +2,121 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\DeleteAssignedUserFromTask\DeleteAssignedUserFromTaskCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\DeleteTaskItem\DeleteTaskItemCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using Ergo.Application.Features.Projects.Commands.DeleteUserFromProject;
+using Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser;
 using Ergo.Application.Persistence;
-using FluentValidation;
 using MediatR;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace Ergo.Application.Features.TaskItems.Commands.DeleteAssignedUserFromTask
+namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
 {
-    public class DeleteAssignedUserFromTaskCommandHandler : IRequestHandler&lt;DeleteAssignedUserFromTaskCommand, DeleteAssignedUserFromTaskCommandResponse&gt;
+    public class DeleteTaskItemCommandHandler : IRequestHandler&lt;DeleteTaskItemCommand, DeleteTaskItemCommandResponse&gt;
     {
-        private readonly ITaskItemRepository taskItemRepository;
+        private readonly ITaskItemRepository taskRepository;
+        private readonly IUserManager userManager;
         private readonly IProjectRepository projectRepository;
-        public DeleteAssignedUserFromTaskCommandHandler(ITaskItemRepository taskItemRepository, IProjectRepository projectRepository)
+        private readonly ICommentRepository commentRepository;
+
+
+
+        public DeleteTaskItemCommandHandler(ITaskItemRepository repository, IUserManager userManager, IProjectRepository projectRepository, ICommentRepository commentRepository)
         {
-            this.taskItemRepository = taskItemRepository;
+            this.taskRepository = repository;
+            this.userManager = userManager;
             this.projectRepository = projectRepository;
+            this.commentRepository = commentRepository;
         }
 
-        public async Task&lt;DeleteAssignedUserFromTaskCommandResponse&gt; Handle(DeleteAssignedUserFromTaskCommand request, CancellationToken cancellationToken)
+        public async Task&lt;DeleteTaskItemCommandResponse&gt; Handle(DeleteTaskItemCommand request, CancellationToken cancellationToken)
         {
-            var validator = new DeleteAssignedUserFromTaskCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-            if(!validatorResult.IsValid)
+            DeleteTaskItemCommandResponse response = new();
+            var validator = new DeleteTaskItemCommandValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
             {
-                return new DeleteAssignedUserFromTaskCommandResponse()
-                {
-                    Success = false,
-                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
-                };
+                response.Success = false;
+                response.ValidationsErrors = validationResult.Errors.Select(x =&gt; x.ErrorMessage).ToList();
+                return response;
             }
-            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
-            if(!taskItem.IsSuccess)
+
+            var taskItemToDelete = await taskRepository.FindByIdAsync(request.TaskItemId);
+
+            if (!taskItemToDelete.IsSuccess)
             {
-                return new DeleteAssignedUserFromTaskCommandResponse()
-                {
-                    Success = false,
-                    Message = &quot;TaskItem not found&quot;
-                };
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { &quot;TaskItem not found&quot; };
+                return response;
             }
-            var project = await projectRepository.FindByIdAsync(taskItem.Value.ProjectId);
-            if(!project.IsSuccess)
+            var project = await projectRepository.FindByIdAsync(taskItemToDelete.Value.ProjectId);
+            if (!project.IsSuccess)
             {
-                return new DeleteAssignedUserFromTaskCommandResponse()
-                {
-                    Success = false,
-                    Message = &quot;Project not found&quot;
-                };
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { &quot;Project not found&quot; };
+                return response;
             }
-            if(project.Value.CreatedBy != request.Owner)
+            var user = await userManager.FindByIdAsync(request.UserId);
+            if (!user.IsSuccess)
             {
-                return new DeleteAssignedUserFromTaskCommandResponse()
-                {
-                    Success = false,
-                    Message = &quot;You are not the owner of the project!&quot;
-                };
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { &quot;User not found&quot; };
+                return response;
             }
-            var result = taskItem.Value.DeleteAssignedUser();
-            if(!result.IsSuccess)
+            if(project.Value.CreatedBy != user.Value.Username)
             {
-                return new DeleteAssignedUserFromTaskCommandResponse()
-                {
-                    Success = false,
-                    Message = result.Error
-                };
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { &quot;You are not the owner of this project.&quot; };
+                return response;
             }
-            var updateResult = await taskItemRepository.UpdateAsync(taskItem.Value);
-            if(!updateResult.IsSuccess)
+            var comments = await commentRepository.GetCommentByTaskIdAsync(request.TaskItemId);
+            if (!comments.IsSuccess)
             {
-                return new DeleteAssignedUserFromTaskCommandResponse()
-                {
-                    Success = false,
-                    Message = updateResult.Error
-                };
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { comments.Error };
+                return response;
             }
-            return new DeleteAssignedUserFromTaskCommandResponse { Success = true };
+
+
+            var result = await taskRepository.DeleteAsync(request.TaskItemId);
+
+            if (!result.IsSuccess)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { result.Error };
+                return response;
+            }
+            foreach (var comment in comments.Value)
+            {
+                var commentResult = await commentRepository.DeleteAsync(comment.CommentId);
+
+                if (!commentResult.IsSuccess)
+                {
+                    response.Success = false;
+                    response.ValidationsErrors = new List&lt;string&gt; { result.Error };
+                    return response;
+                }
+            }
+
+            return new DeleteTaskItemCommandResponse
+            {
+                Success = true
+            };
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[11,9,11,134,0],[12,9,12,10,0],[13,13,13,58,0],[14,13,14,56,0],[15,9,15,10,0],[18,9,18,10,0],[19,13,19,78,0],[20,13,20,93,0],[21,13,21,41,0],[22,13,22,14,0],[23,17,26,76,0],[26,76,26,90,0],[26,90,27,19,0],[29,13,29,87,0],[30,13,30,36,0],[31,13,31,14,0],[32,17,36,19,0],[38,13,38,91,0],[39,13,39,35,0],[40,13,40,14,0],[41,17,45,19,0],[47,13,47,57,0],[48,13,48,14,0],[49,17,53,19,0],[55,13,55,62,0],[56,13,56,34,0],[57,13,57,14,0],[58,17,62,19,0],[64,13,64,85,0],[65,13,65,40,0],[66,13,66,14,0],[67,17,71,19,0],[73,13,73,85,0],[74,9,74,10,0]]);
+      highlightRanges([[21,9,21,178,0],[22,9,22,10,0],[23,13,23,46,0],[24,13,24,44,0],[25,13,25,56,0],[26,13,26,56,0],[27,9,27,10,0],[30,9,30,10,0],[31,13,31,60,0],[32,13,32,66,0],[33,13,33,75,0],[35,13,35,43,0],[36,13,36,14,0],[37,17,37,42,0],[38,17,38,82,0],[38,82,38,96,0],[38,96,38,107,0],[39,17,39,33,0],[42,13,42,91,0],[44,13,44,45,0],[45,13,45,14,0],[46,17,46,42,0],[47,17,47,88,0],[48,17,48,33,0],[50,13,50,99,0],[51,13,51,36,0],[52,13,52,14,0],[53,17,53,42,0],[54,17,54,87,0],[55,17,55,33,0],[57,13,57,72,0],[58,13,58,33,0],[59,13,59,14,0],[60,17,60,42,0],[61,17,61,84,0],[62,17,62,33,0],[64,13,64,63,0],[65,13,65,14,0],[66,17,66,42,0],[67,17,67,108,0],[68,17,68,33,0],[70,13,70,96,0],[71,13,71,37,0],[72,13,72,14,0],[73,17,73,42,0],[74,17,74,82,0],[75,17,75,33,0],[79,13,79,79,0],[81,13,81,35,0],[82,13,82,14,0],[83,17,83,42,0],[84,17,84,80,0],[85,17,85,33,0],[87,13,87,20,0],[87,22,87,33,0],[87,34,87,36,0],[87,37,87,51,0],[88,13,88,14,0],[89,17,89,92,0],[91,17,91,46,0],[92,17,92,18,0],[93,21,93,46,0],[94,21,94,84,0],[95,21,95,37,0],[97,13,97,14,0],[99,13,102,15,0],[103,9,103,10,0]]);
     </script>
   </body>
 </html>

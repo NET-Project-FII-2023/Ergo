@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\ML\Query\TaskPredictionQueryHandlerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.ML.Query.GetTaskPrediction;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities.ML;
+using FluentAssertions;
+using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ergo.Application.Tests.ML.Query
+{
+    public class TaskPredictionQueryHandlerTest
+    {
+        private readonly IMLService _mockMLService;
+        private readonly TaskPredictionQueryHandler _handler;
+        public TaskPredictionQueryHandlerTest()
+        {
+            _mockMLService = Substitute.For&lt;IMLService&gt;();
+            _handler = new TaskPredictionQueryHandler(_mockMLService);
+        }
+
+        [Fact]
+        public async Task Handle_WithValidData_ReturnsSuccess()
+        {
+            // Arrange
+            var request = new TaskPredictionQuery
+            {
+                TaskData = new TaskDataDto { NumberOfParticipants = 1, TaskComplexity = 1, TaskUrgency = 1 }
+            };
+
+            _mockMLService.PredictCompletionTime(Arg.Any&lt;TaskData&gt;()).Returns(Task.FromResult(1.0f));
+
+            // Act
+            var response = await _handler.Handle(request, new CancellationToken());
+
+            // Assert
+            response.Success.Should().BeTrue();
+            response.PredictedResolutionTime.Should().Be(1.0f);
+        }
+        [Fact]
+        public async Task Handle_WithInvalidData_ReturnsError()
+        {
+            // Arrange
+            var request = new TaskPredictionQuery
+            {
+                TaskData = new TaskDataDto { NumberOfParticipants = 0, TaskComplexity = 0, TaskUrgency = 0 }
+            };
+
+            _mockMLService.PredictCompletionTime(Arg.Any&lt;TaskData&gt;()).Returns(Task.FromResult(0.0f));
+
+            // Act
+            var response = await _handler.Handle(request, new CancellationToken());
+
+            // Assert
+            response.Success.Should().BeFalse();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[18,9,18,48,1],[19,9,19,10,1],[20,13,20,59,1],[21,13,21,71,1],[22,9,22,10,1],[26,9,26,10,1],[28,13,31,15,1],[33,13,33,102,1],[36,13,36,84,1],[39,13,39,48,1],[40,13,40,64,1],[41,9,41,10,1],[44,9,44,10,1],[46,13,49,15,1],[51,13,51,102,1],[54,13,54,84,1],[57,13,57,49,1],[58,9,58,10,1]]);
+    </script>
+  </body>
+</html>

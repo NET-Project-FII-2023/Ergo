@@ -2,61 +2,92 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\Users\Commands\DeleteUserCommandHandlerTests.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\Comments\Commands\DeleteCommentCommandHandlerTests.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Users.Commands.DeleteUser;
-using Ergo.Application.Features.Users.Queries;
-using Ergo.Application.Persistence;
-using Ergo.Domain.Common;
-using FluentAssertions;
 using NSubstitute;
+using FluentAssertions;
+using Ergo.Application.Features.Comments.Commands.DeleteComment;
+using Ergo.Application.Persistence;
+using System;
+using System.Threading.Tasks;
+using System.Threading;
+using Xunit;
+using Ergo.Domain.Entities;
+using Ergo.Domain.Common;
 
-namespace Ergo.Application.Tests.Users.Commands
+public class DeleteCommentCommandHandlerTests
 {
-    public  class DeleteUserCommandHandlerTests
-    {
-        private readonly IUserManager _mockUserManager;
-        private readonly DeleteUserCommandHandler _handler;
-        public DeleteUserCommandHandlerTests()
-        {
-            _mockUserManager = Substitute.For&lt;IUserManager&gt;();
-            _handler = new DeleteUserCommandHandler(_mockUserManager);
-        }
-        [Fact]
-        public async Task Handle_UserExists_DeletesSuccessfully()
-        {
-            // Arrange
-            var userId = Guid.NewGuid();
-            var request = new DeleteUserCommand { UserId = userId };
-            _mockUserManager.DeleteAsync(userId).Returns(Result&lt;UserDto&gt;.Success(new UserDto()));
-            // Act
-            var response = await _handler.Handle(request, new CancellationToken());
-            // Assert
-            response.Success.Should().BeTrue();
-        }
-        [Fact]
-        public async Task Handle_DeleteFails_ReturnsErrorResponse()
-        {
-            // Arrange
-            var userId = Guid.NewGuid();
-            var request = new DeleteUserCommand { UserId = userId };
-            _mockUserManager.DeleteAsync(userId).Returns(Result&lt;UserDto&gt;.Failure(&quot;Not found&quot;));
-            // Act
-            var response = await _handler.Handle(request, new CancellationToken());
-            // Assert
-            response.Success.Should().BeFalse();
-        }
+    private readonly ICommentRepository _commentRepository;
+    private readonly DeleteCommentCommandHandler _handler;
 
+    public DeleteCommentCommandHandlerTests()
+    {
+        _commentRepository = Substitute.For&lt;ICommentRepository&gt;();
+        _handler = new DeleteCommentCommandHandler(_commentRepository);
     }
+
+    [Fact]
+    public async Task Handle_ValidComment_DeletesSuccessfully()
+    {
+        // Arrange
+        var commentId = Guid.NewGuid();
+        var comment = new Comment(); 
+        _commentRepository.FindByIdAsync(commentId).Returns(Task.FromResult(Result&lt;Comment&gt;.Success(comment)));
+        _commentRepository.DeleteAsync(commentId).Returns(Task.FromResult(Result&lt;Comment&gt;.Success(comment)));
+
+        var request = new DeleteCommentCommand { CommentId = commentId };
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeTrue();
+    }
+
+
+
+    [Fact]
+    public async Task Handle_ValidationError_ReturnsErrors()
+    {
+        // Arrange
+        var request = new DeleteCommentCommand { CommentId = Guid.Empty }; // Presupunem că acest ID este invalid
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeFalse();
+        response.ValidationsErrors.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task Handle_DeleteFailure_ReturnsError()
+    {
+        // Arrange
+        var commentId = Guid.NewGuid();
+        var mockComment = Substitute.For&lt;Comment&gt;();
+        _commentRepository.FindByIdAsync(commentId).Returns(Task.FromResult(Result&lt;Comment&gt;.Success(mockComment)));
+        _commentRepository.DeleteAsync(commentId).Returns(Task.FromResult(Result&lt;Comment&gt;.Failure(&quot;Delete failed&quot;)));
+
+        var request = new DeleteCommentCommand { CommentId = commentId };
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeFalse();
+        response.ValidationsErrors.Should().Contain(&quot;Delete failed&quot;);
+    }
+
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[14,9,14,47,1],[15,9,15,10,1],[16,13,16,63,1],[17,13,17,71,1],[18,9,18,10,1],[21,9,21,10,1],[23,13,23,41,1],[24,13,24,69,1],[25,13,25,98,1],[27,13,27,84,1],[29,13,29,48,1],[30,9,30,10,1],[33,9,33,10,1],[35,13,35,41,1],[36,13,36,69,1],[37,13,37,96,1],[39,13,39,84,1],[41,13,41,49,1],[42,9,42,10,1]]);
+      highlightRanges([[17,5,17,46,1],[18,5,18,6,1],[19,9,19,67,1],[20,9,20,72,1],[21,5,21,6,1],[25,5,25,6,1],[27,9,27,40,1],[28,9,28,37,1],[29,9,29,112,1],[30,9,30,110,1],[32,9,32,74,1],[35,9,35,80,1],[38,9,38,44,1],[39,5,39,6,1],[45,5,45,6,1],[47,9,47,75,1],[50,9,50,80,1],[53,9,53,45,1],[54,9,54,58,1],[55,5,55,6,1],[59,5,59,6,1],[61,9,61,40,1],[62,9,62,53,1],[63,9,63,116,1],[64,9,64,118,1],[66,9,66,74,1],[69,9,69,80,1],[72,9,72,45,1],[73,9,73,70,1],[74,5,74,6,1]]);
     </script>
   </body>
 </html>

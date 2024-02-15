@@ -2,62 +2,64 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubData\GetProjectGithubDataQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectsByUserId\GetProjectsByUserIdQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
 using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
 using MediatR;
 
-namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
+namespace Ergo.Application.Features.Projects.Queries.GetProjectsByUserId
 {
-    public class GetProjectGithubDataHandler : IRequestHandler&lt;GetProjectGithubDataQuery, GetProjectGithubDataQueryResponse&gt;
+    public class GetProjectsByUserIdQueryHandler : IRequestHandler&lt;GetProjectsByUserIdQuery, GetProjectsByUserIdQueryResponse&gt;
     {
         private readonly IProjectRepository projectRepository;
+        private readonly IUserRepository userRepository;
 
-        public GetProjectGithubDataHandler(IProjectRepository projectRepository)
+        public GetProjectsByUserIdQueryHandler(IProjectRepository projectRepository, IUserRepository userRepository)
         {
             this.projectRepository = projectRepository;
+            this.userRepository = userRepository;
         }
 
-        public async Task&lt;GetProjectGithubDataQueryResponse&gt; Handle(GetProjectGithubDataQuery request, CancellationToken cancellationToken)
+        public async Task&lt;GetProjectsByUserIdQueryResponse&gt; Handle(GetProjectsByUserIdQuery request, CancellationToken cancellationToken)
         {
-            var validator = new GetProjectGithubDataQueryValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
+            var user = await userRepository.FindByIdAsync(Guid.Parse(request.UserId));
+            if (!user.IsSuccess)
             {
-                return new GetProjectGithubDataQueryResponse
+                return new GetProjectsByUserIdQueryResponse
                 {
                     Success = false,
-                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
+                    ValidationsErrors = new List&lt;string&gt; { user.Error }
                 };
             }
-            var project = await projectRepository.FindByIdAsync(request.ProjectId);
-            if (!project.IsSuccess)
+            var projects = await projectRepository.GetProjectsByUserId(Guid.Parse(request.UserId));
+            if (!projects.IsSuccess)
             {
-                return new GetProjectGithubDataQueryResponse
+                return new GetProjectsByUserIdQueryResponse
                 {
                     Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Project with this id doesn&#39;t exist!&quot; }
+                    ValidationsErrors = new List&lt;string&gt; { projects.Error }
                 };
             }
-            if(project.Value.GithubOwner == null || project.Value.GitRepository == null)
-            {
-                return new GetProjectGithubDataQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Project does not have github data&quot; }
-                };
-            }
-            return new GetProjectGithubDataQueryResponse
+            return new GetProjectsByUserIdQueryResponse
             {
                 Success = true,
-                ProjectOwner = project.Value.GithubOwner,
-                ProjectRepository = project.Value.GitRepository,
-                GithubToken = project.Value.GithubToken
+                Projects = projects.Value.Select(p =&gt; new ProjectDto
+                {
+                    ProjectId = Guid.Parse(p.ProjectId.ToString()),
+                    ProjectName = p.ProjectName,
+                    Description = p.Description,
+                    StartDate = p.StartDate,
+                    CreatedBy = p.CreatedBy,
+                    Deadline = p.Deadline,
+                    State = p.State,
+                    GitRepository = p.GitRepository,
+                    Members = p.Members
+                }).ToList()
             };
         }
     }
@@ -65,7 +67,7 @@ namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,10,81,0],[11,9,11,10,0],[12,13,12,56,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,70,0],[18,13,18,93,0],[20,13,20,42,0],[21,13,21,14,0],[22,17,25,76,0],[25,76,25,90,0],[25,90,26,19,0],[28,13,28,84,0],[29,13,29,36,0],[30,13,30,14,0],[31,17,35,19,0],[37,13,37,89,0],[38,13,38,14,0],[39,17,43,19,0],[45,13,51,15,0],[52,9,52,10,0]]);
+      highlightRanges([[12,9,12,117,1],[13,9,13,10,1],[14,13,14,56,1],[15,13,15,50,1],[16,9,16,10,1],[19,9,19,10,1],[20,13,20,87,1],[21,13,21,33,1],[22,13,22,14,1],[23,17,27,19,1],[29,13,29,100,0],[30,13,30,37,0],[31,13,31,14,0],[32,17,36,19,0],[38,13,41,55,0],[41,55,52,18,0],[52,18,53,15,0],[54,9,54,10,1]]);
     </script>
   </body>
 </html>

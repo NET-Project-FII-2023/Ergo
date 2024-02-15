@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubBranches\GetProjectGithubBranchesQuery.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubData\GetProjectGithubDataQuery.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,12 +10,12 @@
     <pre id="content" class="source-code">
 using MediatR;
 
-namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubBranches
+namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
 {
-    public class GetProjectGithubBranchesQuery : IRequest&lt;GetProjectGithubBranchesQueryResponse&gt;
+    public class GetProjectGithubDataQuery : IRequest&lt;GetProjectGithubDataQueryResponse&gt;
     {
         public Guid ProjectId { get; set; }
-
+        //public string Branch { get; set; }
     }
 }
 

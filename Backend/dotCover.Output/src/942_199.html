@@ -2,24 +2,51 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\AddPhotoDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Utility\FileResultContentTypeOperationFilter.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Api.Models
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
+namespace Ergo.API.Utility
 {
-    public class AddPhotoDto
+    public class FileResultContentTypeOperationFilter : IOperationFilter
     {
-        public IFormFile File { get; set; }
-        public Guid TaskItemId { get; set; }
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        {
+            var requestAttribute = context.MethodInfo.GetCustomAttributes(typeof(FileResultContentTypeAttribute), false)
+                .Cast&lt;FileResultContentTypeAttribute&gt;()
+                .FirstOrDefault();
+
+            if (requestAttribute == null) return;
+
+            operation.Responses.Clear();
+            operation.Responses.Add(&quot;200&quot;, new OpenApiResponse
+            {
+                Content = new Dictionary&lt;string, OpenApiMediaType&gt;
+            {
+                {
+                    requestAttribute.ContentType, new OpenApiMediaType
+                    {
+                        Schema = new OpenApiSchema
+                        {
+                            Type = &quot;string&quot;,
+                            Format = &quot;binary&quot;
+                        }
+                    }
+                }
+            }
+            });
+        }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,33,5,37,0],[5,38,5,42,0],[6,34,6,38,0],[6,39,6,43,0]]);
+      highlightRanges([[9,9,9,10,0],[10,13,12,35,0],[14,13,14,42,0],[14,43,14,50,0],[16,13,16,41,0],[17,13,32,16,0],[33,9,33,10,0]]);
     </script>
   </body>
 </html>

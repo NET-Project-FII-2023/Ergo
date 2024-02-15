@@ -2,18 +2,15 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\Photos\Queries\GetPhotosForTaskItemQueryHandlerTest.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\UserPhotosRepositoryMocks.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem;
-using Ergo.Application.Features.TaskItems.Queries;
 using Ergo.Application.Persistence;
 using Ergo.Domain.Common;
 using Ergo.Domain.Entities;
-using FluentAssertions;
 using NSubstitute;
 using System;
 using System.Collections.Generic;
@@ -21,46 +18,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ergo.Application.Tests.Photos.Queries
+namespace Ergo.Application.Tests.RepositoryMocks
 {
-    public  class GetPhotosForTaskItemQueryHandlerTest
+    public static class UserPhotosRepositoryMocks
     {
-        private readonly IPhotoRepository _mockPhotoRepository;
-        private readonly ITaskItemRepository _mockTaskItemRepository;
-        private readonly GetPhotosForTaskItemQueryHandler _handler;
-        public GetPhotosForTaskItemQueryHandlerTest()
+        internal readonly static List&lt;UserPhoto&gt; UserPhotos =
+        [
+            UserPhoto.Create(&quot;photo&quot;, &quot;d1906196-01f7-4335-88b9-89f9672bb4ce&quot;).Value,
+            UserPhoto.Create(&quot;photo&quot;, Guid.NewGuid().ToString()).Value
+        ];
+        public static IUserPhotoRepository GetUserPhotoRepository()
         {
-            _mockPhotoRepository = Substitute.For&lt;IPhotoRepository&gt;();
-            _mockTaskItemRepository = Substitute.For&lt;ITaskItemRepository&gt;();
-            var fakeTaskId = Guid.Parse(&quot;d1906196-01f7-4335-88b9-89f9672bb4ce&quot;);
-            var fakeTaskItemDto = new TaskItemDto { TaskItemId = fakeTaskId, ProjectId = Guid.NewGuid(), State = Domain.Entities.Enums.TaskState.ToDo };
+            var mockUserPhotoRepository = Substitute.For&lt;IUserPhotoRepository&gt;();
 
-            var fakeTaskItem = TaskItem.Create(fakeTaskItemDto.TaskName, fakeTaskItemDto.Description, DateTime.Now.AddDays(1), fakeTaskItemDto.CreatedBy, fakeTaskItemDto.ProjectId, &quot;Test&quot;).Value;
-            
+            mockUserPhotoRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;UserPhoto&gt;&gt;.Success(UserPhotos));
+            mockUserPhotoRepository.FindByIdAsync(UserPhotos[0].UserPhotoId)
+                .Returns(Result&lt;UserPhoto&gt;.Success(UserPhotos[0]));
+            mockUserPhotoRepository.FindByIdAsync(UserPhotos[1].UserPhotoId)
+                .Returns(Result&lt;UserPhoto&gt;.Success(UserPhotos[1]));
 
-            _handler = new GetPhotosForTaskItemQueryHandler(_mockPhotoRepository, _mockTaskItemRepository);
-        }
-        [Fact]
-        public async Task Handle_WithValidData_ReturnsSuccess()
-        {
-            //Arrange &amp; Act
-            var result = await _handler.Handle(new GetPhotosForTaskItemQuery(), new System.Threading.CancellationToken());
+            mockUserPhotoRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != UserPhotos[0].UserPhotoId &amp;&amp; id != UserPhotos[1].UserPhotoId))
+                .Returns(Result&lt;UserPhoto&gt;.Failure(&quot;Not found&quot;));
 
-            //Assert
-            result.Should().NotBeNull();
-            result.Success.Should().BeTrue();
-            result.Photos.Count.Should().Be(2);
-
-            result.Photos.Should().ContainSingle(photo =&gt; photo.CloudURL == &quot;https://www.google.com&quot;);
-            result.Photos.Should().ContainSingle(photo =&gt; photo.CloudURL == &quot;https://www.google.com&quot;);
-
+            return mockUserPhotoRepository;
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[21,9,21,54,1],[22,9,22,10,1],[23,13,23,71,1],[24,13,24,77,1],[25,13,25,81,1],[26,13,26,153,1],[28,13,28,196,1],[31,13,31,108,1],[32,9,32,10,1],[35,9,35,10,1],[37,13,37,123,1],[40,13,40,41,0],[41,13,41,46,0],[42,13,42,48,0],[44,13,44,103,0],[45,13,45,103,0],[47,9,47,10,0]]);
+      highlightRanges([[15,9,19,11,0],[21,9,21,10,0],[22,13,22,82,0],[24,13,24,113,0],[25,13,26,68,0],[27,13,28,68,0],[30,13,31,66,0],[33,13,33,44,0],[34,9,34,10,0]]);
     </script>
   </body>
 </html>

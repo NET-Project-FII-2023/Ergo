@@ -2,25 +2,199 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\CurrentUser.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\CloudController.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Api.Models
+using Amazon.Runtime;
+using Ergo.Api.Controllers;
+using Ergo.Api.Models;
+using Ergo.Api.Models.AwsS3;
+using Ergo.Api.Services;
+using Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem;
+using Ergo.Application.Features.Photos.Commands.DeletePhoto;
+using Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto;
+using Ergo.Application.Features.UserPhotos.Commands.UpdateTaskPhoto;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Ergo.API.Controllers
 {
-    public class CurrentUser
+    [Route(&quot;api/v1/[controller]&quot;)]
+    [ApiController]
+    public class CloudController : ApiControllerBase
     {
-        public bool IsAuthenticated { get; set; }
-        public string UserName { get; set; }
-        public Dictionary&lt;string, string&gt; Claims { get; set; }
+        private readonly IStorageService storageService;
+        private readonly IPhotoRepository photoRepository;
+        private string AwsKeyEnv { get; set; }
+        private string AwsSecretKeyEnv { get; set; }
+
+        public CloudController(IStorageService storageService, IPhotoRepository photoRepository)
+        {
+
+            this.storageService = storageService;
+            this.photoRepository = photoRepository;
+            AwsKeyEnv = DotNetEnv.Env.GetString(&quot;AWSAccessKey&quot;);
+            AwsSecretKeyEnv = DotNetEnv.Env.GetString(&quot;AWSSecretKey&quot;);
+        }
+
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpPost]
+        [Route(&quot;upload-task-photo&quot;)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task&lt;IActionResult&gt; UploadFile(AddPhotoDto addPhoto)
+        {
+            await using var memoryStr = new MemoryStream();
+            await addPhoto.File.CopyToAsync(memoryStr);
+
+            var fileExt = Path.GetExtension(addPhoto.File.FileName);
+            var objName = $&quot;{Guid.NewGuid()}{fileExt}&quot;;
+            var s3Object = new S3Object()
+            {
+                BucketName = &quot;ergo-project&quot;,
+                InputStream = memoryStr,
+                Name = objName
+            };
+
+            var cred = new AWSCredential()
+            {
+                AwsKey = AwsKeyEnv,
+                AwsSecretKey = AwsSecretKeyEnv
+            };
+            var result = await storageService.UploadFileAsync(s3Object, cred);
+            var command = new AddPhotoToTaskItemCommand()
+            {
+                CloudURL = objName,
+                TaskItemId = addPhoto.TaskItemId
+            };
+            var photoResult = await Mediator.Send(command);
+            if (!photoResult.Success)
+            {
+                await storageService.DeleteFileAsync(objName, cred);
+                return BadRequest(photoResult);
+            }
+            return Ok();
+        }
+
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpDelete]
+        [Route(&quot;delete-task-photo&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; DeleteFile(DeletePhotoCommand command)
+        {
+            var photo = await photoRepository.FindByIdAsync(command.PhotoId);
+            if (!photo.IsSuccess)
+            {
+                return BadRequest(photo);
+            }
+            var cred = new AWSCredential()
+            {
+                AwsKey = AwsKeyEnv,
+                AwsSecretKey = AwsSecretKeyEnv
+            };
+            var result = await storageService.DeleteFileAsync(photo.Value.CloudURL, cred);
+            if (!result)
+            {
+                return BadRequest(result);
+            }
+            var deletePhotoResult = await Mediator.Send(command);
+            if (!deletePhotoResult.Success)
+            {
+                return BadRequest(deletePhotoResult);
+            }
+            return Ok();
+
+        }
+
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpPost]
+        [Route(&quot;upload-user-photo&quot;)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task&lt;IActionResult&gt; AddUserPhoto(AddUserPhotoDto addUserPhotoDto)
+        {
+            await using var memoryStr = new MemoryStream();
+            await addUserPhotoDto.File.CopyToAsync(memoryStr);
+            var fileExt = Path.GetExtension(addUserPhotoDto.File.FileName);
+            var objName = $&quot;{Guid.NewGuid()}{fileExt}&quot;;
+            var s3Object = new S3Object()
+            {
+                BucketName = &quot;ergo-project&quot;,
+                InputStream = memoryStr,
+                Name = objName
+            };
+            var cred = new AWSCredential()
+            {
+                AwsKey = AwsKeyEnv,
+                AwsSecretKey = AwsSecretKeyEnv
+            };
+            var result = await storageService.UploadFileAsync(s3Object, cred);
+            var command = new AddUserPhotoCommand()
+            {
+                UserId = addUserPhotoDto.UserId,
+                PhotoUrl = objName
+            };
+            var userPhotoResult = await Mediator.Send(command);
+            if (!userPhotoResult.Success)
+            {
+                await storageService.DeleteFileAsync(objName, cred);
+                return BadRequest(userPhotoResult);
+            }
+            return Ok(userPhotoResult);
+
+        }
+
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpPut]
+        [Route(&quot;update-user-photo&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; UpdateUserPhoto(UpdateUserPhotoDto updateUserPhotoDto)
+        {
+            await using var memoryStr = new MemoryStream();
+            await updateUserPhotoDto.File.CopyToAsync(memoryStr);
+            var fileExt = Path.GetExtension(updateUserPhotoDto.File.FileName);
+            var objName = $&quot;{Guid.NewGuid()}{fileExt}&quot;;
+            var s3Object = new S3Object()
+            {
+                BucketName = &quot;ergo-project&quot;,
+                InputStream = memoryStr,
+                Name = objName
+            };
+            var cred = new AWSCredential()
+            {
+                AwsKey = AwsKeyEnv,
+                AwsSecretKey = AwsSecretKeyEnv
+            };
+
+            var result = await storageService.UploadFileAsync(s3Object, cred);
+            var command = new UpdateUserPhotoCommand()
+            {
+                UserPhotoId = updateUserPhotoDto.UserPhotoId,
+                PhotoUrl = objName
+            };
+            var userPhotoResult = await Mediator.Send(command);
+            if (!userPhotoResult.Success)
+            {
+                await storageService.DeleteFileAsync(objName, cred);
+                return BadRequest(userPhotoResult);
+            }
+            var deleteOldPhoto = await storageService.DeleteFileAsync(updateUserPhotoDto.CloudUrl, cred);
+            if (!deleteOldPhoto)
+            {
+                return BadRequest(deleteOldPhoto);
+            }
+            return Ok(userPhotoResult);
+        }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,39,5,43,0],[5,44,5,48,0],[6,34,6,38,0],[6,39,6,43,0],[7,52,7,56,0],[7,57,7,61,0]]);
+      highlightRanges([[24,36,24,40,0],[24,41,24,45,0],[25,42,25,46,0],[25,47,25,51,0],[27,9,27,97,0],[28,9,28,10,0],[30,13,30,50,0],[31,13,31,52,0],[32,13,32,65,0],[33,13,33,71,0],[34,9,34,10,0],[41,9,41,10,0],[42,13,42,60,0],[43,13,43,56,0],[45,13,45,69,0],[46,13,46,56,0],[47,13,52,15,0],[54,13,58,15,0],[59,13,59,79,0],[60,13,64,15,0],[65,13,65,60,0],[66,13,66,38,0],[67,13,67,14,0],[68,17,68,69,0],[69,17,69,48,0],[71,13,71,25,0],[72,9,72,10,0],[79,9,79,10,0],[80,13,80,78,0],[81,13,81,34,0],[82,13,82,14,0],[83,17,83,42,0],[85,13,89,15,0],[90,13,90,91,0],[91,13,91,25,0],[92,13,92,14,0],[93,17,93,43,0],[95,13,95,66,0],[96,13,96,44,0],[97,13,97,14,0],[98,17,98,54,0],[100,13,100,25,0],[102,9,102,10,0],[109,9,109,10,0],[110,13,110,60,0],[111,13,111,63,0],[112,13,112,76,0],[113,13,113,56,0],[114,13,119,15,0],[120,13,124,15,0],[125,13,125,79,0],[126,13,130,15,0],[131,13,131,64,0],[132,13,132,42,0],[133,13,133,14,0],[134,17,134,69,0],[135,17,135,52,0],[137,13,137,40,0],[139,9,139,10,0],[146,9,146,10,0],[147,13,147,60,0],[148,13,148,66,0],[149,13,149,79,0],[150,13,150,56,0],[151,13,156,15,0],[157,13,161,15,0],[163,13,163,79,0],[164,13,168,15,0],[169,13,169,64,0],[170,13,170,42,0],[171,13,171,14,0],[172,17,172,69,0],[173,17,173,52,0],[175,13,175,106,0],[176,13,176,33,0],[177,13,177,14,0],[178,17,178,51,0],[180,13,180,40,0],[181,9,181,10,0]]);
     </script>
   </body>
 </html>

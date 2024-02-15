@@ -2,33 +2,27 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\InboxItems\Queries\GetByUserId\GetByUserIdDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\ML\Query\GetTaskPrediction\TaskPredictionQuery.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ergo.Domain.Entities.ML;
+using MediatR;
 
-namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
+namespace Ergo.Application.Features.ML.Query.GetTaskPrediction
 {
-    public class GetByUserIdDto
+    public class TaskPredictionQuery : IRequest&lt;TaskPredictionQueryResponse&gt;
     {
-        public Guid InboxItemId { get; set; }
-        public Guid UserId { get; set; }
-        public string Message { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public bool IsRead { get; set; }
+        public TaskDataDto TaskData { get; set; }
+
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[11,35,11,39,0],[11,40,11,44,0],[12,30,12,34,0],[12,35,12,39,0],[13,33,13,37,0],[13,38,13,42,0],[14,39,14,43,0],[14,44,14,48,0],[15,30,15,34,0],[15,35,15,39,0]]);
+      highlightRanges([[8,39,8,43,1],[8,44,8,48,1]]);
     </script>
   </body>
 </html>

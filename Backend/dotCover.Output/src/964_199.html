@@ -2,30 +2,29 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\ResetPasswordController.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\InboxItemController.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem;
-using Ergo.Application.Features.Photos.Commands.DeletePhoto;
-using Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem;
-using Ergo.Application.Features.ResetCode.Commands.CreateResetCode;
-using Ergo.Application.Features.ResetCode.Queries.VerifyResetCode;
+using Ergo.Application.Features.InboxItems.Commands.CreateInboxItem;
+using Ergo.Application.Features.InboxItems.Commands.UpdateInboxItemIsRead;
+using Ergo.Application.Features.InboxItems.Queries.GetByUserId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ergo.Api.Controllers
 {
 
-    public class ResetPasswordController : ApiControllerBase
+    public class InboxItemController : ApiControllerBase
     {
+        [Authorize(Roles = &quot;User&quot;)]
         [HttpPost]
-        [Route(&quot;reset-code&quot;)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task&lt;IActionResult&gt; ResetCode(CreateResetCodeCommand command)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task&lt;IActionResult&gt; Create(CreateInboxItemCommand command)
         {
             var result = await Mediator.Send(command);
             if (!result.Success)
@@ -33,27 +32,37 @@ namespace Ergo.Api.Controllers
                 return BadRequest(result);
             }
             return Ok(result);
-
         }
-        [HttpPost]
-        [Route(&quot;verify-reset-code&quot;)]
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpGet(&quot;{userId}&quot;)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task&lt;IActionResult&gt; VerifyResetCode(VerifyResetCodeQuery query)
+        public async Task&lt;IActionResult&gt; GetByUserId(Guid userId)
         {
-            var result = await Mediator.Send(query);
+            var result = await Mediator.Send(new GetByUserIdQuery { UserId = userId });
             if (!result.Success)
             {
                 return BadRequest(result);
             }
             return Ok(result);
-
+        }
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpPut(&quot;{inboxItemId}&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; UpdateIsRead(Guid inboxItemId)
+        {
+            var result = await Mediator.Send(new UpdateInboxItemIsReadCommand { InboxItemId = inboxItemId });
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[19,9,19,10,0],[20,13,20,55,0],[21,13,21,33,0],[22,13,22,14,0],[23,17,23,43,0],[25,13,25,31,0],[27,9,27,10,0],[32,9,32,10,0],[33,13,33,53,0],[34,13,34,33,0],[35,13,35,14,0],[36,17,36,43,0],[38,13,38,31,0],[40,9,40,10,0]]);
+      highlightRanges([[18,9,18,10,1],[19,13,19,55,1],[20,13,20,33,1],[21,13,21,14,1],[22,17,22,43,1],[24,13,24,31,0],[25,9,25,10,1],[30,9,30,10,0],[31,13,31,88,0],[32,13,32,33,0],[33,13,33,14,0],[34,17,34,43,0],[36,13,36,31,0],[37,9,37,10,0],[42,9,42,10,0],[43,13,43,110,0],[44,13,44,33,0],[45,13,45,14,0],[46,17,46,43,0],[48,13,48,31,0],[49,9,49,10,0]]);
     </script>
   </body>
 </html>

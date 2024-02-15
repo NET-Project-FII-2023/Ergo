@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\CreateComment\CreateCommentCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\DeleteComment\DeleteCommentCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,29 +10,21 @@
     <pre id="content" class="source-code">
 using FluentValidation;
 
-
-namespace Ergo.Application.Features.Comments.Commands.CreateComment
+namespace Ergo.Application.Features.Comments.Commands.DeleteComment
 {
-    public class CreateCommentCommandValidator: AbstractValidator&lt;CreateCommentCommand&gt;
+    public class DeleteCommentCommandValidator : AbstractValidator&lt;DeleteCommentCommand&gt;
     {
-        public CreateCommentCommandValidator()
+        public DeleteCommentCommandValidator()
         {
-            RuleFor(p =&gt; p.CommentText)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
-                .NotNull()
-                .MaximumLength(500).WithMessage(&quot;{PropertyName} must not exceed 500 characters.&quot;);
-            RuleFor(p =&gt; p.CreatedBy)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
+            RuleFor(p =&gt; p.CommentId)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
                 .NotNull();
-            
-            
         }
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[8,9,8,47,1],[9,9,9,10,1],[10,13,13,99,1],[14,13,16,28,1],[19,9,19,10,1]]);
+      highlightRanges([[7,9,7,47,1],[8,9,8,10,1],[9,13,11,28,1],[12,9,12,10,1]]);
     </script>
   </body>
 </html>

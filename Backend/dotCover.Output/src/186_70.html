@@ -2,30 +2,24 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Commands\DeletePhotoCommandHandler\DeletePhotoCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Queries\GetPhotosForTaskItem\PhotoDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
-
-namespace Ergo.Application.Features.Photos.Commands.DeletePhoto
+namespace Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem
 {
-    public class DeletePhotoCommandValidator : AbstractValidator&lt;DeletePhotoCommand&gt;
+    public class PhotoDto
     {
-        public DeletePhotoCommandValidator()
-        {
-            RuleFor(p =&gt; p.PhotoId)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull();
-        }
+        public Guid PhotoId { get; set; }
+        public string CloudURL { get; set; } = &quot;&quot;;
     }
-}
 
+}
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,45,0],[8,9,8,10,0],[9,13,11,28,0],[12,9,12,10,0]]);
+      highlightRanges([[5,31,5,35,0],[5,36,5,40,0],[6,34,6,38,0],[6,39,6,43,0],[6,48,6,50,0]]);
     </script>
   </body>
 </html>

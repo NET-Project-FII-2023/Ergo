@@ -1,4 +1,4 @@
-﻿namespace Ergo.API.IntegrationTests.Controllers
+﻿namespace Ergo.API.IntegrationTests.Dto
 {
     public class CommentDeleteResponse
     {

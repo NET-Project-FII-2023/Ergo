@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\Photos\Queries\GetPhotosForTaskItemQueryHandlerTest.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem;
+using Ergo.Application.Features.TaskItems.Queries;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using FluentAssertions;
+using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ergo.Application.Tests.Photos.Queries
+{
+    public  class GetPhotosForTaskItemQueryHandlerTest
+    {
+        private readonly IPhotoRepository _mockPhotoRepository;
+        private readonly ITaskItemRepository _mockTaskItemRepository;
+        private readonly GetPhotosForTaskItemQueryHandler _handler;
+        public GetPhotosForTaskItemQueryHandlerTest()
+        {
+            _mockPhotoRepository = Substitute.For&lt;IPhotoRepository&gt;();
+            _mockTaskItemRepository = Substitute.For&lt;ITaskItemRepository&gt;();
+            var fakeTaskId = Guid.Parse(&quot;d1906196-01f7-4335-88b9-89f9672bb4ce&quot;);
+            var fakeTaskItemDto = new TaskItemDto { TaskItemId = fakeTaskId, ProjectId = Guid.NewGuid(), State = Domain.Entities.Enums.TaskState.ToDo };
+
+            var fakeTaskItem = TaskItem.Create(fakeTaskItemDto.TaskName, fakeTaskItemDto.Description, DateTime.Now.AddDays(1), fakeTaskItemDto.CreatedBy, fakeTaskItemDto.ProjectId, &quot;Test&quot;).Value;
+            
+
+            _handler = new GetPhotosForTaskItemQueryHandler(_mockPhotoRepository, _mockTaskItemRepository);
+        }
+        [Fact]
+        public async Task Handle_WithValidData_ReturnsSuccess()
+        {
+            //Arrange &amp; Act
+            var result = await _handler.Handle(new GetPhotosForTaskItemQuery(), new System.Threading.CancellationToken());
+
+            //Assert
+            result.Should().NotBeNull();
+            result.Success.Should().BeTrue();
+            result.Photos.Count.Should().Be(2);
+
+            result.Photos.Should().ContainSingle(photo =&gt; photo.CloudURL == &quot;https://www.google.com&quot;);
+            result.Photos.Should().ContainSingle(photo =&gt; photo.CloudURL == &quot;https://www.google.com&quot;);
+
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[21,9,21,54,1],[22,9,22,10,1],[23,13,23,71,1],[24,13,24,77,1],[25,13,25,81,1],[26,13,26,153,1],[28,13,28,196,1],[31,13,31,108,1],[32,9,32,10,1],[35,9,35,10,1],[37,13,37,123,1],[40,13,40,41,0],[41,13,41,46,0],[42,13,42,48,0],[44,13,44,103,0],[45,13,45,103,0],[47,9,47,10,0]]);
+    </script>
+  </body>
+</html>

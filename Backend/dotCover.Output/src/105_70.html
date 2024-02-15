@@ -2,28 +2,32 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\ResetCode\Commands\CreateResetCode\CreateResetCodeCommandResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\ResetCode\Queries\VerifyResetCode\VerifyResetCodeQueryValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
+using FluentValidation;
 
-namespace Ergo.Application.Features.ResetCode.Commands.CreateResetCode
+namespace Ergo.Application.Features.ResetCode.Queries.VerifyResetCode
 {
-    public class CreateResetCodeCommandResponse : BaseResponse
+    public class VerifyResetCodeQueryValidator : AbstractValidator&lt;VerifyResetCodeQuery&gt;
     {
-        public CreateResetCodeCommandResponse() : base()
+        public VerifyResetCodeQueryValidator()
         {
-
+            RuleFor(p =&gt; p.Email)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .EmailAddress().WithMessage(&quot;{PropertyName} is not a valid email address.&quot;);
+            RuleFor(p =&gt; p.Code)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;);
         }
-
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,51,7,57,0],[8,9,8,10,0],[10,9,10,10,0]]);
+      highlightRanges([[7,9,7,47,0],[8,9,8,10,0],[9,13,11,93,0],[12,13,13,72,0],[14,9,14,10,0]]);
     </script>
   </body>
 </html>

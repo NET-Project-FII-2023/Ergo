@@ -2,48 +2,83 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\ProjectRepositoryMocks.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\TaskItems\Queries\GetAllTaskItemsQueryHandlerTests.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using Ergo.Application.Features.TaskItems.Queries.GetAll;
 using Ergo.Application.Persistence;
+using Ergo.Application.Tests.RepositoryMocks;
 using Ergo.Domain.Common;
 using Ergo.Domain.Entities;
+using FluentAssertions;
 using NSubstitute;
 
-namespace Ergo.Application.Tests.RepositoryMocks
+namespace Ergo.Application.Tests.TaskItems.Queries;
+
+public class GetAllTaskItemsQueryHandlerTests
 {
-    public static class ProjectRepositoryMocks
+    private readonly ITaskItemRepository _mockTaskItemRepository;
+    private readonly IUserManager _mockUserManager;
+    private readonly GetAllTaskItemsQueryHandler _handler;
+
+    public GetAllTaskItemsQueryHandlerTests()
     {
-        internal readonly static List&lt;Project&gt; Projects =
-        [
-            Project.Create(&quot;Project 1&quot;, &quot;Description 1&quot;, null, null, &quot;GitRepository 1&quot;, DateTime.Now.AddDays(1), &quot;FullName 1&quot;).Value,
-            Project.Create(&quot;Project 2&quot;, &quot;Description 2&quot;, null, null, null, DateTime.Now.AddDays(2), &quot;FullName 2&quot;).Value
-        ];
-
-        public static IProjectRepository GetProjectRepository()
-        {
-            var mockProjectRepository = Substitute.For&lt;IProjectRepository&gt;();
-
-            mockProjectRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;Project&gt;&gt;.Success(Projects));
-            mockProjectRepository.FindByIdAsync(Projects[0].ProjectId)
-                .Returns(Result&lt;Project&gt;.Success(Projects[0]));
-            mockProjectRepository.FindByIdAsync(Projects[1].ProjectId)
-                .Returns(Result&lt;Project&gt;.Success(Projects[1]));
-
-            mockProjectRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != Projects[0].ProjectId &amp;&amp; id != Projects[1].ProjectId))
-                .Returns(Result&lt;Project&gt;.Failure(&quot;Not found&quot;));
-
-            return mockProjectRepository;
-        }
+        _mockTaskItemRepository = TaskItemRepositoryMocks.GetTaskItemRepository();
+        //_mockUserManager = UserManagerRepositoryMocks.GetUserManager();
+        _handler = new GetAllTaskItemsQueryHandler(_mockTaskItemRepository,_mockUserManager);
     }
-}
 
+    [Fact]
+    public async Task GetAllTaskItemsQueryHandler_Success()
+    {
+        // Arrange
+
+        // Act
+        var result = await _handler.Handle(new GetAllTaskItemsQuery(), CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.TaskItems.Should().NotBeEmpty();
+        result.TaskItems.Count.Should().Be(2);
+
+        result.TaskItems.Should().ContainSingle(taskItem =&gt; taskItem.TaskName == &quot;TaskItem 1&quot;);
+        result.TaskItems.Should().ContainSingle(taskItem =&gt; taskItem.TaskName == &quot;TaskItem 2&quot;);
+    }
+
+    [Fact]
+    public async Task GetAllTaskItemsQueryHandler_ReturnsEmptyList_WhenNoTaskItemsExist()
+    {
+        // Arrange
+        _mockTaskItemRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;TaskItem&gt;&gt;.Success(new List&lt;TaskItem&gt;()));
+
+        // Act
+        var result = await _handler.Handle(new GetAllTaskItemsQuery(), CancellationToken.None);
+
+        // Assert
+        result.TaskItems.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GetAllTaskItemsQueryHandler_ThrowsException_WhenRepositoryFails()
+    {
+        // Arrange
+        _mockTaskItemRepository.GetAllAsync().Returns(Task.FromException&lt;Result&lt;IReadOnlyList&lt;TaskItem&gt;&gt;&gt;(new Exception(&quot;Repository failure&quot;)));
+
+        // Act &amp; Assert
+        await Assert.ThrowsAsync&lt;Exception&gt;(() =&gt; _handler.Handle(new GetAllTaskItemsQuery(), CancellationToken.None));
+    }
+
+    public void Dispose()
+    {
+    }
+    
+}
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,14,11,1],[17,9,17,10,1],[18,13,18,78,1],[20,13,20,107,1],[21,13,22,64,1],[23,13,24,64,1],[26,13,27,64,1],[29,13,29,42,1],[30,9,30,10,1]]);
+      highlightRanges([[17,5,17,46,1],[18,5,18,6,1],[19,9,19,83,1],[21,9,21,94,1],[22,5,22,6,1],[26,5,26,6,1],[30,9,30,96,1],[33,9,33,37,1],[34,9,34,48,1],[35,9,35,47,1],[37,9,37,96,1],[38,9,38,96,1],[39,5,39,6,1],[43,5,43,6,1],[45,9,45,118,1],[48,9,48,96,1],[51,9,51,45,1],[52,5,52,6,1],[56,5,56,6,1],[58,9,58,145,1],[61,9,61,51,1],[61,51,61,118,1],[61,118,61,120,1],[62,5,62,6,1],[65,5,65,6,0],[66,5,66,6,0]]);
     </script>
   </body>
 </html>

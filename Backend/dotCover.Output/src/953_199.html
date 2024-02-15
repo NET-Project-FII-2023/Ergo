@@ -2,24 +2,25 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\AwsS3\Constants.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\OpenAi\Message.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Api.Models.AwsS3
+namespace Ergo.Api.Models.OpenAi
 {
-    public class Constants
+    public class Message
     {
-        public static readonly string AccessKey = &quot;AccessKey&quot;;
-        public static readonly string SecretKey = &quot;SecretKey&quot;;
+        public string Role { get; set; }
+        public string Content { get; set; }
     }
+
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,9,5,63,0],[6,9,6,63,0]]);
+      highlightRanges([[5,30,5,34,0],[5,35,5,39,0],[6,33,6,37,0],[6,38,6,42,0]]);
     </script>
   </body>
 </html>

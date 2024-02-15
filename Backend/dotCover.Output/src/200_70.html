@@ -2,26 +2,33 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\InboxItems\Commands\UpdateInboxItemIsRead\InboxItemDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\InboxItems\Queries\GetByUserId\GetByUserIdDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Application.Features.InboxItems.Commands.UpdateInboxItemIsRead
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
 {
-    public class InboxItemDto
+    public class GetByUserIdDto
     {
-            public Guid UserId { get; set; }
-            public string Message { get; set; }
-            public DateTime CreatedDate { get; set; }
-            public bool IsRead { get; set; }
+        public Guid InboxItemId { get; set; }
+        public Guid UserId { get; set; }
+        public string Message { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public bool IsRead { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,34,5,38,0],[5,39,5,43,1],[6,37,6,41,0],[6,42,6,46,1],[7,43,7,47,0],[7,48,7,52,1],[8,34,8,38,0],[8,39,8,43,1]]);
+      highlightRanges([[11,35,11,39,0],[11,40,11,44,0],[12,30,12,34,0],[12,35,12,39,0],[13,33,13,37,0],[13,38,13,42,0],[14,39,14,43,0],[14,44,14,48,0],[15,30,15,34,0],[15,35,15,39,0]]);
     </script>
   </body>
 </html>

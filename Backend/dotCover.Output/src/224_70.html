@@ -2,69 +2,29 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\DeleteComment\DeleteCommentCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\UpdateComment\UpdateCommentCommandResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
-using MediatR;
+using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.Comments.Commands.DeleteComment
+
+namespace Ergo.Application.Features.Comments.Commands.UpdateComment
 {
-    public class DeleteCommentCommandHandler : IRequestHandler&lt;DeleteCommentCommand, DeleteCommentCommandResponse&gt;
+    public class UpdateCommentCommandResponse : BaseResponse
     {
-        private readonly ICommentRepository repository;
-        public DeleteCommentCommandHandler(ICommentRepository repository)
+        public UpdateCommentCommandResponse() : base()
         {
-            this.repository = repository;
         }
-
-        public async Task&lt;DeleteCommentCommandResponse&gt; Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
-        {
-            DeleteCommentCommandResponse response = new();
-            var validator = new DeleteCommentCommandValidator();
-            var validationResult = await validator.ValidateAsync(request);
-            if (!validationResult.IsValid)
-            {
-                response.Success = false;
-                response.ValidationsErrors = validationResult.Errors.Select(x =&gt; x.ErrorMessage).ToList();
-                return response;
-            }
-            var commentToDelete = await repository.FindByIdAsync(request.CommentId);
-
-            if (commentToDelete == null)
-            {
-                response.Success = false;
-                response.ValidationsErrors = new List&lt;string&gt; { &quot;Comment not found&quot; };
-                return response;
-            }
-            if(request.Owner != commentToDelete.Value.CreatedBy)
-            {
-                response.Success = false;
-                response.ValidationsErrors = new List&lt;string&gt; { &quot;You didn&#39;t post this comment&quot; };
-                return response;
-            }
-            var result = await repository.DeleteAsync(request.CommentId);
-            if (!result.IsSuccess)
-            {
-                response.Success = false;
-                response.ValidationsErrors = new List&lt;string&gt; { result.Error };
-                return response;
-            }
-            return new DeleteCommentCommandResponse
-            {
-                Success = true
-            };
-
-        }
+        public UpdateCommentDto Comment { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[9,9,9,74,1],[10,9,10,10,1],[11,13,11,42,1],[12,9,12,10,1],[15,9,15,10,1],[16,13,16,59,1],[17,13,17,65,1],[18,13,18,75,1],[19,13,19,43,1],[20,13,20,14,1],[21,17,21,42,1],[22,17,22,82,1],[22,82,22,96,1],[22,96,22,107,1],[23,17,23,33,1],[25,13,25,85,1],[27,13,27,41,1],[28,13,28,14,0],[29,17,29,42,0],[30,17,30,87,0],[31,17,31,33,0],[33,13,33,65,1],[34,13,34,14,0],[35,17,35,42,0],[36,17,36,98,0],[37,17,37,33,0],[39,13,39,74,1],[40,13,40,35,1],[41,13,41,14,1],[42,17,42,42,1],[43,17,43,80,1],[44,17,44,33,1],[46,13,49,15,1],[51,9,51,10,1]]);
+      highlightRanges([[8,49,8,55,1],[9,9,9,10,1],[10,9,10,10,1],[11,43,11,47,0],[11,48,11,52,0]]);
     </script>
   </body>
 </html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Domain\Entities\ML\TaskData.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.ML.Data;
+
+namespace Ergo.Domain.Entities.ML
+{
+    public class TaskData
+    {
+        [LoadColumn(0)]
+        public float TaskComplexity { get; set; }
+        [LoadColumn(1)]
+        public float NumberOfParticipants { get; set; }
+        [LoadColumn(2)]
+        public float TaskUrgency { get; set; }
+        [LoadColumn(3)]
+        public float ResolutionTime { get; set; }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,39,8,43,0],[8,44,8,48,1],[10,45,10,49,0],[10,50,10,54,1],[12,36,12,40,0],[12,41,12,45,1],[14,39,14,43,0],[14,44,14,48,0]]);
+    </script>
+  </body>
+</html>

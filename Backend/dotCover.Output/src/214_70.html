@@ -2,92 +2,26 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Queries\GetById\GetByIdCommentQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Queries\GetByTaskId\GetCommentByTaskIdQuery.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Users;
-using Ergo.Application.Features.Users.Queries;
-using Ergo.Application.Persistence;
 using MediatR;
+using Ergo.Application.Features.Comments.Queries.GetByTaskId;
 
-
-namespace Ergo.Application.Features.Comments.Queries.GetById
+namespace Ergo.Application.Features.Comments.Queries.GetByTaskId
 {
-    public class GetByIdCommentQueryHandler : IRequestHandler &lt;GetByIdCommentQuery,GetByIdCommentQueryResponse&gt;
-    {
-        private readonly ICommentRepository _commentRepository;
-        private readonly IUserManager _userManager;
-        private readonly IUserPhotoRepository _userPhotoRepository;
-        
-        public GetByIdCommentQueryHandler(ICommentRepository commentRepository, IUserManager userManager, IUserPhotoRepository userPhotoRepository)
-        {
-            _commentRepository = commentRepository;
-            _userPhotoRepository = userPhotoRepository;
-            _userManager = userManager;
-        }
-
-        public async Task&lt;GetByIdCommentQueryResponse&gt; Handle(GetByIdCommentQuery request, CancellationToken cancellationToken)
-        {
-            var comment = await _commentRepository.FindByIdAsync(request.CommentId);
-
-            if(!comment.IsSuccess)
-            {
-                return new GetByIdCommentQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { comment.Error }
-                };
-            }
-
-            var createdBy = await _userManager.FindByUsernameAsync(comment.Value.CreatedBy);
-            if (!createdBy.IsSuccess)
-            {
-                return new GetByIdCommentQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { createdBy.Error }
-                };
-            }
-
-            var userPhoto = await _userPhotoRepository.GetUserPhotoByUserIdAsync(createdBy.Value.UserId);
-            createdBy.Value.UserPhoto = userPhoto.IsSuccess ? new UserCloudPhotoDto
-            {
-                UserPhotoId = userPhoto.Value.UserPhotoId,
-                PhotoUrl = userPhoto.Value.PhotoUrl
-            } : null;
-
-            return new GetByIdCommentQueryResponse
-            {
-                Success = true,
-                Comment = new CommentDto
-                {
-                    CommentId = comment.Value.CommentId,
-                    CommentText = comment.Value.CommentText,
-                    CreatedBy = new UserCommentDto
-                    {
-                        UserId = createdBy.Value.UserId,
-                        Username = createdBy.Value.Username,
-                        Name = createdBy.Value.Name,
-                        Email = createdBy.Value.Email,
-                        UserPhoto = createdBy.Value.UserPhoto
-                    },
-                    CreatedDate = comment.Value.CreatedDate,
-                    LastModifiedBy = comment.Value.LastModifiedBy,
-                    LastModifiedDate = comment.Value.LastModifiedDate,
-                    TaskId = comment.Value.TaskId
-                }
-            };
-           
-        }
-    }
+	public class GetCommentByTaskIdQuery : IRequest&lt;GetCommentByTaskIdQueryResponse&gt;
+	{
+		public Guid TaskId { get; set; }
+	}
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[15,9,15,148,0],[16,9,16,10,0],[17,13,17,52,0],[18,13,18,56,0],[19,13,19,40,0],[20,9,20,10,0],[23,9,23,10,0],[24,13,24,85,0],[26,13,26,35,0],[27,13,27,14,0],[28,17,32,19,0],[35,13,35,93,0],[36,13,36,38,0],[37,13,37,14,0],[38,17,42,19,0],[45,13,45,106,0],[46,13,50,22,0],[52,13,72,15,0],[74,9,74,10,0]]);
+      highlightRanges([[8,24,8,28,0],[8,29,8,33,0]]);
     </script>
   </body>
 </html>

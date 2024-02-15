@@ -2,27 +2,69 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Queries\GetPhotosForTaskItem\GetPhotosForTaskItemQueryResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Commands\AssignUserToProject\AssignUserToProjectCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
+using Ergo.Application.Features.Projects.Commands.UpdateProject;
+using Ergo.Application.Persistence;
+using MediatR;
 
-namespace Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem
+namespace Ergo.Application.Features.Projects.Commands.AssignUserToProject
 {
-    public class GetPhotosForTaskItemQueryResponse : BaseResponse
+    public class AssignUserToProjectCommandHandler : IRequestHandler&lt;AssignUserToProjectCommand, AssignUserToProjectCommandResponse&gt;
     {
-        public GetPhotosForTaskItemQueryResponse() : base()
+        private readonly IProjectRepository projectRepository;
+        private readonly IUserRepository userRepository;
+
+        public AssignUserToProjectCommandHandler(IProjectRepository projectRepository, IUserRepository userRepository)
         {
+            this.projectRepository = projectRepository;
+            this.userRepository = userRepository;
         }
-        public List&lt;PhotoDto&gt; Photos { get; set; }
+        public async Task&lt;AssignUserToProjectCommandResponse&gt; Handle(AssignUserToProjectCommand request, CancellationToken cancellationToken)
+        {
+            var project = await projectRepository.FindByIdAsync(Guid.Parse(request.ProjectId));
+            if (!project.IsSuccess)
+            {
+                return new AssignUserToProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { project.Error }
+                };
+            }
+            var user = await userRepository.FindByIdAsync(Guid.Parse(request.UserId));
+            if (!user.IsSuccess)
+            {
+                return new AssignUserToProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { user.Error }
+                };
+            }
+            var assignResult = project.Value.AssignUser(user.Value);
+            if (!assignResult.IsSuccess)
+            {
+                return new AssignUserToProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { assignResult.Error }
+                };
+            }
+            var result = await projectRepository.UpdateAsync(project.Value);
+            return new AssignUserToProjectCommandResponse
+            {
+                Success = result.IsSuccess
+            };
+        }
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,54,7,60,0],[8,9,8,10,0],[9,9,9,10,0],[10,40,10,44,0],[10,45,10,49,0]]);
+      highlightRanges([[12,9,12,119,0],[13,9,13,10,0],[14,13,14,56,0],[15,13,15,50,0],[16,9,16,10,0],[18,9,18,10,0],[19,13,19,96,0],[20,13,20,36,0],[21,13,21,14,0],[22,17,26,19,0],[28,13,28,87,0],[29,13,29,33,0],[30,13,30,14,0],[31,17,35,19,0],[37,13,37,69,0],[38,13,38,41,0],[39,13,39,14,0],[40,17,44,19,0],[46,13,46,77,0],[47,13,50,15,0],[51,9,51,10,0]]);
     </script>
   </body>
 </html>

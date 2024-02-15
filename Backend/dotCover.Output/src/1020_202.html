@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240114132305_PhotosUpdate.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240114102313_TaskTimeLogging.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -16,63 +16,42 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// &lt;inheritdoc /&gt;
-    public partial class PhotosUpdate : Migration
+    public partial class TaskTimeLogging : Migration
     {
         /// &lt;inheritdoc /&gt;
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: &quot;CreatedBy&quot;,
-                table: &quot;Photos&quot;);
+            migrationBuilder.AddColumn&lt;DateTime&gt;(
+                name: &quot;StartTime&quot;,
+                table: &quot;TaskItems&quot;,
+                type: &quot;timestamp with time zone&quot;,
+                nullable: true);
 
-            migrationBuilder.DropColumn(
-                name: &quot;CreatedDate&quot;,
-                table: &quot;Photos&quot;);
-
-            migrationBuilder.DropColumn(
-                name: &quot;LastModifiedBy&quot;,
-                table: &quot;Photos&quot;);
-
-            migrationBuilder.DropColumn(
-                name: &quot;LastModifiedDate&quot;,
-                table: &quot;Photos&quot;);
+            migrationBuilder.AddColumn&lt;TimeSpan&gt;(
+                name: &quot;TotalTimeSpent&quot;,
+                table: &quot;TaskItems&quot;,
+                type: &quot;interval&quot;,
+                nullable: false,
+                defaultValue: new TimeSpan(0, 0, 0, 0, 0));
         }
 
         /// &lt;inheritdoc /&gt;
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn&lt;string&gt;(
-                name: &quot;CreatedBy&quot;,
-                table: &quot;Photos&quot;,
-                type: &quot;text&quot;,
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: &quot;StartTime&quot;,
+                table: &quot;TaskItems&quot;);
 
-            migrationBuilder.AddColumn&lt;DateTime&gt;(
-                name: &quot;CreatedDate&quot;,
-                table: &quot;Photos&quot;,
-                type: &quot;timestamp with time zone&quot;,
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn&lt;string&gt;(
-                name: &quot;LastModifiedBy&quot;,
-                table: &quot;Photos&quot;,
-                type: &quot;text&quot;,
-                nullable: true);
-
-            migrationBuilder.AddColumn&lt;DateTime&gt;(
-                name: &quot;LastModifiedDate&quot;,
-                table: &quot;Photos&quot;,
-                type: &quot;timestamp with time zone&quot;,
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            migrationBuilder.DropColumn(
+                name: &quot;TotalTimeSpent&quot;,
+                table: &quot;TaskItems&quot;);
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[13,9,13,10,0],[14,13,16,34,0],[18,13,20,34,0],[22,13,24,34,0],[26,13,28,34,0],[29,9,29,10,0],[33,9,33,10,0],[34,13,38,33,0],[40,13,45,92,0],[47,13,51,33,0],[53,13,58,92,0],[59,9,59,10,0]]);
+      highlightRanges([[13,9,13,10,0],[14,13,18,33,0],[20,13,25,60,0],[26,9,26,10,0],[30,9,30,10,0],[31,13,33,37,0],[35,13,37,37,0],[38,9,38,10,0]]);
     </script>
   </body>
 </html>

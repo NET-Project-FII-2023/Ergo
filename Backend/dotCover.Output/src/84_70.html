@@ -2,86 +2,92 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\CreateTaskItem\CreateTaskItemCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\DeleteAssignedUserFromTask\DeleteAssignedUserFromTaskCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
 using Ergo.Application.Persistence;
-using Ergo.Domain.Entities;
+using FluentValidation;
 using MediatR;
 
-namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.DeleteAssignedUserFromTask
 {
-    public class CreateTaskItemCommandHandler : IRequestHandler&lt;CreateTaskItemCommand, CreateTaskItemCommandResponse&gt;
+    public class DeleteAssignedUserFromTaskCommandHandler : IRequestHandler&lt;DeleteAssignedUserFromTaskCommand, DeleteAssignedUserFromTaskCommandResponse&gt;
     {
-
         private readonly ITaskItemRepository taskItemRepository;
         private readonly IProjectRepository projectRepository;
-
-        public CreateTaskItemCommandHandler(ITaskItemRepository taskItemRepository, IProjectRepository projectRepository)
+        public DeleteAssignedUserFromTaskCommandHandler(ITaskItemRepository taskItemRepository, IProjectRepository projectRepository)
         {
             this.taskItemRepository = taskItemRepository;
             this.projectRepository = projectRepository;
         }
 
-        public async Task&lt;CreateTaskItemCommandResponse&gt; Handle(CreateTaskItemCommand request,
-            CancellationToken cancellationToken)
+        public async Task&lt;DeleteAssignedUserFromTaskCommandResponse&gt; Handle(DeleteAssignedUserFromTaskCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateTaskItemCommandValidator();
+            var validator = new DeleteAssignedUserFromTaskCommandValidator();
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
+            if(!validatorResult.IsValid)
             {
-                return new CreateTaskItemCommandResponse
+                return new DeleteAssignedUserFromTaskCommandResponse()
                 {
                     Success = false,
                     ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
                 };
             }
-            var projectExists = await projectRepository.ProjectExists(request.ProjectId);
-            if (!projectExists)
+            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
+            if(!taskItem.IsSuccess)
             {
-                return new CreateTaskItemCommandResponse
+                return new DeleteAssignedUserFromTaskCommandResponse()
                 {
                     Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Project with the provided ID does not exist.&quot; }
+                    Message = &quot;TaskItem not found&quot;
                 };
             }
-
-            var taskItem = TaskItem.Create(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId, request.Branch);
-            if (!taskItem.IsSuccess)
+            var project = await projectRepository.FindByIdAsync(taskItem.Value.ProjectId);
+            if(!project.IsSuccess)
             {
-                return new CreateTaskItemCommandResponse
+                return new DeleteAssignedUserFromTaskCommandResponse()
                 {
                     Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { taskItem.Error }
+                    Message = &quot;Project not found&quot;
                 };
             }
-            await taskItemRepository.AddAsync(taskItem.Value);
-            return new CreateTaskItemCommandResponse
+            if(project.Value.CreatedBy != request.Owner)
             {
-                Success = true,
-                TaskItem = new CreateTaskItemDto
+                return new DeleteAssignedUserFromTaskCommandResponse()
                 {
-                    TaskName = taskItem.Value.TaskName,
-                    Description = taskItem.Value.Description,
-                    Deadline = taskItem.Value.Deadline,
-                    ProjectId = taskItem.Value.ProjectId,
-                    CreatedBy = taskItem.Value.CreatedBy,
-                    State = taskItem.Value.State,
-                    Branch = taskItem.Value.Branch
-                }
-            };
-
+                    Success = false,
+                    Message = &quot;You are not the owner of the project!&quot;
+                };
+            }
+            var result = taskItem.Value.DeleteAssignedUser();
+            if(!result.IsSuccess)
+            {
+                return new DeleteAssignedUserFromTaskCommandResponse()
+                {
+                    Success = false,
+                    Message = result.Error
+                };
+            }
+            var updateResult = await taskItemRepository.UpdateAsync(taskItem.Value);
+            if(!updateResult.IsSuccess)
+            {
+                return new DeleteAssignedUserFromTaskCommandResponse()
+                {
+                    Success = false,
+                    Message = updateResult.Error
+                };
+            }
+            return new DeleteAssignedUserFromTaskCommandResponse { Success = true };
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[13,9,13,122,1],[14,9,14,10,1],[15,13,15,58,1],[16,13,16,56,1],[17,9,17,10,1],[21,9,21,10,1],[22,13,22,66,1],[23,13,23,93,1],[25,13,25,42,1],[26,13,26,14,0],[27,17,30,76,0],[30,76,30,90,0],[30,90,31,19,0],[33,13,33,90,1],[34,13,34,32,1],[35,13,35,14,1],[36,17,40,19,1],[43,13,43,155,1],[44,13,44,37,1],[45,13,45,14,0],[46,17,50,19,0],[52,13,52,63,1],[53,13,66,15,1],[68,9,68,10,1]]);
+      highlightRanges([[11,9,11,134,0],[12,9,12,10,0],[13,13,13,58,0],[14,13,14,56,0],[15,9,15,10,0],[18,9,18,10,0],[19,13,19,78,0],[20,13,20,93,0],[21,13,21,41,0],[22,13,22,14,0],[23,17,26,76,0],[26,76,26,90,0],[26,90,27,19,0],[29,13,29,87,0],[30,13,30,36,0],[31,13,31,14,0],[32,17,36,19,0],[38,13,38,91,0],[39,13,39,35,0],[40,13,40,14,0],[41,17,45,19,0],[47,13,47,57,0],[48,13,48,14,0],[49,17,53,19,0],[55,13,55,62,0],[56,13,56,34,0],[57,13,57,14,0],[58,17,62,19,0],[64,13,64,85,0],[65,13,65,40,0],[66,13,66,14,0],[67,17,71,19,0],[73,13,73,85,0],[74,9,74,10,0]]);
     </script>
   </body>
 </html>

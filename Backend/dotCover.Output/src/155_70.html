@@ -2,56 +2,29 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetById\GetByIdProjectQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubData\GetProjectGithubDataQueryResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
-using MediatR;
-namespace Ergo.Application.Features.Projects.Queries.GetById
+using Ergo.Application.Responses;
+
+namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
 {
-    public class GetByIdProjectQueryHandler : IRequestHandler&lt;GetByIdProjectQuery, ProjectDto&gt;
+    public class GetProjectGithubDataQueryResponse : BaseResponse
     {
-        private readonly IProjectRepository projectRepository;
-
-        public GetByIdProjectQueryHandler(IProjectRepository projectRepository)
+        public GetProjectGithubDataQueryResponse() : base()
         {
-            this.projectRepository = projectRepository;
         }
-
-        public async Task&lt;ProjectDto&gt; Handle(GetByIdProjectQuery request, CancellationToken cancellationToken)
-        {
-            var project = await projectRepository.FindByIdAsync(request.ProjectId);
-
-            if (project.IsSuccess)
-            {
-                return new ProjectDto
-                {
-                    ProjectId = project.Value.ProjectId,
-                    ProjectName = project.Value.ProjectName,
-                    Description = project.Value.Description,
-                    GitRepository = project.Value.GitRepository,
-                    StartDate = project.Value.StartDate,
-                    Deadline = project.Value.Deadline,
-                    State = project.Value.State,
-                    Members = project.Value.Members,
-                    CreatedBy = project.Value.CreatedBy,
-                    GithubToken = project.Value.GithubToken,
-                    GithubOwner = project.Value.GithubOwner
-                };
-            }
-
-            return new ProjectDto();
-        }
+        public string ProjectOwner { get; set; }
+        public string ProjectRepository { get; set; }
+        public string GithubToken { get; set; }
     }
 }
-
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[9,9,9,80,1],[10,9,10,10,1],[11,13,11,56,1],[12,9,12,10,1],[15,9,15,10,1],[16,13,16,84,1],[18,13,18,35,1],[19,13,19,14,1],[20,17,33,19,1],[36,13,36,37,1],[37,9,37,10,1]]);
+      highlightRanges([[7,54,7,60,0],[8,9,8,10,0],[9,9,9,10,0],[10,38,10,42,0],[10,43,10,47,0],[11,43,11,47,0],[11,48,11,52,0],[12,37,12,41,0],[12,42,12,46,0]]);
     </script>
   </body>
 </html>

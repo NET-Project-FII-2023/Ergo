@@ -2,55 +2,33 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\CreateTaskItem\CreateTaskItemCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\DeleteAssignedUserFromTask\DeleteAssignedUserFromTaskCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.DeleteAssignedUserFromTask
 {
-    public class CreateTaskItemCommandValidator : AbstractValidator&lt;CreateTaskItemCommand&gt;
+    public class DeleteAssignedUserFromTaskCommandValidator : AbstractValidator&lt;DeleteAssignedUserFromTaskCommand&gt;
     {
-
-        public CreateTaskItemCommandValidator()
+        public DeleteAssignedUserFromTaskCommandValidator()
         {
-            RuleFor(p =&gt; p.TaskName)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull()
-                .MaximumLength(50).WithMessage(&quot;{PropertyName} must not exceed 50 characters.&quot;);
-
-            RuleFor(p =&gt; p.Description)
-                .NotEmpty()
-                .NotNull()
-                .MaximumLength(1500).WithMessage(&quot;{PropertyName} must not exceed 1500 characters.&quot;);
-            RuleFor(p =&gt; p.CreatedBy)
-                .NotEmpty()
-                .NotNull()
-                .MaximumLength(50).WithMessage(&quot;{PropertyName} must not exceed 50 characters.&quot;);
-
-            RuleFor(p =&gt; p.ProjectId)
-                .NotEmpty()
+            RuleFor(p =&gt; p.TaskItemId)
+                .NotEmpty().WithMessage(&quot;TaskItemId is required.&quot;)
                 .NotNull();
-            RuleFor(p =&gt; p.State)
-                    .IsInEnum()
-                    .WithMessage(&quot;{PropertyName} must be a valid value between 1-3&quot;);
-
+            RuleFor(p =&gt; p.Owner)
+                .NotEmpty().WithMessage(&quot;UserIdOwner is required.&quot;)
+                .NotNull();
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[14,9,14,48,1],[15,9,15,10,1],[16,13,19,97,1],[21,13,24,101,1],[25,13,28,97,1],[30,13,32,28,1],[33,13,35,86,1],[37,9,37,10,1]]);
+      highlightRanges([[7,9,7,60,0],[8,9,8,10,0],[9,13,11,28,0],[12,13,14,28,0],[15,9,15,10,0]]);
     </script>
   </body>
 </html>

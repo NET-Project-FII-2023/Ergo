@@ -2,25 +2,25 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\OpenAi\Choice.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\CurrentUser.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Api.Models.OpenAi
+namespace Ergo.Api.Models
 {
-    public class Choice { 
-        public int Index { get; set; } 
-        public Message Message { get; set; } 
-        public object Logprobs { get; set; } 
-        public string FinishReason { get; set; } }
-
+    public class CurrentUser
+    {
+        public bool IsAuthenticated { get; set; }
+        public string UserName { get; set; }
+        public Dictionary&lt;string, string&gt; Claims { get; set; }
+    }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[4,28,4,32,0],[4,33,4,37,0],[5,34,5,38,0],[5,39,5,43,0],[6,34,6,38,0],[6,39,6,43,0],[7,38,7,42,0],[7,43,7,47,0]]);
+      highlightRanges([[5,39,5,43,0],[5,44,5,48,0],[6,34,6,38,0],[6,39,6,43,0],[7,52,7,56,0],[7,57,7,61,0]]);
     </script>
   </body>
 </html>

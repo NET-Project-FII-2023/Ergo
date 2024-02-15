@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.API.IntegrationTests\Base\Seed.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Models.Identity;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+using Ergo.Identity;
+using Ergo.Identity.Models;
+using Ergo.Identity.Services;
+using Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+
+namespace Ergo.API.IntegrationTests.Base
+{
+    public class Seed
+    {
+        public static void InitializeDbForTests(ErgoContext context)
+        {
+            var projects = new List&lt;Project&gt;
+            {
+                Project.Create(&quot;Ergo&quot;, &quot;.NET&quot;, null, null,null, DateTime.UtcNow, &quot;John&quot;).Value,
+                Project.Create(&quot;Labs&quot;, &quot;.NET&quot;,  null, null,null, DateTime.UtcNow, &quot;George&quot;).Value,
+                Project.Create(&quot;Github&quot;, &quot;Angular&quot;, null, null, null, DateTime.UtcNow, &quot;John&quot;).Value,
+                Project.Create(&quot;LFAC&quot;, &quot;C&quot;,  null, null,null, DateTime.UtcNow, &quot;Josh&quot;).Value,
+            };
+            var tasks = new List&lt;TaskItem&gt;
+            {
+                TaskItem.Create(&quot;Ergo&quot;, &quot;Create project&quot;, DateTime.UtcNow,&quot;John&quot;,Guid.NewGuid(), null).Value,
+                TaskItem.Create(&quot;Labs&quot;, &quot;Create project&quot;, DateTime.UtcNow,&quot;George&quot;,Guid.NewGuid(), null).Value,
+                TaskItem.Create(&quot;Github&quot;, &quot;Create project&quot;, DateTime.UtcNow,&quot;John&quot;,Guid.NewGuid(), null).Value,
+                TaskItem.Create(&quot;LFAC&quot;, &quot;Create project&quot;, DateTime.UtcNow,&quot;Josh&quot;,Guid.NewGuid(), null).Value,
+
+            };
+            var users = new List&lt;User&gt;
+            {
+                User.Create(Guid.NewGuid()).Value,
+                User.Create(Guid.NewGuid()).Value,
+                User.Create(Guid.NewGuid()).Value,
+                User.Create(Guid.NewGuid()).Value,
+            };
+            var comments = new List&lt;Comment&gt;
+            {
+                Comment.Create(&quot;Mihai&quot;,Guid.NewGuid(),&quot;comment&quot;).Value,
+                Comment.Create(&quot;Mihai2&quot;,Guid.NewGuid(),&quot;comment2&quot;).Value,
+                Comment.Create(&quot;Mihai3&quot;,Guid.NewGuid(),&quot;comment3&quot;).Value,
+                Comment.Create(&quot;Mihai4&quot;,Guid.NewGuid(),&quot;comment4&quot;).Value,
+
+            };
+            var inboxItem = new List&lt;InboxItem&gt;
+            {
+                InboxItem.Create(Guid.NewGuid(),&quot;mesaj&quot;).Value,
+                InboxItem.Create(Guid.NewGuid(),&quot;mesaj2&quot;).Value,
+                InboxItem.Create(Guid.NewGuid(),&quot;mesaj3&quot;).Value,
+                InboxItem.Create(Guid.NewGuid(),&quot;mesaj4&quot;).Value,
+                
+
+            };
+
+            context.TaskItems.AddRange(tasks);
+            context.Projects.AddRange(projects);
+            context.Users.AddRange(users);
+            context.Comments.AddRange(comments);
+            context.SaveChanges();
+
+        }
+        public static async Task InitializeUserDbForTests(UserManager&lt;ApplicationUser&gt; userManager, RoleManager&lt;IdentityRole&gt; roleManager, IUserRepository userRepository, IPasswordResetCode passwordResetCode, IBadgeRepository badgeRepository)
+        {
+            var configuration = new ConfigurationBuilder().Build(); 
+            var authService = new AuthService(userManager, roleManager, configuration, null, userRepository,passwordResetCode, badgeRepository); 
+
+            var registrationModels = new List&lt;RegistrationModel&gt;
+        {
+            new RegistrationModel{ Username = &quot;john_doe&quot;, Email = &quot;john.doe@example.com&quot;, Name = &quot;John Doe&quot;, Password = &quot;ComplexPass1!&quot;},
+            new RegistrationModel{ Username = &quot;jane_doe&quot;, Email = &quot;jane_doe@example.com&quot;, Name = &quot;Jane Doe&quot;, Password = &quot;ComplexPass1!&quot;},
+
+        };
+
+            foreach (var model in registrationModels)
+            {
+                var (status, message) = await authService.Registeration(model, UserRoles.User);
+                if (status == 0)
+                {
+                    Console.WriteLine($&quot;Failed to create user: {message}&quot;);
+                }
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,10,1],[17,13,23,15,1],[24,13,31,15,1],[32,13,38,15,1],[39,13,46,15,1],[47,13,55,15,1],[57,13,57,47,1],[58,13,58,49,1],[59,13,59,43,1],[60,13,60,49,1],[61,13,61,35,1],[63,9,63,10,1],[65,9,65,10,1],[66,13,66,68,1],[67,13,67,145,1],[69,13,74,11,1],[76,13,76,20,1],[76,22,76,31,1],[76,32,76,34,1],[76,35,76,53,1],[77,13,77,14,1],[78,17,78,96,1],[79,17,79,33,1],[80,17,80,18,1],[81,21,81,76,1],[82,17,82,18,1],[83,13,83,14,1],[84,9,84,10,1]]);
+    </script>
+  </body>
+</html>

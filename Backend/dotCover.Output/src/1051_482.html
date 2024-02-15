@@ -2,69 +2,78 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\Users\Commands\UpdateUserRoleCommandHandlerTests.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\Comments\Commands\UpdateCommentCommandHandlerTests.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Users.Commands.UpdateRole;
-using Ergo.Application.Features.Users.Queries;
-using Ergo.Application.Persistence;
-using Ergo.Domain.Common;
-using FluentAssertions;
 using NSubstitute;
+using FluentAssertions;
+using Ergo.Application.Features.Comments.Commands.UpdateComment;
+using Ergo.Application.Persistence;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
+using Xunit;
+using FluentValidation.Results;
+using Ergo.Domain.Entities;
+using Ergo.Domain.Common;
 
-namespace Ergo.Application.Tests.Users.Commands
+public class UpdateCommentCommandHandlerTests
 {
-    public class UpdateUserRoleCommandHandlerTests
-    {
-        private readonly IUserManager _userRepository;
-        private readonly UpdateUserRoleCommandHandler _handler;
-        public UpdateUserRoleCommandHandlerTests()
-        {
-            _userRepository = Substitute.For&lt;IUserManager&gt;();
-            _handler = new UpdateUserRoleCommandHandler(_userRepository);
-        }
-        [Fact]
-        public async Task Handle_UserExists_UpdatesSuccessfully()
-        {
-            // Arrange
-            var userId = Guid.NewGuid();
-            var request = new UpdateUserRoleCommand { UserId = userId, Role = &quot;Admin&quot; };
-            var existingUser = Result&lt;UserDto&gt;.Success(new UserDto { UserId = userId.ToString() });
-            _userRepository.FindByIdAsync(userId).Returns(Task.FromResult(existingUser));
-            _userRepository.UpdateRoleAsync(Arg.Any&lt;UserDto&gt;(), Arg.Any&lt;string&gt;()).Returns(Task.FromResult(Result&lt;UserDto&gt;.Success(new UserDto())));
-            // Act
-            var response = await _handler.Handle(request, new CancellationToken());
-            // Assert
-            response.Success.Should().BeTrue();
-        }
-        [Fact]
-        public async Task Handle_UpdateFails_ReturnsErrorResponse()
-        {
-            // Arrange
-            var userId = Guid.NewGuid();
-            var request = new UpdateUserRoleCommand { UserId = userId, Role = &quot;Admin&quot; };
-            var existingUser = Result&lt;UserDto&gt;.Success(new UserDto { UserId = userId.ToString() });
-            _userRepository.FindByIdAsync(userId).Returns(Task.FromResult(existingUser));
-            _userRepository.UpdateRoleAsync(Arg.Any&lt;UserDto&gt;(), Arg.Any&lt;string&gt;()).Returns(Task.FromResult(Result&lt;UserDto&gt;.Failure(&quot;Error&quot;)));
-            // Act
-            var response = await _handler.Handle(request, new CancellationToken());
-            // Assert
-            response.Success.Should().BeFalse();
-        }
-    }
-}
+    private readonly ICommentRepository _commentRepository;
+    private readonly UpdateCommentCommandHandler _handler;
 
+    public UpdateCommentCommandHandlerTests()
+    {
+        _commentRepository = Substitute.For&lt;ICommentRepository&gt;();
+        _handler = new UpdateCommentCommandHandler(_commentRepository);
+    }
+
+
+    [Fact]
+    public async Task Handle_CommentDoesNotExist_ReturnsError()
+    {
+        // Arrange
+        var request = new UpdateCommentCommand { CommentId = Guid.NewGuid() };
+        _commentRepository.FindByIdAsync(request.CommentId).Returns(Task.FromResult(Result&lt;Comment&gt;.Failure(&quot;Comment not found&quot;)));
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeFalse();
+        response.ValidationsErrors.Should().Contain(&quot;Comment with id this does not exists&quot;);
+    }
+
+    [Fact]
+    public async Task Handle_InvalidData_ReturnsValidationErrors()
+    {
+        // Arrange
+        var commentId = Guid.NewGuid();
+        var existingComment = new Comment();
+        _commentRepository.FindByIdAsync(commentId).Returns(Task.FromResult(Result&lt;Comment&gt;.Success(existingComment)));
+
+        var request = new UpdateCommentCommand
+        {
+            CommentId = commentId,
+            // Lăsați unele c&#226;mpuri invalide sau necompletate
+        };
+
+        // Act
+        var response = await _handler.Handle(request, new CancellationToken());
+
+        // Assert
+        response.Success.Should().BeFalse();
+        response.ValidationsErrors.Should().NotBeEmpty();
+    }
+
+
+}
     </pre>
     <script type="text/javascript">
-      highlightRanges([[19,9,19,51,1],[20,9,20,10,1],[21,13,21,62,1],[22,13,22,74,1],[23,9,23,10,1],[26,9,26,10,1],[28,13,28,41,1],[29,13,29,89,1],[30,13,30,100,1],[31,13,31,90,1],[32,13,32,149,1],[34,13,34,84,1],[36,13,36,48,1],[37,9,37,10,1],[40,9,40,10,1],[42,13,42,41,1],[43,13,43,89,1],[44,13,44,100,1],[45,13,45,90,1],[46,13,46,143,1],[48,13,48,84,1],[50,13,50,49,1],[51,9,51,10,1]]);
+      highlightRanges([[18,5,18,46,1],[19,5,19,6,1],[20,9,20,67,1],[21,9,21,72,1],[22,5,22,6,1],[27,5,27,6,1],[29,9,29,79,1],[30,9,30,132,1],[33,9,33,80,1],[36,9,36,45,1],[37,9,37,93,1],[38,5,38,6,1],[42,5,42,6,1],[44,9,44,40,1],[45,9,45,45,1],[46,9,46,120,1],[48,9,52,11,1],[55,9,55,80,1],[58,9,58,45,1],[59,9,59,58,1],[60,5,60,6,1]]);
     </script>
   </body>
 </html>

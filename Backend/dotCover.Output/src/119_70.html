@@ -2,30 +2,26 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Commands\DeleteUser\DeleteUserCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Commands\UpdateRole\UpdateUserRoleCommand.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ergo.Application.Features.Users.Commands.DeleteUser
+namespace Ergo.Application.Features.Users.Commands.UpdateRole
 {
-    public class DeleteUserCommand : IRequest&lt;DeleteUserCommandResponse&gt;
+    public class UpdateUserRoleCommand : IRequest&lt;UpdateUserRoleCommandResponse&gt;
     {
         public Guid UserId { get; set; }
+        public string Role { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,30,12,34,1],[12,35,12,39,1]]);
+      highlightRanges([[7,30,7,34,1],[7,35,7,39,1],[8,30,8,34,1],[8,35,8,39,1]]);
     </script>
   </body>
 </html>

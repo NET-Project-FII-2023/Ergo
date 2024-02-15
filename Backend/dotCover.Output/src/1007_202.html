@@ -2,67 +2,61 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\ML\MLService.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Repositories\TaskItemRepository.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
 using Ergo.Application.Persistence;
-using Ergo.Domain.Entities.ML;
-using Microsoft.AspNetCore.Http;
-using Microsoft.ML;
-using static Microsoft.ML.DataOperationsCatalog;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+namespace Infrastructure.Repositories;
 
-namespace Infrastructure.ML
+public class TaskItemRepository : BaseRepository&lt;TaskItem&gt;, ITaskItemRepository
 {
-    public class MLService : IMLService
+    public TaskItemRepository(ErgoContext context) : base(context)
     {
-        private readonly MLContext mlContext;
-        private ITransformer trainedModel;
+    }
+    public async Task&lt;bool&gt; TaskItemExists(Guid taskItemId)
+    {
+        return await context.TaskItems.AnyAsync(x =&gt; x.TaskItemId == taskItemId);
+    }
+    public async Task&lt;Result&lt;string&gt;&gt; GetAssignedUser(Guid taskItemId)
+    {
+        var taskItem = await context.TaskItems
+                  .Include(t =&gt; t.AssignedUser)
+                  .FirstOrDefaultAsync(x =&gt; x.TaskItemId == taskItemId);
 
-        public MLService()
+        if (taskItem == null)
         {
-            mlContext = new MLContext();
-
+            return Result&lt;string&gt;.Failure($&quot;Task item with id {taskItemId} not found&quot;);
         }
-        public async Task TrainModelAsync()
+        if (taskItem.AssignedUser == null)
         {
-            IDataView data = mlContext.Data.LoadFromTextFile&lt;TaskData&gt;(&quot;I:\\Facultate\\ErgoUpdate\\Ergo\\ML\\data.csv&quot;, separatorChar: &#39;,&#39;);
-
-            TrainTestData splitData = mlContext.Data.TrainTestSplit(data);
-
-            var pipeline = mlContext.Transforms.Concatenate(&quot;Features&quot;, &quot;TaskComplexity&quot;, &quot;NumberOfParticipants&quot;, &quot;TaskUrgency&quot;)
-                .Append(mlContext.Regression.Trainers.Sdca(labelColumnName: &quot;ResolutionTime&quot;, maximumNumberOfIterations: 100));
-
-            var model = pipeline.Fit(splitData.TrainSet);
-
-            var predictions = model.Transform(splitData.TestSet);
-            var metrics = mlContext.Regression.Evaluate(predictions, &quot;ResolutionTime&quot;);
-            Console.WriteLine($&quot;R^2: {metrics.RSquared:0.##}&quot;);
-            Console.WriteLine($&quot;RMSE: {metrics.RootMeanSquaredError:0.##}&quot;);
-
-            mlContext.Model.Save(model, data.Schema, &quot;model.zip&quot;);
+            return Result&lt;string&gt;.Failure($&quot;Task item with id {taskItemId} is not assigned to any user&quot;);
         }
-        public async Task&lt;float&gt; PredictCompletionTime(TaskData userInput)
-        {
-            using (var stream = File.OpenRead(&quot;model.zip&quot;))
-            {
-                trainedModel = mlContext.Model.Load(stream, out var modelInputSchema);
-            }
+        return Result&lt;string&gt;.Success(taskItem.AssignedUser.UserId.ToString());
+    }
+    public Task&lt;int&gt; GetNumberOfTasksByUserIdAsync(Guid userId)
+    {
+        return context.TaskItems.CountAsync(x =&gt; x.AssignedUser.UserId == userId);
+    }
 
-            var predictor = mlContext.Model.CreatePredictionEngine&lt;TaskData, TaskPrediction&gt;(trainedModel);
-            var prediction = predictor.Predict(userInput);
+    public async Task&lt;int&gt; GetTotalHoursWorkedByUserIdAsync(Guid userId)
+    {
+        var totalHours = await context.TaskItems
+            .Where(x =&gt; x.AssignedUser.UserId == userId)
+            .Select(x =&gt; x.TotalTimeSpent.TotalHours)
+            .SumAsync();
 
-            Console.WriteLine($&quot;Predicted resolution time: {prediction.PredictedResolutionTime}&quot;);
-            return prediction.PredictedResolutionTime;
-        }
+        return (int)totalHours;
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[14,9,14,27,0],[15,9,15,10,0],[16,13,16,41,0],[18,9,18,10,0],[20,9,20,10,0],[21,13,21,141,0],[23,13,23,75,0],[25,13,26,128,0],[28,13,28,58,0],[30,13,30,66,0],[31,13,31,88,0],[32,13,32,64,0],[33,13,33,77,0],[35,13,35,67,0],[36,9,36,10,0],[38,9,38,10,0],[39,20,39,59,0],[40,13,40,14,0],[41,17,41,87,0],[42,13,42,14,0],[44,13,44,108,0],[45,13,45,59,0],[47,13,47,99,0],[48,13,48,55,0],[49,9,49,10,0]]);
+      highlightRanges([[9,54,9,67,1],[10,5,10,6,1],[11,5,11,6,1],[13,5,13,6,0],[14,9,14,82,0],[15,5,15,6,0],[17,5,17,6,1],[18,9,20,73,1],[22,9,22,30,1],[23,9,23,10,0],[24,13,24,88,0],[26,9,26,43,1],[27,9,27,10,1],[28,13,28,106,1],[30,9,30,80,0],[31,5,31,6,1],[33,5,33,6,0],[34,9,34,83,0],[35,5,35,6,0],[38,5,38,6,0],[39,9,42,25,0],[44,9,44,32,0],[45,5,45,6,0]]);
     </script>
   </body>
 </html>

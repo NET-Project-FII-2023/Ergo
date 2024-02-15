@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\UserRepositoryMocks.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\InboxItemsRepositoryMocks.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -15,31 +15,28 @@ using NSubstitute;
 
 namespace Ergo.Application.Tests.RepositoryMocks
 {
-    public static class UserRepositoryMocks
+    public static class InboxItemsRepositoryMocks
     {
-        internal readonly static List&lt;User&gt; Users =
-        [
-            User.Create(new Guid()).Value,
-            User.Create(new Guid()).Value
-        ];
-
-        public static IUserRepository GetUserRepository()
+        internal readonly static List&lt;InboxItem&gt; InboxItems =
+            [
+                InboxItem.Create(Guid.NewGuid(), &quot;Description1&quot;).Value,
+                InboxItem.Create(Guid.NewGuid(), &quot;Description2&quot;).Value,
+            ];
+        public static IInboxItemRepository GetInboxItemRepository()
         {
-            var mockUserRepository = Substitute.For&lt;IUserRepository&gt;();
-
-            mockUserRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;User&gt;&gt;.Success(Users));
-
-            mockUserRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != Users[0].UserId &amp;&amp; id != Users[1].UserId))
-                .Returns(Result&lt;User&gt;.Failure(&quot;Not found&quot;));
-
-            return mockUserRepository;
+            var mockInboxItemRepository = Substitute.For&lt;IInboxItemRepository&gt;();
+            mockInboxItemRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;InboxItem&gt;&gt;.Success(InboxItems));
+            mockInboxItemRepository.FindByIdAsync(InboxItems[0].InboxItemId).Returns(Result&lt;InboxItem&gt;.Success(InboxItems[0]));
+            mockInboxItemRepository.FindByIdAsync(InboxItems[1].InboxItemId).Returns(Result&lt;InboxItem&gt;.Success(InboxItems[1]));
+            mockInboxItemRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != InboxItems[0].InboxItemId &amp;&amp; id != InboxItems[1].InboxItemId)).Returns(Result&lt;InboxItem&gt;.Failure(&quot;Not found&quot;));
+            return mockInboxItemRepository;
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,14,11,1],[17,9,17,10,1],[18,13,18,72,1],[20,13,20,98,1],[22,13,23,61,1],[25,13,25,39,1],[26,9,26,10,1]]);
+      highlightRanges([[10,9,14,15,0],[16,9,16,10,0],[17,13,17,82,0],[18,13,18,113,0],[19,13,19,128,0],[20,13,20,128,0],[21,13,21,187,0],[22,13,22,44,0],[23,9,23,10,0]]);
     </script>
   </body>
 </html>

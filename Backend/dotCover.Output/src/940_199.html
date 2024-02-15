@@ -2,199 +2,114 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\CloudController.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\GitHubController.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Amazon.Runtime;
 using Ergo.Api.Controllers;
 using Ergo.Api.Models;
-using Ergo.Api.Models.AwsS3;
-using Ergo.Api.Services;
-using Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem;
-using Ergo.Application.Features.Photos.Commands.DeletePhoto;
-using Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto;
-using Ergo.Application.Features.UserPhotos.Commands.UpdateTaskPhoto;
-using Ergo.Application.Persistence;
-using Ergo.Domain.Entities;
+using Ergo.Application.Features.Projects.Queries.GetProjectGithubData;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Octokit;
 
-namespace Ergo.API.Controllers
+namespace YourNamespace.Controllers
 {
-    [Route(&quot;api/v1/[controller]&quot;)]
     [ApiController]
-    public class CloudController : ApiControllerBase
+    [Route(&quot;api/v1/GitHub&quot;)]
+    public class GitHubController : ApiControllerBase
     {
-        private readonly IStorageService storageService;
-        private readonly IPhotoRepository photoRepository;
-        private string AwsKeyEnv { get; set; }
-        private string AwsSecretKeyEnv { get; set; }
+        private readonly GitHubClient gitHubClient;
 
-        public CloudController(IStorageService storageService, IPhotoRepository photoRepository)
+        public GitHubController()
         {
-
-            this.storageService = storageService;
-            this.photoRepository = photoRepository;
-            AwsKeyEnv = DotNetEnv.Env.GetString(&quot;AWSAccessKey&quot;);
-            AwsSecretKeyEnv = DotNetEnv.Env.GetString(&quot;AWSSecretKey&quot;);
+            gitHubClient = new GitHubClient(new ProductHeaderValue(&quot;Ergo&quot;));
         }
 
         [Authorize(Roles = &quot;User&quot;)]
         [HttpPost]
-        [Route(&quot;upload-task-photo&quot;)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task&lt;IActionResult&gt; UploadFile(AddPhotoDto addPhoto)
-        {
-            await using var memoryStr = new MemoryStream();
-            await addPhoto.File.CopyToAsync(memoryStr);
-
-            var fileExt = Path.GetExtension(addPhoto.File.FileName);
-            var objName = $&quot;{Guid.NewGuid()}{fileExt}&quot;;
-            var s3Object = new S3Object()
-            {
-                BucketName = &quot;ergo-project&quot;,
-                InputStream = memoryStr,
-                Name = objName
-            };
-
-            var cred = new AWSCredential()
-            {
-                AwsKey = AwsKeyEnv,
-                AwsSecretKey = AwsSecretKeyEnv
-            };
-            var result = await storageService.UploadFileAsync(s3Object, cred);
-            var command = new AddPhotoToTaskItemCommand()
-            {
-                CloudURL = objName,
-                TaskItemId = addPhoto.TaskItemId
-            };
-            var photoResult = await Mediator.Send(command);
-            if (!photoResult.Success)
-            {
-                await storageService.DeleteFileAsync(objName, cred);
-                return BadRequest(photoResult);
-            }
-            return Ok();
-        }
-
-        [Authorize(Roles = &quot;User&quot;)]
-        [HttpDelete]
-        [Route(&quot;delete-task-photo&quot;)]
+        [Route(&quot;commits&quot;)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task&lt;IActionResult&gt; DeleteFile(DeletePhotoCommand command)
+        public async Task&lt;IActionResult&gt; GetCommitsFromBranch(GetProjectGithubDataQuery command, string Branch)
         {
-            var photo = await photoRepository.FindByIdAsync(command.PhotoId);
-            if (!photo.IsSuccess)
+            try
             {
-                return BadRequest(photo);
-            }
-            var cred = new AWSCredential()
-            {
-                AwsKey = AwsKeyEnv,
-                AwsSecretKey = AwsSecretKeyEnv
-            };
-            var result = await storageService.DeleteFileAsync(photo.Value.CloudURL, cred);
-            if (!result)
-            {
-                return BadRequest(result);
-            }
-            var deletePhotoResult = await Mediator.Send(command);
-            if (!deletePhotoResult.Success)
-            {
-                return BadRequest(deletePhotoResult);
-            }
-            return Ok();
+                var result = await Mediator.Send(command);
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+                gitHubClient.Credentials = new Credentials(result.GithubToken);
 
+                IReadOnlyList&lt;GitHubCommit&gt; commits = await gitHubClient.Repository.Commit
+                    .GetAll(result.ProjectOwner, result.ProjectRepository, new CommitRequest { Sha = Branch });
+
+                List&lt;GitHubCommitDto&gt; commitNames = new List&lt;GitHubCommitDto&gt;();
+
+                foreach (var commit in commits)
+                {
+                    commitNames.Add(new GitHubCommitDto
+                    {
+                        CommitName = commit.Commit.Message,
+                        Url = commit.Commit.Url,
+                        Author = commit.Commit.Author.Name,
+                        Date = commit.Commit.Author.Date.ToString()
+                    });
+                }
+
+                return Ok(commitNames);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound($&quot;Repository or branch not found: {ex.Message}&quot;);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $&quot;An error occurred: {ex.Message}&quot;);
+            }
         }
-
         [Authorize(Roles = &quot;User&quot;)]
         [HttpPost]
-        [Route(&quot;upload-user-photo&quot;)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task&lt;IActionResult&gt; AddUserPhoto(AddUserPhotoDto addUserPhotoDto)
-        {
-            await using var memoryStr = new MemoryStream();
-            await addUserPhotoDto.File.CopyToAsync(memoryStr);
-            var fileExt = Path.GetExtension(addUserPhotoDto.File.FileName);
-            var objName = $&quot;{Guid.NewGuid()}{fileExt}&quot;;
-            var s3Object = new S3Object()
-            {
-                BucketName = &quot;ergo-project&quot;,
-                InputStream = memoryStr,
-                Name = objName
-            };
-            var cred = new AWSCredential()
-            {
-                AwsKey = AwsKeyEnv,
-                AwsSecretKey = AwsSecretKeyEnv
-            };
-            var result = await storageService.UploadFileAsync(s3Object, cred);
-            var command = new AddUserPhotoCommand()
-            {
-                UserId = addUserPhotoDto.UserId,
-                PhotoUrl = objName
-            };
-            var userPhotoResult = await Mediator.Send(command);
-            if (!userPhotoResult.Success)
-            {
-                await storageService.DeleteFileAsync(objName, cred);
-                return BadRequest(userPhotoResult);
-            }
-            return Ok(userPhotoResult);
-
-        }
-
-        [Authorize(Roles = &quot;User&quot;)]
-        [HttpPut]
-        [Route(&quot;update-user-photo&quot;)]
+        [Route(&quot;branches&quot;)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task&lt;IActionResult&gt; UpdateUserPhoto(UpdateUserPhotoDto updateUserPhotoDto)
+        public async Task&lt;IActionResult&gt; GetBranches(GetProjectGithubDataQuery command)
         {
-            await using var memoryStr = new MemoryStream();
-            await updateUserPhotoDto.File.CopyToAsync(memoryStr);
-            var fileExt = Path.GetExtension(updateUserPhotoDto.File.FileName);
-            var objName = $&quot;{Guid.NewGuid()}{fileExt}&quot;;
-            var s3Object = new S3Object()
+            try
             {
-                BucketName = &quot;ergo-project&quot;,
-                InputStream = memoryStr,
-                Name = objName
-            };
-            var cred = new AWSCredential()
-            {
-                AwsKey = AwsKeyEnv,
-                AwsSecretKey = AwsSecretKeyEnv
-            };
-
-            var result = await storageService.UploadFileAsync(s3Object, cred);
-            var command = new UpdateUserPhotoCommand()
-            {
-                UserPhotoId = updateUserPhotoDto.UserPhotoId,
-                PhotoUrl = objName
-            };
-            var userPhotoResult = await Mediator.Send(command);
-            if (!userPhotoResult.Success)
-            {
-                await storageService.DeleteFileAsync(objName, cred);
-                return BadRequest(userPhotoResult);
+                var result = await Mediator.Send(command);
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+                gitHubClient.Credentials = new Credentials(result.GithubToken);
+                IReadOnlyList&lt;Branch&gt; branches = await gitHubClient.Repository.Branch.GetAll(result.ProjectOwner, result.ProjectRepository);
+                //only the name of the branches
+                List&lt;string&gt; branchNames = new List&lt;string&gt;();
+                foreach (var branch in branches)
+                {
+                    branchNames.Add(branch.Name);
+                }
+                return Ok(branchNames);
+              
             }
-            var deleteOldPhoto = await storageService.DeleteFileAsync(updateUserPhotoDto.CloudUrl, cred);
-            if (!deleteOldPhoto)
+            catch (NotFoundException ex)
             {
-                return BadRequest(deleteOldPhoto);
+                return NotFound($&quot;Repository not found: {ex.Message}&quot;);
             }
-            return Ok(userPhotoResult);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $&quot;An error occurred: {ex.Message}&quot;);
+            }
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[24,36,24,40,0],[24,41,24,45,0],[25,42,25,46,0],[25,47,25,51,0],[27,9,27,97,0],[28,9,28,10,0],[30,13,30,50,0],[31,13,31,52,0],[32,13,32,65,0],[33,13,33,71,0],[34,9,34,10,0],[41,9,41,10,0],[42,13,42,60,0],[43,13,43,56,0],[45,13,45,69,0],[46,13,46,56,0],[47,13,52,15,0],[54,13,58,15,0],[59,13,59,79,0],[60,13,64,15,0],[65,13,65,60,0],[66,13,66,38,0],[67,13,67,14,0],[68,17,68,69,0],[69,17,69,48,0],[71,13,71,25,0],[72,9,72,10,0],[79,9,79,10,0],[80,13,80,78,0],[81,13,81,34,0],[82,13,82,14,0],[83,17,83,42,0],[85,13,89,15,0],[90,13,90,91,0],[91,13,91,25,0],[92,13,92,14,0],[93,17,93,43,0],[95,13,95,66,0],[96,13,96,44,0],[97,13,97,14,0],[98,17,98,54,0],[100,13,100,25,0],[102,9,102,10,0],[109,9,109,10,0],[110,13,110,60,0],[111,13,111,63,0],[112,13,112,76,0],[113,13,113,56,0],[114,13,119,15,0],[120,13,124,15,0],[125,13,125,79,0],[126,13,130,15,0],[131,13,131,64,0],[132,13,132,42,0],[133,13,133,14,0],[134,17,134,69,0],[135,17,135,52,0],[137,13,137,40,0],[139,9,139,10,0],[146,9,146,10,0],[147,13,147,60,0],[148,13,148,66,0],[149,13,149,79,0],[150,13,150,56,0],[151,13,156,15,0],[157,13,161,15,0],[163,13,163,79,0],[164,13,168,15,0],[169,13,169,64,0],[170,13,170,42,0],[171,13,171,14,0],[172,17,172,69,0],[173,17,173,52,0],[175,13,175,106,0],[176,13,176,33,0],[177,13,177,14,0],[178,17,178,51,0],[180,13,180,40,0],[181,9,181,10,0]]);
+      highlightRanges([[17,9,17,34,0],[18,9,18,10,0],[19,13,19,77,0],[20,9,20,10,0],[27,9,27,10,0],[29,13,29,14,0],[30,17,30,59,0],[31,17,31,37,0],[32,17,32,18,0],[33,21,33,47,0],[35,17,35,80,0],[37,17,38,112,0],[40,17,40,81,0],[42,17,42,24,0],[42,26,42,36,0],[42,37,42,39,0],[42,40,42,47,0],[43,17,43,18,0],[44,21,50,24,0],[51,17,51,18,0],[53,17,53,40,0],[55,13,55,41,0],[56,13,56,14,0],[57,17,57,82,0],[59,13,59,33,0],[60,13,60,14,0],[61,17,61,76,0],[63,9,63,10,0],[69,9,69,10,0],[71,13,71,14,0],[72,17,72,59,0],[73,17,73,37,0],[74,17,74,18,0],[75,21,75,47,0],[77,17,77,80,0],[78,17,78,141,0],[80,17,80,63,0],[81,17,81,24,0],[81,26,81,36,0],[81,37,81,39,0],[81,40,81,48,0],[82,17,82,18,0],[83,21,83,50,0],[84,17,84,18,0],[85,17,85,40,0],[88,13,88,41,0],[89,13,89,14,0],[90,17,90,72,0],[92,13,92,33,0],[93,13,93,14,0],[94,17,94,76,0],[96,9,96,10,0]]);
     </script>
   </body>
 </html>

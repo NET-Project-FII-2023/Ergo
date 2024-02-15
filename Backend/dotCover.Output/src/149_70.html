@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubData\GetProjectGithubDataQuery.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectsByUserId\GetProjectsByUserIdQuery.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,18 +10,17 @@
     <pre id="content" class="source-code">
 using MediatR;
 
-namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
+namespace Ergo.Application.Features.Projects.Queries.GetProjectsByUserId
 {
-    public class GetProjectGithubDataQuery : IRequest&lt;GetProjectGithubDataQueryResponse&gt;
+    public class GetProjectsByUserIdQuery : IRequest&lt;GetProjectsByUserIdQueryResponse&gt;
     {
-        public Guid ProjectId { get; set; }
-        //public string Branch { get; set; }
+        public string UserId { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,33,7,37,0],[7,38,7,42,0]]);
+      highlightRanges([[7,32,7,36,1],[7,37,7,41,1]]);
     </script>
   </body>
 </html>

@@ -2,48 +2,31 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\GetTaskItemTime\GetTaskItemTimeQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\UserPhotos\Commands\AddUserPhoto\AddUserPhotoCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
-using MediatR;
+using FluentValidation;
 
-namespace Ergo.Application.Features.TaskItems.Queries.GetTaskItemTime
+namespace Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto
 {
-    public class GetTaskItemTimeQueryHandler : IRequestHandler&lt;GetTaskItemTimeQuery, GetTaskItemTimeQueryResponse&gt;
+    public class AddUserPhotoCommandValidator : AbstractValidator&lt;AddUserPhotoCommand&gt;
     {
-        private readonly ITaskItemRepository taskItemRepository;
-        public GetTaskItemTimeQueryHandler(ITaskItemRepository taskItemRepository)
+        public AddUserPhotoCommandValidator()
         {
-            this.taskItemRepository = taskItemRepository;
-        }
-
-        public async Task&lt;GetTaskItemTimeQueryResponse&gt; Handle(GetTaskItemTimeQuery request, CancellationToken cancellationToken)
-        {
-            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
-            if(!taskItem.IsSuccess)
-            {
-                return new GetTaskItemTimeQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;TaskItem with the provided ID does not exist.&quot; }
-                };
-            }
-            return new GetTaskItemTimeQueryResponse
-            {
-                Success = true,
-                RecordedTime = taskItem.Value.TotalTimeSpent
-            };
+            RuleFor(p =&gt; p.UserId)
+                .NotEmpty().WithMessage(&quot;UserId is required.&quot;);
+            RuleFor(p =&gt; p.PhotoUrl)
+                .NotEmpty().WithMessage(&quot;PhotoUrl is required.&quot;);
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[9,9,9,83,0],[10,9,10,10,0],[11,13,11,58,0],[12,9,12,10,0],[15,9,15,10,0],[16,13,16,87,0],[17,13,17,36,0],[18,13,18,14,0],[19,17,23,19,0],[25,13,29,15,0],[30,9,30,10,0]]);
+      highlightRanges([[7,9,7,46,1],[8,9,8,10,1],[9,13,10,64,1],[11,13,12,66,1],[13,9,13,10,1]]);
     </script>
   </body>
 </html>

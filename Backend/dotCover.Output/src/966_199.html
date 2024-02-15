@@ -2,247 +2,66 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\TaskItemsController.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\PhotosController.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem;
-using Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser;
-using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
-using Ergo.Application.Features.TaskItems.Commands.DeleteAssignedUserFromTask;
-using Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem;
-using Ergo.Application.Features.TaskItems.Commands.PauseTimerTaskItem;
-using Ergo.Application.Features.TaskItems.Commands.StartTimerTaskItem;
-using Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem;
-using Ergo.Application.Features.TaskItems.Queries.GetAll;
-using Ergo.Application.Features.TaskItems.Queries.GetById;
-using Ergo.Application.Features.TaskItems.Queries.GetByProjectId;
-using Ergo.Application.Features.TaskItems.Queries.GetByUserId;
-using Ergo.Application.Features.TaskItems.Queries.GetTaskItemTime;
+using Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem;
+using Ergo.Application.Features.Photos.Commands.DeletePhoto;
+using Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ergo.Api.Controllers;
-
-public class TaskItemsController : ApiControllerBase
+namespace Ergo.Api.Controllers
 {
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task&lt;IActionResult&gt; Create(CreateTaskItemCommand command)
+
+    public class PhotosController : ApiControllerBase
     {
-
-        var result = await Mediator.Send(command);
-        if (!result.Success)
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task&lt;IActionResult&gt; AddPhotoToTaskItem([FromForm] AddPhotoToTaskItemCommand command)
         {
-            return BadRequest(result);
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
         }
-        return Ok(result);
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpGet(&quot;{taskItemId}&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; GetPhotosForTaskItem(Guid taskItemId)
+        {
+            var result = await Mediator.Send(new GetPhotosForTaskItemQuery { TaskItemId = taskItemId });
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpDelete(&quot;{photoId}&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; DeletePhoto(Guid photoId)
+        {
+            var result = await Mediator.Send(new DeletePhotoCommand { PhotoId = photoId });
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
     }
-
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpPut(&quot;{id}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; Update(Guid id, UpdateTaskItemCommand command)
-    {
-
-        if (id != Guid.Empty)
-        {
-            command.TaskItemId = id;
-        }
-        else
-        {
-            return BadRequest(&quot;Input has no id!&quot;);
-        }
-        var result = await Mediator.Send(command);
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-        return Ok(result);
-    }
-
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpDelete(&quot;{id}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; DeleteTaskItem(Guid id,DeleteTaskItemCommand command)
-    {
-        if(id != command.TaskItemId)
-        {
-            return BadRequest(&quot;Input id&#39;s doesn&#39;t match!&quot;);
-        }
-        var result = await Mediator.Send(command);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetAll()
-    {
-        var result = await Mediator.Send(new GetAllTaskItemsQuery());
-        return Ok(result);
-    }
-
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;{id}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetTaskItemById(Guid id)
-    {
-        var query = new GetByIdTaskItemQuery { TaskItemId = id };
-        var result = await Mediator.Send(query);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpPost(&quot;AssignUser&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; AssignUser(AssignTaskItemToUserCommand command)
-    {
-        var result = await Mediator.Send(command);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-    [Authorize(Roles =&quot;User&quot;)]
-    [HttpPost(&quot;UnassignUser&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; UnassignUser(DeleteAssignedUserFromTaskCommand command)
-    {
-        var result = await Mediator.Send(command);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;ByProject/{projectId}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetTasksByProjectId(Guid projectId)
-    {
-        var query = new GetTasksByProjectIdQuery { ProjectId = projectId };
-        var result = await Mediator.Send(query);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpPost(&quot;StartTimer&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; StartTimer(StartTimerTaskItemCommand command)
-    {
-        var result = await Mediator.Send(command);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpPost(&quot;PauseTimer&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; PauseTimer(PauseTimerTaskItemCommand command)
-    {
-        var result = await Mediator.Send(command);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpPost(&quot;AddManualTime&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; AddManualTime(AddManualTimeTaskItemCommand command)
-    {
-        var result = await Mediator.Send(command);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;GetTaskItemTime/{taskItemId}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetTaskItemTime(Guid taskItemId)
-    {
-        var query = new GetTaskItemTimeQuery { TaskItemId = taskItemId };
-        var result = await Mediator.Send(query);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-    //[Authorize(Roles = &quot;User&quot;)]
-    //[HttpPut(&quot;DeleteAssignedUser&quot;)]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //public async Task&lt;IActionResult&gt; DeleteAssignedUser(DeleteAssignedUserFromTaskCommand command)
-    //{
-    //    var result = await Mediator.Send(command);
-
-    //    if (!result.Success)
-    //    {
-    //        return BadRequest(result);
-    //    }
-
-    //    return Ok(result);
-    //}    
-    [Authorize(Roles = &quot;User&quot;)]
-    [HttpGet(&quot;ByProjectsOfUser/{userId}&quot;)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task&lt;IActionResult&gt; GetTasksByProjectsOfUser(Guid userId)
-    {
-        var query = new GetTasksByProjectsOfUsersQuery { UserId = userId };
-        var result = await Mediator.Send(query);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok(result);
-    }
-
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[25,5,25,6,0],[27,9,27,51,0],[28,9,28,29,0],[29,9,29,10,0],[30,13,30,39,0],[32,9,32,27,0],[33,5,33,6,0],[39,5,39,6,0],[41,9,41,30,0],[42,9,42,10,0],[43,13,43,37,0],[44,9,44,10,0],[46,9,46,10,0],[47,13,47,51,0],[49,9,49,51,0],[50,9,50,29,0],[51,9,51,10,0],[52,13,52,39,0],[54,9,54,27,0],[55,5,55,6,0],[61,5,61,6,0],[62,9,62,37,0],[63,9,63,10,0],[64,13,64,60,0],[66,9,66,51,0],[68,9,68,29,0],[69,9,69,10,0],[70,13,70,39,0],[73,9,73,27,0],[74,5,74,6,0],[79,5,79,6,1],[80,9,80,70,1],[81,9,81,27,1],[82,5,82,6,1],[88,5,88,6,1],[89,9,89,66,1],[90,9,90,49,1],[92,9,92,29,1],[93,9,93,10,0],[94,13,94,39,0],[97,9,97,27,1],[98,5,98,6,1],[104,5,104,6,0],[105,9,105,51,0],[107,9,107,29,0],[108,9,108,10,0],[109,13,109,39,0],[112,9,112,27,0],[113,5,113,6,0],[118,5,118,6,0],[119,9,119,51,0],[121,9,121,29,0],[122,9,122,10,0],[123,13,123,39,0],[126,9,126,27,0],[127,5,127,6,0],[133,5,133,6,0],[134,9,134,76,0],[135,9,135,49,0],[137,9,137,29,0],[138,9,138,10,0],[139,13,139,39,0],[142,9,142,27,0],[143,5,143,6,0],[148,5,148,6,0],[149,9,149,51,0],[151,9,151,29,0],[152,9,152,10,0],[153,13,153,39,0],[156,9,156,27,0],[157,5,157,6,0],[162,5,162,6,0],[163,9,163,51,0],[165,9,165,29,0],[166,9,166,10,0],[167,13,167,39,0],[170,9,170,27,0],[171,5,171,6,0],[176,5,176,6,0],[177,9,177,51,0],[179,9,179,29,0],[180,9,180,10,0],[181,13,181,39,0],[184,9,184,27,0],[185,5,185,6,0],[190,5,190,6,0],[191,9,191,74,0],[192,9,192,49,0],[194,9,194,29,0],[195,9,195,10,0],[196,13,196,39,0],[199,9,199,27,0],[200,5,200,6,0],[219,5,219,6,0],[220,9,220,76,0],[221,9,221,49,0],[223,9,223,29,0],[224,9,224,10,0],[225,13,225,39,0],[228,9,228,27,0],[229,5,229,6,0]]);
+      highlightRanges([[17,9,17,10,0],[18,13,18,55,0],[19,13,19,33,0],[20,13,20,14,0],[21,17,21,43,0],[23,13,23,31,0],[24,9,24,10,0],[29,9,29,10,0],[30,13,30,105,0],[31,13,31,33,0],[32,13,32,14,0],[33,17,33,43,0],[35,13,35,31,0],[36,9,36,10,0],[41,9,41,10,0],[42,13,42,92,0],[43,13,43,33,0],[44,13,44,14,0],[45,17,45,43,0],[47,13,47,31,0],[48,9,48,10,0]]);
     </script>
   </body>
 </html>

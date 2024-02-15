@@ -2,29 +2,66 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetById\GetByIdUserQueryResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetUserStats\GetUserStatsQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
+using Ergo.Application.Persistence;
+using MediatR;
 
-namespace Ergo.Application.Features.Users.Queries.GetById
+namespace Ergo.Application.Features.Users.Queries.GetUserStats
 {
-    public class GetByIdUserQueryResponse : BaseResponse
+    public class GetUserStatsQueryHandler : IRequestHandler&lt;GetUserStatsQuery, GetUserStatsQueryResponse&gt;
     {
-        public GetByIdUserQueryResponse() : base()
+        private readonly IUserManager userManager;
+        private readonly IProjectRepository projectRepository;
+        private readonly ITaskItemRepository taskRepository;
+        private readonly ICommentRepository commentRepository;
+        public GetUserStatsQueryHandler(IUserManager userManager, IProjectRepository projectRepository, ITaskItemRepository taskRepository, ICommentRepository commentRepository)
         {
+            this.userManager = userManager;
+            this.projectRepository = projectRepository;
+            this.taskRepository = taskRepository;
+            this.commentRepository = commentRepository;
         }
 
-        public UserDto User { get; set; }
+        public async Task&lt;GetUserStatsQueryResponse&gt; Handle(GetUserStatsQuery request, CancellationToken cancellationToken)
+        {
+            var user = await userManager.FindByIdAsync(Guid.Parse(request.UserId));
+            if (!user.IsSuccess)
+            {
+                return new GetUserStatsQueryResponse
+                {
+                    Success = false,
+                    Message = &quot;User not found&quot;
+                };  
+            }
+            var numberOfProjects = await projectRepository.GetNumberOfProjectsByUserIdAsync(Guid.Parse(request.UserId));
+            var numberOfTasks = await taskRepository.GetNumberOfTasksByUserIdAsync(Guid.Parse(request.UserId));
+            var numberOfComments = await commentRepository.GetNumberOfCommentsByUserIdAsync(user.Value.Username);
+            var totalHoursWorked = await taskRepository.GetTotalHoursWorkedByUserIdAsync(Guid.Parse(request.UserId));
+            return new GetUserStatsQueryResponse
+            {
+                Success = true,
+                UserStats = new UserStatsDto
+                {
+                    TotalProjectsCreated = numberOfProjects,
+                    TotalTasks = numberOfTasks,
+                    TotalComments = numberOfComments,
+                    TotalHoursWorked = totalHoursWorked
+                }
+            };
+
+
+        }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,45,7,51,0],[8,9,8,10,0],[9,9,9,10,0],[11,31,11,35,0],[11,36,11,40,0]]);
+      highlightRanges([[12,9,12,178,0],[13,9,13,10,0],[14,13,14,44,0],[15,13,15,56,0],[16,13,16,50,0],[17,13,17,56,0],[18,9,18,10,0],[21,9,21,10,0],[22,13,22,84,0],[23,13,23,33,0],[24,13,24,14,0],[25,17,29,19,0],[31,13,31,121,0],[32,13,32,112,0],[33,13,33,114,0],[34,13,34,118,0],[35,13,45,15,0],[48,9,48,10,0]]);
     </script>
   </body>
 </html>

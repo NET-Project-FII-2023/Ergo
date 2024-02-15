@@ -2,105 +2,69 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\TaskItems\Commands\CreateTaskItemCommandHandlerTests.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\Users\Commands\UpdateUserRoleCommandHandlerTests.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.TaskItems.Commands.CreateTaskItem;
+using Ergo.Application.Features.Users.Commands.UpdateRole;
+using Ergo.Application.Features.Users.Queries;
 using Ergo.Application.Persistence;
-using Ergo.Application.Tests.RepositoryMocks;
-using Ergo.Domain.Entities.Enums;
+using Ergo.Domain.Common;
 using FluentAssertions;
 using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Ergo.Application.Tests.TaskItems.Commands;
-
-public class CreateTaskItemCommandHandlerTests
+namespace Ergo.Application.Tests.Users.Commands
 {
-    private readonly ITaskItemRepository _mockTaskItemRepository;
-    private readonly IProjectRepository _mockProjectRepository;
-    private readonly CreateTaskItemCommandHandler _handler;
-
-    public CreateTaskItemCommandHandlerTests()
+    public class UpdateUserRoleCommandHandlerTests
     {
-        _mockTaskItemRepository = TaskItemRepositoryMocks.GetTaskItemRepository();
-        _mockProjectRepository = ProjectRepositoryMocks.GetProjectRepository();
-        _handler = new CreateTaskItemCommandHandler(_mockTaskItemRepository, _mockProjectRepository);
-    }
-
-    [Fact]
-    public async Task Handle_WithValidData_ReturnsSuccess()
-    {
-        // Arrange
-        var request = new CreateTaskItemCommand
+        private readonly IUserManager _userRepository;
+        private readonly UpdateUserRoleCommandHandler _handler;
+        public UpdateUserRoleCommandHandlerTests()
         {
-            TaskName = &quot;Task 1&quot;,
-            CreatedBy = &quot;Marcel&quot;,
-            Description = &quot;This is a sample description&quot;,
-            Deadline = DateTime.UtcNow.AddDays(5),
-            ProjectId = Guid.NewGuid(),
-            State = TaskState.ToDo
-        };
-
-        _mockProjectRepository.ProjectExists(request.ProjectId).Returns(Task.FromResult(true));
-
-        // Act
-        var response = await _handler.Handle(request, new CancellationToken());
-
-        // Assert
-        response.Success.Should().BeTrue();
-        response.TaskItem.Should().NotBeNull();
-    }
-
-    [Fact]
-    public async Task Handle_WithInvalidProject_ReturnsError()
-    {
-        // Arrange
-        var request = new CreateTaskItemCommand
+            _userRepository = Substitute.For&lt;IUserManager&gt;();
+            _handler = new UpdateUserRoleCommandHandler(_userRepository);
+        }
+        [Fact]
+        public async Task Handle_UserExists_UpdatesSuccessfully()
         {
-            TaskName = &quot;Task 1&quot;,
-            CreatedBy = &quot;Marcel&quot;,
-            Description = &quot;This is a sample description&quot;,
-            Deadline = DateTime.UtcNow.AddDays(5),
-            ProjectId = Guid.NewGuid(),
-            State = TaskState.ToDo
-        };
-
-        // Act
-        var response = await _handler.Handle(request, new CancellationToken());
-
-        // Assert
-        response.Success.Should().BeFalse();
-        response.ValidationsErrors.Should().NotBeEmpty();
-    }
-
-    [Fact]
-    public async Task Handle_WithInvalidData_ReturnsError()
-    {
-        // Arrange
-        var request = new CreateTaskItemCommand
+            // Arrange
+            var userId = Guid.NewGuid();
+            var request = new UpdateUserRoleCommand { UserId = userId, Role = &quot;Admin&quot; };
+            var existingUser = Result&lt;UserDto&gt;.Success(new UserDto { UserId = userId.ToString() });
+            _userRepository.FindByIdAsync(userId).Returns(Task.FromResult(existingUser));
+            _userRepository.UpdateRoleAsync(Arg.Any&lt;UserDto&gt;(), Arg.Any&lt;string&gt;()).Returns(Task.FromResult(Result&lt;UserDto&gt;.Success(new UserDto())));
+            // Act
+            var response = await _handler.Handle(request, new CancellationToken());
+            // Assert
+            response.Success.Should().BeTrue();
+        }
+        [Fact]
+        public async Task Handle_UpdateFails_ReturnsErrorResponse()
         {
-            TaskName = &quot;Task 1&quot;,
-            CreatedBy = &quot;Marcel&quot;,
-            Description = &quot;This is a sample description&quot;,
-            Deadline = DateTime.UtcNow.AddDays(5),
-            ProjectId = Guid.NewGuid(),
-            State = TaskState.ToDo
-        };
-        
-        // Act
-        var response = await _handler.Handle(request, new CancellationToken());
-
-        // Assert
-        response.Success.Should().BeFalse();
-        response.ValidationsErrors.Should().NotBeEmpty();
+            // Arrange
+            var userId = Guid.NewGuid();
+            var request = new UpdateUserRoleCommand { UserId = userId, Role = &quot;Admin&quot; };
+            var existingUser = Result&lt;UserDto&gt;.Success(new UserDto { UserId = userId.ToString() });
+            _userRepository.FindByIdAsync(userId).Returns(Task.FromResult(existingUser));
+            _userRepository.UpdateRoleAsync(Arg.Any&lt;UserDto&gt;(), Arg.Any&lt;string&gt;()).Returns(Task.FromResult(Result&lt;UserDto&gt;.Failure(&quot;Error&quot;)));
+            // Act
+            var response = await _handler.Handle(request, new CancellationToken());
+            // Assert
+            response.Success.Should().BeFalse();
+        }
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[16,5,16,47,1],[17,5,17,6,1],[18,9,18,83,1],[19,9,19,80,1],[20,9,20,102,1],[21,5,21,6,1],[25,5,25,6,1],[27,9,35,11,1],[37,9,37,96,1],[40,9,40,80,1],[43,9,43,44,1],[44,9,44,48,1],[45,5,45,6,1],[49,5,49,6,1],[51,9,59,11,1],[62,9,62,80,1],[65,9,65,45,1],[66,9,66,58,1],[67,5,67,6,1],[71,5,71,6,1],[73,9,81,11,1],[84,9,84,80,1],[87,9,87,45,1],[88,9,88,58,1],[89,5,89,6,1]]);
+      highlightRanges([[19,9,19,51,1],[20,9,20,10,1],[21,13,21,62,1],[22,13,22,74,1],[23,9,23,10,1],[26,9,26,10,1],[28,13,28,41,1],[29,13,29,89,1],[30,13,30,100,1],[31,13,31,90,1],[32,13,32,149,1],[34,13,34,84,1],[36,13,36,48,1],[37,9,37,10,1],[40,9,40,10,1],[42,13,42,41,1],[43,13,43,89,1],[44,13,44,100,1],[45,13,45,90,1],[46,13,46,143,1],[48,13,48,84,1],[50,13,50,49,1],[51,9,51,10,1]]);
     </script>
   </body>
 </html>

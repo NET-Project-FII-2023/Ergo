@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Commands\AddPhotoToTaskItem\AddPhotoToTaskItemCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Commands\DeletePhotoCommandHandler\DeletePhotoCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,26 +10,22 @@
     <pre id="content" class="source-code">
 using FluentValidation;
 
-namespace Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem
+namespace Ergo.Application.Features.Photos.Commands.DeletePhoto
 {
-    public class AddPhotoToTaskItemCommandValidator : AbstractValidator&lt;AddPhotoToTaskItemCommand&gt;
+    public class DeletePhotoCommandValidator : AbstractValidator&lt;DeletePhotoCommand&gt;
     {
-        public AddPhotoToTaskItemCommandValidator()
+        public DeletePhotoCommandValidator()
         {
-            RuleFor(p =&gt; p.TaskItemId)
+            RuleFor(p =&gt; p.PhotoId)
                 .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
                 .NotNull();
-            RuleFor(p =&gt; p.CloudURL)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull();
-
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,52,1],[8,9,8,10,1],[9,13,11,28,1],[12,13,14,28,1],[16,9,16,10,1]]);
+      highlightRanges([[7,9,7,45,0],[8,9,8,10,0],[9,13,11,28,0],[12,9,12,10,0]]);
     </script>
   </body>
 </html>

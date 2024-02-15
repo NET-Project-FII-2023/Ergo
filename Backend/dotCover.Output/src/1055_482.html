@@ -2,41 +2,81 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\InboxItemsRepositoryMocks.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\UserPhotos\Commands\AddUserPhotoCommandHandlerTests.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using Ergo.Application.Features.UserPhotos.Commands.AddUserPhoto;
 using Ergo.Application.Persistence;
-using Ergo.Domain.Common;
-using Ergo.Domain.Entities;
+using FluentAssertions;
 using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Ergo.Application.Tests.RepositoryMocks
+namespace Ergo.Application.Tests.UserPhotos.Commands
 {
-    public static class InboxItemsRepositoryMocks
+    public class AddUserPhotoCommandHandlerTests
     {
-        internal readonly static List&lt;InboxItem&gt; InboxItems =
-            [
-                InboxItem.Create(Guid.NewGuid(), &quot;Description1&quot;).Value,
-                InboxItem.Create(Guid.NewGuid(), &quot;Description2&quot;).Value,
-            ];
-        public static IInboxItemRepository GetInboxItemRepository()
+        private readonly IUserPhotoRepository _mockUserPhotoRepository;
+        private readonly AddUserPhotoCommandHandler _handler;
+        public AddUserPhotoCommandHandlerTests()
         {
-            var mockInboxItemRepository = Substitute.For&lt;IInboxItemRepository&gt;();
-            mockInboxItemRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;InboxItem&gt;&gt;.Success(InboxItems));
-            mockInboxItemRepository.FindByIdAsync(InboxItems[0].InboxItemId).Returns(Result&lt;InboxItem&gt;.Success(InboxItems[0]));
-            mockInboxItemRepository.FindByIdAsync(InboxItems[1].InboxItemId).Returns(Result&lt;InboxItem&gt;.Success(InboxItems[1]));
-            mockInboxItemRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != InboxItems[0].InboxItemId &amp;&amp; id != InboxItems[1].InboxItemId)).Returns(Result&lt;InboxItem&gt;.Failure(&quot;Not found&quot;));
-            return mockInboxItemRepository;
+            _mockUserPhotoRepository = Substitute.For&lt;IUserPhotoRepository&gt;();  
+            _handler = new AddUserPhotoCommandHandler(_mockUserPhotoRepository);
+        }
+        [Fact]
+        public async Task Handle_SuccessfulCreation()
+        {
+            // Arrange
+            var command = new AddUserPhotoCommand
+            {
+                PhotoUrl = &quot;https://example.com/photo.jpg&quot;,
+                UserId = Guid.NewGuid().ToString()
+            };
+            // Act
+            var response = await _handler.Handle(command, new CancellationToken());
+            // Assert
+            response.Success.Should().BeTrue();
+        }
+        [Fact]
+        public async Task Handle_InvalidPhotoUrl_ReturnsErrorResponse()
+        {
+            // Arrange
+            var command = new AddUserPhotoCommand
+            {
+                PhotoUrl = &quot; &quot;,
+                UserId = Guid.NewGuid().ToString()
+            };
+            // Act
+            var response = await _handler.Handle(command, new CancellationToken());
+            // Assert
+            response.Success.Should().BeFalse();
+        }
+        [Fact]
+        public async Task Handle_InvalidUserId_ReturnsErrorResponse()
+        {
+            // Arrange
+            var command = new AddUserPhotoCommand
+            {
+                PhotoUrl = &quot;https://example.com/photo.jpg&quot;,
+                UserId = &quot; &quot;
+            };
+            // Act
+            var response = await _handler.Handle(command, new CancellationToken());
+            // Assert
+            response.Success.Should().BeFalse();
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,14,15,0],[16,9,16,10,0],[17,13,17,82,0],[18,13,18,113,0],[19,13,19,128,0],[20,13,20,128,0],[21,13,21,187,0],[22,13,22,44,0],[23,9,23,10,0]]);
+      highlightRanges([[17,9,17,49,1],[18,9,18,10,1],[19,13,19,79,1],[20,13,20,81,1],[21,9,21,10,1],[24,9,24,10,1],[26,13,30,15,1],[32,13,32,84,1],[34,13,34,48,1],[35,9,35,10,1],[38,9,38,10,1],[40,13,44,15,1],[46,13,46,84,1],[48,13,48,49,1],[49,9,49,10,1],[52,9,52,10,1],[54,13,58,15,1],[60,13,60,84,1],[62,13,62,49,1],[63,9,63,10,1]]);
     </script>
   </body>
 </html>

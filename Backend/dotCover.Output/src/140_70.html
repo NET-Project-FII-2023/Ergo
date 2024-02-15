@@ -2,29 +2,25 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetAll\GetAllUsersResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetByEmail\GetByEmailUserQuery.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MediatR;
 
-namespace Ergo.Application.Features.Users.Queries.GetAll
+namespace Ergo.Application.Features.Users.Queries.GetByEmail
 {
-    public class GetAllUsersResponse
+    public class GetByEmailUserQuery : IRequest&lt;GetByEmailUserQueryReponse&gt;
     {
-        public List&lt;UserDto&gt;? Users { get; set; }
+        public string Email { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[11,39,11,43,1],[11,44,11,48,1]]);
+      highlightRanges([[7,31,7,35,1],[7,36,7,40,1]]);
     </script>
   </body>
 </html>

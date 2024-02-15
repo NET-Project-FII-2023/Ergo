@@ -2,28 +2,45 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\UnassignUserFromTaskItem\UnassignUserFromTaskItemCommandResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\UpdateTaskItem\UpdateTaskItemCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
+using System.Data;
+using FluentValidation;
 
-namespace Ergo.Application.Features.TaskItems.Commands.UnassignUserFromTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
 {
-    public class UnassignUserFromTaskItemCommandResponse : BaseResponse
+    public class UpdateTaskItemCommandValidator : AbstractValidator&lt;UpdateTaskItemCommand&gt;
     {
-        public UnassignUserFromTaskItemCommandResponse() : base()
+        public UpdateTaskItemCommandValidator() 
         {
-
+            {
+                RuleFor(p =&gt; p.TaskName) 
+                    .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                    .NotNull()
+                    .MaximumLength(50).WithMessage(&quot;{PropertyName} must not exceed 50 characters.&quot;);
+                RuleFor(p =&gt; p.Description)
+                    .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                    .NotNull()
+                    .MaximumLength(1500).WithMessage(&quot;{PropertyName} must not exceed 1500 characters.&quot;);
+                RuleFor(p =&gt; p.CreatedBy)
+                    .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                    .NotNull()
+                    .MaximumLength(50).WithMessage(&quot;{PropertyName} must not exceed 50 characters.&quot;);
+                RuleFor(p =&gt; p.State)
+                    .IsInEnum()
+                    .WithMessage(&quot;{PropertyName} must be a valid value between 1-3&quot;);
+            }
         }
     }
-
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,60,7,66,0],[8,9,8,10,0],[10,9,10,10,0]]);
+      highlightRanges([[8,9,8,48,0],[9,9,9,10,0],[10,13,10,14,0],[11,17,14,101,0],[15,17,18,105,0],[19,17,22,101,0],[23,17,25,86,0],[26,13,26,14,0],[27,9,27,10,0]]);
     </script>
   </body>
 </html>

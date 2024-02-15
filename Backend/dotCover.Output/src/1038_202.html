@@ -2,12 +2,13 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240208085559_branchName.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240206180758_Badges.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -15,42 +16,39 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// &lt;inheritdoc /&gt;
-    public partial class branchName : Migration
+    public partial class Badges : Migration
     {
         /// &lt;inheritdoc /&gt;
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: &quot;BranchId&quot;,
-                table: &quot;TaskItems&quot;);
-
-            migrationBuilder.AddColumn&lt;string&gt;(
-                name: &quot;Branch&quot;,
-                table: &quot;TaskItems&quot;,
-                type: &quot;text&quot;,
-                nullable: true);
+            migrationBuilder.CreateTable(
+                name: &quot;Badges&quot;,
+                columns: table =&gt; new
+                {
+                    BadgeId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    Name = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    Count = table.Column&lt;int&gt;(type: &quot;integer&quot;, nullable: false),
+                    UserId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    Type = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Badges&quot;, x =&gt; x.BadgeId);
+                });
         }
 
         /// &lt;inheritdoc /&gt;
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: &quot;Branch&quot;,
-                table: &quot;TaskItems&quot;);
-
-            migrationBuilder.AddColumn&lt;string&gt;(
-                name: &quot;BranchId&quot;,
-                table: &quot;TaskItems&quot;,
-                type: &quot;text&quot;,
-                nullable: false,
-                defaultValue: &quot;&quot;);
+            migrationBuilder.DropTable(
+                name: &quot;Badges&quot;);
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,9,12,10,0],[13,13,15,37,0],[17,13,21,33,0],[22,9,22,10,0],[26,9,26,10,0],[27,13,29,37,0],[31,13,36,35,0],[37,9,37,10,0]]);
+      highlightRanges([[13,9,13,10,0],[14,13,16,35,0],[16,35,23,18,0],[23,18,25,17,0],[25,17,25,18,0],[25,18,26,21,0],[26,21,26,67,0],[26,67,27,17,0],[27,17,27,18,0],[27,18,27,20,0],[28,9,28,10,0],[32,9,32,10,0],[33,13,34,33,0],[35,9,35,10,0]]);
     </script>
   </body>
 </html>

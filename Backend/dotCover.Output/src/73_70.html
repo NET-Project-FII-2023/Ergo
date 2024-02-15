@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\PauseTimerTaskItem\PauseTimerTaskItemCommandResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\StartTimerTaskItem\StartTimerTaskItemCommandResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,20 +10,20 @@
     <pre id="content" class="source-code">
 using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.TaskItems.Commands.PauseTimerTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.StartTimerTaskItem
 {
-    public class PauseTimerTaskItemCommandResponse : BaseResponse
+    public class StartTimerTaskItemCommandResponse : BaseResponse
     {
-        public PauseTimerTaskItemCommandResponse() : base()
+        public StartTimerTaskItemCommandResponse() : base()
         {
 
         }
-        public TimeSpan TotalTimeSpent { get; set; }
+        public DateTime StartTime { get; set; }
     }
 }
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,54,7,60,0],[8,9,8,10,0],[10,9,10,10,0],[11,42,11,46,0],[11,47,11,51,0]]);
+      highlightRanges([[7,54,7,60,0],[8,9,8,10,0],[10,9,10,10,0],[11,37,11,41,0],[11,42,11,46,0]]);
     </script>
   </body>
 </html>

@@ -2,39 +2,99 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\UpdateTaskItem\UpdateTaskItemCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\GetById\GetByIdTaskItemQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ergo.Domain.Entities.Enums;
+using Ergo.Application.Features.Users;
+using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Persistence;
 using MediatR;
 
-namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
+namespace Ergo.Application.Features.TaskItems.Queries.GetById
 {
-    public class UpdateTaskItemCommand : IRequest&lt;UpdateTaskItemCommandResponse&gt;
+    public class GetByIdTaskItemQueryHandler : IRequestHandler&lt;GetByIdTaskItemQuery, GetByIdTaskItemQueryResponse&gt;
     {
-        public Guid TaskItemId { get; set; }
-        public string? TaskName { get; set; }
-        public string? Description { get; set; }
-        public DateTime Deadline { get; set; }
-        public string? CreatedBy { get; set; }
-        public Guid ProjectId { get; set; }
-        public TaskState State { get; set; }
-        public string? Branch { get; set; }
+        private readonly ITaskItemRepository taskItemRepository;
+        private readonly IUserManager userManager;
+        private readonly IUserPhotoRepository userPhotoRepository;
+        private readonly IPhotoRepository photoRepository;
 
+        public GetByIdTaskItemQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager, IUserPhotoRepository userPhotoRepository, IPhotoRepository photoRepository)
+        {
+            this.taskItemRepository = taskItemRepository;
+            this.userManager = userManager;
+            this.userPhotoRepository = userPhotoRepository;
+            this.photoRepository = photoRepository;
+        }
+
+        public async Task&lt;GetByIdTaskItemQueryResponse&gt; Handle(GetByIdTaskItemQuery request, CancellationToken cancellationToken)
+        {
+            GetByIdTaskItemQueryResponse response = new();
+            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
+
+            if (!taskItem.IsSuccess)
+            {
+                response.Success = false;
+                response.ValidationsErrors = new List&lt;string&gt; { taskItem.Error };
+                return response;
+            }
+
+            UserTaskDto? assignedUser = null;
+            var assignedUserId = await taskItemRepository.GetAssignedUser(request.TaskItemId);
+
+            if (assignedUserId.IsSuccess &amp;&amp; Guid.TryParse(assignedUserId.Value, out var guidUserId))
+            {
+                var user = await userManager.FindByIdAsync(guidUserId);
+
+                if (user.IsSuccess)
+                {
+                    var userPhoto = await userPhotoRepository.GetUserPhotoByUserIdAsync(user.Value.UserId);
+
+                    assignedUser = new UserTaskDto
+                    {
+                        UserId = user.Value.UserId,
+                        Name = user.Value.Name,
+                        Username = user.Value.Username,
+                        UserPhoto = userPhoto.IsSuccess ? new UserCloudPhotoDto {
+                                UserPhotoId = userPhoto.Value.UserPhotoId,
+                                PhotoUrl = userPhoto.Value.PhotoUrl
+                        } : null
+                    };
+                }
+            }
+
+            var taskFiles = await photoRepository.GetByTaskItemIdAsync(request.TaskItemId);
+            return new GetByIdTaskItemQueryResponse
+            {
+                Success = true,
+                TaskItem = new TaskItemDto
+                {
+                    TaskItemId = taskItem.Value.TaskItemId,
+                    ProjectId = taskItem.Value.ProjectId,
+                    TaskName = taskItem.Value.TaskName,
+                    Description = taskItem.Value.Description,
+                    Deadline = taskItem.Value.Deadline,
+                    State = taskItem.Value.State,
+                    AssignedUser = assignedUser,
+                    TaskFiles = taskFiles.Select(photo =&gt; new TaskFileDto
+                    {
+                        TaskFileId = photo.PhotoId,
+                        FileUrl = photo.CloudURL
+                    }).ToArray(),
+                    Branch = taskItem.Value.Branch,
+                    StartTime = taskItem.Value.StartTime
+                }
+            };
+        }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[13,34,13,38,0],[13,39,13,43,0],[14,35,14,39,0],[14,40,14,44,0],[15,38,15,42,0],[15,43,15,47,0],[16,36,16,40,0],[16,41,16,45,0],[17,36,17,40,0],[17,41,17,45,0],[18,33,18,37,0],[18,38,18,42,0],[19,34,19,38,0],[19,39,19,43,0],[20,33,20,37,0],[20,38,20,42,0]]);
+      highlightRanges([[15,9,15,185,1],[16,9,16,10,1],[17,13,17,58,1],[18,13,18,44,1],[19,13,19,60,1],[20,13,20,52,1],[21,9,21,10,1],[24,9,24,10,1],[25,13,25,59,1],[26,13,26,87,1],[28,13,28,37,1],[29,13,29,14,1],[30,17,30,42,1],[31,17,31,82,1],[32,17,32,33,1],[35,13,35,46,1],[36,13,36,95,1],[38,13,38,101,1],[39,13,39,14,0],[40,17,40,72,0],[42,17,42,36,0],[43,17,43,18,0],[44,21,44,108,0],[46,21,55,23,0],[56,17,56,18,0],[57,13,57,14,0],[59,13,59,92,1],[60,13,72,59,1],[72,59,76,22,0],[76,22,80,15,1],[81,9,81,10,1]]);
     </script>
   </body>
 </html>

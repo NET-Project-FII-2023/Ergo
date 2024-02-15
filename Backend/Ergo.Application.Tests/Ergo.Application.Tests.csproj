@@ -47,6 +47,10 @@
 
     <Folder Include="TaskItems\Commands\" />
 
+    <Folder Include="UserPhotos\Queries\" />
+
+    <Folder Include="Users\Queries\" />
+
   </ItemGroup>
 
 </Project>

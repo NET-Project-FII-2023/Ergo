@@ -2,36 +2,29 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\ProjectDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetAll\GetAllUsersResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Domain.Entities;
-using Ergo.Domain.Entities.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Ergo.Application.Features.Projects.Queries
+namespace Ergo.Application.Features.Users.Queries.GetAll
 {
-    public class ProjectDto
+    public class GetAllUsersResponse
     {
-        public Guid ProjectId { get; set; }
-        public string? ProjectName { get; set; }
-        public string? Description { get; set; }
-        public string? GitRepository { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime Deadline { get; set; }
-        public ProjectState State { get; set; }
-        public List&lt;User&gt;? Members { get; set; }
-        public string? CreatedBy { get; set; }
-        public string? GithubToken { get; set; }
-        public string? GithubOwner { get; set; }
+        public List&lt;UserDto&gt;? Users { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[8,33,8,37,1],[8,38,8,42,1],[9,38,9,42,1],[9,43,9,47,1],[10,38,10,42,1],[10,43,10,47,1],[11,40,11,44,1],[11,45,11,49,1],[12,37,12,41,1],[12,42,12,46,1],[13,36,13,40,1],[13,41,13,45,1],[14,37,14,41,1],[14,42,14,46,1],[15,38,15,42,1],[15,43,15,47,1],[16,36,16,40,1],[16,41,16,45,1],[17,38,17,42,1],[17,43,17,47,1],[18,38,18,42,1],[18,43,18,47,1]]);
+      highlightRanges([[11,39,11,43,1],[11,44,11,48,1]]);
     </script>
   </body>
 </html>

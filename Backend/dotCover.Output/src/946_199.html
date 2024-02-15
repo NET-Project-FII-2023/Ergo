@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\UpdateUserPhotoDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\AddPhotoDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,18 +10,16 @@
     <pre id="content" class="source-code">
 namespace Ergo.Api.Models
 {
-    public class UpdateUserPhotoDto
+    public class AddPhotoDto
     {
         public IFormFile File { get; set; }
-
-        public string UserPhotoId { get; set; }
-        public string CloudUrl { get; set; }
+        public Guid TaskItemId { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,33,5,37,0],[5,38,5,42,0],[7,37,7,41,0],[7,42,7,46,0],[8,34,8,38,0],[8,39,8,43,0]]);
+      highlightRanges([[5,33,5,37,0],[5,38,5,42,0],[6,34,6,38,0],[6,39,6,43,0]]);
     </script>
   </body>
 </html>

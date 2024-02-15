@@ -2,25 +2,28 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Statistics\Queries\GetTasksDueThisWeek\GetTasksDueThisWeekQueryResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AddManualTimeTaskItem\AddManualTimeTaskItemCommandResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Models.Statistics;
 using Ergo.Application.Responses;
-using Ergo.Domain.Entities;
 
-namespace Ergo.Application.Features.Statistics.Queries.GetTasksDueThisWeek;
-
-public class GetTasksDueThisWeekQueryResponse : BaseResponse
+namespace Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem
 {
-    public List&lt;TaskDueModel&gt; TasksDueThisWeek { get; set; }
+    public class AddManualTimeTaskItemCommandResponse : BaseResponse
+    {
+        public AddManualTimeTaskItemCommandResponse() : base()
+        {
+
+        }
+        public TimeSpan TotalTimeSpent { get; set; }
+    }
 }
     </pre>
     <script type="text/javascript">
-      highlightRanges([[9,50,9,54,0],[9,55,9,59,0]]);
+      highlightRanges([[7,57,7,63,0],[8,9,8,10,0],[10,9,10,10,0],[11,42,11,46,0],[11,47,11,51,0]]);
     </script>
   </body>
 </html>

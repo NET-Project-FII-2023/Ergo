@@ -2,27 +2,27 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\AwsS3\S3Object.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Models\OpenAi\OpenAIChatResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Api.Models.AwsS3
+namespace Ergo.Api.Models.OpenAi
 {
-    public class S3Object
-    {
-        public string Name { get; set; } = null;
-        public MemoryStream InputStream { get; set; } = null;
-        public string BucketName { get; set; } = null;
+    public class OpenAIChatResponse { 
+        public string Id { get; set; } 
+        public string Object { get; set; } 
+        public long Created { get; set; } 
+        public string Model { get; set; } 
+        public List&lt;Choice&gt; Choices { get; set; } 
+        public Usage Usage { get; set; } }
 
-
-    }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,30,5,34,0],[5,35,5,39,0],[5,44,5,48,0],[6,43,6,47,0],[6,48,6,52,0],[6,57,6,61,0],[7,36,7,40,0],[7,41,7,45,0],[7,50,7,54,0]]);
+      highlightRanges([[4,28,4,32,0],[4,33,4,37,0],[5,32,5,36,0],[5,37,5,41,0],[6,31,6,35,0],[6,36,6,40,0],[7,31,7,35,0],[7,36,7,40,0],[8,39,8,43,0],[8,44,8,48,0],[9,30,9,34,0],[9,35,9,39,0]]);
     </script>
   </body>
 </html>

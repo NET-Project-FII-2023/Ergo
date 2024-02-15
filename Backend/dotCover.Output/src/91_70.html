@@ -2,34 +2,36 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AssignTaskItemToUser\AssignTaskItemToUserCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\CreateTaskItem\CreateTaskItemDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ergo.Domain.Entities.Enums;
 
-namespace Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser
+namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
 {
-    public class AssignTaskItemToUserCommandValidator : AbstractValidator&lt;AssignTaskItemToUserCommand&gt;
+    public class CreateTaskItemDto
     {
-        public AssignTaskItemToUserCommandValidator()
-        {
-            RuleFor(x =&gt; x.TaskItemId).NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;);
-            RuleFor(x =&gt; x.UserId).NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;);
-        }
+        public string? TaskName { get; set; }
+        public string? Description { get; set; } 
+        public DateTime? Deadline { get; set; } 
+        public string? CreatedBy { get; set; }
+        public Guid ProjectId { get; set; }
+        public TaskState State { get; set; }
+        public string? Branch { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,9,12,54,0],[13,9,13,10,0],[14,13,14,94,0],[15,13,15,90,0],[16,9,16,10,0]]);
+      highlightRanges([[12,35,12,39,0],[12,40,12,44,1],[13,38,13,42,0],[13,43,13,47,1],[14,37,14,41,0],[14,42,14,46,1],[15,36,15,40,0],[15,41,15,45,1],[16,33,16,37,0],[16,38,16,42,1],[17,34,17,38,0],[17,39,17,43,1],[18,33,18,37,0],[18,38,18,42,1]]);
     </script>
   </body>
 </html>
