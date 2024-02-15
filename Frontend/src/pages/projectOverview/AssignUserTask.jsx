@@ -48,7 +48,7 @@ const AssignUserTask = ({ token, task, project }) => {
 
     const handleClick = async () => {
         try {
-            const response = await api.get('/api/v1/Users', {
+            const response = await api.get(`/api/v1/Users/ByProjectId/${project.projectId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
