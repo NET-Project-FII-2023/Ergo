@@ -1,9 +1,4 @@
-import {
-  Input,
-  Checkbox,
-  Button,
-  Typography,
-} from "@material-tailwind/react";
+import {Input, Button, Typography} from "@material-tailwind/react";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -11,8 +6,6 @@ import { Link } from "react-router-dom";
 import api from "../../services/api";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const baseURL = "https://localhost:7248/api/v1/Authentication/register";
 
 export function SignUp() {
   const navigate = useNavigate();
@@ -51,7 +44,6 @@ export function SignUp() {
       }
       toast.error(errorMessage);
     }
-
   };
 
   const validatePassword = (password) => {
@@ -90,20 +82,20 @@ export function SignUp() {
       register(inputs);
   }
   return (
-    <section className="p-8 flex text-surface-light">
-            <div className="w-2/5  h-full hidden lg:block">
+    <section className="flex text-surface-light">
+      <div className="h-full p-4 min-h-screen relative justify-start items-center w-2/5 hidden lg:flex">
         <img
           src="/img/pattern.png"
-          className="h-full w-full object-cover rounded-3xl"
+          className="object-contain rounded-3xl"
         />
       </div>
-      <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
+      <div className="w-full lg:w-3/5 mt-24 flex flex-col items-center justify-center">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-1">Join Us Today</Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal text-surface-light-dark">Enter your email, username, name and password to register.</Typography>
         </div>
         <form className="mt-2 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleSignup}>
-          <div className="mb-1 flex flex-col gap-6">
+          <div className="mb-2 flex flex-col gap-4">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-light">
               Your email
             </Typography>
@@ -119,7 +111,7 @@ export function SignUp() {
               onChange={handleChange}
             />
           </div>
-          <div className="mb-1 flex flex-col gap-6">
+          <div className="mb-2 flex flex-col gap-4">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-light">
               Your username
             </Typography>
@@ -134,7 +126,7 @@ export function SignUp() {
               onChange={handleChange}
             />
           </div>
-          <div className="mb-1 flex flex-col gap-6">
+          <div className="mb-2 flex flex-col gap-4">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-light">
               Your name
             </Typography>
@@ -149,7 +141,7 @@ export function SignUp() {
               onChange={handleChange}
             />
           </div>
-          <div className="mb-1 flex flex-col gap-6">
+          <div className="mb-2 flex flex-col gap-4">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-light">
               Your password
             </Typography>
@@ -165,7 +157,7 @@ export function SignUp() {
               onChange={handleChange}
             />
           </div>
-          <div className="mb-1 flex flex-col gap-6">
+          <div className="mb-2 flex flex-col gap-4">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-light">
               Confirm password
             </Typography>
