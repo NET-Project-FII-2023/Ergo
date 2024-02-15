@@ -2,37 +2,25 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Comments\Commands\CreateComment\CreateCommentCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Queries\GetAll\GetAllCommentsResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
+using Ergo.Application.Responses;
 
-
-namespace Ergo.Application.Features.Comments.Commands.CreateComment
+namespace Ergo.Application.Features.Comments.Queries.GetAll
 {
-    public class CreateCommentCommandValidator: AbstractValidator&lt;CreateCommentCommand&gt;
+    public class GetAllCommentsResponse : BaseResponse
     {
-        public CreateCommentCommandValidator()
-        {
-            RuleFor(p =&gt; p.CommentText)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
-                .NotNull()
-                .MaximumLength(500).WithMessage(&quot;{PropertyName} must not exceed 500 characters.&quot;);
-            RuleFor(p =&gt; p.CreatedBy)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
-                .NotNull();
-            
-            
-        }
+        public List&lt;CommentDto&gt; Comments { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[8,9,8,47,1],[9,9,9,10,1],[10,13,13,99,1],[14,13,16,28,1],[19,9,19,10,1]]);
+      highlightRanges([[7,44,7,48,1],[7,49,7,53,1]]);
     </script>
   </body>
 </html>

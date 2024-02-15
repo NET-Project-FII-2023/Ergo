@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240206205543_BadgesActiveUpdate.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Infrastructure.Migrations
+{
+    /// &lt;inheritdoc /&gt;
+    public partial class BadgesActiveUpdate : Migration
+    {
+        /// &lt;inheritdoc /&gt;
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn&lt;bool&gt;(
+                name: &quot;Active&quot;,
+                table: &quot;Badges&quot;,
+                type: &quot;boolean&quot;,
+                nullable: false,
+                defaultValue: false);
+        }
+
+        /// &lt;inheritdoc /&gt;
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: &quot;Active&quot;,
+                table: &quot;Badges&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,10,0],[13,13,18,38,0],[19,9,19,10,0],[23,9,23,10,0],[24,13,26,34,0],[27,9,27,10,0]]);
+    </script>
+  </body>
+</html>

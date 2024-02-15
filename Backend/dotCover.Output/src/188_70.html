@@ -2,25 +2,74 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\InboxItems\Commands\UpdateInboxItemIsRead\UpdateInboxItemIsReadCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Commands\AddPhotoToTaskItem\AddPhotoToTaskItemCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
 using MediatR;
 
-namespace Ergo.Application.Features.InboxItems.Commands.UpdateInboxItemIsRead
+namespace Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem
 {
-    public class UpdateInboxItemIsReadCommand : IRequest&lt;UpdateInboxItemIsReadCommandResponse&gt;
+    public class AddPhotoToTaskItemCommandHandler : IRequestHandler&lt;AddPhotoToTaskItemCommand, AddPhotoToTaskItemCommandResponse&gt;
     {
-        public Guid InboxItemId { get; set; }
+        private readonly ITaskItemRepository taskItemRepository;
+        private readonly IPhotoRepository photoRepository;
+        public AddPhotoToTaskItemCommandHandler(ITaskItemRepository taskItemRepository, IPhotoRepository photoRepository)
+        {
+            this.taskItemRepository = taskItemRepository;
+            this.photoRepository = photoRepository;
+        }
+
+        public async Task&lt;AddPhotoToTaskItemCommandResponse&gt; Handle(AddPhotoToTaskItemCommand request, CancellationToken cancellationToken)
+        {
+            var validator = new AddPhotoToTaskItemCommandValidator();
+            var validatorResult = validator.Validate(request);
+            if (!validatorResult.IsValid)
+            {
+                return new AddPhotoToTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
+                };
+            }
+            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
+            if (!taskItem.IsSuccess)
+            {
+                return new AddPhotoToTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { taskItem.Error }
+                };
+            }
+
+            var photo = Photo.Create(request.TaskItemId, request.CloudURL);
+            if (!photo.IsSuccess)
+            {
+                return new AddPhotoToTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { photo.Error }
+                };
+            }
+            await photoRepository.AddAsync(photo.Value);
+            return new AddPhotoToTaskItemCommandResponse
+            {
+                Success = true
+            };
+        }
+
+
     }
+    
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,35,7,39,0],[7,40,7,44,0]]);
+      highlightRanges([[11,9,11,122,1],[12,9,12,10,1],[13,13,13,58,1],[14,13,14,52,1],[15,9,15,10,1],[18,9,18,10,1],[19,13,19,70,1],[20,13,20,63,1],[21,13,21,42,1],[22,13,22,14,0],[23,17,26,76,0],[26,76,26,90,0],[26,90,27,19,0],[29,13,29,87,1],[30,13,30,37,1],[31,13,31,14,1],[32,17,36,19,1],[39,13,39,76,1],[40,13,40,34,1],[41,13,41,14,0],[42,17,46,19,0],[48,13,48,57,1],[49,13,52,15,1],[53,9,53,10,1]]);
     </script>
   </body>
 </html>

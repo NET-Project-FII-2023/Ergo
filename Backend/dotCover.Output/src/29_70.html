@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Models\Identity\ResetPasswordModel.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Models\Identity\RegistrationModel.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -12,20 +12,26 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ergo.Application.Models.Identity
 {
-    public class ResetPasswordModel
+    public class RegistrationModel
     {
+        [Required(ErrorMessage = &quot;User Name is required&quot;)]
+        public string? Username { get; set; }
+
+        [Required(ErrorMessage = &quot;Name is required&quot;)]
+        public string? Name { get; set; }
+
+        [EmailAddress]
         [Required(ErrorMessage = &quot;Email is required&quot;)]
         public string? Email { get; set; }
+
         [Required(ErrorMessage = &quot;Password is required&quot;)]
         public string? Password { get; set; }
-        [Required(ErrorMessage = &quot;Code is required&quot;)]
-        public string? Code { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[8,32,8,36,0],[8,37,8,41,0],[10,35,10,39,0],[10,40,10,44,0],[12,31,12,35,0],[12,36,12,40,0]]);
+      highlightRanges([[8,35,8,39,1],[8,40,8,44,1],[11,31,11,35,1],[11,36,11,40,1],[15,32,15,36,1],[15,37,15,41,1],[18,35,18,39,1],[18,40,18,44,1]]);
     </script>
   </body>
 </html>

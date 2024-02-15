@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Domain.Tests\TaskItemsTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Entities.Enums;
+using Ergo.Domain.Entities;
+using FluentAssertions;
+using System.Reflection;
+
+namespace Ergo.Domain.Tests
+{
+    public class TaskItemsTests
+    {
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_TaskNameIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_TaskNameIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(null, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_DescriptionIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_DescriptionIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, null, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_DeadlineIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_DeadlineIsDefault_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, default, &quot;Test&quot;, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_CreatedByIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_CreatedByIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, null, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_ProjectIdIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateTaskItemIsCalled_And_ProjectIdIsEmpty_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.Empty, null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_TaskNameIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), TaskState.InProgress, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_TaskNameIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(null, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), TaskState.Done, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_DescriptionIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), TaskState.InProgress, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_DescriptionIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, null, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), TaskState.Done, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_DeadlineIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), TaskState.InProgress, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_DeadlineIsDefault_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, default, &quot;Test&quot;, Guid.NewGuid(), TaskState.Done, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_CreatedByIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), TaskState.InProgress, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_CreatedByIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, null, Guid.NewGuid(), TaskState.Done, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_ProjectIdIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), TaskState.InProgress, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_ProjectIdIsEmpty_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.Empty, TaskState.Done, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_TaskStateIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult = result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), TaskState.Done, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateTaskItemIsCalled_And_TaskStateIsDefault_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var updateResult =
+                result.Value.UpdateData(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), default, null);
+            //Assert
+            updateResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_AssignCommentIsCalled_And_UserIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var commentResult = Comment.Create(&quot;Test&quot;, Guid.NewGuid(), &quot;Test&quot;);
+            var assignResult = result.Value.AssignComment(commentResult.Value);
+            //Assert
+            assignResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_AssignCommentIsCalled_And_UserIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var assignResult = result.Value.AssignComment(null);
+            //Assert
+            assignResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_AssignCommentToTaskItemIsCalled_And_CommentsIsNull_Then_CommentsIsInitializedAndCommentIsAdded()
+        {
+            // Arrange
+            var taskItemResult = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            taskItemResult.Value.Comments = null; 
+
+            var comment =  Comment.Create(&quot;Test Comment&quot;, Guid.NewGuid(),&quot;Test&quot;); 
+
+            // Act
+            var assignedResult = taskItemResult.Value.AssignComment(comment.Value);
+
+            // Assert
+            assignedResult.IsSuccess.Should().BeTrue();
+            taskItemResult.Value.Comments.Should().NotBeNull();
+            taskItemResult.Value.Comments.Should().Contain(comment.Value);
+        }
+
+        [Fact]
+        public void When_AssignUserIsCalled_And_UserIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var userResult = User.Create(Guid.NewGuid());
+            var assignResult = result.Value.AssignUser(userResult.Value);
+            //Assert
+            assignResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_AssignUserIsCalled_And_UserIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var assignResult = result.Value.AssignUser(null);
+            //Assert
+            assignResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void PrivateConstructorTest()
+        {
+            var constructor = typeof(TaskItem).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new Type[0], null);
+            var instance = constructor.Invoke(null);
+            Assert.NotNull(instance);
+        }
+        [Fact]
+        public void When_DeleteAssignedUserIsCalled_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var userResult = User.Create(Guid.NewGuid());
+            var assignResult = result.Value.AssignUser(userResult.Value);
+            var deleteResult = result.Value.DeleteAssignedUser();
+            //Assert
+            deleteResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_StartOrResumeTaskItemIsCalled_And_TaskStateIsNotDone_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var startResult = result.Value.StartOrResumeTask();
+            //Assert
+            startResult.IsSuccess.Should().BeTrue();
+        }
+
+        [Fact]
+        public void When_StartOrResumeTaskIsCalled_And_TaskIsAlreadyInProgress_Then_FailureIsReturned()
+        {
+            // Arrange
+            var task = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+
+            task.Value.StartOrResumeTask(); // Starting the task once
+
+            // Act
+            var result = task.Value.StartOrResumeTask(); // Trying to start the task again
+
+            // Assert
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Should().Be(&quot;Task is already in progress&quot;);
+        }
+        [Fact]
+        public void When_PauseTaskIsCalled_And_TaskIsInProgress_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            result.Value.StartOrResumeTask();
+            var pauseResult = result.Value.PauseTask();
+            //Assert
+            pauseResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_PauseTaskIsCalled_And_TaskIsNotInProgress_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var pauseResult = result.Value.PauseTask();
+            //Assert
+            pauseResult.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_AddManualTimeIsCalled_And_TimeToAddIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var addTimeResult = result.Value.AddManualTime(TimeSpan.FromMinutes(5));
+            //Assert
+            addTimeResult.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_AddManualTimeIsCalled_And_TimeToAddIsZero_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = TaskItem.Create(&quot;Test&quot;, &quot;Test&quot;, DateTime.UtcNow, &quot;Test&quot;, Guid.NewGuid(), null);
+            var addTimeResult = result.Value.AddManualTime(TimeSpan.Zero);
+            //Assert
+            addTimeResult.IsSuccess.Should().BeFalse();
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,9,12,10,1],[14,13,14,105,1],[16,13,16,48,1],[17,9,17,10,1],[20,9,20,10,1],[22,13,22,103,1],[24,13,24,49,1],[25,9,25,10,1],[28,9,28,10,1],[30,13,30,105,1],[32,13,32,48,1],[33,9,33,10,1],[36,9,36,10,1],[38,13,38,103,1],[40,13,40,49,1],[41,9,41,10,1],[44,9,44,10,1],[46,13,46,105,1],[48,13,48,48,1],[49,9,49,10,1],[52,9,52,10,1],[54,13,54,97,1],[56,13,56,49,1],[57,9,57,10,1],[60,9,60,10,1],[62,13,62,105,1],[64,13,64,48,1],[65,9,65,10,1],[68,9,68,10,1],[70,13,70,103,1],[72,13,72,49,1],[73,9,73,10,1],[76,9,76,10,1],[78,13,78,105,1],[80,13,80,48,1],[81,9,81,10,1],[84,9,84,10,1],[86,13,86,101,1],[88,13,88,49,1],[89,9,89,10,1],[92,9,92,10,1],[94,13,94,105,1],[95,13,95,141,1],[97,13,97,54,1],[98,9,98,10,1],[102,9,102,10,1],[104,13,104,105,1],[105,13,105,133,1],[107,13,107,55,1],[108,9,108,10,1],[112,9,112,10,1],[114,13,114,105,1],[115,13,115,141,1],[117,13,117,54,1],[118,9,118,10,1],[121,9,121,10,1],[123,13,123,105,1],[124,13,124,133,1],[126,13,126,55,1],[127,9,127,10,1],[130,9,130,10,1],[132,13,132,105,1],[133,13,133,141,1],[135,13,135,54,1],[136,9,136,10,1],[139,9,139,10,1],[141,13,141,105,1],[142,13,142,127,1],[144,13,144,55,1],[145,9,145,10,1],[148,9,148,10,1],[150,13,150,105,1],[151,13,151,141,1],[153,13,153,54,1],[154,9,154,10,1],[157,9,157,10,1],[159,13,159,105,1],[160,13,160,133,1],[162,13,162,55,1],[163,9,163,10,1],[166,9,166,10,1],[168,13,168,105,1],[169,13,169,141,1],[171,13,171,54,1],[172,9,172,10,1],[175,9,175,10,1],[177,13,177,105,1],[178,13,178,131,1],[180,13,180,55,1],[181,9,181,10,1],[184,9,184,10,1],[186,13,186,105,1],[187,13,187,135,1],[189,13,189,54,1],[190,9,190,10,1],[193,9,193,10,1],[195,13,195,105,1],[196,13,197,113,1],[199,13,199,55,1],[200,9,200,10,1],[203,9,203,10,1],[205,13,205,105,1],[206,13,206,80,1],[207,13,207,80,1],[209,13,209,54,1],[210,9,210,10,1],[213,9,213,10,1],[215,13,215,105,1],[216,13,216,65,1],[218,13,218,55,1],[219,9,219,10,1],[222,9,222,10,1],[224,13,224,113,1],[225,13,225,50,1],[227,13,227,82,1],[230,13,230,84,1],[233,13,233,56,1],[234,13,234,64,1],[235,13,235,75,1],[236,9,236,10,1],[240,9,240,10,1],[242,13,242,105,1],[243,13,243,58,1],[244,13,244,74,1],[246,13,246,54,1],[247,9,247,10,1],[250,9,250,10,1],[252,13,252,105,1],[253,13,253,62,1],[255,13,255,55,1],[256,9,256,10,1],[259,9,259,10,1],[260,13,260,136,1],[261,13,261,53,1],[262,13,262,38,1],[263,9,263,10,1],[266,9,266,10,1],[268,13,268,105,1],[269,13,269,58,1],[270,13,270,74,1],[271,13,271,66,1],[273,13,273,54,1],[274,9,274,10,1],[277,9,277,10,1],[279,13,279,105,1],[280,13,280,64,1],[282,13,282,53,1],[283,9,283,10,1],[287,9,287,10,1],[289,13,289,103,1],[291,13,291,44,1],[294,13,294,57,1],[297,13,297,49,1],[298,13,298,69,1],[299,9,299,10,1],[302,9,302,10,1],[304,13,304,105,1],[305,13,305,46,1],[306,13,306,56,1],[308,13,308,53,1],[309,9,309,10,1],[312,9,312,10,1],[314,13,314,105,1],[315,13,315,56,1],[317,13,317,54,1],[318,9,318,10,1],[321,9,321,10,1],[323,13,323,105,1],[324,13,324,85,1],[326,13,326,55,1],[327,9,327,10,1],[330,9,330,10,1],[332,13,332,105,1],[333,13,333,75,1],[335,13,335,56,1],[336,9,336,10,1]]);
+    </script>
+  </body>
+</html>

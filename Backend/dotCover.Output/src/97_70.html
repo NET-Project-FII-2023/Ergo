@@ -2,26 +2,88 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Users\UserStatsDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Statistics\Queries\GetTasksDueThisWeek\GetTasksDueThisWeekQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-namespace Ergo.Application.Features.Users
+using Ergo.Application.Models.Statistics;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+using MediatR;
+
+namespace Ergo.Application.Features.Statistics.Queries.GetTasksDueThisWeek;
+
+public class GetTasksDueThisWeekQueryHandler(
+    IProjectRepository projectRepository,
+    ITaskItemRepository taskItemRepository)
+    : IRequestHandler&lt;GetTasksDueThisWeekQuery, GetTasksDueThisWeekQueryResponse&gt;
 {
-    public class UserStatsDto
+    public async Task&lt;GetTasksDueThisWeekQueryResponse&gt; Handle(GetTasksDueThisWeekQuery request, CancellationToken cancellationToken)
     {
-        public int TotalProjectsCreated { get; set; }
-        public int TotalTasks { get; set; }
-        public int TotalComments { get; set; }
-        public int TotalHoursWorked { get; set; }
+        var projectsResult = await projectRepository.GetProjectsByUserId(request.UserId);
+        
+        if (!projectsResult.IsSuccess)
+        {
+            return new GetTasksDueThisWeekQueryResponse
+            {
+                Success = false,
+                TasksDueThisWeek = [],
+                Message = &quot;Error getting projects by user id.&quot;
+            };
+        }
+        
+        var projects = projectsResult.Value;
+        List&lt;TaskDueModel&gt; tasksDue = [];
+        
+        foreach (var project in projects)
+        {
+            var tasksResult = await taskItemRepository.GetTasksByProjectIdAsync(project.ProjectId);
+            
+            if (!tasksResult.IsSuccess)
+            {
+                return new GetTasksDueThisWeekQueryResponse
+                {
+                    Success = false,
+                    TasksDueThisWeek = [],
+                    Message = &quot;Error getting tasks by project id.&quot;
+                };
+            }
+
+            var tasks = tasksResult.Value;
+            foreach (TaskItem task in tasks)
+            {
+                if (task.Deadline.HasValue &amp;&amp; task.Deadline.Value.Date &lt;= DateTime.Now.AddDays(7).Date)
+                {
+                    tasksDue.Add(new TaskDueModel
+                    {
+                        TaskItemId = task.TaskItemId,
+                        ProjectId = task.ProjectId,
+                        Deadline = task.Deadline.Value, 
+                        State = task.State
+                    });
+                }
+            }
+
+
+        }
+
+        return new GetTasksDueThisWeekQueryResponse
+        {
+            Success = true,
+            TasksDueThisWeek = tasksDue,
+            Message = &quot;All tasks due this week.&quot;
+        };
     }
 }
 
+
+
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[5,43,5,47,0],[5,48,5,52,0],[6,33,6,37,0],[6,38,6,42,0],[7,36,7,40,0],[7,41,7,45,0],[8,39,8,43,0],[8,44,8,48,0]]);
+      highlightRanges([[8,14,10,44,0],[14,5,14,6,0],[15,9,15,90,0],[17,9,17,39,0],[18,9,18,10,0],[19,13,24,15,0],[27,9,27,45,0],[28,9,28,42,0],[30,9,30,16,0],[30,18,30,29,0],[30,30,30,32,0],[30,33,30,41,0],[31,9,31,10,0],[32,13,32,100,0],[34,13,34,40,0],[35,13,35,14,0],[36,17,41,19,0],[44,13,44,43,0],[45,13,45,20,0],[45,22,45,35,0],[45,36,45,38,0],[45,39,45,44,0],[46,13,46,14,0],[47,17,47,104,0],[48,17,48,18,0],[49,21,55,24,0],[56,17,56,18,0],[57,13,57,14,0],[60,9,60,10,0],[62,9,67,11,0],[68,5,68,6,0]]);
     </script>
   </body>
 </html>

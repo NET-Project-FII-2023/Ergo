@@ -2,105 +2,27 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\GetByProjectId\GetTasksByProjectIdQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\GetTaskItemTime\GetTaskItemTimeQueryResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Users.Queries;
-using Ergo.Application.Persistence;
-using MediatR;
-namespace Ergo.Application.Features.TaskItems.Queries.GetByProjectId
+using Ergo.Application.Responses;
+
+namespace Ergo.Application.Features.TaskItems.Queries.GetTaskItemTime
 {
-    public class GetTasksByProjectIdQueryHandler : IRequestHandler&lt;GetTasksByProjectIdQuery, GetTasksByProjectIdQueryResponse&gt;
+    public class GetTaskItemTimeQueryResponse : BaseResponse
     {
-        private readonly ITaskItemRepository _taskItemRepository;
-        private readonly IUserManager userManager;
-
-        public GetTasksByProjectIdQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager)
+        public GetTaskItemTimeQueryResponse() : base()
         {
-            _taskItemRepository = taskItemRepository;
-            this.userManager = userManager;
         }
-
-        public async Task&lt;GetTasksByProjectIdQueryResponse&gt; Handle(GetTasksByProjectIdQuery request, CancellationToken cancellationToken)
-        {
-            //var projectExists = await _taskItemRepository.FindByIdAsync(request.ProjectId);
-            //if(!projectExists.IsSuccess)
-            //{
-            //    return new GetTasksByProjectIdQueryResponse
-            //    {
-            //        Success = false,
-            //        ValidationsErrors = new List&lt;string&gt; { &quot;Project with the provided ID does not exist.&quot; }
-            //    };
-            //}
-            var taskItemsResult = await _taskItemRepository.GetTasksByProjectIdAsync(request.ProjectId);
-
-            if (!taskItemsResult.IsSuccess)
-            {
-                // Handle the case where fetching task items by project ID fails
-                return new GetTasksByProjectIdQueryResponse
-                {
-                    Success = false,
-                    // Handle error or return empty task items list
-                    // TaskItems = new List&lt;TaskItemDto&gt;() or TaskItems = null
-                };
-            }
-
-            var taskItems = taskItemsResult.Value;
-
-            var taskItemDtos = new List&lt;TaskItemDto&gt;();
-
-            foreach (var taskItem in taskItems)
-            {
-                UserTaskDto? assignedUser = null;
-                var assignedUserId = await _taskItemRepository.GetAssignedUser(taskItem.TaskItemId);
-
-                if (assignedUserId.IsSuccess)
-                {
-                    if (Guid.TryParse(assignedUserId.Value, out var guidUserId))
-                    {
-                        var user = await userManager.FindByIdAsync(guidUserId);
-
-                        if (user.IsSuccess)
-                        {
-                            assignedUser = new UserTaskDto
-                            {
-                                UserId = user.Value.UserId,
-                                Name = user.Value.Name,
-                                Username = user.Value.Username,
-                            };
-                        }
-                    }
-                }
-
-                taskItemDtos.Add(new TaskItemDto
-                {
-                    TaskItemId = taskItem.TaskItemId,
-                    TaskName = taskItem.TaskName,
-                    Description = taskItem.Description,
-                    Deadline = taskItem.Deadline,
-                    ProjectId = taskItem.ProjectId,
-                    State = taskItem.State,
-                    AssignedUser = assignedUser,
-                    Branch = taskItem.Branch
-                });
-            }
-
-            return new GetTasksByProjectIdQueryResponse
-            {
-                Success = true,
-                TaskItems = taskItemDtos
-            };
-        }
-
+        public TimeSpan RecordedTime { get; set; }
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[11,9,11,113,0],[12,9,12,10,0],[13,13,13,54,0],[14,13,14,44,0],[15,9,15,10,0],[18,9,18,10,0],[28,13,28,105,0],[30,13,30,44,0],[31,13,31,14,0],[33,17,38,19,0],[41,13,41,51,0],[43,13,43,56,0],[45,13,45,20,0],[45,22,45,34,0],[45,35,45,37,0],[45,38,45,47,0],[46,13,46,14,0],[47,17,47,50,0],[48,17,48,101,0],[50,17,50,46,0],[51,17,51,18,0],[52,21,52,81,0],[53,21,53,22,0],[54,25,54,80,0],[56,25,56,44,0],[57,25,57,26,0],[58,29,63,31,0],[64,25,64,26,0],[65,21,65,22,0],[66,17,66,18,0],[68,17,78,20,0],[79,13,79,14,0],[81,13,85,15,0],[86,9,86,10,0]]);
+      highlightRanges([[7,49,7,55,0],[8,9,8,10,0],[9,9,9,10,0],[10,40,10,44,0],[10,45,10,49,0]]);
     </script>
   </body>
 </html>

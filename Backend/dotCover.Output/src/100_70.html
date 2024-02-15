@@ -2,28 +2,51 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Users\Commands\UpdateUser\UpdateUserCommandResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\ResetCode\Queries\VerifyResetCode\VerifyResetCodeQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
+using Ergo.Application.Persistence;
+using MediatR;
 
-namespace Ergo.Application.Features.Users.Commands.UpdateUser
+namespace Ergo.Application.Features.ResetCode.Queries.VerifyResetCode
 {
-    public class UpdateUserCommandResponse : BaseResponse
+    public class VerifyResetCodeQueryHandler : IRequestHandler&lt;VerifyResetCodeQuery, VerifyResetCodeResponse&gt;
     {
-        public UpdateUserCommandResponse() : base()
+        private readonly IPasswordResetCode passwordResetCodeRepository;
+        public VerifyResetCodeQueryHandler(IPasswordResetCode passwordResetCodeRepository)
         {
+            this.passwordResetCodeRepository = passwordResetCodeRepository;
         }
 
-        public UpdateUserDto User { get; set; }
+        public async Task&lt;VerifyResetCodeResponse&gt; Handle(VerifyResetCodeQuery request, CancellationToken cancellationToken)
+        {
+
+            var hasValidCode = await passwordResetCodeRepository.HasValidCodeByEmailAsync(request.Email,request.Code);
+            if(!hasValidCode)
+            {
+                return new VerifyResetCodeResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;Invalid reset code or expired.&quot; }
+                };
+                
+            }
+            //await passwordResetCodeRepository.InvalidateExistingCodesAsync(request.Email);
+            return new VerifyResetCodeResponse
+            {
+                Success = true
+            };
+
+        }
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,46,7,52,1],[8,9,8,10,1],[9,9,9,10,1],[11,37,11,41,0],[11,42,11,46,0]]);
+      highlightRanges([[9,9,9,91,0],[10,9,10,10,0],[11,13,11,76,0],[12,9,12,10,0],[15,9,15,10,0],[17,13,17,119,0],[18,13,18,30,0],[19,13,19,14,0],[20,17,24,19,0],[28,13,31,15,0],[33,9,33,10,0]]);
     </script>
   </body>
 </html>

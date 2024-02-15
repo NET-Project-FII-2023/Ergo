@@ -2,66 +2,38 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Badges\Queries\GetBadgesForUser\GetBadgesForUserQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\UpdateComment\UpdateCommentCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
-using MediatR;
+using FluentValidation;
 
-namespace Ergo.Application.Features.Badges.Queries.GetBadgesForUser
+
+namespace Ergo.Application.Features.Comments.Commands.UpdateComment
 {
-    public class GetBadgesForUserQueryHandler : IRequestHandler&lt;GetBadgesForUserQuery, GetBadgesForUserQueryResponse&gt;
+    public class UpdateCommentCommandValidator : AbstractValidator&lt;UpdateCommentCommand&gt;
     {
-        private readonly IBadgeRepository badgeRepository;
-        private readonly IUserManager userManager;
-        public GetBadgesForUserQueryHandler(IBadgeRepository badgeRepository, IUserManager userManager)
+        public UpdateCommentCommandValidator()
         {
-            this.badgeRepository = badgeRepository;
-            this.userManager = userManager;
-        }
+            RuleFor(p =&gt; p.CommentText)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
+                .NotNull()
+                .MaximumLength(500).WithMessage(&quot;{PropertyName} must not exceed 500 characters.&quot;);
+            RuleFor(p =&gt; p.CreatedBy)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
+                .NotNull();
 
-        public async Task&lt;GetBadgesForUserQueryResponse&gt; Handle(GetBadgesForUserQuery request, CancellationToken cancellationToken)
-        {
-            var userExists = await userManager.FindByIdAsync(request.UserId);
-            if (!userExists.IsSuccess)
-            {
-                return new GetBadgesForUserQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;User not found&quot; }
-                };
-            }
-            var badges = await badgeRepository.GetBadgesByUserId(request.UserId);
-            if (!badges.IsSuccess)
-            {
-                return new GetBadgesForUserQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Badges not found&quot; }
-                };
-            }
-            return new GetBadgesForUserQueryResponse
-            {
-                Success = true,
-                Badges = badges.Value.Select(b =&gt; new BadgeDto
-                {
-                    Name = b.Name,
-                    Count = b.Count,
-                    Type = b.Type,
-                    Active = b.Active
-                }).ToArray()
-            };
+
+
         }
     }
-
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,10,104,0],[11,9,11,10,0],[12,13,12,52,0],[13,13,13,44,0],[14,9,14,10,0],[17,9,17,10,0],[18,13,18,78,0],[19,13,19,39,0],[20,13,20,14,0],[21,17,25,19,0],[27,13,27,82,0],[28,13,28,35,0],[29,13,29,14,0],[30,17,34,19,0],[36,13,39,51,0],[39,51,45,18,0],[45,18,46,15,0],[47,9,47,10,0]]);
+      highlightRanges([[8,9,8,47,1],[9,9,9,10,1],[10,13,13,99,1],[14,13,16,28,1],[20,9,20,10,1]]);
     </script>
   </body>
 </html>

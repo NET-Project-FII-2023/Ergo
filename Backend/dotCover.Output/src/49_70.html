@@ -2,84 +2,23 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\GetById\GetByIdTaskItemQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\GetByProjectsOfUser\GetTasksByProjectsOfUsersQueryResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Users.Queries;
-using Ergo.Application.Persistence;
-using MediatR;
+using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.TaskItems.Queries.GetById
-{
-    public class GetByIdTaskItemQueryHandler : IRequestHandler&lt;GetByIdTaskItemQuery, GetByIdTaskItemQueryResponse&gt;
-    {
-        private readonly ITaskItemRepository taskItemRepository;
-        private readonly IUserManager userManager;
+namespace Ergo.Application.Features.TaskItems.Queries.GetByUserId;
 
-        public GetByIdTaskItemQueryHandler(ITaskItemRepository taskItemRepository, IUserManager userManager)
-        {
-            this.taskItemRepository = taskItemRepository;
-            this.userManager = userManager;
-        }
-
-        public async Task&lt;GetByIdTaskItemQueryResponse&gt; Handle(GetByIdTaskItemQuery request, CancellationToken cancellationToken)
-        {
-            GetByIdTaskItemQueryResponse response = new();
-            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
-
-            if (!taskItem.IsSuccess)
-            {
-                response.Success = false;
-                response.ValidationsErrors = new List&lt;string&gt; { taskItem.Error };
-                return response;
-            }
-
-            UserTaskDto? assignedUser = null;
-            var assignedUserId = await taskItemRepository.GetAssignedUser(request.TaskItemId);
-
-            if (assignedUserId.IsSuccess)
-            {
-                if (Guid.TryParse(assignedUserId.Value, out var guidUserId))
-                {
-                    var user = await userManager.FindByIdAsync(guidUserId);
-
-                    if (user.IsSuccess)
-                    {
-                        assignedUser = new UserTaskDto
-                        {
-                            UserId = user.Value.UserId,
-                            Name = user.Value.Name,
-                            Username = user.Value.Username,
-                        };
-                    }
-                }
-            }
-
-            return new GetByIdTaskItemQueryResponse
-            {
-                Success = true,
-                TaskItem = new TaskItemDto
-                {
-                    TaskItemId = taskItem.Value.TaskItemId,
-                    ProjectId = taskItem.Value.ProjectId,
-                    TaskName = taskItem.Value.TaskName,
-                    Description = taskItem.Value.Description,
-                    Deadline = taskItem.Value.Deadline,
-                    State = taskItem.Value.State,
-                    AssignedUser = assignedUser,
-                    Branch = taskItem.Value.Branch
-                }
-            };
-        }
-    }
+public class GetTasksByProjectsOfUsersQueryResponse : BaseResponse
+{   
+    public Dictionary&lt;Guid, List&lt;TaskItemDto&gt;&gt; TaskItems { get; set; }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,9,12,109,1],[13,9,13,10,1],[14,13,14,58,1],[15,13,15,44,1],[16,9,16,10,1],[19,9,19,10,1],[20,13,20,59,1],[21,13,21,87,1],[23,13,23,37,1],[24,13,24,14,1],[25,17,25,42,1],[26,17,26,82,1],[27,17,27,33,1],[30,13,30,46,1],[31,13,31,95,1],[33,13,33,42,1],[34,13,34,14,0],[35,17,35,77,0],[36,17,36,18,0],[37,21,37,76,0],[39,21,39,40,0],[40,21,40,22,0],[41,25,46,27,0],[47,21,47,22,0],[48,17,48,18,0],[49,13,49,14,0],[51,13,65,15,1],[66,9,66,10,1]]);
+      highlightRanges([[7,60,7,64,0],[7,65,7,69,0]]);
     </script>
   </body>
 </html>

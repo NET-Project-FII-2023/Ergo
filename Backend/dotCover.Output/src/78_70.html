@@ -2,36 +2,30 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\CreateTaskItem\CreateTaskItemDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\DeleteTaskItem\DeleteTaskItemCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ergo.Domain.Entities.Enums;
+using FluentValidation;
 
-namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
 {
-    public class CreateTaskItemDto
+    public class DeleteTaskItemCommandValidator : AbstractValidator&lt;DeleteTaskItemCommand&gt;
     {
-        public string? TaskName { get; set; }
-        public string? Description { get; set; } 
-        public DateTime Deadline { get; set; } 
-        public string? CreatedBy { get; set; }
-        public Guid ProjectId { get; set; }
-        public TaskState State { get; set; }
-        public string? Branch { get; set; }
+        public DeleteTaskItemCommandValidator()
+        {
+            RuleFor(p =&gt; p.TaskItemId)
+                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
+                .NotNull();
+        }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,35,12,39,0],[12,40,12,44,1],[13,38,13,42,0],[13,43,13,47,1],[14,36,14,40,0],[14,41,14,45,1],[15,36,15,40,0],[15,41,15,45,1],[16,33,16,37,0],[16,38,16,42,1],[17,34,17,38,0],[17,39,17,43,1],[18,33,18,37,0],[18,38,18,42,1]]);
+      highlightRanges([[7,9,7,48,0],[8,9,8,10,0],[9,13,11,28,0],[12,9,12,10,0]]);
     </script>
   </body>
 </html>

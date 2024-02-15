@@ -2,27 +2,25 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\ML\Query\GetTaskPrediction\TaskPredictionQuery.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Queries\GetPhotosForTaskItem\GetPhotosForTaskItemQuery.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Domain.Entities.ML;
 using MediatR;
 
-namespace Ergo.Application.Features.ML.Query.GetTaskPrediction
+namespace Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem
 {
-    public class TaskPredictionQuery : IRequest&lt;TaskPredictionQueryResponse&gt;
+    public class GetPhotosForTaskItemQuery : IRequest&lt;GetPhotosForTaskItemQueryResponse&gt;
     {
-        public TaskDataDto TaskData { get; set; }
-
+        public Guid TaskItemId { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[8,39,8,43,0],[8,44,8,48,0]]);
+      highlightRanges([[7,34,7,38,1],[7,39,7,43,0]]);
     </script>
   </body>
 </html>

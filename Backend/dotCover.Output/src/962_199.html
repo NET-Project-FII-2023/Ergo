@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\PhotosController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem;
+using Ergo.Application.Features.Photos.Commands.DeletePhoto;
+using Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Ergo.Api.Controllers
+{
+
+    public class PhotosController : ApiControllerBase
+    {
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task&lt;IActionResult&gt; AddPhotoToTaskItem([FromForm] AddPhotoToTaskItemCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpGet(&quot;{taskItemId}&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; GetPhotosForTaskItem(Guid taskItemId)
+        {
+            var result = await Mediator.Send(new GetPhotosForTaskItemQuery { TaskItemId = taskItemId });
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpDelete(&quot;{photoId}&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; DeletePhoto(Guid photoId)
+        {
+            var result = await Mediator.Send(new DeletePhotoCommand { PhotoId = photoId });
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,10,0],[18,13,18,55,0],[19,13,19,33,0],[20,13,20,14,0],[21,17,21,43,0],[23,13,23,31,0],[24,9,24,10,0],[29,9,29,10,0],[30,13,30,105,0],[31,13,31,33,0],[32,13,32,14,0],[33,17,33,43,0],[35,13,35,31,0],[36,9,36,10,0],[41,9,41,10,0],[42,13,42,92,0],[43,13,43,33,0],[44,13,44,14,0],[45,17,45,43,0],[47,13,47,31,0],[48,9,48,10,0]]);
+    </script>
+  </body>
+</html>

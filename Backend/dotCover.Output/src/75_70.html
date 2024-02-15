@@ -2,86 +2,27 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\CreateTaskItem\CreateTaskItemCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\DeleteTaskItem\DeleteTaskItemCommand.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
-using Ergo.Domain.Entities;
 using MediatR;
+using System;
 
-namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
 {
-    public class CreateTaskItemCommandHandler : IRequestHandler&lt;CreateTaskItemCommand, CreateTaskItemCommandResponse&gt;
+    public class DeleteTaskItemCommand : IRequest&lt;DeleteTaskItemCommandResponse&gt;
     {
-
-        private readonly ITaskItemRepository taskItemRepository;
-        private readonly IProjectRepository projectRepository;
-
-        public CreateTaskItemCommandHandler(ITaskItemRepository taskItemRepository, IProjectRepository projectRepository)
-        {
-            this.taskItemRepository = taskItemRepository;
-            this.projectRepository = projectRepository;
-        }
-
-        public async Task&lt;CreateTaskItemCommandResponse&gt; Handle(CreateTaskItemCommand request,
-            CancellationToken cancellationToken)
-        {
-            var validator = new CreateTaskItemCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
-            {
-                return new CreateTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
-                };
-            }
-            var projectExists = await projectRepository.ProjectExists(request.ProjectId);
-            if (!projectExists)
-            {
-                return new CreateTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Project with the provided ID does not exist.&quot; }
-                };
-            }
-
-            var taskItem = TaskItem.Create(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId, request.Branch);
-            if (!taskItem.IsSuccess)
-            {
-                return new CreateTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { taskItem.Error }
-                };
-            }
-            await taskItemRepository.AddAsync(taskItem.Value);
-            return new CreateTaskItemCommandResponse
-            {
-                Success = true,
-                TaskItem = new CreateTaskItemDto
-                {
-                    TaskName = taskItem.Value.TaskName,
-                    Description = taskItem.Value.Description,
-                    Deadline = taskItem.Value.Deadline,
-                    ProjectId = taskItem.Value.ProjectId,
-                    CreatedBy = taskItem.Value.CreatedBy,
-                    State = taskItem.Value.State,
-                    Branch = taskItem.Value.Branch
-                }
-            };
-
-        }
+        public Guid TaskItemId { get; set; }
+        public Guid UserId { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[13,9,13,122,1],[14,9,14,10,1],[15,13,15,58,1],[16,13,16,56,1],[17,9,17,10,1],[21,9,21,10,1],[22,13,22,66,1],[23,13,23,93,1],[25,13,25,42,1],[26,13,26,14,0],[27,17,30,76,0],[30,76,30,90,0],[30,90,31,19,0],[33,13,33,90,1],[34,13,34,32,1],[35,13,35,14,1],[36,17,40,19,1],[43,13,43,155,1],[44,13,44,37,1],[45,13,45,14,0],[46,17,50,19,0],[52,13,52,63,1],[53,13,66,15,1],[68,9,68,10,1]]);
+      highlightRanges([[8,34,8,38,0],[8,39,8,43,0],[9,30,9,34,0],[9,35,9,39,0]]);
     </script>
   </body>
 </html>

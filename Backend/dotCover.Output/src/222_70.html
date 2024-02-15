@@ -2,27 +2,36 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Badges\Queries\GetBadgesForUser\GetBadgesForUserQueryResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\UpdateComment\UpdateCommentDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
+using Ergo.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Ergo.Application.Features.Badges.Queries.GetBadgesForUser
+namespace Ergo.Application.Features.Comments.Commands.UpdateComment
 {
-    public class GetBadgesForUserQueryResponse : BaseResponse
+    public class UpdateCommentDto
     {
-        public GetBadgesForUserQueryResponse() : base()
-        {
-        }
-        public BadgeDto[] Badges { get; set; }
+        public string CreatedBy { get; set; } = default!;
+        public DateTime CreatedDate { get; set; }
+        public string LastModifiedBy { get; set; } = default!;
+
+        public DateTime LastModifiedDate { get; set; }
+        public string CommentText { get; set; } = default!;
+        public Guid TaskId { get; set; } = default!;
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,50,7,56,0],[8,9,8,10,0],[9,9,9,10,0],[10,36,10,40,0],[10,41,10,45,0]]);
+      highlightRanges([[12,35,12,39,0],[12,40,12,44,0],[12,49,12,57,0],[13,39,13,43,0],[13,44,13,48,0],[14,40,14,44,0],[14,45,14,49,0],[14,54,14,62,0],[16,44,16,48,0],[16,49,16,53,0],[17,37,17,41,0],[17,42,17,46,0],[17,51,17,59,0],[18,30,18,34,0],[18,35,18,39,0],[18,44,18,52,0]]);
     </script>
   </body>
 </html>

@@ -2,43 +2,56 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\ML\Query\GetTaskPrediction\TaskPredictionQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Queries\GetPhotosForTaskItem\GetPhotosForTaskItemQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
 using Ergo.Application.Persistence;
-using Ergo.Domain.Entities.ML;
 using MediatR;
 
-namespace Ergo.Application.Features.ML.Query.GetTaskPrediction
+namespace Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem
 {
-    public class TaskPredictionQueryHandler : IRequestHandler&lt;TaskPredictionQuery, TaskPredictionQueryResponse&gt;
+    public class GetPhotosForTaskItemQueryHandler : IRequestHandler&lt;GetPhotosForTaskItemQuery, GetPhotosForTaskItemQueryResponse&gt;
     {
-        private readonly IMLService mlService;
-        public TaskPredictionQueryHandler(IMLService mlService)
+        private readonly IPhotoRepository photoRepository;
+        private readonly ITaskItemRepository taskItemRepository;
+        public GetPhotosForTaskItemQueryHandler(IPhotoRepository photoRepository, ITaskItemRepository taskItemRepository)
         {
-            this.mlService = mlService;
+            this.photoRepository = photoRepository;
+            this.taskItemRepository = taskItemRepository;
         }
 
-        public async Task&lt;TaskPredictionQueryResponse&gt; Handle(TaskPredictionQuery request, CancellationToken cancellationToken)
+        public async Task&lt;GetPhotosForTaskItemQueryResponse&gt; Handle(GetPhotosForTaskItemQuery request, CancellationToken cancellationToken)
         {
-            var validationResults = new TaskPredictionQueryValidator().Validate(request);
-            if (!validationResults.IsValid)
+            var taskItemExists = await taskItemRepository.FindByIdAsync(request.TaskItemId);
+            if(!taskItemExists.IsSuccess)
             {
-                return new TaskPredictionQueryResponse { Success = false, ValidationsErrors = validationResults.Errors.Select(x =&gt; x.ErrorMessage).ToList() };
+                return new GetPhotosForTaskItemQueryResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item with the provided ID does not exist.&quot; }
+                };
             }
-            var taskData = new TaskData { NumberOfParticipants = request.TaskData.NumberOfParticipants, TaskComplexity = request.TaskData.TaskComplexity, TaskUrgency = request.TaskData.TaskUrgency };
-            var result = await mlService.PredictCompletionTime(taskData);
-            return new TaskPredictionQueryResponse { PredictedResolutionTime = result };
+            var photos = await photoRepository.GetByTaskItemIdAsync(request.TaskItemId);
+            var photoDtos = photos.Select(p =&gt; new PhotoDto
+            {
+                PhotoId = p.PhotoId,
+                CloudURL = p.CloudURL
+            }).ToList();
+            return new GetPhotosForTaskItemQueryResponse
+            {
+                Success = true,
+                Photos = photoDtos
+            };
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,10,64,0],[11,9,11,10,0],[12,13,12,40,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,90,0],[18,13,18,44,0],[19,13,19,14,0],[20,17,20,132,0],[20,132,20,146,0],[20,146,20,159,0],[22,13,22,200,0],[23,13,23,74,0],[24,13,24,89,0],[25,9,25,10,0]]);
+      highlightRanges([[10,9,10,122,1],[11,9,11,10,1],[12,13,12,52,1],[13,13,13,58,1],[14,9,14,10,1],[17,9,17,10,1],[18,13,18,93,1],[19,13,19,42,1],[20,13,20,14,0],[21,17,25,19,0],[27,13,27,89,0],[28,13,28,48,0],[28,48,32,14,0],[32,14,32,25,0],[33,13,37,15,0],[38,9,38,10,0]]);
     </script>
   </body>
 </html>

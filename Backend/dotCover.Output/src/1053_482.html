@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\TaskItems\Queries\GetByIdTaskItemQueryHandlerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.TaskItems.Queries.GetById;
+using Ergo.Application.Persistence;
+using Ergo.Application.Tests.RepositoryMocks;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using FluentAssertions;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.TaskItems.Queries;
+
+public class GetByIdTaskItemQueryHandlerTests : IDisposable
+{
+    private readonly ITaskItemRepository _mockTaskItemRepository;
+    private readonly IUserPhotoRepository _mockUserPhotoRepository;
+    private readonly IUserManager _mockUserManager;
+    private readonly IPhotoRepository _mockPhotoRepository;
+    private readonly GetByIdTaskItemQueryHandler _handler;
+
+    public GetByIdTaskItemQueryHandlerTests()
+    {
+        _mockTaskItemRepository = TaskItemRepositoryMocks.GetTaskItemRepository();
+        _mockUserPhotoRepository = Substitute.For&lt;IUserPhotoRepository&gt;();
+        _mockUserManager = Substitute.For&lt;IUserManager&gt;();
+        _mockPhotoRepository = Substitute.For&lt;IPhotoRepository&gt;();
+        _handler = new GetByIdTaskItemQueryHandler(_mockTaskItemRepository, _mockUserManager, _mockUserPhotoRepository,_mockPhotoRepository);
+    }
+    
+    /*[Fact]
+    public async Task GetByIdTaskItemQueryHandler_ReturnsTaskItem_WhenTaskItemExists()
+    {
+        // Arrange
+        var existingTaskItemId = TaskItemRepositoryMocks.TaskItems[0].TaskItemId;
+        var query = new GetByIdTaskItemQuery(existingTaskItemId);
+        this construtor has 0 parameters so how tf ???
+        
+        // Act
+        var result = await _handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.TaskItem.Should().NotBeNull();
+        result.TaskItem.TaskItemId.Should().Be(existingTaskItemId);
+        result.TaskItem.TaskName.Should().NotBeNullOrWhiteSpace();
+    }*/
+
+    [Fact]
+    public async Task GetByIdTaskItemQueryHandler_ReturnsNull_WhenTaskItemDoesNotExist()
+    {
+        // Arrange
+        var taskItem = TaskItemRepositoryMocks.TaskItems[0];
+
+        // Act
+        // GetByIdTaskItemQuery has 0 parameters ???
+        var result = await _handler.Handle(new GetByIdTaskItemQuery(), CancellationToken.None);
+
+        // Assert
+        result.TaskItem.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetByIdTaskItemQueryHandler_ThrowsException_WhenRepositoryFails()
+    {
+        // Arrange
+        _mockTaskItemRepository.FindByIdAsync(Arg.Any&lt;Guid&gt;())
+            .Returns(Task.FromException&lt;Result&lt;TaskItem&gt;&gt;(new Exception(&quot;Repository failure&quot;)));
+
+        // Act &amp; Assert
+        await Assert.ThrowsAsync&lt;Exception&gt;(() =&gt; _handler.Handle(new GetByIdTaskItemQuery(), CancellationToken.None));
+    }
+
+    public void Dispose()
+    {
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,5,19,46,1],[20,5,20,6,1],[21,9,21,83,1],[22,9,22,75,1],[23,9,23,59,1],[24,9,24,67,1],[25,9,25,142,1],[26,5,26,6,1],[48,5,48,6,1],[50,9,50,61,1],[54,9,54,96,1],[57,9,57,43,1],[58,5,58,6,1],[62,5,62,6,1],[64,9,65,97,1],[68,9,68,51,1],[68,51,68,118,1],[68,118,68,120,1],[69,5,69,6,1],[72,5,72,6,1],[73,5,73,6,1]]);
+    </script>
+  </body>
+</html>

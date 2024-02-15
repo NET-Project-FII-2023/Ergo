@@ -87,7 +87,8 @@ namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
             foreach (var comment in comments.Value)
             {
                 var commentResult = await commentRepository.DeleteAsync(comment.CommentId);
-                if (!result.IsSuccess)
+
+                if (!commentResult.IsSuccess)
                 {
                     response.Success = false;
                     response.ValidationsErrors = new List<string> { result.Error };

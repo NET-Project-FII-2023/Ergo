@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20231218210755_UserUpdateProjectAndTask.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Infrastructure.Migrations
+{
+    /// &lt;inheritdoc /&gt;
+    public partial class UserUpdateProjectAndTask : Migration
+    {
+        /// &lt;inheritdoc /&gt;
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: &quot;Projects&quot;,
+                columns: table =&gt; new
+                {
+                    ProjectId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    ProjectName = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    Description = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    GitRepository = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    StartDate = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false),
+                    Deadline = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false),
+                    State = table.Column&lt;int&gt;(type: &quot;integer&quot;, nullable: false),
+                    CreatedBy = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    CreatedDate = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false),
+                    LastModifiedBy = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    LastModifiedDate = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Projects&quot;, x =&gt; x.ProjectId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;Users&quot;,
+                columns: table =&gt; new
+                {
+                    UserId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Users&quot;, x =&gt; x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;ProjectUser&quot;,
+                columns: table =&gt; new
+                {
+                    MembersUserId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    ProjectsProjectId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_ProjectUser&quot;, x =&gt; new { x.MembersUserId, x.ProjectsProjectId });
+                    table.ForeignKey(
+                        name: &quot;FK_ProjectUser_Projects_ProjectsProjectId&quot;,
+                        column: x =&gt; x.ProjectsProjectId,
+                        principalTable: &quot;Projects&quot;,
+                        principalColumn: &quot;ProjectId&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: &quot;FK_ProjectUser_Users_MembersUserId&quot;,
+                        column: x =&gt; x.MembersUserId,
+                        principalTable: &quot;Users&quot;,
+                        principalColumn: &quot;UserId&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;TaskItems&quot;,
+                columns: table =&gt; new
+                {
+                    TaskItemId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    AssignedUserUserId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: true),
+                    ProjectId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    BranchId = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    TaskName = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    Description = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    Deadline = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false),
+                    State = table.Column&lt;int&gt;(type: &quot;integer&quot;, nullable: false),
+                    CreatedBy = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    CreatedDate = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false),
+                    LastModifiedBy = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    LastModifiedDate = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_TaskItems&quot;, x =&gt; x.TaskItemId);
+                    table.ForeignKey(
+                        name: &quot;FK_TaskItems_Users_AssignedUserUserId&quot;,
+                        column: x =&gt; x.AssignedUserUserId,
+                        principalTable: &quot;Users&quot;,
+                        principalColumn: &quot;UserId&quot;);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;Comments&quot;,
+                columns: table =&gt; new
+                {
+                    CommentId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    CommentText = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    TaskId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    TaskItemId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: true),
+                    CreatedBy = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    CreatedDate = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false),
+                    LastModifiedBy = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    LastModifiedDate = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_Comments&quot;, x =&gt; x.CommentId);
+                    table.ForeignKey(
+                        name: &quot;FK_Comments_TaskItems_TaskItemId&quot;,
+                        column: x =&gt; x.TaskItemId,
+                        principalTable: &quot;TaskItems&quot;,
+                        principalColumn: &quot;TaskItemId&quot;);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: &quot;IX_Comments_TaskItemId&quot;,
+                table: &quot;Comments&quot;,
+                column: &quot;TaskItemId&quot;);
+
+            migrationBuilder.CreateIndex(
+                name: &quot;IX_ProjectUser_ProjectsProjectId&quot;,
+                table: &quot;ProjectUser&quot;,
+                column: &quot;ProjectsProjectId&quot;);
+
+            migrationBuilder.CreateIndex(
+                name: &quot;IX_TaskItems_AssignedUserUserId&quot;,
+                table: &quot;TaskItems&quot;,
+                column: &quot;AssignedUserUserId&quot;);
+        }
+
+        /// &lt;inheritdoc /&gt;
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: &quot;Comments&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;ProjectUser&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;TaskItems&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;Projects&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;Users&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,9,13,10,0],[14,13,16,35,0],[16,35,29,18,0],[29,18,31,17,0],[31,17,31,18,0],[31,18,32,21,0],[32,21,32,71,0],[32,71,33,17,0],[33,17,33,18,0],[33,18,33,20,0],[35,13,37,35,0],[37,35,40,18,0],[40,18,42,17,0],[42,17,42,18,0],[42,18,43,21,0],[43,21,43,65,0],[43,65,44,17,0],[44,17,44,18,0],[44,18,44,20,0],[46,13,48,35,0],[48,35,52,18,0],[52,18,54,17,0],[54,17,54,18,0],[54,18,55,21,0],[55,21,55,107,0],[55,107,56,21,0],[56,21,61,62,0],[61,62,62,21,0],[62,21,67,62,0],[67,62,68,17,0],[68,17,68,18,0],[68,18,68,20,0],[70,13,72,35,0],[72,35,86,18,0],[86,18,88,17,0],[88,17,88,18,0],[88,18,89,21,0],[89,21,89,73,0],[89,73,90,21,0],[90,21,94,52,0],[94,52,95,17,0],[95,17,95,18,0],[95,18,95,20,0],[97,13,99,35,0],[99,35,109,18,0],[109,18,111,17,0],[111,17,111,18,0],[111,18,112,21,0],[112,21,112,71,0],[112,71,113,21,0],[113,21,117,56,0],[117,56,118,17,0],[118,17,118,18,0],[118,18,118,20,0],[120,13,123,39,0],[125,13,128,46,0],[130,13,133,47,0],[134,9,134,10,0],[138,9,138,10,0],[139,13,140,35,0],[142,13,143,38,0],[145,13,146,36,0],[148,13,149,35,0],[151,13,152,32,0],[153,9,153,10,0]]);
+    </script>
+  </body>
+</html>

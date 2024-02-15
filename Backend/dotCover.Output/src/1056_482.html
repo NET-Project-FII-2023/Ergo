@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\PhotoRepositoryMocks.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.RepositoryMocks
+{
+    public static class PhotoRepositoryMocks
+    {
+        internal readonly static List&lt;Photo&gt; Photos =
+            [
+                Photo.Create(Guid.Parse(&quot;00000000-0000-0000-0000-000000000000&quot;), &quot;token&quot;).Value,
+                Photo.Create(Guid.Parse(&quot;00000000-0000-0000-0000-000000000000&quot;), &quot;token&quot;).Value,
+            ];
+        public static IPhotoRepository GetPhotoRepository()
+        {
+            var mockPhotoRepository = Substitute.For&lt;IPhotoRepository&gt;();
+            mockPhotoRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;Photo&gt;&gt;.Success(Photos));
+            mockPhotoRepository.FindByIdAsync(Photos[0].PhotoId).Returns(Result&lt;Photo&gt;.Success(Photos[0]));
+            mockPhotoRepository.FindByIdAsync(Photos[1].PhotoId).Returns(Result&lt;Photo&gt;.Success(Photos[1]));
+            mockPhotoRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != Photos[0].PhotoId &amp;&amp; id != Photos[1].PhotoId)).Returns(Result&lt;Photo&gt;.Failure(&quot;Not found&quot;));
+            return mockPhotoRepository;
+
+
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,14,15,0],[16,9,16,10,0],[17,13,17,74,0],[18,13,18,101,0],[19,13,19,108,0],[20,13,20,108,0],[21,13,21,163,0],[22,13,22,40,0],[25,9,25,10,0]]);
+    </script>
+  </body>
+</html>

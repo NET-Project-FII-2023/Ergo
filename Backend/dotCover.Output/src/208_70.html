@@ -2,38 +2,25 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Comments\Commands\UpdateComment\UpdateCommentCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\InboxItems\Commands\CreateInboxItem\CreateInboxItemDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
-
-
-namespace Ergo.Application.Features.Comments.Commands.UpdateComment
+namespace Ergo.Application.Features.InboxItems.Commands.CreateInboxItem
 {
-    public class UpdateCommentCommandValidator : AbstractValidator&lt;UpdateCommentCommand&gt;
+    public class CreateInboxItemDto
     {
-        public UpdateCommentCommandValidator()
-        {
-            RuleFor(p =&gt; p.CommentText)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
-                .NotNull()
-                .MaximumLength(500).WithMessage(&quot;{PropertyName} must not exceed 500 characters.&quot;);
-            RuleFor(p =&gt; p.CreatedBy)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
-                .NotNull();
-
-
-
-        }
+        public Guid UserId { get; set; }
+        public string Message { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public bool IsRead { get; set; }
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[8,9,8,47,1],[9,9,9,10,1],[10,13,13,99,1],[14,13,16,28,1],[20,9,20,10,1]]);
+      highlightRanges([[5,30,5,34,0],[5,35,5,39,1],[6,33,6,37,0],[6,38,6,42,1],[7,39,7,43,0],[7,44,7,48,1],[8,30,8,34,0],[8,35,8,39,1]]);
     </script>
   </body>
 </html>

@@ -10,7 +10,7 @@ namespace Ergo.Application.Features.Projects.Commands.DeleteProject
         private readonly ITaskItemRepository taskItemRepository;
         private readonly ICommentRepository commentRepository;
 
-        public DeleteProjectCommandHandler(IProjectRepository repository, ITaskItemRepository taskItemRepository, ICommentRepository commentRepository = null)
+        public DeleteProjectCommandHandler(IProjectRepository repository, ITaskItemRepository taskItemRepository, ICommentRepository commentRepository)
         {
             this.repository = repository;
             this.taskItemRepository = taskItemRepository;

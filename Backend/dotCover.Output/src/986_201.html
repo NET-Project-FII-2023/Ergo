@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Identity\Services\AuthService.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Contracts.Identity;
+using Ergo.Application.Models.Identity;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+using Ergo.Identity.Models;
+using Google.Apis.Auth;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Security.Cryptography;
+
+
+namespace Ergo.Identity.Services
+{
+    public class AuthService : IAuthService
+    {
+        private readonly UserManager&lt;ApplicationUser&gt; userManager;
+        private readonly IUserRepository userRepository;
+        private readonly IBadgeRepository badgeRepository;
+        private readonly RoleManager&lt;IdentityRole&gt; roleManager;
+        private readonly SignInManager&lt;ApplicationUser&gt; signInManager;
+        private readonly IConfiguration configuration;
+        private readonly IPasswordResetCode passwordResetCodeRepository;
+        public AuthService(UserManager&lt;ApplicationUser&gt; userManager, RoleManager&lt;IdentityRole&gt; roleManager, IConfiguration configuration, SignInManager&lt;ApplicationUser&gt; signInManager, IUserRepository userRepository, IPasswordResetCode passwordResetCodeRepository, IBadgeRepository badgeRepository)
+        {
+            this.userManager = userManager;
+            this.roleManager = roleManager;
+            this.configuration = configuration;
+            this.signInManager = signInManager;
+            this.userRepository = userRepository;
+            this.passwordResetCodeRepository = passwordResetCodeRepository;
+            this.badgeRepository = badgeRepository;
+        }
+        public async Task&lt;(int, string)&gt; Registeration(RegistrationModel model, string role)
+        {
+            var userExists = await userManager.FindByNameAsync(model.Username);
+            if (userExists != null)
+                return (0, &quot;User already exists&quot;);
+            var userExistsByEmail = await userManager.FindByEmailAsync(model.Email);
+            if (userExistsByEmail != null)
+                return (0, &quot;User with this email already exists&quot;);
+            if (!IsPasswordValid(model.Password))
+                return (0, &quot;Password is not valid! The password must have at least 7 characters and needs to include a capital letter, a symbol, a digit.&quot;);
+            ApplicationUser user = new ApplicationUser()
+            {
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.Username,
+                Name = model.Name
+            };
+            var createUserResult = await userManager.CreateAsync(user, model.Password);
+            
+            
+            if (!createUserResult.Succeeded)
+            { 
+                return (0, &quot;User creation failed! Please check user details and try again.&quot;);
+            }
+
+            if (!await roleManager.RoleExistsAsync(role))
+                await roleManager.CreateAsync(new IdentityRole(role));
+
+            if (await roleManager.RoleExistsAsync(UserRoles.User))
+                await userManager.AddToRoleAsync(user, role);
+            var userDomain = User.Create(Guid.Parse(user.Id));
+            await userRepository.AddAsync(userDomain.Value);
+            var badgeInnovator = Badge.Create(BadgeConstants.InnovatorBadgeName,0,Guid.Parse(user.Id),BadgeConstants.InnovatorBadgeType);
+            await badgeRepository.AddAsync(badgeInnovator.Value);
+            var badgeQualityMaster = Badge.Create(BadgeConstants.QualityMasterBadgeName,0,Guid.Parse(user.Id),BadgeConstants.QualityMasterBadgeType);
+            await badgeRepository.AddAsync(badgeQualityMaster.Value);
+            var badgeProblemSolver = Badge.Create(BadgeConstants.ProblemSolverBadgeName,0,Guid.Parse(user.Id),BadgeConstants.ProblemSolverBadgeType);
+            await badgeRepository.AddAsync(badgeProblemSolver.Value);
+            var badgeTeamPlayer = Badge.Create(BadgeConstants.TeamPlayerBadgeName,0,Guid.Parse(user.Id),BadgeConstants.TeamPlayerBadgeType);
+            await badgeRepository.AddAsync(badgeTeamPlayer.Value);
+            return (1, &quot;User created successfully!&quot;);
+        }
+
+        public async Task&lt;(int, string)&gt; Login(LoginModel model)
+        {
+            var user = await userManager.FindByNameAsync(model.Username!);
+            if (user == null)
+                return (0, &quot;Invalid username&quot;);
+            if (!await userManager.CheckPasswordAsync(user, model.Password!))
+                return (0, &quot;Invalid password&quot;);
+
+            var userRoles = await userManager.GetRolesAsync(user);
+            var authClaims = new List&lt;Claim&gt;
+            {
+               new Claim(ClaimTypes.Name, user.UserName!),
+               new Claim(ClaimTypes.Email, user.Email!),
+               new Claim(ClaimTypes.NameIdentifier, user.Id!),
+               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+            string token = GenerateToken(authClaims);
+            return (1, token);
+        }
+        public async Task&lt;(int, string)&gt; LoginWithGoogle(string googleToken)
+        {
+            GoogleJsonWebSignature.Payload payload;
+            try
+            {
+                payload = await GoogleJsonWebSignature.ValidateAsync(googleToken);
+            }
+            catch (Exception)
+            {
+                return (0, &quot;Invalid Google Token&quot;);
+            }
+
+            var user = await userManager.FindByEmailAsync(payload.Email);
+            if (user == null)
+            {
+                var usernameToSearch = payload.Email.Split(&quot;@&quot;)[0];
+                var userName = userManager.Users.FirstOrDefault(u =&gt; u.UserName == usernameToSearch);
+                var randomGenerator = RandomNumberGenerator.Create();
+                if (userName != null)
+                {
+                    usernameToSearch += randomGenerator.GetHashCode().ToString()[..3];
+                }
+                user = new ApplicationUser
+                {
+                    UserName = usernameToSearch,
+                    Name = payload.Name,
+                    Email = payload.Email
+                };
+
+                var result = await userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                {
+                    return (0, &quot;Failed to create user&quot;);
+                }
+                var userDomain = User.Create(Guid.Parse(user.Id));
+                await userRepository.AddAsync(userDomain.Value);
+
+                await userManager.AddToRoleAsync(user, &quot;User&quot;);
+            }
+            var userRoles = await userManager.GetRolesAsync(user);
+            var authClaims = new List&lt;Claim&gt;
+            {
+               new Claim(ClaimTypes.Name, user.UserName!),
+               new Claim(ClaimTypes.Email, user.Email!),
+               new Claim(ClaimTypes.NameIdentifier, user.Id!),
+               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+
+            var token = GenerateToken(authClaims);
+
+            return (1, token);
+        }
+        public async Task&lt;(int, string)&gt; ResetPassword(ResetPasswordModel model)
+        {
+            var user = await userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return (0, &quot;User with the provided email does not exist.&quot;);
+            var resetCodeValid = await passwordResetCodeRepository.HasValidCodeByEmailAsync(model.Email, model.Code);
+            if (!resetCodeValid)
+                return (0, &quot;Invalid reset code.&quot;);
+            var codeHash = userManager.PasswordHasher.HashPassword(user, model.Password);
+            user.PasswordHash = codeHash;
+            var updateResult = await userManager.UpdateAsync(user);
+            await passwordResetCodeRepository.InvalidateExistingCodesAsync(model.Email);
+
+            if (!updateResult.Succeeded)
+            {
+                return (0, &quot;Password reset failed! Please check user details and try again.&quot;);
+            }
+
+            await userManager.UpdateSecurityStampAsync(user);
+
+            return (1, &quot;Password reset successfully!&quot;);
+
+        }
+
+        public async Task&lt;(int, string)&gt; Logout()
+        {
+            await signInManager.SignOutAsync();
+            return (1, &quot;User logged out successfully!&quot;);
+        }
+
+        private string GenerateToken(IEnumerable&lt;Claim&gt; claims)
+        {
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration[&quot;JWT:Secret&quot;]!));
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Issuer = configuration[&quot;JWT:ValidIssuer&quot;]!,
+                Audience = configuration[&quot;JWT:ValidAudience&quot;]!,
+                Expires = DateTime.UtcNow.AddHours(3),
+                SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256),
+                Subject = new ClaimsIdentity(claims)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+        private bool IsPasswordValid(string password)
+        {
+            var passwordValidator = new PasswordValidator&lt;ApplicationUser&gt;();
+            var result = passwordValidator.ValidateAsync(userManager, null, password);
+            return result.Result.Succeeded;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[27,9,27,298,1],[28,9,28,10,1],[29,13,29,44,1],[30,13,30,44,1],[31,13,31,48,1],[32,13,32,48,1],[33,13,33,50,1],[34,13,34,76,1],[35,13,35,52,1],[36,9,36,10,1],[38,9,38,10,1],[39,13,39,80,1],[40,13,40,36,1],[41,17,41,51,1],[42,13,42,85,1],[43,13,43,43,1],[44,17,44,67,0],[45,13,45,50,1],[46,17,46,157,1],[47,13,53,15,1],[54,13,54,88,1],[57,13,57,45,1],[58,13,58,14,1],[59,17,59,94,1],[62,13,62,58,1],[63,17,63,71,1],[65,13,65,67,1],[66,17,66,62,1],[67,13,67,63,0],[68,13,68,61,0],[69,13,69,138,0],[70,13,70,66,0],[71,13,71,150,0],[72,13,72,70,0],[73,13,73,150,0],[74,13,74,70,0],[75,13,75,141,0],[76,13,76,67,0],[77,13,77,54,0],[78,9,78,10,1],[81,9,81,10,1],[82,13,82,75,1],[83,13,83,30,1],[84,17,84,48,1],[85,13,85,78,1],[86,17,86,48,1],[88,13,88,67,1],[89,13,95,15,1],[97,13,97,20,1],[97,22,97,34,0],[97,35,97,37,1],[97,38,97,47,1],[98,13,98,14,0],[99,17,99,70,0],[100,13,100,14,0],[101,13,101,54,1],[102,13,102,31,1],[103,9,103,10,1],[105,9,105,10,0],[108,13,108,14,0],[109,17,109,83,0],[110,13,110,14,0],[111,13,111,30,0],[112,13,112,14,0],[113,17,113,52,0],[116,13,116,74,0],[117,13,117,30,0],[118,13,118,14,0],[119,17,119,68,0],[120,17,120,102,0],[121,17,121,70,0],[122,17,122,38,0],[123,17,123,18,0],[124,21,124,87,0],[125,17,125,18,0],[126,17,131,19,0],[133,17,133,66,0],[134,17,134,39,0],[135,17,135,18,0],[136,21,136,57,0],[138,17,138,67,0],[139,17,139,65,0],[141,17,141,64,0],[142,13,142,14,0],[143,13,143,67,0],[144,13,150,15,0],[152,13,152,20,0],[152,22,152,34,0],[152,35,152,37,0],[152,38,152,47,0],[153,13,153,14,0],[154,17,154,70,0],[155,13,155,14,0],[157,13,157,51,0],[159,13,159,31,0],[160,9,160,10,0],[162,9,162,10,0],[163,13,163,72,0],[164,13,164,30,0],[165,17,165,76,0],[166,13,166,118,0],[167,13,167,33,0],[168,17,168,51,0],[169,13,169,90,0],[170,13,170,42,0],[171,13,171,68,0],[172,13,172,89,0],[174,13,174,41,0],[175,13,175,14,0],[176,17,176,95,0],[179,13,179,62,0],[181,13,181,56,0],[183,9,183,10,0],[186,9,186,10,0],[187,13,187,48,0],[188,13,188,57,0],[189,9,189,10,0],[192,9,192,10,1],[193,13,193,113,1],[195,13,202,15,1],[204,13,204,62,1],[205,13,205,67,1],[206,13,206,51,1],[207,9,207,10,1],[209,9,209,10,1],[210,13,210,78,1],[211,13,211,87,1],[212,13,212,44,1],[213,9,213,10,1]]);
+    </script>
+  </body>
+</html>

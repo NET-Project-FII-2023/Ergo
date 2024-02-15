@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Domain.Tests\PasswordResetCodeTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Entities;
+using FluentAssertions;
+
+namespace Ergo.Domain.Tests
+{
+    public class PasswordResetCodeTests
+    {
+        [Fact]
+        public void DefaultConstructorTest()
+        {
+            // Arrange &amp; Act
+            var passwordResetCodeInstance = new PasswordResetCode();
+
+            // Assert
+            passwordResetCodeInstance.Should().NotBeNull();
+        }
+        [Fact]
+        public void When_CreatePasswordResetCodeIsCalled_And_EmailIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = PasswordResetCode.Create(&quot;Test&quot;, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreatePasswordResetCodeIsCalled_And_EmailIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = PasswordResetCode.Create(null, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreatePasswordResetCodeIsCalled_And_CodeIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = PasswordResetCode.Create(&quot;Test&quot;, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreatePasswordResetCodeIsCalled_And_CodeIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = PasswordResetCode.Create(&quot;Test&quot;, null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_IsValidIsCalled_And_ExpirationTimeIsGreaterThanCurrentTime_Then_TrueIsReturned()
+        {
+            //Arrange
+            var passwordResetCode = PasswordResetCode.Create(&quot;Test&quot;, &quot;Test&quot;);
+            //Act
+            var result = passwordResetCode.Value.IsValid();
+            //Assert
+            result.Should().BeTrue();
+        }
+        [Fact]
+        public void When_IsValidIsCalled_And_ExpirationTimeIsLessThanCurrentTime_Then_FalseIsReturned()
+        {
+            //Arrange
+            var passwordResetCode = PasswordResetCode.Create(&quot;Test&quot;, &quot;Test&quot;);
+            passwordResetCode.Value.Invalidate();
+            //Act
+            var result = passwordResetCode.Value.IsValid();
+            //Assert
+            result.Should().BeFalse();
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,10,1],[12,13,12,69,1],[15,13,15,60,1],[16,9,16,10,1],[19,9,19,10,1],[21,13,21,67,1],[23,13,23,48,1],[24,9,24,10,1],[27,9,27,10,1],[29,13,29,65,1],[31,13,31,49,1],[32,9,32,10,1],[35,9,35,10,1],[37,13,37,67,1],[39,13,39,48,1],[40,9,40,10,1],[43,9,43,10,1],[45,13,45,65,1],[47,13,47,49,1],[48,9,48,10,1],[51,9,51,10,1],[53,13,53,78,1],[55,13,55,60,1],[57,13,57,38,1],[58,9,58,10,1],[61,9,61,10,1],[63,13,63,78,1],[64,13,64,50,1],[66,13,66,60,1],[68,13,68,39,1],[69,9,69,10,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\GitHubController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Api.Controllers;
+using Ergo.Api.Models;
+using Ergo.Application.Features.Projects.Queries.GetProjectGithubData;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Octokit;
+
+namespace YourNamespace.Controllers
+{
+    [ApiController]
+    [Route(&quot;api/v1/GitHub&quot;)]
+    public class GitHubController : ApiControllerBase
+    {
+        private readonly GitHubClient gitHubClient;
+
+        public GitHubController()
+        {
+            gitHubClient = new GitHubClient(new ProductHeaderValue(&quot;Ergo&quot;));
+        }
+
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpPost]
+        [Route(&quot;commits&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; GetCommitsFromBranch(GetProjectGithubDataQuery command, string Branch)
+        {
+            try
+            {
+                var result = await Mediator.Send(command);
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+                gitHubClient.Credentials = new Credentials(result.GithubToken);
+
+                IReadOnlyList&lt;GitHubCommit&gt; commits = await gitHubClient.Repository.Commit
+                    .GetAll(result.ProjectOwner, result.ProjectRepository, new CommitRequest { Sha = Branch });
+
+                List&lt;GitHubCommitDto&gt; commitNames = new List&lt;GitHubCommitDto&gt;();
+
+                foreach (var commit in commits)
+                {
+                    commitNames.Add(new GitHubCommitDto
+                    {
+                        CommitName = commit.Commit.Message,
+                        Url = commit.Commit.Url,
+                        Author = commit.Commit.Author.Name,
+                        Date = commit.Commit.Author.Date.ToString()
+                    });
+                }
+
+                return Ok(commitNames);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound($&quot;Repository or branch not found: {ex.Message}&quot;);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $&quot;An error occurred: {ex.Message}&quot;);
+            }
+        }
+        [Authorize(Roles = &quot;User&quot;)]
+        [HttpPost]
+        [Route(&quot;branches&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; GetBranches(GetProjectGithubDataQuery command)
+        {
+            try
+            {
+                var result = await Mediator.Send(command);
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+                gitHubClient.Credentials = new Credentials(result.GithubToken);
+                IReadOnlyList&lt;Branch&gt; branches = await gitHubClient.Repository.Branch.GetAll(result.ProjectOwner, result.ProjectRepository);
+                //only the name of the branches
+                List&lt;string&gt; branchNames = new List&lt;string&gt;();
+                foreach (var branch in branches)
+                {
+                    branchNames.Add(branch.Name);
+                }
+                return Ok(branchNames);
+              
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound($&quot;Repository not found: {ex.Message}&quot;);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $&quot;An error occurred: {ex.Message}&quot;);
+            }
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,34,0],[18,9,18,10,0],[19,13,19,77,0],[20,9,20,10,0],[27,9,27,10,0],[29,13,29,14,0],[30,17,30,59,0],[31,17,31,37,0],[32,17,32,18,0],[33,21,33,47,0],[35,17,35,80,0],[37,17,38,112,0],[40,17,40,81,0],[42,17,42,24,0],[42,26,42,36,0],[42,37,42,39,0],[42,40,42,47,0],[43,17,43,18,0],[44,21,50,24,0],[51,17,51,18,0],[53,17,53,40,0],[55,13,55,41,0],[56,13,56,14,0],[57,17,57,82,0],[59,13,59,33,0],[60,13,60,14,0],[61,17,61,76,0],[63,9,63,10,0],[69,9,69,10,0],[71,13,71,14,0],[72,17,72,59,0],[73,17,73,37,0],[74,17,74,18,0],[75,21,75,47,0],[77,17,77,80,0],[78,17,78,141,0],[80,17,80,63,0],[81,17,81,24,0],[81,26,81,36,0],[81,37,81,39,0],[81,40,81,48,0],[82,17,82,18,0],[83,21,83,50,0],[84,17,84,18,0],[85,17,85,40,0],[88,13,88,41,0],[89,13,89,14,0],[90,17,90,72,0],[92,13,92,33,0],[93,13,93,14,0],[94,17,94,76,0],[96,9,96,10,0]]);
+    </script>
+  </body>
+</html>

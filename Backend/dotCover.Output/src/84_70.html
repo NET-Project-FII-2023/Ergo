@@ -2,102 +2,86 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AddManualTimeTaskItem\AddManualTimeTaskItemCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\CreateTaskItem\CreateTaskItemCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
 using Ergo.Application.Persistence;
-using Ergo.Domain.Entities.Enums;
+using Ergo.Domain.Entities;
 using MediatR;
 
-namespace Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
 {
-    public class AddManualTimeTaskItemCommandHandler : IRequestHandler&lt;AddManualTimeTaskItemCommand, AddManualTimeTaskItemCommandResponse&gt;
+    public class CreateTaskItemCommandHandler : IRequestHandler&lt;CreateTaskItemCommand, CreateTaskItemCommandResponse&gt;
     {
+
         private readonly ITaskItemRepository taskItemRepository;
-        public AddManualTimeTaskItemCommandHandler(ITaskItemRepository taskItemRepository)
+        private readonly IProjectRepository projectRepository;
+
+        public CreateTaskItemCommandHandler(ITaskItemRepository taskItemRepository, IProjectRepository projectRepository)
         {
             this.taskItemRepository = taskItemRepository;
+            this.projectRepository = projectRepository;
         }
 
-        public async Task&lt;AddManualTimeTaskItemCommandResponse&gt; Handle(AddManualTimeTaskItemCommand request, CancellationToken cancellationToken)
+        public async Task&lt;CreateTaskItemCommandResponse&gt; Handle(CreateTaskItemCommand request,
+            CancellationToken cancellationToken)
         {
-            var validator = new AddManualTimeTaskItemCommandValidator();
-            var validatorResult = validator.Validate(request);
+            var validator = new CreateTaskItemCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+
             if (!validatorResult.IsValid)
             {
-                return new AddManualTimeTaskItemCommandResponse
+                return new CreateTaskItemCommandResponse
                 {
                     Success = false,
                     ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
                 };
             }
-            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
+            var projectExists = await projectRepository.ProjectExists(request.ProjectId);
+            if (!projectExists)
+            {
+                return new CreateTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;Project with the provided ID does not exist.&quot; }
+                };
+            }
+
+            var taskItem = TaskItem.Create(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId, request.Branch);
             if (!taskItem.IsSuccess)
             {
-                return new AddManualTimeTaskItemCommandResponse
+                return new CreateTaskItemCommandResponse
                 {
                     Success = false,
                     ValidationsErrors = new List&lt;string&gt; { taskItem.Error }
                 };
             }
-            if (taskItem.Value.State == TaskState.Done)
-            {
-                return new AddManualTimeTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item is already done&quot; }
-                };
-            }
-            var assignedUserId = await taskItemRepository.GetAssignedUser(request.TaskItemId);
-            if (!assignedUserId.IsSuccess)
-            {
-                return new AddManualTimeTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { assignedUserId.Error }
-                };
-            }
-            if (Guid.Parse(assignedUserId.Value) != request.UserId)
-            {
-                return new AddManualTimeTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item is not assigned to this user&quot; }
-                };
-            }
-            var response = taskItem.Value.AddManualTime(request.TimeSpent);
-            if (!response.IsSuccess)
-            {
-                return new AddManualTimeTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { response.Error }
-                };
-            }
-            var result = await taskItemRepository.UpdateAsync(taskItem.Value);
-            if (!result.IsSuccess)
-            {
-                return new AddManualTimeTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { result.Error }
-                };
-            }
-            return new AddManualTimeTaskItemCommandResponse
+            await taskItemRepository.AddAsync(taskItem.Value);
+            return new CreateTaskItemCommandResponse
             {
                 Success = true,
-                TotalTimeSpent = taskItem.Value.TotalTimeSpent
+                TaskItem = new CreateTaskItemDto
+                {
+                    TaskName = taskItem.Value.TaskName,
+                    Description = taskItem.Value.Description,
+                    Deadline = taskItem.Value.Deadline,
+                    ProjectId = taskItem.Value.ProjectId,
+                    CreatedBy = taskItem.Value.CreatedBy,
+                    State = taskItem.Value.State,
+                    Branch = taskItem.Value.Branch
+                }
             };
+
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,10,91,0],[11,9,11,10,0],[12,13,12,58,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,73,0],[18,13,18,63,0],[19,13,19,42,0],[20,13,20,14,0],[21,17,24,76,0],[24,76,24,90,0],[24,90,25,19,0],[27,13,27,87,0],[28,13,28,37,0],[29,13,29,14,0],[30,17,34,19,0],[36,13,36,56,0],[37,13,37,14,0],[38,17,42,19,0],[44,13,44,95,0],[45,13,45,43,0],[46,13,46,14,0],[47,17,51,19,0],[53,13,53,68,0],[54,13,54,14,0],[55,17,59,19,0],[61,13,61,76,0],[62,13,62,37,0],[63,13,63,14,0],[64,17,68,19,0],[70,13,70,79,0],[71,13,71,35,0],[72,13,72,14,0],[73,17,77,19,0],[79,13,83,15,0],[84,9,84,10,0]]);
+      highlightRanges([[13,9,13,122,1],[14,9,14,10,1],[15,13,15,58,1],[16,13,16,56,1],[17,9,17,10,1],[21,9,21,10,1],[22,13,22,66,1],[23,13,23,93,1],[25,13,25,42,1],[26,13,26,14,0],[27,17,30,76,0],[30,76,30,90,0],[30,90,31,19,0],[33,13,33,90,1],[34,13,34,32,1],[35,13,35,14,1],[36,17,40,19,1],[43,13,43,155,1],[44,13,44,37,1],[45,13,45,14,0],[46,17,50,19,0],[52,13,52,63,1],[53,13,66,15,1],[68,9,68,10,1]]);
     </script>
   </body>
 </html>

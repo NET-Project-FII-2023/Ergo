@@ -2,28 +2,102 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\ResetCode\Commands\CreateResetCode\CreateResetCodeCommandResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AddManualTimeTaskItem\AddManualTimeTaskItemCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities.Enums;
+using MediatR;
 
-namespace Ergo.Application.Features.ResetCode.Commands.CreateResetCode
+namespace Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem
 {
-    public class CreateResetCodeCommandResponse : BaseResponse
+    public class AddManualTimeTaskItemCommandHandler : IRequestHandler&lt;AddManualTimeTaskItemCommand, AddManualTimeTaskItemCommandResponse&gt;
     {
-        public CreateResetCodeCommandResponse() : base()
+        private readonly ITaskItemRepository taskItemRepository;
+        public AddManualTimeTaskItemCommandHandler(ITaskItemRepository taskItemRepository)
         {
-
+            this.taskItemRepository = taskItemRepository;
         }
 
+        public async Task&lt;AddManualTimeTaskItemCommandResponse&gt; Handle(AddManualTimeTaskItemCommand request, CancellationToken cancellationToken)
+        {
+            var validator = new AddManualTimeTaskItemCommandValidator();
+            var validatorResult = validator.Validate(request);
+            if (!validatorResult.IsValid)
+            {
+                return new AddManualTimeTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
+                };
+            }
+            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
+            if (!taskItem.IsSuccess)
+            {
+                return new AddManualTimeTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { taskItem.Error }
+                };
+            }
+            if (taskItem.Value.State == TaskState.Done)
+            {
+                return new AddManualTimeTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item is already done&quot; }
+                };
+            }
+            var assignedUserId = await taskItemRepository.GetAssignedUser(request.TaskItemId);
+            if (!assignedUserId.IsSuccess)
+            {
+                return new AddManualTimeTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { assignedUserId.Error }
+                };
+            }
+            if (Guid.Parse(assignedUserId.Value) != request.UserId)
+            {
+                return new AddManualTimeTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item is not assigned to this user&quot; }
+                };
+            }
+            var response = taskItem.Value.AddManualTime(request.TimeSpent);
+            if (!response.IsSuccess)
+            {
+                return new AddManualTimeTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { response.Error }
+                };
+            }
+            var result = await taskItemRepository.UpdateAsync(taskItem.Value);
+            if (!result.IsSuccess)
+            {
+                return new AddManualTimeTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { result.Error }
+                };
+            }
+            return new AddManualTimeTaskItemCommandResponse
+            {
+                Success = true,
+                TotalTimeSpent = taskItem.Value.TotalTimeSpent
+            };
+        }
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,51,7,57,0],[8,9,8,10,0],[10,9,10,10,0]]);
+      highlightRanges([[10,9,10,91,0],[11,9,11,10,0],[12,13,12,58,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,73,0],[18,13,18,63,0],[19,13,19,42,0],[20,13,20,14,0],[21,17,24,76,0],[24,76,24,90,0],[24,90,25,19,0],[27,13,27,87,0],[28,13,28,37,0],[29,13,29,14,0],[30,17,34,19,0],[36,13,36,56,0],[37,13,37,14,0],[38,17,42,19,0],[44,13,44,95,0],[45,13,45,43,0],[46,13,46,14,0],[47,17,51,19,0],[53,13,53,68,0],[54,13,54,14,0],[55,17,59,19,0],[61,13,61,76,0],[62,13,62,37,0],[63,13,63,14,0],[64,17,68,19,0],[70,13,70,79,0],[71,13,71,35,0],[72,13,72,14,0],[73,17,77,19,0],[79,13,83,15,0],[84,9,84,10,0]]);
     </script>
   </body>
 </html>

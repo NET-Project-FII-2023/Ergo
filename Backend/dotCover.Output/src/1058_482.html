@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\TaskItemRepositoryMocks.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.RepositoryMocks;
+
+public static class TaskItemRepositoryMocks
+{
+    internal readonly static List&lt;TaskItem&gt; TaskItems =
+    [
+        TaskItem.Create(&quot;TaskItem 1&quot;, &quot;Description 1&quot;, DateTime.Now.AddDays(1), &quot;FullName 1&quot;, Guid.NewGuid(), null).Value,
+        TaskItem.Create(&quot;TaskItem 2&quot;, &quot;Description 2&quot;, DateTime.Now.AddDays(2), &quot;FullName 2&quot;, Guid.NewGuid(), null).Value,
+    ];
+    
+    public static ITaskItemRepository GetTaskItemRepository()
+    {
+        var mockTaskItemRepository = Substitute.For&lt;ITaskItemRepository&gt;();
+
+        mockTaskItemRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;TaskItem&gt;&gt;.Success(TaskItems));
+        mockTaskItemRepository.FindByIdAsync(TaskItems[0].TaskItemId)
+            .Returns(Result&lt;TaskItem&gt;.Success(TaskItems[0]));
+        mockTaskItemRepository.FindByIdAsync(TaskItems[1].TaskItemId)
+            .Returns(Result&lt;TaskItem&gt;.Success(TaskItems[1]));
+
+        mockTaskItemRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != TaskItems[0].TaskItemId &amp;&amp; id != TaskItems[1].TaskItemId))
+            .Returns(Result&lt;TaskItem&gt;.Failure(&quot;Not found&quot;));
+
+        return mockTaskItemRepository;
+    }
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,5,14,7,1],[17,5,17,6,1],[18,9,18,76,1],[20,9,20,106,1],[21,9,22,62,1],[23,9,24,62,1],[26,9,27,61,1],[29,9,29,39,1],[30,5,30,6,1]]);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240114102313_TaskTimeLogging.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Infrastructure.Migrations
+{
+    /// &lt;inheritdoc /&gt;
+    public partial class TaskTimeLogging : Migration
+    {
+        /// &lt;inheritdoc /&gt;
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn&lt;DateTime&gt;(
+                name: &quot;StartTime&quot;,
+                table: &quot;TaskItems&quot;,
+                type: &quot;timestamp with time zone&quot;,
+                nullable: true);
+
+            migrationBuilder.AddColumn&lt;TimeSpan&gt;(
+                name: &quot;TotalTimeSpent&quot;,
+                table: &quot;TaskItems&quot;,
+                type: &quot;interval&quot;,
+                nullable: false,
+                defaultValue: new TimeSpan(0, 0, 0, 0, 0));
+        }
+
+        /// &lt;inheritdoc /&gt;
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: &quot;StartTime&quot;,
+                table: &quot;TaskItems&quot;);
+
+            migrationBuilder.DropColumn(
+                name: &quot;TotalTimeSpent&quot;,
+                table: &quot;TaskItems&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,9,13,10,0],[14,13,18,33,0],[20,13,25,60,0],[26,9,26,10,0],[30,9,30,10,0],[31,13,33,37,0],[35,13,37,37,0],[38,9,38,10,0]]);
+    </script>
+  </body>
+</html>

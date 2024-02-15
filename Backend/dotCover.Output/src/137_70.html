@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubData\GetProjectGithubDataQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetByEmail\GetByEmailUserQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -11,53 +11,34 @@
 using Ergo.Application.Persistence;
 using MediatR;
 
-namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
+namespace Ergo.Application.Features.Users.Queries.GetByEmail
 {
-    public class GetProjectGithubDataHandler : IRequestHandler&lt;GetProjectGithubDataQuery, GetProjectGithubDataQueryResponse&gt;
+    public class GetByEmailUserQueryHandler : IRequestHandler&lt;GetByEmailUserQuery, GetByEmailUserQueryReponse&gt;
     {
-        private readonly IProjectRepository projectRepository;
+        private readonly IUserManager userRepository;
 
-        public GetProjectGithubDataHandler(IProjectRepository projectRepository)
+        public GetByEmailUserQueryHandler(IUserManager userRepository)
         {
-            this.projectRepository = projectRepository;
+            this.userRepository = userRepository;
         }
 
-        public async Task&lt;GetProjectGithubDataQueryResponse&gt; Handle(GetProjectGithubDataQuery request, CancellationToken cancellationToken)
+        public async Task&lt;GetByEmailUserQueryReponse&gt; Handle(GetByEmailUserQuery request, CancellationToken cancellationToken)
         {
-            var validator = new GetProjectGithubDataQueryValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
-            {
-                return new GetProjectGithubDataQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
-                };
-            }
-            var project = await projectRepository.FindByIdAsync(request.ProjectId);
-            if (!project.IsSuccess)
-            {
-                return new GetProjectGithubDataQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Project with this id doesn&#39;t exist!&quot; }
-                };
-            }
-            if(project.Value.GithubOwner == null || project.Value.GitRepository == null)
-            {
-                return new GetProjectGithubDataQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Project does not have github data&quot; }
-                };
-            }
-            return new GetProjectGithubDataQueryResponse
+            var result = await userRepository.FindByEmailAsync(request.Email);
+            if (!result.IsSuccess)
+                return new GetByEmailUserQueryReponse { Success = false, Message = result.Error };
+            var userDto = result.Value;
+            return new GetByEmailUserQueryReponse
             {
                 Success = true,
-                ProjectOwner = project.Value.GithubOwner,
-                ProjectRepository = project.Value.GitRepository,
-                GithubToken = project.Value.GithubToken
+                User = new UserDto
+                {
+                    UserId = userDto.UserId,
+                    Name = userDto.Name,
+                    Username = userDto.Username,
+                    Email = userDto.Email,
+                    Roles = userDto.Roles
+                }
             };
         }
     }
@@ -65,7 +46,7 @@ namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,10,81,0],[11,9,11,10,0],[12,13,12,56,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,70,0],[18,13,18,93,0],[20,13,20,42,0],[21,13,21,14,0],[22,17,25,76,0],[25,76,25,90,0],[25,90,26,19,0],[28,13,28,84,0],[29,13,29,36,0],[30,13,30,14,0],[31,17,35,19,0],[37,13,37,89,0],[38,13,38,14,0],[39,17,43,19,0],[45,13,51,15,0],[52,9,52,10,0]]);
+      highlightRanges([[10,9,10,71,1],[11,9,11,10,1],[12,13,12,50,1],[13,9,13,10,1],[16,9,16,10,1],[17,13,17,79,1],[18,13,18,35,0],[19,17,19,99,0],[20,13,20,40,0],[21,13,32,15,0],[33,9,33,10,0]]);
     </script>
   </body>
 </html>

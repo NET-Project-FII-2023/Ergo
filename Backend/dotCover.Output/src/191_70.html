@@ -2,26 +2,25 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\InboxItems\Commands\CreateInboxItem\CreateInboxItemCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\ML\Query\GetTaskPrediction\TaskDataDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using MediatR;
-
-namespace Ergo.Application.Features.InboxItems.Commands.CreateInboxItem
+namespace Ergo.Application.Features.ML.Query.GetTaskPrediction
 {
-    public class CreateInboxItemCommand : IRequest&lt;CreateInboxItemCommandResponse&gt;
+    public class TaskDataDto
     {
-        public Guid UserId { get; set; }
-        public string Message { get; set; } = default!;
+        public float TaskComplexity { get; set; }
+        public float NumberOfParticipants { get; set; }
+        public float TaskUrgency { get; set; }
+
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,30,7,34,0],[7,35,7,39,0],[8,33,8,37,0],[8,38,8,42,0],[8,47,8,55,0]]);
+      highlightRanges([[5,39,5,43,1],[5,44,5,48,1],[6,45,6,49,1],[6,50,6,54,1],[7,36,7,40,1],[7,41,7,45,1]]);
     </script>
   </body>
 </html>

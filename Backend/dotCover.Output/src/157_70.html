@@ -2,29 +2,23 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Commands\DeleteProject\DeleteProjectCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetAll\GetAllProjectsResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
-namespace Ergo.Application.Features.Projects.Commands.DeleteProject
+namespace Ergo.Application.Features.Projects.Queries.GetAll
 {
-    public class DeleteProjectCommandValidator : AbstractValidator&lt;DeleteProjectCommand&gt;
+    public class GetAllProjectsResponse
     {
-        public DeleteProjectCommandValidator()
-        {
-            RuleFor(p =&gt; p.ProjectId)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull();
-
-        }
+        public List&lt;ProjectDto&gt; Projects { get; set; }
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[6,9,6,47,1],[7,9,7,10,1],[8,13,10,28,1],[12,9,12,10,1]]);
+      highlightRanges([[5,44,5,48,1],[5,49,5,53,1]]);
     </script>
   </body>
 </html>

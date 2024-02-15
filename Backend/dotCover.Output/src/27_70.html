@@ -2,29 +2,26 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Models\Identity\LoginModel.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Models\Statistics\TaskDueModel.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using System.ComponentModel.DataAnnotations;
+using Ergo.Domain.Entities.Enums;
 
-namespace Ergo.Application.Models.Identity
+namespace Ergo.Application.Models.Statistics;
+
+public class TaskDueModel
 {
-    public class LoginModel
-    {
-        [Required(ErrorMessage = &quot;User Name is required&quot;)]
-        public string? Username { get; set; }
-
-        [Required(ErrorMessage = &quot;Password is required&quot;)]
-        public string? Password { get; set; }
-    }
+    public Guid TaskItemId { get; set; }
+    public Guid ProjectId { get; set; }
+    public DateTime Deadline { get; set; }
+    public TaskState State { get; set; }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[8,35,8,39,1],[8,40,8,44,1],[11,35,11,39,1],[11,40,11,44,1]]);
+      highlightRanges([[7,30,7,34,0],[7,35,7,39,0],[8,29,8,33,0],[8,34,8,38,0],[9,32,9,36,0],[9,37,9,41,0],[10,30,10,34,0],[10,35,10,39,0]]);
     </script>
   </body>
 </html>

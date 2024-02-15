@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Repositories\UserPhotoRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace Infrastructure.Repositories
+{
+    public class UserPhotoRepository : BaseRepository&lt;UserPhoto&gt;, IUserPhotoRepository
+    {
+        public UserPhotoRepository(ErgoContext context) : base(context)
+        {
+        }
+
+        public async Task&lt;Result&lt;UserPhoto&gt;&gt; GetUserPhotoByUserIdAsync(string userId)
+        {
+            var userPhoto = await context.UserPhotos
+                                .Where(up =&gt; up.UserId == userId)
+                                .FirstOrDefaultAsync();
+
+            if (userPhoto == null)
+            {
+                return Result&lt;UserPhoto&gt;.Failure(&quot;User photo not found&quot;);
+            }
+
+            return Result&lt;UserPhoto&gt;.Success(userPhoto);
+
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,59,10,72,1],[11,9,11,10,1],[12,9,12,10,1],[15,9,15,10,0],[16,13,18,56,0],[20,13,20,35,0],[21,13,21,14,0],[22,17,22,74,0],[25,13,25,57,0],[27,9,27,10,0]]);
+    </script>
+  </body>
+</html>

@@ -135,7 +135,7 @@ export function SignIn() {
           <Button className="mt-6 bg-secondary hover:bg-primary" fullWidth onClick={handleSignIn}>
             Sign In
           </Button>
-          <div id="signInDiv"></div>
+          <div id="signInDiv" className="w-6"></div>
           </div>
           
           

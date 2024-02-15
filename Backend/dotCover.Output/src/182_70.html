@@ -2,36 +2,24 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\ML\Query\GetTaskPrediction\TaskPredictionQueryValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Queries\GetPhotosForTaskItem\PhotoDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Ergo.Application.Features.ML.Query.GetTaskPrediction
+namespace Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem
 {
-    public class TaskPredictionQueryValidator : AbstractValidator&lt;TaskPredictionQuery&gt;
+    public class PhotoDto
     {
-        public TaskPredictionQueryValidator()
-        {
-            RuleFor(x =&gt; x.TaskData.NumberOfParticipants).InclusiveBetween(1, 50).WithMessage(&quot;Number of participants should be between 1 and 50&quot;);
-            RuleFor(x =&gt; x.TaskData.TaskComplexity).InclusiveBetween(1, 3).WithMessage(&quot;Task complexity should be between 1 and 3&quot;);
-            RuleFor(x =&gt; x.TaskData.TaskUrgency).InclusiveBetween(1, 3).WithMessage(&quot;Task urgency should be between 1 and 3&quot;);
-        }
-
+        public Guid PhotoId { get; set; }
+        public string CloudURL { get; set; } = &quot;&quot;;
     }
-}
 
+}
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,9,12,46,0],[13,9,13,10,0],[14,13,14,148,0],[15,13,15,133,0],[16,13,16,127,0],[17,9,17,10,0]]);
+      highlightRanges([[5,31,5,35,0],[5,36,5,40,0],[6,34,6,38,0],[6,39,6,43,0],[6,48,6,50,0]]);
     </script>
   </body>
 </html>

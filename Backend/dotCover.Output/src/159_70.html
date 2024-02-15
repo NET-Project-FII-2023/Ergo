@@ -2,105 +2,104 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Commands\CreateProject\CreateProjectCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Commands\UpdateProject\UpdateProjectCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.Projects.Commands.AssignUserToProject;
 using Ergo.Application.Persistence;
-using Ergo.Domain.Entities;
 using MediatR;
-namespace Ergo.Application.Features.Projects.Commands.CreateProject
+
+namespace Ergo.Application.Features.Projects.Commands.UpdateProject
 {
-    public class CreateProjectCommandHandler : IRequestHandler&lt;CreateProjectCommand, CreateProjectCommandResponse&gt;
+    public class UpdateProjectCommandHandler : IRequestHandler&lt;UpdateProjectCommand, UpdateProjectCommandResponse&gt;
     {
         private readonly IProjectRepository projectRepository;
-        private readonly IUserManager userManager;
-        private readonly IUserRepository userRepository;
 
-        public CreateProjectCommandHandler(IProjectRepository projectRepository, IUserManager userManager, IUserRepository userRepository)
+        public UpdateProjectCommandHandler(IProjectRepository projectRepository)
         {
             this.projectRepository = projectRepository;
-            this.userManager = userManager;
-            this.userRepository = userRepository;
         }
 
-        public async Task&lt;CreateProjectCommandResponse&gt; Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+        public async Task&lt;UpdateProjectCommandResponse&gt; Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateProjectCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-
-            if (!validatorResult.IsValid)
-            {
-                return new CreateProjectCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
-                };
-            }
-            var userByUsername = await userManager.FindByUsernameAsync(request.FullName);
-            if (!userByUsername.IsSuccess)
-            {
-                return new CreateProjectCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { userByUsername.Error }
-                };
-            }
-            var user = await userRepository.FindByIdAsync(Guid.Parse(userByUsername.Value.UserId));
-            if (!user.IsSuccess)
-            {
-                return new CreateProjectCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { user.Error }
-                };
-            }
-            var project = Project.Create(request.ProjectName, request.Description,request.GithubOwner,request.GithubToken, request.GitRepository, request.Deadline, request.FullName);
+            var project = await projectRepository.FindByIdAsync(request.ProjectId);
             if (!project.IsSuccess)
             {
-                return new CreateProjectCommandResponse
+                return new UpdateProjectCommandResponse
                 {
                     Success = false,
                     ValidationsErrors = new List&lt;string&gt; { project.Error }
                 };
             }
-
-            await projectRepository.AddAsync(project.Value);
-            var assignResult = project.Value.AssignUser(user.Value);
-            if (!assignResult.IsSuccess)
+            var projectOwner = project.Value.CreatedBy;
+            if(projectOwner != request.ProjectOwner)
             {
-                return new CreateProjectCommandResponse
+                return new UpdateProjectCommandResponse
                 {
                     Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { assignResult.Error }
+                    ValidationsErrors = new List&lt;string&gt; { &quot;You are not the owner of this project&quot; }
+                };
+            }
+
+            request.ProjectName ??= project.Value.ProjectName;
+            request.Description ??= project.Value.Description;
+            request.GithubToken ??= project.Value.GithubToken;
+            request.GitRepository ??= project.Value.GitRepository;
+            if (request.Deadline == default)
+            {
+                request.Deadline = project.Value.Deadline;
+            }
+            if (request.State == default)
+            {
+                request.State = project.Value.State;
+            }
+
+            var validator = new UpdateProjectCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+            if (!validatorResult.IsValid)
+            {
+                return new UpdateProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
+                };
+            }
+
+            var updateResult = project.Value.UpdateData(request.ProjectName, request.Description,request.GithubOwner,request.GithubToken, request.GitRepository, request.Deadline, request.State, request.ProjectOwner);
+            if (!updateResult.IsSuccess)
+            {
+                return new UpdateProjectCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { updateResult.Error }
                 };
             }
             var result = await projectRepository.UpdateAsync(project.Value);
 
-            return new CreateProjectCommandResponse
+            return new UpdateProjectCommandResponse
             {
-                Success = true,
-                Project = new CreateProjectDto()
+                Success = result.IsSuccess,
+                Project = new UpdateProjectDto
                 {
-                    ProjectId = project.Value.ProjectId,
-                    ProjectName = project.Value.ProjectName,
-                    Deadline = project.Value.Deadline,
-                    Description = project.Value.Description,
-                    GitRepository = project.Value.GitRepository,
-                    FullName = project.Value.CreatedBy
+                    ProjectId = result.Value.ProjectId,
+                    ProjectName = result.Value.ProjectName,
+                    Description = result.Value.Description,
+                    GitRepository = result.Value.GitRepository,
+                    LastModifiedBy = result.Value.LastModifiedBy,
+                    LastModifiedDate = result.Value.LastModifiedDate,
+                    Deadline = result.Value.Deadline,
+                    State = result.Value.State
                 }
             };
         }
     }
-
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[13,9,13,139,1],[14,9,14,10,1],[15,13,15,56,1],[16,13,16,44,1],[17,13,17,50,1],[18,9,18,10,1],[21,9,21,10,1],[22,13,22,65,1],[23,13,23,93,1],[25,13,25,42,1],[26,13,26,14,1],[27,17,30,76,1],[30,76,30,90,1],[30,90,31,19,1],[33,13,33,90,1],[34,13,34,43,1],[35,13,35,14,0],[36,17,40,19,0],[42,13,42,100,1],[43,13,43,33,1],[44,13,44,14,1],[45,17,49,19,1],[51,13,51,183,1],[52,13,52,36,1],[53,13,53,14,0],[54,17,58,19,0],[61,13,61,61,1],[62,13,62,69,1],[63,13,63,41,1],[64,13,64,14,0],[65,17,69,19,0],[71,13,71,77,1],[73,13,85,15,1],[86,9,86,10,1]]);
+      highlightRanges([[10,9,10,81,0],[11,9,11,10,0],[12,13,12,56,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,84,0],[18,13,18,36,0],[19,13,19,14,0],[20,17,24,19,0],[26,13,26,56,0],[27,13,27,53,0],[28,13,28,14,0],[29,17,33,19,0],[36,13,36,63,0],[37,13,37,63,0],[38,13,38,63,0],[39,13,39,67,0],[40,13,40,45,0],[41,13,41,14,0],[42,17,42,59,0],[43,13,43,14,0],[44,13,44,42,0],[45,13,45,14,0],[46,17,46,53,0],[47,13,47,14,0],[49,13,49,65,0],[50,13,50,93,0],[51,13,51,42,0],[52,13,52,14,0],[53,17,56,76,0],[56,76,56,90,0],[56,90,57,19,0],[60,13,60,217,0],[61,13,61,41,0],[62,13,62,14,0],[63,17,67,19,0],[69,13,69,77,0],[71,13,85,15,0],[86,9,86,10,0]]);
     </script>
   </body>
 </html>

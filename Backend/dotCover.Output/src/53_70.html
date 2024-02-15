@@ -2,39 +2,26 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\UpdateTaskItem\UpdateTaskItemCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Queries\GetById\GetByIdTaskItemQuery.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ergo.Domain.Entities.Enums;
 using MediatR;
+using System;
 
-namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
+namespace Ergo.Application.Features.TaskItems.Queries.GetById
 {
-    public class UpdateTaskItemCommand : IRequest&lt;UpdateTaskItemCommandResponse&gt;
+    public class GetByIdTaskItemQuery : IRequest&lt;GetByIdTaskItemQueryResponse&gt;
     {
         public Guid TaskItemId { get; set; }
-        public string? TaskName { get; set; }
-        public string? Description { get; set; }
-        public DateTime Deadline { get; set; }
-        public string? CreatedBy { get; set; }
-        public Guid ProjectId { get; set; }
-        public TaskState State { get; set; }
-        public string? Branch { get; set; }
-
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[13,34,13,38,0],[13,39,13,43,0],[14,35,14,39,0],[14,40,14,44,0],[15,38,15,42,0],[15,43,15,47,0],[16,36,16,40,0],[16,41,16,45,0],[17,36,17,40,0],[17,41,17,45,0],[18,33,18,37,0],[18,38,18,42,0],[19,34,19,38,0],[19,39,19,43,0],[20,33,20,37,0],[20,38,20,42,0]]);
+      highlightRanges([[8,34,8,38,1],[8,39,8,43,1]]);
     </script>
   </body>
 </html>

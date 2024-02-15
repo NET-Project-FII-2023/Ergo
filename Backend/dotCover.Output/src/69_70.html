@@ -2,30 +2,28 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\DeleteTaskItem\DeleteTaskItemCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\StartTimerTaskItem\StartTimerTaskItemCommandResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
+using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.TaskItems.Commands.DeleteTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.StartTimerTaskItem
 {
-    public class DeleteTaskItemCommandValidator : AbstractValidator&lt;DeleteTaskItemCommand&gt;
+    public class StartTimerTaskItemCommandResponse : BaseResponse
     {
-        public DeleteTaskItemCommandValidator()
+        public StartTimerTaskItemCommandResponse() : base()
         {
-            RuleFor(p =&gt; p.TaskItemId)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull();
+
         }
+        public DateTime StartTime { get; set; }
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,48,1],[8,9,8,10,1],[9,13,11,28,1],[12,9,12,10,1]]);
+      highlightRanges([[7,54,7,60,0],[8,9,8,10,0],[10,9,10,10,0],[11,37,11,41,0],[11,42,11,46,0]]);
     </script>
   </body>
 </html>

@@ -2,58 +2,26 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\InboxItems\Commands\UpdateInboxItemIsRead\UpdateInboxItemIsReadCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Photos\Commands\AddPhotoToTaskItem\AddPhotoToTaskItemCommandResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
-using MediatR;
+using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.InboxItems.Commands.UpdateInboxItemIsRead
+namespace Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem
 {
-    public class UpdateInboxItemIsReadCommandHandler: IRequestHandler&lt;UpdateInboxItemIsReadCommand, UpdateInboxItemIsReadCommandResponse&gt;
+    public class AddPhotoToTaskItemCommandResponse : BaseResponse
     {
-        private readonly IInboxItemRepository inboxItemRepository;
-
-        public UpdateInboxItemIsReadCommandHandler(IInboxItemRepository inboxItemRepository)
+        public AddPhotoToTaskItemCommandResponse() : base()
         {
-            this.inboxItemRepository = inboxItemRepository;
         }
-        public async Task&lt;UpdateInboxItemIsReadCommandResponse&gt; Handle(UpdateInboxItemIsReadCommand request, CancellationToken cancellationToken)
-        {
-            var inboxItem = await inboxItemRepository.FindByIdAsync(request.InboxItemId);
-            if (!inboxItem.IsSuccess)
-            {
-                return new UpdateInboxItemIsReadCommandResponse
-                {
-                    Success = false,
-                    Message = inboxItem.Error
-                };
-            }
-            var result = await inboxItemRepository.UpdateIsReadAsync(inboxItem.Value, true);
-            if (!result.IsSuccess)
-            {
-                return new UpdateInboxItemIsReadCommandResponse
-                {
-                    Success = false,
-                    Message = result.Error
-                };
-            }
-            return new UpdateInboxItemIsReadCommandResponse
-            {
-                Success = true
-            };
-
-        }
-
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,10,93,0],[11,9,11,10,0],[12,13,12,60,0],[13,9,13,10,0],[15,9,15,10,0],[16,13,16,90,0],[17,13,17,38,0],[18,13,18,14,0],[19,17,23,19,0],[25,13,25,93,0],[26,13,26,35,0],[27,13,27,14,0],[28,17,32,19,0],[34,13,37,15,0],[39,9,39,10,0]]);
+      highlightRanges([[7,54,7,60,1],[8,9,8,10,1],[9,9,9,10,1]]);
     </script>
   </body>
 </html>

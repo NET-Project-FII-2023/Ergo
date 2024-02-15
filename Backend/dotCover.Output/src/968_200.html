@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Domain\Responses\BaseResponse.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+namespace Ergo.Application.Responses
+{
+    public class BaseResponse
+    {
+        public BaseResponse() =&gt; Success = true;
+
+        public BaseResponse(string message, bool success)
+        {
+            Success = success;
+            Message = message;
+        }
+
+        public bool Success { get; set; }
+        public string Message { get; set; }
+
+        public List&lt;string&gt;? ValidationsErrors { get; set; }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[5,9,5,30,1],[5,34,5,48,1],[7,9,7,58,1],[8,9,8,10,1],[9,13,9,31,1],[10,13,10,31,1],[11,9,11,10,1],[13,31,13,35,1],[13,36,13,40,1],[14,33,14,37,1],[14,38,14,42,1],[16,50,16,54,1],[16,55,16,59,0]]);
+    </script>
+  </body>
+</html>

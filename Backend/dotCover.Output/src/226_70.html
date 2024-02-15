@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Badges\Commands\UpdateSpecialBadgeCommand\UpdateSpecialBadgeCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\DeleteComment\DeleteCommentCommandValidator.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
@@ -10,26 +10,21 @@
     <pre id="content" class="source-code">
 using FluentValidation;
 
-namespace Ergo.Application.Features.Badges.Commands.UpdateSpecialBadgeCommand
+namespace Ergo.Application.Features.Comments.Commands.DeleteComment
 {
-    public class UpdateSpecialBadgeCommandValidator : AbstractValidator&lt;UpdateSpecialBadgeCommand&gt;
+    public class DeleteCommentCommandValidator : AbstractValidator&lt;DeleteCommentCommand&gt;
     {
-        public UpdateSpecialBadgeCommandValidator()
+        public DeleteCommentCommandValidator()
         {
-            RuleFor(p =&gt; p.VotedId)
+            RuleFor(p =&gt; p.CommentId)
                 .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
                 .NotNull();
-            RuleFor(p =&gt; p.Type)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull()
-                .Must(x =&gt; x == &quot;Innovator&quot; || x == &quot;Quality-Master&quot; || x == &quot;Problem-Solver&quot; || x == &quot;Team-Player&quot;);
         }
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,52,0],[8,9,8,10,0],[9,13,11,28,0],[12,13,15,28,0],[15,28,15,116,0],[15,116,15,118,0],[16,9,16,10,0]]);
+      highlightRanges([[7,9,7,47,1],[8,9,8,10,1],[9,13,11,28,1],[12,9,12,10,1]]);
     </script>
   </body>
 </html>

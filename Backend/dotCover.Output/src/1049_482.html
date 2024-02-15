@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\Users\Queries\GetAllUsersQueryHandlerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Users.Queries.GetAll;
+using Ergo.Application.Persistence;
+using FluentAssertions;
+using NSubstitute;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ergo.Application.Tests.Users.Queries
+{
+    public class GetAllUsersQueryHandlerTests
+    {
+        private readonly IUserManager _mockUserManager;
+        private readonly GetAllUsersQueryHandler _handler;
+        public GetAllUsersQueryHandlerTests()
+        {
+            _mockUserManager = Substitute.For&lt;IUserManager&gt;();
+
+            _handler = new GetAllUsersQueryHandler(_mockUserManager);
+        }
+        [Fact]
+        public async Task GetAllUsersQueryHandler_Success()
+        {
+            // Arrange
+            //Act
+            var result = await _handler.Handle(new GetAllUsersQuery(), CancellationToken.None);
+            //Assert
+            result.Should().NotBeNull();
+            result.Users.Should().NotBeEmpty();
+            result.Users.Count.Should().Be(2);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,46,1],[18,9,18,10,1],[19,13,19,63,1],[21,13,21,70,1],[22,9,22,10,1],[25,9,25,10,1],[28,13,28,96,1],[30,13,30,41,0],[31,13,31,48,0],[32,13,32,47,0],[33,9,33,10,0]]);
+    </script>
+  </body>
+</html>

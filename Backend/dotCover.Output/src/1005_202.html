@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Repositories\UserRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Entities;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Microsoft.EntityFrameworkCore;
+
+namespace Infrastructure.Repositories;
+
+public class UserRepository : BaseRepository&lt;User&gt;, IUserRepository
+{
+    public UserRepository(ErgoContext context) : base(context)
+    {
+
+    }
+
+
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,50,10,63,1],[11,5,11,6,1],[13,5,13,6,1]]);
+    </script>
+  </body>
+</html>

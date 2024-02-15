@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240212082244_TaskUpdate.Designer.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+// &lt;auto-generated /&gt;
+using System;
+using Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+
+#nullable disable
+
+namespace Infrastructure.Migrations
+{
+    [DbContext(typeof(ErgoContext))]
+    [Migration(&quot;20240212082244_TaskUpdate&quot;)]
+    partial class TaskUpdate
+    {
+        /// &lt;inheritdoc /&gt;
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        {
+#pragma warning disable 612, 618
+            modelBuilder
+                .HasAnnotation(&quot;ProductVersion&quot;, &quot;8.0.0&quot;)
+                .HasAnnotation(&quot;Relational:MaxIdentifierLength&quot;, 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.Badge&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;BadgeId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;bool&gt;(&quot;Active&quot;)
+                        .HasColumnType(&quot;boolean&quot;);
+
+                    b.Property&lt;int&gt;(&quot;Count&quot;)
+                        .HasColumnType(&quot;integer&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Name&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Type&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;UserId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.HasKey(&quot;BadgeId&quot;);
+
+                    b.ToTable(&quot;Badges&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.Comment&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;CommentId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;string&gt;(&quot;CommentText&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;string&gt;(&quot;CreatedBy&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;CreatedDate&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;string&gt;(&quot;LastModifiedBy&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;LastModifiedDate&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;TaskId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;Guid?&gt;(&quot;TaskItemId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.HasKey(&quot;CommentId&quot;);
+
+                    b.HasIndex(&quot;TaskItemId&quot;);
+
+                    b.ToTable(&quot;Comments&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.InboxItem&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;InboxItemId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;CreatedDate&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;bool&gt;(&quot;IsRead&quot;)
+                        .HasColumnType(&quot;boolean&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Message&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;UserId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.HasKey(&quot;InboxItemId&quot;);
+
+                    b.ToTable(&quot;InboxItems&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.PasswordResetCode&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;PasswordResetCodeId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Code&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;CreatedAt&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Email&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;ExpirationTime&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.HasKey(&quot;PasswordResetCodeId&quot;);
+
+                    b.ToTable(&quot;PasswordResetCodes&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.Photo&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;PhotoId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;string&gt;(&quot;CloudURL&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;TaskItemId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.HasKey(&quot;PhotoId&quot;);
+
+                    b.ToTable(&quot;Photos&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.Project&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;ProjectId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;string&gt;(&quot;CreatedBy&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;CreatedDate&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;Deadline&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Description&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;string&gt;(&quot;GitRepository&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;string&gt;(&quot;GithubOwner&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;string&gt;(&quot;GithubToken&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;string&gt;(&quot;LastModifiedBy&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;LastModifiedDate&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;string&gt;(&quot;ProjectName&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;StartDate&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;int&gt;(&quot;State&quot;)
+                        .HasColumnType(&quot;integer&quot;);
+
+                    b.HasKey(&quot;ProjectId&quot;);
+
+                    b.ToTable(&quot;Projects&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.TaskItem&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;TaskItemId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;Guid?&gt;(&quot;AssignedUserUserId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Branch&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;string&gt;(&quot;CreatedBy&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;CreatedDate&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;Deadline&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Description&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;string&gt;(&quot;LastModifiedBy&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;DateTime&gt;(&quot;LastModifiedDate&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;ProjectId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;DateTime?&gt;(&quot;StartTime&quot;)
+                        .HasColumnType(&quot;timestamp with time zone&quot;);
+
+                    b.Property&lt;int&gt;(&quot;State&quot;)
+                        .HasColumnType(&quot;integer&quot;);
+
+                    b.Property&lt;string&gt;(&quot;TaskName&quot;)
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;TimeSpan&gt;(&quot;TotalTimeSpent&quot;)
+                        .HasColumnType(&quot;interval&quot;);
+
+                    b.HasKey(&quot;TaskItemId&quot;);
+
+                    b.HasIndex(&quot;AssignedUserUserId&quot;);
+
+                    b.ToTable(&quot;TaskItems&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.User&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;UserId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.HasKey(&quot;UserId&quot;);
+
+                    b.ToTable(&quot;Users&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.UserPhoto&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;UserPhotoId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;string&gt;(&quot;PhotoUrl&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;string&gt;(&quot;UserId&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.HasKey(&quot;UserPhotoId&quot;);
+
+                    b.ToTable(&quot;UserPhotos&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.UserVotedBadges&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;UserVotedBadgesId&quot;)
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;string&gt;(&quot;Type&quot;)
+                        .IsRequired()
+                        .HasColumnType(&quot;text&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;VotedId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;VoterId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.HasKey(&quot;UserVotedBadgesId&quot;);
+
+                    b.ToTable(&quot;UserVotedBadges&quot;);
+                });
+
+            modelBuilder.Entity(&quot;ProjectUser&quot;, b =&gt;
+                {
+                    b.Property&lt;Guid&gt;(&quot;MembersUserId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.Property&lt;Guid&gt;(&quot;ProjectsProjectId&quot;)
+                        .HasColumnType(&quot;uuid&quot;);
+
+                    b.HasKey(&quot;MembersUserId&quot;, &quot;ProjectsProjectId&quot;);
+
+                    b.HasIndex(&quot;ProjectsProjectId&quot;);
+
+                    b.ToTable(&quot;ProjectUser&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.Comment&quot;, b =&gt;
+                {
+                    b.HasOne(&quot;Ergo.Domain.Entities.TaskItem&quot;, null)
+                        .WithMany(&quot;Comments&quot;)
+                        .HasForeignKey(&quot;TaskItemId&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.TaskItem&quot;, b =&gt;
+                {
+                    b.HasOne(&quot;Ergo.Domain.Entities.User&quot;, &quot;AssignedUser&quot;)
+                        .WithMany(&quot;Tasks&quot;)
+                        .HasForeignKey(&quot;AssignedUserUserId&quot;);
+
+                    b.Navigation(&quot;AssignedUser&quot;);
+                });
+
+            modelBuilder.Entity(&quot;ProjectUser&quot;, b =&gt;
+                {
+                    b.HasOne(&quot;Ergo.Domain.Entities.User&quot;, null)
+                        .WithMany()
+                        .HasForeignKey(&quot;MembersUserId&quot;)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne(&quot;Ergo.Domain.Entities.Project&quot;, null)
+                        .WithMany()
+                        .HasForeignKey(&quot;ProjectsProjectId&quot;)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.TaskItem&quot;, b =&gt;
+                {
+                    b.Navigation(&quot;Comments&quot;);
+                });
+
+            modelBuilder.Entity(&quot;Ergo.Domain.Entities.User&quot;, b =&gt;
+                {
+                    b.Navigation(&quot;Tasks&quot;);
+                });
+#pragma warning restore 612, 618
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[20,9,20,10,0],[22,13,24,70,0],[26,13,26,84,0],[28,13,29,17,0],[29,17,29,18,0],[29,18,30,21,0],[30,21,32,48,0],[32,48,34,21,0],[34,21,35,51,0],[35,51,37,21,0],[37,21,38,51,0],[38,51,40,21,0],[40,21,42,48,0],[42,48,44,21,0],[44,21,46,48,0],[46,48,48,21,0],[48,21,49,48,0],[49,48,51,21,0],[51,21,51,41,0],[51,41,53,21,0],[53,21,53,41,0],[53,41,54,17,0],[54,17,54,18,0],[54,18,54,20,0],[56,13,57,17,0],[57,17,57,18,0],[57,18,58,21,0],[58,21,60,48,0],[60,48,62,21,0],[62,21,64,48,0],[64,48,66,21,0],[66,21,67,48,0],[67,48,69,21,0],[69,21,70,68,0],[70,68,72,21,0],[72,21,73,48,0],[73,48,75,21,0],[75,21,76,68,0],[76,68,78,21,0],[78,21,79,48,0],[79,48,81,21,0],[81,21,82,48,0],[82,48,84,21,0],[84,21,84,43,0],[84,43,86,21,0],[86,21,86,46,0],[86,46,88,21,0],[88,21,88,43,0],[88,43,89,17,0],[89,17,89,18,0],[89,18,89,20,0],[91,13,92,17,0],[92,17,92,18,0],[92,18,93,21,0],[93,21,95,48,0],[95,48,97,21,0],[97,21,98,68,0],[98,68,100,21,0],[100,21,101,51,0],[101,51,103,21,0],[103,21,105,48,0],[105,48,107,21,0],[107,21,108,48,0],[108,48,110,21,0],[110,21,110,45,0],[110,45,112,21,0],[112,21,112,45,0],[112,45,113,17,0],[113,17,113,18,0],[113,18,113,20,0],[115,13,116,17,0],[116,17,116,18,0],[116,18,117,21,0],[117,21,119,48,0],[119,48,121,21,0],[121,21,123,48,0],[123,48,125,21,0],[125,21,126,68,0],[126,68,128,21,0],[128,21,130,48,0],[130,48,132,21,0],[132,21,133,68,0],[133,68,135,21,0],[135,21,135,53,0],[135,53,137,21,0],[137,21,137,53,0],[137,53,138,17,0],[138,17,138,18,0],[138,18,138,20,0],[140,13,141,17,0],[141,17,141,18,0],[141,18,142,21,0],[142,21,144,48,0],[144,48,146,21,0],[146,21,148,48,0],[148,48,150,21,0],[150,21,151,48,0],[151,48,153,21,0],[153,21,153,41,0],[153,41,155,21,0],[155,21,155,41,0],[155,41,156,17,0],[156,17,156,18,0],[156,18,156,20,0],[158,13,159,17,0],[159,17,159,18,0],[159,18,160,21,0],[160,21,162,48,0],[162,48,164,21,0],[164,21,165,48,0],[165,48,167,21,0],[167,21,168,68,0],[168,68,170,21,0],[170,21,171,68,0],[171,68,173,21,0],[173,21,175,48,0],[175,48,177,21,0],[177,21,178,48,0],[178,48,180,21,0],[180,21,181,48,0],[181,48,183,21,0],[183,21,184,48,0],[184,48,186,21,0],[186,21,187,48,0],[187,48,189,21,0],[189,21,190,68,0],[190,68,192,21,0],[192,21,194,48,0],[194,48,196,21,0],[196,21,197,68,0],[197,68,199,21,0],[199,21,200,51,0],[200,51,202,21,0],[202,21,202,43,0],[202,43,204,21,0],[204,21,204,43,0],[204,43,205,17,0],[205,17,205,18,0],[205,18,205,20,0],[207,13,208,17,0],[208,17,208,18,0],[208,18,209,21,0],[209,21,211,48,0],[211,48,213,21,0],[213,21,214,48,0],[214,48,216,21,0],[216,21,217,48,0],[217,48,219,21,0],[219,21,220,48,0],[220,48,222,21,0],[222,21,223,68,0],[223,68,225,21,0],[225,21,226,68,0],[226,68,228,21,0],[228,21,229,48,0],[229,48,231,21,0],[231,21,232,48,0],[232,48,234,21,0],[234,21,235,68,0],[235,68,237,21,0],[237,21,238,48,0],[238,48,240,21,0],[240,21,241,68,0],[241,68,243,21,0],[243,21,244,51,0],[244,51,246,21,0],[246,21,247,48,0],[247,48,249,21,0],[249,21,250,52,0],[250,52,252,21,0],[252,21,252,44,0],[252,44,254,21,0],[254,21,254,54,0],[254,54,256,21,0],[256,21,256,44,0],[256,44,257,17,0],[257,17,257,18,0],[257,18,257,20,0],[259,13,260,17,0],[260,17,260,18,0],[260,18,261,21,0],[261,21,263,48,0],[263,48,265,21,0],[265,21,265,40,0],[265,40,267,21,0],[267,21,267,40,0],[267,40,268,17,0],[268,17,268,18,0],[268,18,268,20,0],[270,13,271,17,0],[271,17,271,18,0],[271,18,272,21,0],[272,21,274,48,0],[274,48,276,21,0],[276,21,278,48,0],[278,48,280,21,0],[280,21,282,48,0],[282,48,284,21,0],[284,21,284,45,0],[284,45,286,21,0],[286,21,286,45,0],[286,45,287,17,0],[287,17,287,18,0],[287,18,287,20,0],[289,13,290,17,0],[290,17,290,18,0],[290,18,291,21,0],[291,21,293,48,0],[293,48,295,21,0],[295,21,297,48,0],[297,48,299,21,0],[299,21,300,48,0],[300,48,302,21,0],[302,21,303,48,0],[303,48,305,21,0],[305,21,305,51,0],[305,51,307,21,0],[307,21,307,50,0],[307,50,308,17,0],[308,17,308,18,0],[308,18,308,20,0],[310,13,311,17,0],[311,17,311,18,0],[311,18,312,21,0],[312,21,313,48,0],[313,48,315,21,0],[315,21,316,48,0],[316,48,318,21,0],[318,21,318,68,0],[318,68,320,21,0],[320,21,320,53,0],[320,53,322,21,0],[322,21,322,46,0],[322,46,323,17,0],[323,17,323,18,0],[323,18,323,20,0],[325,13,326,17,0],[326,17,326,18,0],[326,18,327,21,0],[327,21,329,54,0],[329,54,330,17,0],[330,17,330,18,0],[330,18,330,20,0],[332,13,333,17,0],[333,17,333,18,0],[333,18,334,21,0],[334,21,336,62,0],[336,62,338,21,0],[338,21,338,50,0],[338,50,339,17,0],[339,17,339,18,0],[339,18,339,20,0],[341,13,342,17,0],[342,17,342,18,0],[342,18,343,21,0],[343,21,347,39,0],[347,39,349,21,0],[349,21,353,39,0],[353,39,354,17,0],[354,17,354,18,0],[354,18,354,20,0],[356,13,357,17,0],[357,17,357,18,0],[357,18,358,21,0],[358,21,358,46,0],[358,46,359,17,0],[359,17,359,18,0],[359,18,359,20,0],[361,13,362,17,0],[362,17,362,18,0],[362,18,363,21,0],[363,21,363,43,0],[363,43,364,17,0],[364,17,364,18,0],[364,18,364,20,0],[366,9,366,10,0]]);
+    </script>
+  </body>
+</html>

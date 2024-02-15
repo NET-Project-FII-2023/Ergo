@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Identity\Migrations\20231219140230_UserUpdateWithProject.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+
+#nullable disable
+
+namespace Ergo.Identity.Migrations
+{
+    /// &lt;inheritdoc /&gt;
+    public partial class UserUpdateWithProject : Migration
+    {
+        /// &lt;inheritdoc /&gt;
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: &quot;AspNetRoles&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    Name = table.Column&lt;string&gt;(type: &quot;character varying(256)&quot;, maxLength: 256, nullable: true),
+                    NormalizedName = table.Column&lt;string&gt;(type: &quot;character varying(256)&quot;, maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_AspNetRoles&quot;, x =&gt; x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;AspNetUsers&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    Name = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    UserName = table.Column&lt;string&gt;(type: &quot;character varying(256)&quot;, maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column&lt;string&gt;(type: &quot;character varying(256)&quot;, maxLength: 256, nullable: true),
+                    Email = table.Column&lt;string&gt;(type: &quot;character varying(256)&quot;, maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column&lt;string&gt;(type: &quot;character varying(256)&quot;, maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column&lt;bool&gt;(type: &quot;boolean&quot;, nullable: false),
+                    PasswordHash = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    SecurityStamp = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    ConcurrencyStamp = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    PhoneNumber = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    PhoneNumberConfirmed = table.Column&lt;bool&gt;(type: &quot;boolean&quot;, nullable: false),
+                    TwoFactorEnabled = table.Column&lt;bool&gt;(type: &quot;boolean&quot;, nullable: false),
+                    LockoutEnd = table.Column&lt;DateTimeOffset&gt;(type: &quot;timestamp with time zone&quot;, nullable: true),
+                    LockoutEnabled = table.Column&lt;bool&gt;(type: &quot;boolean&quot;, nullable: false),
+                    AccessFailedCount = table.Column&lt;int&gt;(type: &quot;integer&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_AspNetUsers&quot;, x =&gt; x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;AspNetRoleClaims&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;int&gt;(type: &quot;integer&quot;, nullable: false)
+                        .Annotation(&quot;Npgsql:ValueGenerationStrategy&quot;, NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    ClaimType = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    ClaimValue = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_AspNetRoleClaims&quot;, x =&gt; x.Id);
+                    table.ForeignKey(
+                        name: &quot;FK_AspNetRoleClaims_AspNetRoles_RoleId&quot;,
+                        column: x =&gt; x.RoleId,
+                        principalTable: &quot;AspNetRoles&quot;,
+                        principalColumn: &quot;Id&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;AspNetUserClaims&quot;,
+                columns: table =&gt; new
+                {
+                    Id = table.Column&lt;int&gt;(type: &quot;integer&quot;, nullable: false)
+                        .Annotation(&quot;Npgsql:ValueGenerationStrategy&quot;, NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    ClaimType = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    ClaimValue = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_AspNetUserClaims&quot;, x =&gt; x.Id);
+                    table.ForeignKey(
+                        name: &quot;FK_AspNetUserClaims_AspNetUsers_UserId&quot;,
+                        column: x =&gt; x.UserId,
+                        principalTable: &quot;AspNetUsers&quot;,
+                        principalColumn: &quot;Id&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;AspNetUserLogins&quot;,
+                columns: table =&gt; new
+                {
+                    LoginProvider = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    ProviderKey = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    ProviderDisplayName = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true),
+                    UserId = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_AspNetUserLogins&quot;, x =&gt; new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: &quot;FK_AspNetUserLogins_AspNetUsers_UserId&quot;,
+                        column: x =&gt; x.UserId,
+                        principalTable: &quot;AspNetUsers&quot;,
+                        principalColumn: &quot;Id&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;AspNetUserRoles&quot;,
+                columns: table =&gt; new
+                {
+                    UserId = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    RoleId = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_AspNetUserRoles&quot;, x =&gt; new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: &quot;FK_AspNetUserRoles_AspNetRoles_RoleId&quot;,
+                        column: x =&gt; x.RoleId,
+                        principalTable: &quot;AspNetRoles&quot;,
+                        principalColumn: &quot;Id&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: &quot;FK_AspNetUserRoles_AspNetUsers_UserId&quot;,
+                        column: x =&gt; x.UserId,
+                        principalTable: &quot;AspNetUsers&quot;,
+                        principalColumn: &quot;Id&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: &quot;AspNetUserTokens&quot;,
+                columns: table =&gt; new
+                {
+                    UserId = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    LoginProvider = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    Name = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    Value = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: true)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_AspNetUserTokens&quot;, x =&gt; new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: &quot;FK_AspNetUserTokens_AspNetUsers_UserId&quot;,
+                        column: x =&gt; x.UserId,
+                        principalTable: &quot;AspNetUsers&quot;,
+                        principalColumn: &quot;Id&quot;,
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: &quot;IX_AspNetRoleClaims_RoleId&quot;,
+                table: &quot;AspNetRoleClaims&quot;,
+                column: &quot;RoleId&quot;);
+
+            migrationBuilder.CreateIndex(
+                name: &quot;RoleNameIndex&quot;,
+                table: &quot;AspNetRoles&quot;,
+                column: &quot;NormalizedName&quot;,
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: &quot;IX_AspNetUserClaims_UserId&quot;,
+                table: &quot;AspNetUserClaims&quot;,
+                column: &quot;UserId&quot;);
+
+            migrationBuilder.CreateIndex(
+                name: &quot;IX_AspNetUserLogins_UserId&quot;,
+                table: &quot;AspNetUserLogins&quot;,
+                column: &quot;UserId&quot;);
+
+            migrationBuilder.CreateIndex(
+                name: &quot;IX_AspNetUserRoles_RoleId&quot;,
+                table: &quot;AspNetUserRoles&quot;,
+                column: &quot;RoleId&quot;);
+
+            migrationBuilder.CreateIndex(
+                name: &quot;EmailIndex&quot;,
+                table: &quot;AspNetUsers&quot;,
+                column: &quot;NormalizedEmail&quot;);
+
+            migrationBuilder.CreateIndex(
+                name: &quot;UserNameIndex&quot;,
+                table: &quot;AspNetUsers&quot;,
+                column: &quot;NormalizedUserName&quot;,
+                unique: true);
+        }
+
+        /// &lt;inheritdoc /&gt;
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: &quot;AspNetRoleClaims&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;AspNetUserClaims&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;AspNetUserLogins&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;AspNetUserRoles&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;AspNetUserTokens&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;AspNetRoles&quot;);
+
+            migrationBuilder.DropTable(
+                name: &quot;AspNetUsers&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,9,14,10,0],[15,13,17,35,0],[17,35,23,18,0],[23,18,25,17,0],[25,17,25,18,0],[25,18,26,21,0],[26,21,26,67,0],[26,67,27,17,0],[27,17,27,18,0],[27,18,27,20,0],[29,13,31,35,0],[31,35,49,18,0],[49,18,51,17,0],[51,17,51,18,0],[51,18,52,21,0],[52,21,52,67,0],[52,67,53,17,0],[53,17,53,18,0],[53,18,53,20,0],[55,13,57,35,0],[57,35,64,18,0],[64,18,66,17,0],[66,17,66,18,0],[66,18,67,21,0],[67,21,67,72,0],[67,72,68,21,0],[68,21,73,62,0],[73,62,74,17,0],[74,17,74,18,0],[74,18,74,20,0],[76,13,78,35,0],[78,35,85,18,0],[85,18,87,17,0],[87,17,87,18,0],[87,18,88,21,0],[88,21,88,72,0],[88,72,89,21,0],[89,21,94,62,0],[94,62,95,17,0],[95,17,95,18,0],[95,18,95,20,0],[97,13,99,35,0],[99,35,105,18,0],[105,18,107,17,0],[107,17,107,18,0],[107,18,108,21,0],[108,21,108,106,0],[108,106,109,21,0],[109,21,114,62,0],[114,62,115,17,0],[115,17,115,18,0],[115,18,115,20,0],[117,13,119,35,0],[119,35,123,18,0],[123,18,125,17,0],[125,17,125,18,0],[125,18,126,21,0],[126,21,126,93,0],[126,93,127,21,0],[127,21,132,62,0],[132,62,133,21,0],[133,21,138,62,0],[138,62,139,17,0],[139,17,139,18,0],[139,18,139,20,0],[141,13,143,35,0],[143,35,149,18,0],[149,18,151,17,0],[151,17,151,18,0],[151,18,152,21,0],[152,21,152,109,0],[152,109,153,21,0],[153,21,158,62,0],[158,62,159,17,0],[159,17,159,18,0],[159,18,159,20,0],[161,13,164,35,0],[166,13,170,31,0],[172,13,175,35,0],[177,13,180,35,0],[182,13,185,35,0],[187,13,190,44,0],[192,13,196,31,0],[197,9,197,10,0],[201,9,201,10,0],[202,13,203,43,0],[205,13,206,43,0],[208,13,209,43,0],[211,13,212,42,0],[214,13,215,43,0],[217,13,218,38,0],[220,13,221,38,0],[222,9,222,10,0]]);
+    </script>
+  </body>
+</html>

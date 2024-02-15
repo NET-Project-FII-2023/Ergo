@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Migrations\20240105214214_InboxItemsUpdate.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace Infrastructure.Migrations
+{
+    /// &lt;inheritdoc /&gt;
+    public partial class InboxItemsUpdate : Migration
+    {
+        /// &lt;inheritdoc /&gt;
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: &quot;InboxItems&quot;,
+                columns: table =&gt; new
+                {
+                    InboxItemId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    UserId = table.Column&lt;Guid&gt;(type: &quot;uuid&quot;, nullable: false),
+                    Message = table.Column&lt;string&gt;(type: &quot;text&quot;, nullable: false),
+                    CreatedDate = table.Column&lt;DateTime&gt;(type: &quot;timestamp with time zone&quot;, nullable: false),
+                    IsRead = table.Column&lt;bool&gt;(type: &quot;boolean&quot;, nullable: false)
+                },
+                constraints: table =&gt;
+                {
+                    table.PrimaryKey(&quot;PK_InboxItems&quot;, x =&gt; x.InboxItemId);
+                });
+        }
+
+        /// &lt;inheritdoc /&gt;
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: &quot;InboxItems&quot;);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,9,13,10,0],[14,13,16,35,0],[16,35,23,18,0],[23,18,25,17,0],[25,17,25,18,0],[25,18,26,21,0],[26,21,26,75,0],[26,75,27,17,0],[27,17,27,18,0],[27,18,27,20,0],[28,9,28,10,0],[32,9,32,10,0],[33,13,34,37,0],[35,9,35,10,0]]);
+    </script>
+  </body>
+</html>

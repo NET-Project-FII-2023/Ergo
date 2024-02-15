@@ -2,31 +2,34 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Commands\CreateProject\CreateProjectCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Commands\UpdateProject\UpdateProjectCommand.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using Ergo.Domain.Entities.Enums;
 using MediatR;
-namespace Ergo.Application.Features.Projects.Commands.CreateProject
+
+namespace Ergo.Application.Features.Projects.Commands.UpdateProject
 {
-    public class CreateProjectCommand : IRequest&lt;CreateProjectCommandResponse&gt;
+    public class UpdateProjectCommand : IRequest&lt;UpdateProjectCommandResponse&gt;
     {
-        public string ProjectName { get; set; } = default!;
-        public string Description { get; set; } = default!;
+        public string? ProjectOwner { get; set; }
+        public Guid ProjectId { get; set; }
+        public string? ProjectName { get; set; }
+        public string? Description { get; set; }
         public string? GithubOwner { get; set; }
         public string? GithubToken { get; set; }
-        public string? GitRepository { get; set; } = default!;
-        public string FullName { get; set; } = default!;
+        public string? GitRepository { get; set; }
         public DateTime Deadline { get; set; }
+        public ProjectState State { get; set; }
     }
 }
 
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[6,37,6,41,1],[6,42,6,46,1],[6,51,6,59,1],[7,37,7,41,1],[7,42,7,46,1],[7,51,7,59,1],[8,38,8,42,1],[8,43,8,47,1],[9,38,9,42,1],[9,43,9,47,1],[10,40,10,44,1],[10,45,10,49,1],[10,54,10,62,1],[11,34,11,38,1],[11,39,11,43,1],[11,48,11,56,1],[12,36,12,40,1],[12,41,12,45,1]]);
+      highlightRanges([[8,39,8,43,0],[8,44,8,48,0],[9,33,9,37,0],[9,38,9,42,0],[10,38,10,42,0],[10,43,10,47,0],[11,38,11,42,0],[11,43,11,47,0],[12,38,12,42,0],[12,43,12,47,0],[13,38,13,42,0],[13,43,13,47,0],[14,40,14,44,0],[14,45,14,49,0],[15,36,15,40,0],[15,41,15,45,0],[16,37,16,41,0],[16,42,16,46,0]]);
     </script>
   </body>
 </html>

@@ -2,29 +2,28 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\PauseTimerTaskItem\PauseTimerTaskItemCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\UnassignUserFromTaskItem\UnassignUserFromTaskItemCommandResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
+using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.TaskItems.Commands.PauseTimerTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.UnassignUserFromTaskItem
 {
-    public class PauseTimerTaskItemCommandValidator : AbstractValidator&lt;PauseTimerTaskItemCommand&gt;
+    public class UnassignUserFromTaskItemCommandResponse : BaseResponse
     {
-        public PauseTimerTaskItemCommandValidator()
+        public UnassignUserFromTaskItemCommandResponse() : base()
         {
-            RuleFor(x =&gt; x.TaskItemId).NotEmpty().WithMessage(&quot;Task item id is required&quot;);
-            RuleFor(x =&gt; x.UserId).NotEmpty().WithMessage(&quot;User id is required&quot;);
+
         }
     }
-}
 
+}
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,52,0],[8,9,8,10,0],[9,13,9,91,0],[10,13,10,82,0],[11,9,11,10,0]]);
+      highlightRanges([[7,60,7,66,0],[8,9,8,10,0],[10,9,10,10,0]]);
     </script>
   </body>
 </html>

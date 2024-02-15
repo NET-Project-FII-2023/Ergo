@@ -2,26 +2,54 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Commands\DeleteProject\DeleteProjectCommandResponse.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetAll\GetAllProjectsQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
-namespace Ergo.Application.Features.Projects.Commands.DeleteProject
+using Ergo.Application.Persistence;
+using MediatR;
+namespace Ergo.Application.Features.Projects.Queries.GetAll
 {
-    public class DeleteProjectCommandResponse :BaseResponse
+    public class GetAllProjectsQueryHandler : IRequestHandler&lt;GetAllProjectsQuery, GetAllProjectsResponse&gt;
     {
-        public DeleteProjectCommandResponse() : base()
+        private readonly IProjectRepository projectRepository;
+
+        public GetAllProjectsQueryHandler(IProjectRepository projectRepository)
         {
-            
+            this.projectRepository = projectRepository;
+        }
+
+        public async Task&lt;GetAllProjectsResponse&gt; Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
+        {
+            var response = new GetAllProjectsResponse();
+            var result = await projectRepository.GetAllAsync();
+
+            if (result.IsSuccess)
+            {
+                response.Projects = result.Value.Select(project =&gt; new ProjectDto
+                {
+                    ProjectId = project.ProjectId,
+                    ProjectName = project.ProjectName,
+                    Description = project.Description,
+                    CreatedBy = project.CreatedBy,
+                    GitRepository = project.GitRepository,
+                    StartDate = project.StartDate,
+                    Deadline = project.Deadline,
+                    State = project.State,
+                    Members = project.Members
+                }).ToList();
+            }
+
+            return response;
         }
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[6,49,6,55,1],[7,9,7,10,1],[9,9,9,10,1]]);
+      highlightRanges([[9,9,9,80,1],[10,9,10,10,1],[11,13,11,56,1],[12,9,12,10,1],[15,9,15,10,1],[16,13,16,57,1],[17,13,17,64,1],[19,13,19,34,1],[20,13,20,14,1],[21,17,21,68,1],[21,68,32,18,1],[32,18,32,29,1],[33,13,33,14,1],[35,13,35,29,1],[36,9,36,10,1]]);
     </script>
   </body>
 </html>

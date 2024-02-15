@@ -2,56 +2,27 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Photos\Queries\GetPhotosForTaskItem\GetPhotosForTaskItemQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Commands\DeleteProject\DeleteProjectCommand.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
 using MediatR;
 
-namespace Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem
+namespace Ergo.Application.Features.Projects.Commands.DeleteProject
 {
-    public class GetPhotosForTaskItemQueryHandler : IRequestHandler&lt;GetPhotosForTaskItemQuery, GetPhotosForTaskItemQueryResponse&gt;
+    public class DeleteProjectCommand : IRequest&lt;DeleteProjectCommandResponse&gt;
     {
-        private readonly IPhotoRepository photoRepository;
-        private readonly ITaskItemRepository taskItemRepository;
-        public GetPhotosForTaskItemQueryHandler(IPhotoRepository photoRepository, ITaskItemRepository taskItemRepository)
-        {
-            this.photoRepository = photoRepository;
-            this.taskItemRepository = taskItemRepository;
-        }
+        public Guid ProjectId { get; set; }
+        public string Owner { get; set; }
 
-        public async Task&lt;GetPhotosForTaskItemQueryResponse&gt; Handle(GetPhotosForTaskItemQuery request, CancellationToken cancellationToken)
-        {
-            var taskItemExists = await taskItemRepository.FindByIdAsync(request.TaskItemId);
-            if(!taskItemExists.IsSuccess)
-            {
-                return new GetPhotosForTaskItemQueryResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item with the provided ID does not exist.&quot; }
-                };
-            }
-            var photos = await photoRepository.GetByTaskItemIdAsync(request.TaskItemId);
-            var photoDtos = photos.Select(p =&gt; new PhotoDto
-            {
-                PhotoId = p.PhotoId,
-                CloudURL = p.CloudURL
-            }).ToList();
-            return new GetPhotosForTaskItemQueryResponse
-            {
-                Success = true,
-                Photos = photoDtos
-            };
-        }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[10,9,10,122,0],[11,9,11,10,0],[12,13,12,52,0],[13,13,13,58,0],[14,9,14,10,0],[17,9,17,10,0],[18,13,18,93,0],[19,13,19,42,0],[20,13,20,14,0],[21,17,25,19,0],[27,13,27,89,0],[28,13,28,48,0],[28,48,32,14,0],[32,14,32,25,0],[33,13,37,15,0],[38,9,38,10,0]]);
+      highlightRanges([[7,33,7,37,0],[7,38,7,42,0],[8,31,8,35,0],[8,36,8,40,0]]);
     </script>
   </body>
 </html>

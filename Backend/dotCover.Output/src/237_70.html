@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Badges\Commands\UpdateSpecialBadgeCommand\UpdateSpecialBadgeCommandHandler.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Badges.Commands.CreateBadgeCommand;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+using MediatR;
+
+namespace Ergo.Application.Features.Badges.Commands.UpdateSpecialBadgeCommand
+{
+    public class UpdateSpecialBadgeCommandHandler : IRequestHandler&lt;UpdateSpecialBadgeCommand, UpdateSpecialBadgeCommandResponse&gt;
+    {
+        private readonly IBadgeRepository badgeRepository;
+        private readonly IUserManager userManager;
+        private readonly IUserVotedBadgesRepository userVotedBadgesRepository;
+        public UpdateSpecialBadgeCommandHandler(IBadgeRepository badgeRepository, IUserManager userManager, IUserVotedBadgesRepository userVotedBadgesRepository)
+        {
+            this.badgeRepository = badgeRepository;
+            this.userManager = userManager;
+            this.userVotedBadgesRepository = userVotedBadgesRepository;
+        }
+
+        public async Task&lt;UpdateSpecialBadgeCommandResponse&gt; Handle(UpdateSpecialBadgeCommand request, CancellationToken cancellationToken)
+        {
+            var validator = new UpdateSpecialBadgeCommandValidator();
+            var validationResult = await validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                return new UpdateSpecialBadgeCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validationResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
+                };
+            }
+            var voterExist = await userManager.FindByIdAsync(request.VoterId);
+            if (!voterExist.IsSuccess)
+            {
+                return ReturnBadResponse(&quot;Voter not found&quot;);
+            }
+            var votedExist = await userManager.FindByIdAsync(request.VotedId);
+            if (!votedExist.IsSuccess)
+            {
+                return ReturnBadResponse(&quot;Voted not found&quot;);
+            }
+            var badge = await badgeRepository.GetBadgeByUserIdAndType(request.VotedId, request.Type);
+            if (!badge.IsSuccess)
+            {
+                return ReturnBadResponse(&quot;Badge not found&quot;);
+            }
+            var userVotedAlready = await userVotedBadgesRepository.GetUserVotedBadge(request.VoterId, request.VotedId, request.Type);
+            if (userVotedAlready)
+            {
+                return ReturnBadResponse(&quot;You have already endorsed this user with this badge&quot;);
+            }
+            var userVotedBadge = UserVotedBadges.Create(request.VoterId, request.VotedId, request.Type);
+            var resultUserVoted = await userVotedBadgesRepository.AddAsync(userVotedBadge.Value);
+            if (!resultUserVoted.IsSuccess)
+            {
+               return ReturnBadResponse(&quot;Error adding user voted badge&quot;);
+            }
+            badge.Value.UpdateCount(badge.Value.Count + 1);
+            var result = await badgeRepository.UpdateAsync(badge.Value);
+            if (!result.IsSuccess)
+            {
+                return ReturnBadResponse(&quot;Error updating badge&quot;);
+
+            }
+            return new UpdateSpecialBadgeCommandResponse
+            {
+                Success = true,
+            };
+
+
+        }
+        public UpdateSpecialBadgeCommandResponse ReturnBadResponse(string error)
+        {
+            return new UpdateSpecialBadgeCommandResponse
+            {
+                Success = false,
+                ValidationsErrors = new List&lt;string&gt; { error }
+            };
+        }
+    }
+
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[13,9,13,162,0],[14,9,14,10,0],[15,13,15,52,0],[16,13,16,44,0],[17,13,17,72,0],[18,9,18,10,0],[21,9,21,10,0],[22,13,22,70,0],[23,13,23,75,0],[24,13,24,43,0],[25,13,25,14,0],[26,17,29,77,0],[29,77,29,91,0],[29,91,30,19,0],[32,13,32,79,0],[33,13,33,39,0],[34,13,34,14,0],[35,17,35,61,0],[37,13,37,79,0],[38,13,38,39,0],[39,13,39,14,0],[40,17,40,61,0],[42,13,42,102,0],[43,13,43,34,0],[44,13,44,14,0],[45,17,45,61,0],[47,13,47,134,0],[48,13,48,34,0],[49,13,49,14,0],[50,17,50,97,0],[52,13,52,105,0],[53,13,53,98,0],[54,13,54,44,0],[55,13,55,14,0],[56,16,56,74,0],[58,13,58,60,0],[59,13,59,73,0],[60,13,60,35,0],[61,13,61,14,0],[62,17,62,66,0],[65,13,68,15,0],[71,9,71,10,0],[73,9,73,10,0],[74,13,78,15,0],[79,9,79,10,0]]);
+    </script>
+  </body>
+</html>

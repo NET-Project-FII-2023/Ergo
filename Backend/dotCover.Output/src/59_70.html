@@ -2,88 +2,97 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\StartTimerTaskItem\StartTimerTaskItemCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\UpdateTaskItem\UpdateTaskItemCommandHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Ergo.Application.Persistence;
-using Ergo.Domain.Entities.Enums;
 using MediatR;
+using Ergo.Domain.Entities;
 
-namespace Ergo.Application.Features.TaskItems.Commands.StartTimerTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.UpdateTaskItem
 {
-    public class StartTimerTaskItemCommandHandler : IRequestHandler&lt;StartTimerTaskItemCommand, StartTimerTaskItemCommandResponse&gt;
+    public class UpdateTaskItemCommandHandler : IRequestHandler&lt;UpdateTaskItemCommand, UpdateTaskItemCommandResponse&gt;
     {
         private readonly ITaskItemRepository taskItemRepository;
 
-        public StartTimerTaskItemCommandHandler(ITaskItemRepository taskItemRepository)
+        public UpdateTaskItemCommandHandler(ITaskItemRepository taskItemRepository)
         {
             this.taskItemRepository = taskItemRepository;
         }
-        public async Task&lt;StartTimerTaskItemCommandResponse&gt; Handle(StartTimerTaskItemCommand request, CancellationToken cancellationToken)
+
+
+        public async Task&lt;UpdateTaskItemCommandResponse&gt; Handle(UpdateTaskItemCommand request,
+            CancellationToken cancellationToken)
         {
-            var validator = new StartTimerTaskItemCommandValidator();
-            var validatorResult = validator.Validate(request);
-            if(!validatorResult.IsValid)
+            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
+            if (!taskItem.IsSuccess)
             {
-                return new StartTimerTaskItemCommandResponse
+                return new UpdateTaskItemCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { taskItem.Error }
+                };
+            }   
+
+            request.TaskName ??= taskItem.Value.TaskName;
+            request.Description ??= taskItem.Value.Description;
+            if (request.Deadline == default(DateTime) &amp;&amp; taskItem.Value.Deadline.HasValue)
+            {
+                request.Deadline = taskItem.Value.Deadline.Value;
+            }
+
+            request.CreatedBy ??= taskItem.Value.CreatedBy;
+            if (request.ProjectId == default(Guid))
+            {
+                request.ProjectId = taskItem.Value.ProjectId;
+            }
+            if (request.State == default)
+            {
+                request.State = taskItem.Value.State;
+            }
+
+            var validator = new UpdateTaskItemCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+            if (!validatorResult.IsValid)
+            {
+                return new UpdateTaskItemCommandResponse
                 {
                     Success = false,
                     ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
                 };
             }
-            var taskItem = await taskItemRepository.FindByIdAsync(request.TaskItemId);
-            if (!taskItem.IsSuccess)
+
+            var updateResult = taskItem.Value.UpdateData(request.TaskName, request.Description, request.Deadline, request.CreatedBy, request.ProjectId, request.State, request.Branch);
+            if (!updateResult.IsSuccess)
             {
-                return new StartTimerTaskItemCommandResponse
+                return new UpdateTaskItemCommandResponse
                 {
                     Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { taskItem.Error }
-                }; 
-            }
-            if (taskItem.Value.State == TaskState.Done)
-            {
-                return new StartTimerTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item is already done&quot; }
-                };
-            }
-            var assignedUserId = await taskItemRepository.GetAssignedUser(request.TaskItemId);
-            if(!assignedUserId.IsSuccess)
-            {
-                return new StartTimerTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { assignedUserId.Error }
-                };
-            }
-            if(Guid.Parse(assignedUserId.Value) != request.UserId)
-            {
-                return new StartTimerTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Task item is not assigned to this user&quot; }
-                };
-            }
-            
-            var response = taskItem.Value.StartOrResumeTask();
-            if (!response.IsSuccess)
-            {
-                return new StartTimerTaskItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { response.Error }
+                    ValidationsErrors = new List&lt;string&gt; { updateResult.Error }
                 };
             }
             var result = await taskItemRepository.UpdateAsync(taskItem.Value);
-            return new StartTimerTaskItemCommandResponse
+            return new UpdateTaskItemCommandResponse
             {
-                Success = result.IsSuccess,
-                StartTime = taskItem.Value.StartTime.Value
+                Success = true,
+                TaskItem = new UpdateTaskItemDto
+                {
+                    TaskName = result.Value.TaskName,
+                    Description = result.Value.Description,
+                    Deadline = result.Value.Deadline,
+                    CreatedBy = result.Value.CreatedBy,
+                    ProjectId = result.Value.ProjectId,
+                    State = result.Value.State,
+                    Branch = result.Value.Branch
+                }
             };
         }
     }
@@ -91,7 +100,7 @@ namespace Ergo.Application.Features.TaskItems.Commands.StartTimerTaskItem
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,9,12,88,0],[13,9,13,10,0],[14,13,14,58,0],[15,9,15,10,0],[17,9,17,10,0],[18,13,18,70,0],[19,13,19,63,0],[20,13,20,41,0],[21,13,21,14,0],[22,17,25,76,0],[25,76,25,90,0],[25,90,26,19,0],[28,13,28,87,0],[29,13,29,37,0],[30,13,30,14,0],[31,17,35,19,0],[37,13,37,56,0],[38,13,38,14,0],[39,17,43,19,0],[45,13,45,95,0],[46,13,46,42,0],[47,13,47,14,0],[48,17,52,19,0],[54,13,54,67,0],[55,13,55,14,0],[56,17,60,19,0],[63,13,63,63,0],[64,13,64,37,0],[65,13,65,14,0],[66,17,70,19,0],[72,13,72,79,0],[73,13,77,15,0],[78,9,78,10,0]]);
+      highlightRanges([[16,9,16,84,0],[17,9,17,10,0],[18,13,18,58,0],[19,9,19,10,0],[24,9,24,10,0],[25,13,25,87,0],[26,13,26,37,0],[27,13,27,14,0],[28,17,32,19,0],[35,13,35,58,0],[36,13,36,64,0],[37,13,37,91,0],[38,13,38,14,0],[39,17,39,66,0],[40,13,40,14,0],[42,13,42,60,0],[43,13,43,52,0],[44,13,44,14,0],[45,17,45,62,0],[46,13,46,14,0],[47,13,47,42,0],[48,13,48,14,0],[49,17,49,54,0],[50,13,50,14,0],[52,13,52,66,0],[53,13,53,93,0],[54,13,54,42,0],[55,13,55,14,0],[56,17,59,76,0],[59,76,59,90,0],[59,90,60,19,0],[63,13,63,184,0],[64,13,64,41,0],[65,13,65,14,0],[66,17,70,19,0],[72,13,72,79,0],[73,13,86,15,0],[87,9,87,10,0]]);
     </script>
   </body>
 </html>

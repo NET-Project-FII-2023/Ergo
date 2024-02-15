@@ -2,25 +2,29 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectsByUserId\GetProjectsByUserIdQuery.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetUserStats\GetUserStatsQueryResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using Ergo.Application.Responses;
 using MediatR;
 
-namespace Ergo.Application.Features.Projects.Queries.GetProjectsByUserId
+namespace Ergo.Application.Features.Users.Queries.GetUserStats
 {
-    public class GetProjectsByUserIdQuery : IRequest&lt;GetProjectsByUserIdQueryResponse&gt;
+    public class GetUserStatsQueryResponse : BaseResponse
     {
-        public string UserId { get; set; }
+        public GetUserStatsQueryResponse() : base()
+        {
+        }
+        public UserStatsDto? UserStats { get; set; }
+
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,32,7,36,1],[7,37,7,41,1]]);
+      highlightRanges([[8,46,8,52,0],[9,9,9,10,0],[10,9,10,10,0],[11,42,11,46,0],[11,47,11,51,0]]);
     </script>
   </body>
 </html>

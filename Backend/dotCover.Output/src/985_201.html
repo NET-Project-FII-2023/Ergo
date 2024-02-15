@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Identity\Services\ApplicationUserManager.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Users;
+using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Models;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Identity.Models;
+using Microsoft.AspNetCore.Identity;
+
+namespace Ergo.Identity.Services
+{
+    public class ApplicationUserManager : IUserManager
+    {
+        private readonly UserManager&lt;ApplicationUser&gt; userManager;
+        private readonly RoleManager&lt;IdentityRole&gt; roleManager;
+        private readonly IUserPhotoRepository userPhotoRepository;
+
+        public ApplicationUserManager(UserManager&lt;ApplicationUser&gt; userManager, RoleManager&lt;IdentityRole&gt; roleManager, IUserPhotoRepository userPhotoRepository)
+        {
+            this.userManager = userManager;
+            this.roleManager = roleManager;
+            this.userPhotoRepository = userPhotoRepository;
+        }
+
+        public async Task&lt;Result&lt;UserDto&gt;&gt; FindByIdAsync(Guid userId)
+        {
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if(user == null)
+            {
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userId} not found&quot;);
+            }
+
+            var userDtos = MapToUserDto(user);
+            var roles = await userManager.GetRolesAsync(user);
+            userDtos.Roles = roles.ToList();
+
+            var userPhoto = await userPhotoRepository.GetUserPhotoByUserIdAsync(user.Id);
+            if (userPhoto.IsSuccess)
+            {
+                userDtos.UserPhoto = new UserCloudPhotoDto
+                {
+                    UserPhotoId = userPhoto.Value.UserPhotoId,
+                    PhotoUrl = userPhoto.Value.PhotoUrl
+                };
+            }
+
+            return Result&lt;UserDto&gt;.Success(userDtos);
+        }
+
+        public async Task&lt;Result&lt;UserDto&gt;&gt; FindByEmailAsync(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with email {email} not found&quot;);
+            var userDtos = MapToUserDto(user);
+            var roles = await userManager.GetRolesAsync(user);
+            userDtos.Roles = roles.ToList();
+            return Result&lt;UserDto&gt;.Success(userDtos);
+        }
+        public async Task&lt;Result&lt;UserDto&gt;&gt; FindByUsernameAsync(string username)
+        {
+
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with username {username} not found&quot;);
+            var userDtos = MapToUserDto(user);
+            var roles = await userManager.GetRolesAsync(user);
+            userDtos.Roles = roles.ToList();
+            return Result&lt;UserDto&gt;.Success(userDtos);
+        }
+
+
+
+        public async Task&lt;Result&lt;List&lt;UserDto&gt;&gt;&gt; GetAllAsync()
+        {
+            var users = userManager.Users.ToList();
+            var userDtos = users.Select(u =&gt; MapToUserDto(u)).ToList();
+
+            foreach (var userDto in userDtos)
+            {
+                var appUser = await userManager.FindByIdAsync(userDto.UserId.ToString());
+                if (appUser != null)
+                {
+                    var roles = await userManager.GetRolesAsync(appUser);
+                    userDto.Roles = roles.ToList();
+                }
+            }
+
+            return Result&lt;List&lt;UserDto&gt;&gt;.Success(userDtos);
+        }
+
+
+        public async Task&lt;Result&lt;UserDto&gt;&gt; DeleteAsync(Guid userId)
+        {
+            var user = await userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userId} not found&quot;);
+
+            var deleteResult = await userManager.DeleteAsync(user);
+            if (!deleteResult.Succeeded)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userId} not deleted&quot;);
+
+            return Result&lt;UserDto&gt;.Success(MapToUserDto(user));
+        }
+
+
+        public async Task&lt;Result&lt;UserDto&gt;&gt; UpdateAsync(UserDto userDto)
+        {
+            var userToUpdate = await userManager.FindByIdAsync(userDto.UserId.ToString());
+            if (userToUpdate == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} not found&quot;);
+
+            UpdateUserProperties(userToUpdate, userDto);
+
+            var updateResult = await userManager.UpdateAsync(userToUpdate);
+            return updateResult.Succeeded ? Result&lt;UserDto&gt;.Success(MapToUserDto(userToUpdate)) : Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} not updated&quot;);
+        }
+
+        public async Task&lt;Result&lt;UserDto&gt;&gt; UpdateRoleAsync(UserDto userDto, string role)
+        {
+            var userToUpdate = await userManager.FindByIdAsync(userDto.UserId.ToString());
+            if (userToUpdate == null)
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} not found&quot;);
+            
+            if (role != &quot;Admin&quot; &amp;&amp; role != &quot;User&quot;)
+                return Result&lt;UserDto&gt;.Failure($&quot;Role {role} not found&quot;);
+
+            if (!await roleManager.RoleExistsAsync(role))
+                await roleManager.CreateAsync(new IdentityRole(role));
+
+            if (await userManager.IsInRoleAsync(userToUpdate, role))
+                return Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} already has role {role}&quot;);
+
+            var addToRoleResult = await userManager.AddToRoleAsync(userToUpdate, role);
+            return addToRoleResult.Succeeded ? Result&lt;UserDto&gt;.Success(MapToUserDto(userToUpdate)) : Result&lt;UserDto&gt;.Failure($&quot;User with id {userDto.UserId} not updated&quot;);
+        }
+        private void UpdateUserProperties(ApplicationUser user, UserDto userDto)
+        {
+            user.Name = userDto.Name;
+            user.UserName = userDto.Username;
+            user.Email = userDto.Email;
+            user.Bio = userDto.Bio;
+            user.Mobile = userDto.Mobile;
+            user.Company = userDto.Company;
+            user.Location = userDto.Location;
+            user.Facebook = userDto.Social?.Facebook;
+            user.Instagram = userDto.Social?.Instagram;
+            user.GitHub = userDto.Social?.GitHub;
+            user.LinkedIn = userDto.Social?.LinkedIn;
+            user.TwitterX = userDto.Social?.TwitterX;
+        }
+        private UserDto MapToUserDto(ApplicationUser user)
+        {
+            return new UserDto
+            {
+                UserId = user.Id,
+                Name = user.Name,
+                Username = user.UserName,
+                Email = user.Email,
+                Bio = user.Bio,
+                Mobile = user.Mobile,
+                Company = user.Company,
+                Location = user.Location,
+                Social = new Social
+                {
+                    Facebook = user.Facebook,
+                    Instagram = user.Instagram,
+                    GitHub = user.GitHub,
+                    LinkedIn = user.LinkedIn,
+                    TwitterX = user.TwitterX
+                }
+            };
+        }
+
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,161,1],[18,9,18,10,1],[19,13,19,44,1],[20,13,20,44,1],[21,13,21,60,1],[22,9,22,10,1],[25,9,25,10,0],[26,13,26,75,0],[27,13,27,29,0],[28,13,28,14,0],[29,17,29,84,0],[32,13,32,47,0],[33,13,33,63,0],[34,13,34,45,0],[36,13,36,90,0],[37,13,37,37,0],[38,13,38,14,0],[39,17,43,19,0],[44,13,44,14,0],[46,13,46,54,0],[47,9,47,10,0],[50,9,50,10,1],[51,13,51,66,1],[52,13,52,30,0],[53,17,53,86,0],[54,13,54,47,0],[55,13,55,63,0],[56,13,56,45,0],[57,13,57,54,0],[58,9,58,10,0],[60,9,60,10,1],[62,13,62,68,1],[63,13,63,30,1],[64,17,64,92,1],[65,13,65,47,1],[66,13,66,63,1],[67,13,67,45,1],[68,13,68,54,1],[69,9,69,10,1],[74,9,74,10,1],[75,13,75,52,1],[76,13,76,46,1],[76,46,76,61,1],[76,61,76,72,1],[78,13,78,20,1],[78,22,78,33,1],[78,34,78,36,1],[78,37,78,45,1],[79,13,79,14,1],[80,17,80,90,1],[81,17,81,37,1],[82,17,82,18,1],[83,21,83,74,1],[84,21,84,52,1],[85,17,85,18,1],[86,13,86,14,1],[88,13,88,60,1],[89,9,89,10,1],[93,9,93,10,0],[94,13,94,75,0],[95,13,95,30,0],[96,17,96,84,0],[98,13,98,68,0],[99,13,99,41,0],[100,17,100,86,0],[102,13,102,64,0],[103,9,103,10,0],[107,9,107,10,0],[108,13,108,91,0],[109,13,109,38,0],[110,17,110,92,0],[112,13,112,57,0],[114,13,114,76,0],[115,13,115,169,0],[116,9,116,10,0],[119,9,119,10,0],[120,13,120,91,0],[121,13,121,38,0],[122,17,122,92,0],[124,13,124,51,0],[125,17,125,74,0],[127,13,127,58,0],[128,17,128,71,0],[130,13,130,69,0],[131,17,131,106,0],[133,13,133,88,0],[134,13,134,172,0],[135,9,135,10,0],[137,9,137,10,0],[138,13,138,38,0],[139,13,139,46,0],[140,13,140,40,0],[141,13,141,36,0],[142,13,142,42,0],[143,13,143,44,0],[144,13,144,46,0],[145,13,145,54,0],[146,13,146,56,0],[147,13,147,50,0],[148,13,148,54,0],[149,13,149,54,0],[150,9,150,10,0],[152,9,152,10,1],[153,13,171,15,1],[172,9,172,10,1]]);
+    </script>
+  </body>
+</html>

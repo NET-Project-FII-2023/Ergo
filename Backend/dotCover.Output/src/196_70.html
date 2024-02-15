@@ -2,38 +2,33 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Comments\Queries\CommentDto.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\InboxItems\Queries\GetByUserId\GetByUserIdDto.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Domain.Entities;
-using Ergo.Domain.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ergo.Application.Features.Comments.Queries
+namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
 {
-    public class CommentDto
+    public class GetByUserIdDto
     {
-        public Guid CommentId { get; set; }
-        public string? CreatedBy { get; set; }
+        public Guid InboxItemId { get; set; }
+        public Guid UserId { get; set; }
+        public string Message { get; set; }
         public DateTime CreatedDate { get; set; }
-        public string? LastModifiedBy { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public string? CommentText { get; set; }
-        public Guid TaskId { get; set; }
-
+        public bool IsRead { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[13,33,13,37,1],[13,38,13,42,1],[14,36,14,40,1],[14,41,14,45,1],[15,39,15,43,1],[15,44,15,48,1],[16,41,16,45,1],[16,46,16,50,1],[17,44,17,48,1],[17,49,17,53,1],[18,38,18,42,1],[18,43,18,47,1],[19,30,19,34,1],[19,35,19,39,1]]);
+      highlightRanges([[11,35,11,39,0],[11,40,11,44,0],[12,30,12,34,0],[12,35,12,39,0],[13,33,13,37,0],[13,38,13,42,0],[14,39,14,43,0],[14,44,14,48,0],[15,30,15,34,0],[15,35,15,39,0]]);
     </script>
   </body>
 </html>

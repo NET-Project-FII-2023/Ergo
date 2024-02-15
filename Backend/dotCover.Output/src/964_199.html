@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\ResetPasswordController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Photos.Commands.AddPhotoToTaskItem;
+using Ergo.Application.Features.Photos.Commands.DeletePhoto;
+using Ergo.Application.Features.Photos.Queries.GetPhotosForTaskItem;
+using Ergo.Application.Features.ResetCode.Commands.CreateResetCode;
+using Ergo.Application.Features.ResetCode.Queries.VerifyResetCode;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Ergo.Api.Controllers
+{
+
+    public class ResetPasswordController : ApiControllerBase
+    {
+        [HttpPost]
+        [Route(&quot;reset-code&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; ResetCode(CreateResetCodeCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+
+        }
+        [HttpPost]
+        [Route(&quot;verify-reset-code&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; VerifyResetCode(VerifyResetCodeQuery query)
+        {
+            var result = await Mediator.Send(query);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[19,9,19,10,0],[20,13,20,55,0],[21,13,21,33,0],[22,13,22,14,0],[23,17,23,43,0],[25,13,25,31,0],[27,9,27,10,0],[32,9,32,10,0],[33,13,33,53,0],[34,13,34,33,0],[35,13,35,14,0],[36,17,36,43,0],[38,13,38,31,0],[40,9,40,10,0]]);
+    </script>
+  </body>
+</html>

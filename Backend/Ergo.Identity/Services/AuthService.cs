@@ -10,6 +10,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Security.Cryptography;
+
 
 namespace Ergo.Identity.Services
 {
@@ -22,7 +24,6 @@ namespace Ergo.Identity.Services
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly IConfiguration configuration;
         private readonly IPasswordResetCode passwordResetCodeRepository;
-        private readonly IUserPhotoRepository _userPhotoRepository;
         public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration, SignInManager<ApplicationUser> signInManager, IUserRepository userRepository, IPasswordResetCode passwordResetCodeRepository, IBadgeRepository badgeRepository)
         {
             this.userManager = userManager;
@@ -117,9 +118,10 @@ namespace Ergo.Identity.Services
             {
                 var usernameToSearch = payload.Email.Split("@")[0];
                 var userName = userManager.Users.FirstOrDefault(u => u.UserName == usernameToSearch);
+                var randomGenerator = RandomNumberGenerator.Create();
                 if (userName != null)
                 {
-                    usernameToSearch += new Random().Next(10, 99);
+                    usernameToSearch += randomGenerator.GetHashCode().ToString()[..3];
                 }
                 user = new ApplicationUser
                 {

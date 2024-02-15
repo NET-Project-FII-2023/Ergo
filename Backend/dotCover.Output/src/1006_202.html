@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Repositories\UserVotedBadgesRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+
+namespace Infrastructure.Repositories
+{
+    public class UserVotedBadgesRepository : BaseRepository&lt;UserVotedBadges&gt;, IUserVotedBadgesRepository
+    {
+        public UserVotedBadgesRepository(ErgoContext context) : base(context)
+        {
+        }
+
+        public async Task&lt;bool&gt; GetUserVotedBadge(Guid voterId, Guid votedId, string type)
+        {
+            var vote = context.UserVotedBadges
+                .Where(b =&gt; b.VoterId == voterId &amp;&amp; b.VotedId == votedId &amp;&amp; b.Type == type)
+                .FirstOrDefault();
+            if (vote == null)
+            {
+                return false;
+            }
+            return true;
+        }
+    }
+
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[8,65,8,78,0],[9,9,9,10,0],[10,9,10,10,0],[13,9,13,10,0],[14,13,16,35,0],[17,13,17,30,0],[18,13,18,14,0],[19,17,19,30,0],[21,13,21,25,0],[22,9,22,10,0]]);
+    </script>
+  </body>
+</html>

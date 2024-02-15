@@ -1,16 +1,26 @@
-﻿using Ergo.Application.Persistence;
+﻿using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Identity.Models;
 using NSubstitute;
 
 namespace Ergo.Application.Tests.RepositoryMocks
 {
     public static class UserManagerRepositoryMocks
     {
-        //public static IUserManager GetUserManager()
+        internal readonly static List<UserDto> Users =
+        [
+            new UserDto { UserId = "1", Username = "User 1"},
+            new UserDto { UserId = "2", Username = "User 2" }
+            
+        ];
+        //public static IUserManager GetUserManagerRepository()
         //{
-        //    var userManager = Substitute.For<IUserManager>();
-        //    userManager.FindByIdAsync(Arg.Any<Guid>()).Returns(Result<User>.Success(new User()));
-        //    userManager.FindByUsernameAsync(Arg.Any<string>()).Returns(Result<User>.Success(new User()));
-        //    return userManager;
+        //    var mockUserManager = Substitute.For<IUserManager>();
+        //    mockUserManager.GetAllAsync().Returns(Result<IReadOnlyList<UserDto>>.Success(Users));
+
+            
         //}
+       
     }
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\StatisticsController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+
+using Ergo.Application.Features.Statistics.Queries.GetTasksDueThisWeek;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Ergo.Api.Controllers;
+
+public class StatisticsController : ApiControllerBase
+{
+    [Authorize(Roles = &quot;User&quot;)]
+    [HttpGet(&quot;GetTasksDueThisWeek/{userId:guid}&quot;)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task&lt;IActionResult&gt; GetTasksDueThisWeek(Guid userId)
+    {
+        var query = new GetTasksDueThisWeekQuery { UserId = userId };
+        var result = await Mediator.Send(query);
+        return Ok(result);
+    }   
+}
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[14,5,14,6,0],[15,9,15,70,0],[16,9,16,49,0],[17,9,17,27,0],[18,5,18,6,0]]);
+    </script>
+  </body>
+</html>

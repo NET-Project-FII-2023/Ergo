@@ -1,1 +1,1 @@
-I:\Facultate\Ergo\Ergo\Backend\.sonarqube\out\0
+I:\Facultate\ErgoUpdate\Ergo\Backend\.sonarqube\out\0

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Comments\Commands\CreateComment\CreateCommentDto.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ergo.Application.Features.Comments.Commands.CreateComment
+{
+    public class CreateCommentDto
+    {
+        public Guid CommentId { get; set; }
+        public string CreatedBy { get; set; } = default!;
+        public DateTime CreatedDate { get; set; }
+        public string LastModifiedBy { get; set; } = default!;
+
+        public DateTime LastModifiedDate { get; set; }
+        public string CommentText { get; set; } = default!;
+       public Guid TaskId { get; set;}
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[12,33,12,37,0],[12,38,12,42,0],[13,35,13,39,0],[13,40,13,44,1],[13,49,13,57,1],[14,39,14,43,0],[14,44,14,48,1],[15,40,15,44,0],[15,45,15,49,1],[15,54,15,62,1],[17,44,17,48,0],[17,49,17,53,1],[18,37,18,41,0],[18,42,18,46,1],[18,51,18,59,1],[19,29,19,33,0],[19,34,19,38,1]]);
+    </script>
+  </body>
+</html>

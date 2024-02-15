@@ -2,78 +2,27 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\InboxItems\Commands\CreateInboxItem\CreateInboxItemCommandHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\ML\Query\GetTaskPrediction\TaskPredictionQuery.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
-using Ergo.Domain.Entities;
+using Ergo.Domain.Entities.ML;
 using MediatR;
 
-namespace Ergo.Application.Features.InboxItems.Commands.CreateInboxItem
+namespace Ergo.Application.Features.ML.Query.GetTaskPrediction
 {
-    public class CreateInboxItemCommandHandler : IRequestHandler&lt;CreateInboxItemCommand, CreateInboxItemCommandResponse&gt;
+    public class TaskPredictionQuery : IRequest&lt;TaskPredictionQueryResponse&gt;
     {
-        private readonly IInboxItemRepository inboxItemRepository;
-        private readonly IUserRepository userRepository;
+        public TaskDataDto TaskData { get; set; }
 
-        public CreateInboxItemCommandHandler(IInboxItemRepository inboxItemRepository, IUserRepository userRepository)
-        {
-            this.inboxItemRepository = inboxItemRepository;
-            this.userRepository = userRepository;
-        }
-
-        public async Task&lt;CreateInboxItemCommandResponse&gt; Handle(CreateInboxItemCommand request, CancellationToken cancellationToken)
-        {
-            var validator = new CreateInboxItemCommandValidator();
-            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-            if (!validatorResult.IsValid)
-            {
-                return new CreateInboxItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
-                };
-            }
-            var userExists = await userRepository.FindByIdAsync(request.UserId);
-            if (!userExists.IsSuccess)
-            {
-                return new CreateInboxItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;User with the provided ID does not exist.&quot; }
-                };
-            }
-            var inboxItem = InboxItem.Create(request.UserId, request.Message);
-            if (!inboxItem.IsSuccess)
-            {
-                return new CreateInboxItemCommandResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { inboxItem.Error }
-                };
-            }
-            await inboxItemRepository.AddAsync(inboxItem.Value);
-            return new CreateInboxItemCommandResponse
-            {
-                Success = true,
-                InboxItem = new CreateInboxItemDto
-                {
-                    Message = inboxItem.Value.Message,
-                    UserId = inboxItem.Value.UserId,
-                    CreatedDate = inboxItem.Value.CreatedDate,
-                    IsRead = inboxItem.Value.IsRead
-                }
-            };
-        }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,9,12,119,0],[13,9,13,10,0],[14,13,14,60,0],[15,13,15,50,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,20,67,0],[21,13,21,93,0],[22,13,22,42,0],[23,13,23,14,0],[24,17,27,76,0],[27,76,27,90,0],[27,90,28,19,0],[30,13,30,81,0],[31,13,31,39,0],[32,13,32,14,0],[33,17,37,19,0],[39,13,39,79,0],[40,13,40,38,0],[41,13,41,14,0],[42,17,46,19,0],[48,13,48,65,0],[49,13,59,15,0],[60,9,60,10,0]]);
+      highlightRanges([[8,39,8,43,1],[8,44,8,48,1]]);
     </script>
   </body>
 </html>

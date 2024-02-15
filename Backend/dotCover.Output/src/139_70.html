@@ -2,30 +2,48 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubData\GetProjectGithubDataQueryValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetAll\GetAllUsersQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
+using Ergo.Application.Persistence;
+using MediatR;
 
-namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
+namespace Ergo.Application.Features.Users.Queries.GetAll
 {
-    public class GetProjectGithubDataQueryValidator : AbstractValidator&lt;GetProjectGithubDataQuery&gt;
+    public class GetAllUsersQueryHandler : IRequestHandler&lt;GetAllUsersQuery, GetAllUsersResponse&gt;
     {
-        public GetProjectGithubDataQueryValidator()
+        private readonly IUserManager userRepository;
+
+        public GetAllUsersQueryHandler(IUserManager userRepository)
         {
-            RuleFor(p =&gt; p.ProjectId)
-                .NotEmpty().WithMessage(&quot;{PropertyName} is required.&quot;)
-                .NotNull();
+            this.userRepository = userRepository;
+        }
+        public async Task&lt;GetAllUsersResponse&gt; Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+        {
+            GetAllUsersResponse response = new();
+            var result = await userRepository.GetAllAsync();
+            if(result.IsSuccess)
+            {
+                response.Users = result.Value.Select(u =&gt; new UserDto
+                { 
+                    UserId = u.UserId,
+                    Name = u.Name,
+                    Username = u.Username,
+                    Email = u.Email,
+                    Roles = u.Roles
+                }).ToList();
+            }
+            return response;
         }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,52,0],[8,9,8,10,0],[9,13,11,28,0],[12,9,12,10,0]]);
+      highlightRanges([[10,9,10,68,1],[11,9,11,10,1],[12,13,12,50,1],[13,9,13,10,1],[15,9,15,10,1],[16,13,16,50,1],[17,13,17,61,1],[18,13,18,33,1],[19,13,19,14,1],[20,17,20,59,1],[20,59,27,18,1],[27,18,27,29,1],[28,13,28,14,1],[29,13,29,29,1],[30,9,30,10,1]]);
     </script>
   </body>
 </html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Infrastructure\Repositories\CommentRepository.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+
+namespace Infrastructure.Repositories
+{
+    public class CommentRepository : BaseRepository&lt;Comment&gt;, ICommentRepository
+    {
+        public CommentRepository(ErgoContext context) : base(context)
+        {
+        }
+        public Task&lt;int&gt; GetNumberOfCommentsByUserIdAsync(string name)
+        {
+            return context.Comments.CountAsync(x =&gt; x.CreatedBy == name);
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,57,10,70,1],[11,9,11,10,1],[12,9,12,10,1],[14,9,14,10,0],[15,13,15,74,0],[16,9,16,10,0]]);
+    </script>
+  </body>
+</html>

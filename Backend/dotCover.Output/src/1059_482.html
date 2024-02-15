@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\UserManagerRepositoryMocks.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Identity.Models;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.RepositoryMocks
+{
+    public static class UserManagerRepositoryMocks
+    {
+        internal readonly static List&lt;UserDto&gt; Users =
+        [
+            new UserDto { UserId = &quot;1&quot;, Username = &quot;User 1&quot;},
+            new UserDto { UserId = &quot;2&quot;, Username = &quot;User 2&quot; }
+            
+        ];
+        //public static IUserManager GetUserManagerRepository()
+        //{
+        //    var mockUserManager = Substitute.For&lt;IUserManager&gt;();
+        //    mockUserManager.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;UserDto&gt;&gt;.Success(Users));
+
+            
+        //}
+       
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[11,9,16,11,0]]);
+    </script>
+  </body>
+</html>

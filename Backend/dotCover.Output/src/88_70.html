@@ -2,51 +2,28 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\ResetCode\Queries\VerifyResetCode\VerifyResetCodeQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AssignTaskItemToUser\AssignTaskItemToUserCommand.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Persistence;
 using MediatR;
 
-namespace Ergo.Application.Features.ResetCode.Queries.VerifyResetCode
+namespace Ergo.Application.Features.TaskItems.Commands.AssignTaskItemToUser
 {
-    public class VerifyResetCodeQueryHandler : IRequestHandler&lt;VerifyResetCodeQuery, VerifyResetCodeResponse&gt;
+    public class AssignTaskItemToUserCommand : IRequest&lt;AssignTaskItemToUserCommandResponse&gt;
     {
-        private readonly IPasswordResetCode passwordResetCodeRepository;
-        public VerifyResetCodeQueryHandler(IPasswordResetCode passwordResetCodeRepository)
-        {
-            this.passwordResetCodeRepository = passwordResetCodeRepository;
-        }
+        public Guid TaskItemId { get; set; }
+        public Guid UserId { get; set; }
 
-        public async Task&lt;VerifyResetCodeResponse&gt; Handle(VerifyResetCodeQuery request, CancellationToken cancellationToken)
-        {
-
-            var hasValidCode = await passwordResetCodeRepository.HasValidCodeByEmailAsync(request.Email,request.Code);
-            if(!hasValidCode)
-            {
-                return new VerifyResetCodeResponse
-                {
-                    Success = false,
-                    ValidationsErrors = new List&lt;string&gt; { &quot;Invalid reset code or expired.&quot; }
-                };
-                
-            }
-            //await passwordResetCodeRepository.InvalidateExistingCodesAsync(request.Email);
-            return new VerifyResetCodeResponse
-            {
-                Success = true
-            };
-
-        }
     }
+
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[9,9,9,91,0],[10,9,10,10,0],[11,13,11,76,0],[12,9,12,10,0],[15,9,15,10,0],[17,13,17,119,0],[18,13,18,30,0],[19,13,19,14,0],[20,17,24,19,0],[28,13,31,15,0],[33,9,33,10,0]]);
+      highlightRanges([[7,34,7,38,0],[7,39,7,43,0],[8,30,8,34,0],[8,35,8,39,0]]);
     </script>
   </body>
 </html>

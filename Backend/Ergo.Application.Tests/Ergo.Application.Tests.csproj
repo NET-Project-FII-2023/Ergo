@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\**" />
+    <EmbeddedResource Remove="Commands\**" />
+    <None Remove="Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageReference Include="NSubstitute" Version="5.1.0" />
@@ -26,12 +32,18 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ergo.Application\Ergo.Application.csproj" />
+    <ProjectReference Include="..\Ergo.Identity\Ergo.Identity.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\" />
 
     <Folder Include="Comments\Queries\" />
+
+    <Folder Include="InboxItems\Queries\" />
+
+    <Folder Include="ResetCode\Commands\" />
+
+    <Folder Include="ResetCode\Queries\" />
 
     <Folder Include="TaskItems\Commands\" />
 

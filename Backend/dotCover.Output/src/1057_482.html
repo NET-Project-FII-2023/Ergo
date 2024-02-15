@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application.Tests\RepositoryMocks\ProjectRepositoryMocks.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.RepositoryMocks
+{
+    public static class ProjectRepositoryMocks
+    {
+        internal readonly static List&lt;Project&gt; Projects =
+        [
+            Project.Create(&quot;Project 1&quot;, &quot;Description 1&quot;, null, null, &quot;GitRepository 1&quot;, DateTime.Now.AddDays(1), &quot;FullName 1&quot;).Value,
+            Project.Create(&quot;Project 2&quot;, &quot;Description 2&quot;, null, null, null, DateTime.Now.AddDays(2), &quot;FullName 2&quot;).Value
+        ];
+
+        public static IProjectRepository GetProjectRepository()
+        {
+            var mockProjectRepository = Substitute.For&lt;IProjectRepository&gt;();
+
+            mockProjectRepository.GetAllAsync().Returns(Result&lt;IReadOnlyList&lt;Project&gt;&gt;.Success(Projects));
+            mockProjectRepository.FindByIdAsync(Projects[0].ProjectId)
+                .Returns(Result&lt;Project&gt;.Success(Projects[0]));
+            mockProjectRepository.FindByIdAsync(Projects[1].ProjectId)
+                .Returns(Result&lt;Project&gt;.Success(Projects[1]));
+
+            mockProjectRepository.FindByIdAsync(Arg.Is&lt;Guid&gt;(id =&gt; id != Projects[0].ProjectId &amp;&amp; id != Projects[1].ProjectId))
+                .Returns(Result&lt;Project&gt;.Failure(&quot;Not found&quot;));
+
+            return mockProjectRepository;
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,14,11,1],[17,9,17,10,1],[18,13,18,78,1],[20,13,20,107,1],[21,13,22,64,1],[23,13,24,64,1],[26,13,27,64,1],[29,13,29,42,1],[30,9,30,10,1]]);
+    </script>
+  </body>
+</html>

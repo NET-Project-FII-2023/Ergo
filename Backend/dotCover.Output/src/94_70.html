@@ -2,29 +2,28 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\ResetCode\Commands\CreateResetCode\CreateResetCodeCommandValidator.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AddManualTimeTaskItem\AddManualTimeTaskItemCommandResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using FluentValidation;
+using Ergo.Application.Responses;
 
-namespace Ergo.Application.Features.ResetCode.Commands.CreateResetCode
+namespace Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem
 {
-    public class CreateResetCodeCommandValidator : AbstractValidator&lt;CreateResetCodeCommand&gt;
+    public class AddManualTimeTaskItemCommandResponse : BaseResponse
     {
-        public CreateResetCodeCommandValidator()
+        public AddManualTimeTaskItemCommandResponse() : base()
         {
-            RuleFor(i =&gt; i.Email).NotEmpty().NotEmpty().WithMessage(&quot;{PropertyName} is required&quot;)
-                .NotNull();
+
         }
+        public TimeSpan TotalTimeSpent { get; set; }
     }
 }
-
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,9,7,49,0],[8,9,8,10,0],[9,13,10,28,0],[11,9,11,10,0]]);
+      highlightRanges([[7,57,7,63,0],[8,9,8,10,0],[10,9,10,10,0],[11,42,11,46,0],[11,47,11,51,0]]);
     </script>
   </body>
 </html>

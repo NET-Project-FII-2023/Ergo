@@ -2,32 +2,32 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\AddManualTimeTaskItem\AddManualTimeTaskItemCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\TaskItems\Commands\CreateTaskItem\CreateTaskItemCommand.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using Ergo.Domain.Entities.Enums;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
-using Swashbuckle.AspNetCore.Annotations;
 
-namespace Ergo.Application.Features.TaskItems.Commands.AddManualTimeTaskItem
+namespace Ergo.Application.Features.TaskItems.Commands.CreateTaskItem
 {
-    public class AddManualTimeTaskItemCommand : IRequest&lt;AddManualTimeTaskItemCommandResponse&gt;
+    public class CreateTaskItemCommand : IRequest&lt;CreateTaskItemCommandResponse&gt;
     {
-        public Guid TaskItemId { get; set; }
-        public Guid UserId { get; set; }
-
-        [SwaggerSchema(Format = &quot;time-span&quot;)]
-        [DataType(DataType.Duration)]
-        public TimeSpan TimeSpent { get; set; }
+        public string TaskName { get; set; } = default!;
+        public string Description { get; set; } = default!;
+        public DateTime Deadline { get; set; } = default!;
+        public string CreatedBy { get; set; } = default!;
+        public Guid ProjectId { get; set; }
+        public TaskState? State { get; set; } = TaskState.ToDo;
+        public string? Branch { get; set; } = default!;
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[9,34,9,38,0],[9,39,9,43,0],[10,30,10,34,0],[10,35,10,39,0],[14,37,14,41,0],[14,42,14,46,0]]);
+      highlightRanges([[8,34,8,38,1],[8,39,8,43,1],[8,48,8,56,1],[9,37,9,41,1],[9,42,9,46,1],[9,51,9,59,1],[10,36,10,40,1],[10,41,10,45,1],[10,50,10,58,1],[11,35,11,39,1],[11,40,11,44,1],[11,49,11,57,1],[12,33,12,37,1],[12,38,12,42,1],[13,35,13,39,1],[13,40,13,44,1],[13,49,13,63,1],[14,33,14,37,1],[14,38,14,42,0],[14,47,14,55,1]]);
     </script>
   </body>
 </html>

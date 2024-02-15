@@ -199,19 +199,19 @@ public class TaskItemsController : ApiControllerBase
         return Ok(result);
     }
     //[Authorize(Roles = "User")]
-    [HttpPut("DeleteAssignedUser")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeleteAssignedUser(DeleteAssignedUserFromTaskCommand command)
-    {
-        var result = await Mediator.Send(command);
+    //[HttpPut("DeleteAssignedUser")]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //public async Task<IActionResult> DeleteAssignedUser(DeleteAssignedUserFromTaskCommand command)
+    //{
+    //    var result = await Mediator.Send(command);
 
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
+    //    if (!result.Success)
+    //    {
+    //        return BadRequest(result);
+    //    }
 
-        return Ok(result);
-    }    
+    //    return Ok(result);
+    //}    
     [Authorize(Roles = "User")]
     [HttpGet("ByProjectsOfUser/{userId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]

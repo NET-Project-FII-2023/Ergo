@@ -2,26 +2,29 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubBranches\GetProjectGithubBranchesQuery.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Queries\GetAll\GetAllUsersResponse.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubBranches
+namespace Ergo.Application.Features.Users.Queries.GetAll
 {
-    public class GetProjectGithubBranchesQuery : IRequest&lt;GetProjectGithubBranchesQueryResponse&gt;
+    public class GetAllUsersResponse
     {
-        public Guid ProjectId { get; set; }
-
+        public List&lt;UserDto&gt;? Users { get; set; }
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,33,7,37,0],[7,38,7,42,0]]);
+      highlightRanges([[11,39,11,43,1],[11,44,11,48,1]]);
     </script>
   </body>
 </html>

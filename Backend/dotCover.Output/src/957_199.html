@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Api\Controllers\OpenAiController.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Api.Models.OpenAi;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+
+namespace Ergo.Api.Controllers
+{
+    public class OpenAiController : ApiControllerBase
+    {
+        private readonly HttpClient _httpClient;
+
+        public OpenAiController(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
+        [HttpPost]
+        [Authorize(Roles = &quot;User&quot;)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task&lt;IActionResult&gt; Post(ChatGptRequest request)
+        {
+            if (request.Type != &quot;task&quot; &amp;&amp; request.Type != &quot;project-tasks&quot;)
+            {
+                return BadRequest(&quot;Invalid type&quot;);
+            }
+            string messageContent = request.Type switch
+            {
+                &quot;task&quot; =&gt; $&quot;Based on the title {request.Title} and the descriptive phrase {request.Description}, generate a comprehensive and insightful description. This description should delve into the key aspects, implications, and functionalities related to the title and phrase. Please ensure that the resulting description is concise, not exceeding 500 characters. The response should contain only the description, with no additional text or explanations. The focus is on clarity and depth, within the 500-character limit.&quot;,
+                &quot;project-tasks&quot; =&gt; $&quot;Generate a JSON file of type \&quot;tasks\&quot;:[{{\&quot;taskName\&quot;: string, \&quot;description\&quot;: string}}] with descriptive tasknames for a project named {request.Title} with the description {request.Description} where you divide the project in tasks. Include only the JSON file in the response, nothing else.&quot;,
+                _ =&gt; $&quot;Generate me a task description maximum 300 tokens based on this phrase {request.Description}&quot;,
+            };
+            
+            var requestBody = new
+            {
+                model = &quot;gpt-3.5-turbo&quot;,
+                messages = new[] { new { role = &quot;user&quot;, content = messageContent } },
+                max_tokens = 300
+            };
+
+            var httpContent = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, &quot;application/json&quot;);
+            string openAiKey = DotNetEnv.Env.GetString(&quot;OpenAiSecretKey&quot;);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(&quot;Bearer&quot;, openAiKey);
+
+            var response = await _httpClient.PostAsync(&quot;https://api.openai.com/v1/chat/completions&quot;, httpContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var chatResponse = JObject.Parse(responseContent).ToObject&lt;OpenAIChatResponse&gt;();
+
+                var firstChoiceContent = chatResponse.Choices.First().Message.Content;
+
+                return Ok(firstChoiceContent);
+
+            }
+
+            return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+        }
+
+
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[15,9,15,55,0],[16,9,16,10,0],[17,13,17,38,0],[18,9,18,10,0],[24,9,24,10,0],[25,13,25,75,0],[26,13,26,14,0],[27,17,27,51,0],[29,13,31,27,0],[31,27,31,531,0],[31,531,32,36,0],[32,36,32,332,0],[32,332,33,22,0],[33,22,33,117,0],[33,117,34,15,0],[36,13,41,15,0],[43,13,43,123,0],[44,13,44,75,0],[45,13,45,114,0],[47,13,47,115,0],[49,13,49,46,0],[50,13,50,14,0],[51,17,51,82,0],[52,17,52,98,0],[54,17,54,87,0],[56,17,56,47,0],[60,13,60,101,0],[61,9,61,10,0]]);
+    </script>
+  </body>
+</html>

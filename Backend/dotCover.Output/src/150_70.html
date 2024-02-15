@@ -2,26 +2,70 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Projects\Commands\DeleteUserFromProject\DeleteUserFromProjectCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Projects\Queries\GetProjectGithubData\GetProjectGithubDataQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
+using Ergo.Application.Persistence;
 using MediatR;
 
-namespace Ergo.Application.Features.Projects.Commands.DeleteUserFromProject
+namespace Ergo.Application.Features.Projects.Queries.GetProjectGithubData
 {
-    public class DeleteUserFromProjectCommand : IRequest&lt;DeleteUserFromProjectCommandResponse&gt;
+    public class GetProjectGithubDataHandler : IRequestHandler&lt;GetProjectGithubDataQuery, GetProjectGithubDataQueryResponse&gt;
     {
-        public string OwnerUsername { get; set; }
-        public string UserId { get; set; }
-        public string ProjectId { get; set; }
+        private readonly IProjectRepository projectRepository;
+
+        public GetProjectGithubDataHandler(IProjectRepository projectRepository)
+        {
+            this.projectRepository = projectRepository;
+        }
+
+        public async Task&lt;GetProjectGithubDataQueryResponse&gt; Handle(GetProjectGithubDataQuery request, CancellationToken cancellationToken)
+        {
+            var validator = new GetProjectGithubDataQueryValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if (!validatorResult.IsValid)
+            {
+                return new GetProjectGithubDataQueryResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e =&gt; e.ErrorMessage).ToList()
+                };
+            }
+            var project = await projectRepository.FindByIdAsync(request.ProjectId);
+            if (!project.IsSuccess)
+            {
+                return new GetProjectGithubDataQueryResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;Project with this id doesn&#39;t exist!&quot; }
+                };
+            }
+            if(project.Value.GithubOwner == null || project.Value.GitRepository == null)
+            {
+                return new GetProjectGithubDataQueryResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;Project does not have github data&quot; }
+                };
+            }
+            return new GetProjectGithubDataQueryResponse
+            {
+                Success = true,
+                ProjectOwner = project.Value.GithubOwner,
+                ProjectRepository = project.Value.GitRepository,
+                GithubToken = project.Value.GithubToken
+            };
+        }
     }
 }
+
     </pre>
     <script type="text/javascript">
-      highlightRanges([[7,39,7,43,0],[7,44,7,48,0],[8,32,8,36,0],[8,37,8,41,0],[9,35,9,39,0],[9,40,9,44,0]]);
+      highlightRanges([[10,9,10,81,0],[11,9,11,10,0],[12,13,12,56,0],[13,9,13,10,0],[16,9,16,10,0],[17,13,17,70,0],[18,13,18,93,0],[20,13,20,42,0],[21,13,21,14,0],[22,17,25,76,0],[25,76,25,90,0],[25,90,26,19,0],[28,13,28,84,0],[29,13,29,36,0],[30,13,30,14,0],[31,17,35,19,0],[37,13,37,89,0],[38,13,38,14,0],[39,17,43,19,0],[45,13,51,15,0],[52,9,52,10,0]]);
     </script>
   </body>
 </html>

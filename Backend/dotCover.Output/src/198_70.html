@@ -2,72 +2,62 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Comments\Queries\GetByTaskId\GetCommentByTaskIdQueryHandler.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\InboxItems\Queries\GetByUserId\GetByUserIdQueryHandler.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Application.Responses;
-using MediatR;
-using Ergo.Application.Features.Comments.Queries.GetByTaskId;
+using Ergo.Application.Features.InboxItems.Commands.CreateInboxItem;
 using Ergo.Application.Persistence;
+using MediatR;
 
-namespace Ergo.Application.Features.Comments.Queries.GetByTaskId
+namespace Ergo.Application.Features.InboxItems.Queries.GetByUserId
 {
-	public class GetCommentByTaskIdQueryHandler : IRequestHandler&lt;GetCommentByTaskIdQuery,GetCommentByTaskIdQueryResponse&gt;
-	{
-		private readonly ICommentRepository _commentRepository;
+    public class GetByUserIdQueryHandler : IRequestHandler&lt;GetByUserIdQuery, GetByUserIdQueryResponse&gt;
+    {
+        private readonly IInboxItemRepository inboxItemRepository;
+        private readonly IUserRepository userRepository;
 
-		public GetCommentByTaskIdQueryHandler(ICommentRepository commentRepository)
-		{
-			_commentRepository = commentRepository;
-		}
+        public GetByUserIdQueryHandler(IInboxItemRepository inboxItemRepository, IUserRepository userRepository)
+        {
+            this.inboxItemRepository = inboxItemRepository;
+            this.userRepository = userRepository;
+        }
 
-		public async Task&lt;GetCommentByTaskIdQueryResponse&gt; Handle(GetCommentByTaskIdQuery request, CancellationToken cancellationToken)
-		{
-			var commentResult = await _commentRepository.GetCommentByTaskIdAsync(request.TaskId);
+        public async Task&lt;GetByUserIdQueryResponse&gt; Handle(GetByUserIdQuery request, CancellationToken cancellationToken)
+        {
+            var userExists = await userRepository.FindByIdAsync(request.UserId);
+            if(!userExists.IsSuccess)
+            {
+                return new GetByUserIdQueryResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List&lt;string&gt; { &quot;User with the provided ID does not exist.&quot; }
+                };
+            }
+            var inboxItems = await inboxItemRepository.GetByUserIdAsync(request.UserId);
+            return new GetByUserIdQueryResponse
+            {
+                Success = true,
+                InboxItems = inboxItems.Select(x =&gt; new GetByUserIdDto
+                {
+                   InboxItemId = x.InboxItemId,
+                   UserId = x.UserId,
+                   Message = x.Message,
+                   CreatedDate = x.CreatedDate,
+                   IsRead = x.IsRead,
 
-			if (!commentResult.IsSuccess)
-			{
-				return new GetCommentByTaskIdQueryResponse
-				{
-					Success = false,
-					Comments = null
-				};
-			}
-
-			var comments = commentResult.Value;
-
-			var commentDtos = new List&lt;CommentDto&gt;();
-
-			foreach (var comment in comments)
-			{
-				commentDtos.Add(new CommentDto
-				{
-					CommentId = comment.CommentId,
-					TaskId = comment.TaskId,
-					CommentText = comment.CommentText,
-					CreatedBy = comment.CreatedBy,
-					CreatedDate = comment.CreatedDate,
-					LastModifiedBy = comment.LastModifiedBy,
-					LastModifiedDate = comment.LastModifiedDate
-
-				});
-			}
-
-			return new GetCommentByTaskIdQueryResponse
-			{
-				Success = true,
-				Comments = commentDtos
-			};
-		}
-	}
+                }).ToList()
+            };
+               
+        }
+    }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,3,12,78,0],[13,3,13,4,0],[14,4,14,43,0],[15,3,15,4,0],[18,3,18,4,0],[19,4,19,89,0],[21,4,21,33,0],[22,4,22,5,0],[23,5,27,7,0],[30,4,30,39,0],[32,4,32,45,0],[34,4,34,11,0],[34,13,34,24,0],[34,25,34,27,0],[34,28,34,36,0],[35,4,35,5,0],[36,5,46,8,0],[47,4,47,5,0],[49,4,53,6,0],[54,3,54,4,0]]);
+      highlightRanges([[12,9,12,113,0],[13,9,13,10,0],[14,13,14,60,0],[15,13,15,50,0],[16,9,16,10,0],[19,9,19,10,0],[20,13,20,81,0],[21,13,21,38,0],[22,13,22,14,0],[23,17,27,19,0],[29,13,29,89,0],[30,13,33,53,0],[33,53,41,18,0],[41,18,42,15,0],[44,9,44,10,0]]);
     </script>
   </body>
 </html>

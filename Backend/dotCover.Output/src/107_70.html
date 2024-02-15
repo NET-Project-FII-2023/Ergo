@@ -2,30 +2,28 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\Ergo\Ergo\Backend\Ergo.Application\Features\Users\Commands\DeleteUser\DeleteUserCommand.cs</title>
+    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Application\Features\Users\Social.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Ergo.Application.Features.Users.Commands.DeleteUser
+namespace Ergo.Application.Features.Users
 {
-    public class DeleteUserCommand : IRequest&lt;DeleteUserCommandResponse&gt;
+    public class Social
     {
-        public Guid UserId { get; set; }
+        public string? Facebook { get; set; }
+        public string? TwitterX { get; set; }
+        public string? LinkedIn { get; set; }
+        public string? Instagram { get; set; }
+        public string? GitHub { get; set; }
+
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[12,30,12,34,0],[12,35,12,39,0]]);
+      highlightRanges([[5,35,5,39,0],[5,40,5,44,1],[6,35,6,39,0],[6,40,6,44,1],[7,35,7,39,0],[7,40,7,44,1],[8,36,8,40,0],[8,41,8,45,1],[9,33,9,37,0],[9,38,9,42,1]]);
     </script>
   </body>
 </html>
