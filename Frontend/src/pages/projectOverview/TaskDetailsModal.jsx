@@ -107,7 +107,6 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
         setCurrentTask(response.data.taskItem);
         setUpdatedDeadline(response.data.taskItem.deadline);
         console.log(response.data.taskItem);
-        console.log(response.data.taskItem.assignedUser);
       } else {
         console.error('Error fetching tasks:', response);
       }
@@ -142,6 +141,7 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
                   <AttachmentSection
                     attachedFiles={currentTask?.taskFiles || []}
                     handleFileInputChange={handleFileInputChange}
+                    handleFileDelete={fetchCurrentTask}
                   />
                   <CommentSection token={token} task={selectedTask} />
                   <div className="flex items-center px-2 mt-6">

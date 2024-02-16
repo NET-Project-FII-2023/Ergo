@@ -121,7 +121,7 @@ const TaskSection = ({ project, setProject, token, userId, handleOpenModal, hand
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`min-h-[50px] p-2`}
+            className={`min-h-[50px]`}
           >
             {tasks.map((taskItem, index) => (
               <Draggable key={taskItem.taskItemId} draggableId={taskItem.taskItemId.toString()} index={index}>

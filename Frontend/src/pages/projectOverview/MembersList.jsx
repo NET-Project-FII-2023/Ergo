@@ -48,8 +48,8 @@ const MembersList = ({ project, setAssignedMembers, token }) => {
             key={member.userId}
             className="bg-surface-darkest opacity-80 mb-2 rounded"
           >
-            <CardContent className='p-2 rounded bg-surface-dark'>
-              <div className='flex'>
+            <CardContent className='!p-5 rounded bg-surface-dark'>
+              <div className='flex items-center'>
                 <Tooltip content={member.name}>
                   <div
                     onClick={() => navigate(`/dashboard/profile/${member.userId}`)}

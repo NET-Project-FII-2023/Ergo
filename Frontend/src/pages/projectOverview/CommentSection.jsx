@@ -110,9 +110,9 @@ const CommentSection = ({ task, token }) => {
             </div>
 
             <div className="text-surface-light overflow-auto max-h-[14rem]" style={{scrollbarWidth: 'thin'}}>
-                {comments.map(comment => (
+                {comments.map((comment, i) => (
                   <Card
-                    className="mb-2 md:w-4/5 !rounded-lg"
+                    className={`${comments.length - 1 !== i && "mb-2"} md:w-4/5 !rounded-lg`}
                     key={comment.commentId}
                   >
                       <CardContent className='p-2 bg-surface-darkest'>

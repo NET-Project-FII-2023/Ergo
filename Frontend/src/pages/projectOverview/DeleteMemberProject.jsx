@@ -36,7 +36,11 @@ const DeleteMemberProject = ({project, token, currentUser, member, fetchMembers}
     return(
         <>
             {member.username !== project.createdBy && member.username !== currentUser.username && project.createdBy === currentUser.username && (
-                <PersonRemoveIcon fontSize="extraSmall" className="text-gray-400 ml-auto hover:text-red-300" onClick={() => handleUnassign(member.userId)}>x</PersonRemoveIcon>
+                <PersonRemoveIcon
+                  fontSize="extraSmall"
+                  className="text-gray-400 ml-auto hover:text-red-400 cursor-pointer"
+                  onClick={() => handleUnassign(member.userId)}
+                />
             )}
         </>
     );

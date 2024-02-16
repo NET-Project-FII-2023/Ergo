@@ -7,6 +7,8 @@ import SaveAsIcon from '@mui/icons-material/SaveAs';
 import { useUser } from '@/context/LoginRequired';
 import EditStateModal from './EditStateModal';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ErgoTextarea from "@/widgets/form_utils/ErgoTextArea";
+import ErgoInput from "@/widgets/form_utils/ErgoInput";
 
 
 const TaskMainInfo = ({ selectedTask, setSelectedTask, token,onClose }) => {
@@ -119,48 +121,48 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token,onClose }) => {
   }
   return (
     <div>
-      <div className="flex flex-col px-2 mt-2">
+      <div className="flex flex-col pr-2 mt-2">
       <div className='flex align-items gap-2'>
       {currentTask.state === 1 && (
-          <Button size='sm' onClick={handleOpenEditStateModal} className="w-[5rem] text-xs text-center rounded-md text-surface-darkest bg-secondary p-1">To Do</Button>
+          <Button size='sm' onClick={handleOpenEditStateModal} className="w-[5rem] text-xs text-center rounded-md text-surface-darkest bg-secondary p-1 ml-2">To Do</Button>
         )}
         {currentTask.state === 2 && (
-          <Button size='sm' onClick={handleOpenEditStateModal}  className="w-[7rem] text-xs text-center rounded-md text-surface-darkest bg-blue-400 p-1">In Progress</Button>
+          <Button size='sm' onClick={handleOpenEditStateModal}  className="w-[7rem] text-xs text-center rounded-md text-surface-darkest bg-blue-400 p-1 ml-2">In Progress</Button>
         )}
         {currentTask.state === 3 && (
-          <Button size='sm'  onClick={handleOpenEditStateModal} className="w-[3rem] text-xs text-center rounded-md text-surface-darkest bg-teal-300 p-1">Done</Button>
+          <Button size='sm'  onClick={handleOpenEditStateModal} className="w-[3rem] text-xs text-center rounded-md text-surface-darkest bg-teal-300 p-1 ml-2">Done</Button>
         )}
         <DeleteIcon className="text-secondary hover:text-red-900" fontSize='medium' onClick={handleDeleteTask}/>
       </div>
       
 
         {editMode.taskName && (selectedTask.assignedUser && selectedTask.assignedUser.username === currentUser.username) ? (
-          <div className='flex md:flex-row flex-col justify-center'>
-            <input
-              type="text"
+          <div className='flex md:flex-row flex-col justify-center items-center mt-4'>
+            <ErgoInput
               value={updatedTaskName}
-              onChange={(e) => setUpdatedTaskName(e.target.value)}
-              className="bg-transparent text-white text-3xl focus:outline-none mb-2"
+              onChange={(val) => setUpdatedTaskName(val)}
             />
-            <p onClick={handleSave}>
-              <SaveAsIcon fontSize='medium' className='text-surface-light hover:text-secondary ml-1 cursor-pointer' />
-            </p>
+            <SaveAsIcon
+              onClick={handleSave}
+              fontSize='medium'
+              className='text-surface-light hover:text-secondary ml-1 cursor-pointer'
+            />
           </div>
 
         ) : (
-          <Typography variant='h4' className='text-white py-2' onDoubleClick={() => handleDoubleClick('taskName')}>
-            {currentTask.taskName}
+          <Typography variant='h4' className='text-white py-2 ml-2' onDoubleClick={() => handleDoubleClick('taskName')}>
+            {updatedTaskName}
           </Typography>
         )}
       </div>
       <div className='flex flex-row mt-4 pr-2 items-center'>
         {editMode.description && selectedTask.assignedUser && selectedTask.assignedUser.username === currentUser.username ? (
           <div className="flex flex-grow items-center">
-            <textarea
+            <ErgoTextarea
               value={updatedDescription}
-              onChange={(e) => setUpdatedDescription(e.target.value)}
+              onChange={(val) => setUpdatedDescription(val)}
               className="bg-transparent text-white text-lg focus:outline-none resize-none border-2 p-4 border-surface-mid flex-grow"
-              style={{ height: '100px', outline: 'none' }}
+              style={{ height: '100px'}}
             />
             <button onClick={handleSave}>
               <SaveAsIcon fontSize='medium' className='text-surface-light ml-2 cursor-pointer hover:text-secondary' />
@@ -177,7 +179,7 @@ const TaskMainInfo = ({ selectedTask, setSelectedTask, token,onClose }) => {
               </p>
             </div>
             <p variant="body2" className='text-surface-light pl-2 py-2 pr-12 text-lg' onDoubleClick={() => handleDoubleClick('description')}>
-              {currentTask.description}
+              {updatedDescription}
             </p>
           </div>
         )}

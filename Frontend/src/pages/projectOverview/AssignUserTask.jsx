@@ -24,7 +24,6 @@ const AssignUserTask = ({ token, task, project }) => {
 
     const fetchCurrentTask = async () => {
         try {
-            console.log('fetching task:', task.taskItemId);
           const response = await api.get(`/api/v1/TaskItems/${task.taskItemId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -33,7 +32,6 @@ const AssignUserTask = ({ token, task, project }) => {
     
           if (response.status === 200) {
             setLoadedAssignedUser(response.data.taskItem.assignedUser);
-            console.log(response.data.taskItem.assignedUser);
           } else {
             console.error('Error fetching tasks:', response);
           }

@@ -109,9 +109,10 @@ type AttachmentSectionProps = {
     taskFileId: string;
   }[];
   handleFileInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFileDelete: () => void;
 }
 
-function AttachmentSection({attachedFiles, handleFileInputChange}: AttachmentSectionProps) {
+function AttachmentSection({attachedFiles, handleFileInputChange, handleFileDelete}: AttachmentSectionProps) {
   const currentUser = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<fileType[]>([]);
@@ -175,6 +176,7 @@ function AttachmentSection({attachedFiles, handleFileInputChange}: AttachmentSec
         })
 
         if(response.status === 200) {
+          handleFileDelete();
           setFiles(files.filter(file => file.fileId !== fileId))
           toast.success("File deleted successfully")
         }
