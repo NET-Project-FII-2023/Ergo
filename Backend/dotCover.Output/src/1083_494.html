@@ -2,36 +2,60 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>I:\Facultate\ErgoUpdate\Ergo\Backend\Ergo.Domain.Tests\ResultTests.cs</title>
+    <title>I:\Facultate\ErgoTestData\Ergo\Backend\Ergo.Domain.Tests\BaseResponseTests.cs</title>
     <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
   </head>
   <body>
     <pre id="content" class="source-code">
-using Ergo.Domain.Common;
+using Ergo.Application.Responses;
+using FluentAssertions;
 
 namespace Ergo.Domain.Tests
 {
-    public class ResultTests
+    public class BaseResponseTests
     {
         [Fact]
-        public void Result_Failure_SetsErrorProperty()
+        public void When_CreateBaseResponseIsCalled_Then_SuccessIsReturned()
         {
             //Arrange &amp;&amp; Act
-            string errorMessage = &quot;An error occurred&quot;;
-            var result = Result&lt;object&gt;.Failure(errorMessage);
+            var result = new BaseResponse();
             //Assert
-            Assert.False(result.IsSuccess);
-            Assert.Null(result.Value);
-            Assert.Equal(errorMessage, result.Error);
+            result.Success.Should().BeTrue();
         }
+        [Fact]
+        public void When_CreateBaseResponseIsCalled_Then_MessageIsNull()
+        {
+            //Arrange &amp;&amp; Act
+            var result = new BaseResponse();
+            //Assert
+            result.Message.Should().BeNull();
+        }
+        [Fact]
+        public void When_CreateBaseResponseIsCalled_Then_ValidationsErrorsIsNull()
+        {
+            //Arrange &amp;&amp; Act
+            var result = new BaseResponse();
+            //Assert
+            result.ValidationsErrors.Should().BeNull();
+        }
+        [Fact]
+        public void When_CreateBaseResponseIsCalled_Then_MessageIsNotNull()
+        {
+            //Arrange &amp;&amp; Act
+            var result = new BaseResponse(&quot;Test&quot;, true);
+            //Assert
+            result.Message.Should().NotBeNull();
+        }
+       
+        
 
     }
 }
 
     </pre>
     <script type="text/javascript">
-      highlightRanges([[9,9,9,10,1],[11,13,11,55,1],[12,13,12,63,1],[14,13,14,44,1],[15,13,15,39,1],[16,13,16,54,1],[17,9,17,10,1]]);
+      highlightRanges([[10,9,10,10,1],[12,13,12,45,1],[14,13,14,46,1],[15,9,15,10,1],[18,9,18,10,1],[20,13,20,45,1],[22,13,22,46,1],[23,9,23,10,1],[26,9,26,10,1],[28,13,28,45,1],[30,13,30,56,1],[31,9,31,10,1],[34,9,34,10,1],[36,13,36,57,1],[38,13,38,49,1],[39,9,39,10,1]]);
     </script>
   </body>
 </html>

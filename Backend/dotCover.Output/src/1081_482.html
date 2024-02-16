@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoTestData\Ergo\Backend\Ergo.Application.Tests\Badges\Commands\UpdateSpecialBadgeCommandHandlerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Badges.Commands.UpdateSpecialBadgeCommand;
+using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using FluentAssertions;
+using NSubstitute;
+namespace Ergo.Application.Tests.Badges.Commands
+{
+    public class UpdateSpecialBadgeCommandHandlerTests
+    {
+        private readonly IBadgeRepository _badgeRepository;
+        private readonly IUserManager _userManager;
+        private readonly IUserVotedBadgesRepository _userVotedBadgesRepository;
+        private readonly UpdateSpecialBadgeCommandHandler _handler;
+
+        public UpdateSpecialBadgeCommandHandlerTests()
+        {
+            _badgeRepository = Substitute.For&lt;IBadgeRepository&gt;();
+            _userManager = Substitute.For&lt;IUserManager&gt;();
+            _userVotedBadgesRepository = Substitute.For&lt;IUserVotedBadgesRepository&gt;();
+            _handler = new UpdateSpecialBadgeCommandHandler(_badgeRepository, _userManager, _userVotedBadgesRepository);
+        }
+
+        [Fact]
+        public async Task Handle_ValidationFailure_ReturnsErrorResponse()
+        {
+            // Arrange
+            var command = new UpdateSpecialBadgeCommand { };
+
+            // Act
+            var response = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            response.Success.Should().BeFalse();
+            response.ValidationsErrors.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public async Task Handle_UserNotFound_ReturnsErrorResponse()
+        {
+            // Arrange
+            var command = new UpdateSpecialBadgeCommand
+            {
+                VoterId = Guid.NewGuid(),
+                VotedId = Guid.NewGuid(),
+                Type = &quot;Innovator&quot;
+            };
+            _userManager.FindByIdAsync(Arg.Any&lt;Guid&gt;()).Returns(Task.FromResult(Result&lt;UserDto&gt;.Failure(&quot;Voter not found&quot;)));
+
+            // Act
+            var response = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            response.Success.Should().BeFalse();
+            response.ValidationsErrors.Should().Contain(&quot;Voter not found&quot;); // Updated to expect &quot;Voter not found&quot;
+        }
+
+        [Fact]
+        public async Task Handle_Success_ReturnsSuccessResponse()
+        {
+            // Arrange
+            var command = SetupValidCommand();
+            SetupMocksForSuccess();
+
+            // Act
+            var response = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            response.Success.Should().BeTrue();
+        }
+
+        private UpdateSpecialBadgeCommand SetupValidCommand()
+        {
+            return new UpdateSpecialBadgeCommand
+            {
+                VoterId = Guid.NewGuid(),
+                VotedId = Guid.NewGuid(),
+                Type = &quot;Innovator&quot;
+            };
+        }
+
+        private void SetupMocksForSuccess()
+        {
+            _userManager.FindByIdAsync(Arg.Any&lt;Guid&gt;()).Returns(Task.FromResult(Result&lt;UserDto&gt;.Success(new UserDto())));
+            _badgeRepository.GetBadgeByUserIdAndType(Arg.Any&lt;Guid&gt;(), Arg.Any&lt;string&gt;())
+                .Returns(Task.FromResult(Result&lt;Badge&gt;.Success(new Badge())));
+            _userVotedBadgesRepository.GetUserVotedBadge(Arg.Any&lt;Guid&gt;(), Arg.Any&lt;Guid&gt;(), Arg.Any&lt;string&gt;())
+                .Returns(Task.FromResult(false));
+            _userVotedBadgesRepository.AddAsync(Arg.Any&lt;UserVotedBadges&gt;())
+                .Returns(Task.FromResult(Result&lt;UserVotedBadges&gt;.Success(new UserVotedBadges())));
+            _badgeRepository.UpdateAsync(Arg.Any&lt;Badge&gt;())
+                .Returns(Task.FromResult(Result&lt;Badge&gt;.Success(new Badge())));
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,55,1],[18,9,18,10,1],[19,13,19,67,1],[20,13,20,59,1],[21,13,21,87,1],[22,13,22,121,1],[23,9,23,10,1],[27,9,27,10,1],[29,13,29,61,1],[32,13,32,83,1],[35,13,35,49,1],[36,13,36,62,1],[37,9,37,10,1],[41,9,41,10,1],[43,13,48,15,1],[49,13,49,126,1],[52,13,52,83,1],[55,13,55,49,1],[56,13,56,76,1],[57,9,57,10,1],[61,9,61,10,1],[63,13,63,47,1],[64,13,64,36,1],[67,13,67,83,1],[70,13,70,48,1],[71,9,71,10,1],[74,9,74,10,1],[75,13,80,15,1],[81,9,81,10,1],[84,9,84,10,1],[85,13,85,122,1],[86,13,87,79,1],[88,13,89,50,1],[90,13,91,99,1],[92,13,93,79,1],[94,9,94,10,1]]);
+    </script>
+  </body>
+</html>

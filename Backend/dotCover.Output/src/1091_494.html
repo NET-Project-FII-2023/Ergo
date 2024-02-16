@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoTestData\Ergo\Backend\Ergo.Domain.Tests\UserPhotoTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Domain.Entities;
+using FluentAssertions;
+
+namespace Ergo.Domain.Tests
+{
+    public class UserPhotoTests 
+    {
+        [Fact]
+        public void DefaultConstructorTest()
+        {
+            // Arrange &amp; Act
+            var userPhotoInstance = new UserPhoto();
+
+            // Assert
+            userPhotoInstance.Should().NotBeNull();
+        }
+        [Fact]
+        public void When_CreateUserPhotoIsCalled_And_PhotoUrlIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = UserPhoto.Create(&quot;Test&quot;, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateUserPhotoIsCalled_And_PhotoUrlIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = UserPhoto.Create(null, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_CreateUserPhotoIsCalled_And_UserIdIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = UserPhoto.Create(&quot;Test&quot;, &quot;Test&quot;);
+            //Assert
+            result.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_CreateUserPhotoIsCalled_And_UserIdIsNull_Then_FailureIsReturned()
+        {
+            //Arrange &amp;&amp; Act
+            var result = UserPhoto.Create(&quot;Test&quot;, null);
+            //Assert
+            result.IsSuccess.Should().BeFalse();
+        }
+        [Fact]
+        public void When_UpdateUserPhotoIsCalled_And_PhotoUrlIsValid_Then_SuccessIsReturned()
+        {
+            //Arrange 
+            var result = UserPhoto.Create(&quot;Test&quot;, &quot;Test&quot;);
+            //Act
+            var update = result.Value.UpdatePhoto(&quot;Test&quot;);
+            //Assert
+            update.IsSuccess.Should().BeTrue();
+        }
+        [Fact]
+        public void When_UpdateUserPhotoIsCalled_And_PhotoUrlIsNull_Then_FailureIsReturned()
+        {
+            //Arrange
+            var result = UserPhoto.Create(&quot;Test&quot;, &quot;Test&quot;);
+            //Act   
+            var update = result.Value.UpdatePhoto(&quot;&quot;);
+            //Assert
+            update.IsSuccess.Should().BeFalse();
+        }
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[10,9,10,10,1],[12,13,12,53,1],[15,13,15,52,1],[16,9,16,10,1],[19,9,19,10,1],[21,13,21,59,1],[23,13,23,48,1],[24,9,24,10,1],[27,9,27,10,1],[29,13,29,57,1],[31,13,31,49,1],[32,9,32,10,1],[35,9,35,10,1],[37,13,37,59,1],[39,13,39,48,1],[40,9,40,10,1],[43,9,43,10,1],[45,13,45,57,1],[47,13,47,49,1],[48,9,48,10,1],[51,9,51,10,1],[53,13,53,59,1],[55,13,55,59,1],[57,13,57,48,1],[58,9,58,10,1],[61,9,61,10,1],[63,13,63,59,1],[65,13,65,55,1],[67,13,67,49,1],[68,9,68,10,1]]);
+    </script>
+  </body>
+</html>

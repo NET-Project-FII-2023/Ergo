@@ -106,7 +106,6 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
       if (response.status === 200) {
         setCurrentTask(response.data.taskItem);
         setUpdatedDeadline(response.data.taskItem.deadline);
-        console.log(response.data.taskItem);
       } else {
         console.error('Error fetching tasks:', response);
       }

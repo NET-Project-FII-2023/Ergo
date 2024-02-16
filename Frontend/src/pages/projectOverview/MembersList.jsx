@@ -28,7 +28,6 @@ const MembersList = ({ project, setAssignedMembers, token }) => {
 
             if (response.status === 200) {
                 setAssignedMembers(response.data.users);
-                console.log("users", response.data.users)
             } else {
                 console.error('Error fetching members:', response);
             }

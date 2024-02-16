@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoTestData\Ergo\Backend\Ergo.Application.Tests\Comments\Queries\GetAllCommentsQueryHandlerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Comments.Queries.GetAll;
+using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using Ergo.Domain.Entities;
+using FluentAssertions;
+using NSubstitute;
+namespace Ergo.Application.Tests.Comments.Queries
+{
+    public class GetAllCommentsQueryHandlerTests
+    {
+        private readonly ICommentRepository _mockCommentRepository;
+        private readonly IUserManager _mockUserManager;
+        private readonly IUserPhotoRepository _mockUserPhotoRepository;
+        private readonly GetAllCommentsQueryHandler _handler;
+
+        public GetAllCommentsQueryHandlerTests()
+        {
+            _mockCommentRepository = Substitute.For&lt;ICommentRepository&gt;();
+            _mockUserManager = Substitute.For&lt;IUserManager&gt;();
+            _mockUserPhotoRepository = Substitute.For&lt;IUserPhotoRepository&gt;();
+            _handler = new GetAllCommentsQueryHandler(_mockCommentRepository, _mockUserManager, _mockUserPhotoRepository);
+        }
+
+        [Fact]
+        public async Task Handle_NoCommentsFound_ReturnsEmptyList()
+        {
+            // Arrange
+            _mockCommentRepository.GetAllAsync().Returns(Task.FromResult(Result&lt;IReadOnlyList&lt;Comment&gt;&gt;.Success(new List&lt;Comment&gt;().AsReadOnly())));
+
+            // Act
+            var result = await _handler.Handle(new GetAllCommentsQuery(), CancellationToken.None);
+
+            // Assert
+            result.Success.Should().BeTrue();
+            result.Comments.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task Handle_CommentsFoundButUserNotFound_SkipsComment()
+        {
+            // Arrange
+            var comments = new List&lt;Comment&gt;
+            {
+                Comment.Create(&quot;username&quot;, Guid.NewGuid(), &quot;Sample comment text&quot;).Value
+            };
+            _mockCommentRepository.GetAllAsync().Returns(Task.FromResult(Result&lt;IReadOnlyList&lt;Comment&gt;&gt;.Success(new List&lt;Comment&gt;().AsReadOnly())));
+            _mockUserManager.FindByUsernameAsync(Arg.Any&lt;string&gt;()).Returns(Result&lt;UserDto&gt;.Failure(&quot;User not found&quot;));
+
+            // Act
+            var result = await _handler.Handle(new GetAllCommentsQuery(), CancellationToken.None);
+
+            // Assert
+            result.Success.Should().BeTrue();
+            result.Comments.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task Handle_CommentsAndUserPhotosFound_ReturnsCommentsWithPhotos()
+        {
+            // Arrange
+            var comments = new List&lt;Comment&gt;
+            {
+                Comment.Create(&quot;username&quot;, Guid.NewGuid(), &quot;Sample comment text&quot;).Value
+            };
+            var userDto = new UserDto { UserId = &quot;userId&quot;, Username = &quot;username&quot;, Name = &quot;User Name&quot;, Email = &quot;user@example.com&quot; };
+            var userPhoto = UserPhoto.Create(&quot;photoUrl&quot;, &quot;userId&quot;).Value;
+
+            _mockCommentRepository.GetAllAsync().Returns(Task.FromResult(Result&lt;IReadOnlyList&lt;Comment&gt;&gt;.Success(comments.AsReadOnly())));
+            _mockUserManager.FindByUsernameAsync(&quot;username&quot;).Returns(Result&lt;UserDto&gt;.Success(userDto));
+            _mockUserPhotoRepository.GetUserPhotoByUserIdAsync(&quot;userId&quot;).Returns(Result&lt;UserPhoto&gt;.Success(userPhoto));
+
+            // Act
+            var result = await _handler.Handle(new GetAllCommentsQuery(), CancellationToken.None);
+
+            // Assert
+            result.Success.Should().BeTrue();
+            result.Comments.Should().NotBeEmpty();
+            result.Comments.First().CreatedBy.UserPhoto.PhotoUrl.Should().Be(&quot;photoUrl&quot;);
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[17,9,17,49,1],[18,9,18,10,1],[19,13,19,75,1],[20,13,20,63,1],[21,13,21,79,1],[22,13,22,123,1],[23,9,23,10,1],[27,9,27,10,1],[29,13,29,149,1],[32,13,32,99,1],[35,13,35,46,1],[36,13,36,48,1],[37,9,37,10,1],[41,9,41,10,1],[43,13,46,15,1],[47,13,47,149,1],[48,13,48,120,1],[51,13,51,99,1],[54,13,54,46,1],[55,13,55,48,1],[56,9,56,10,1],[60,9,60,10,1],[62,13,65,15,1],[66,13,66,132,1],[67,13,67,74,1],[69,13,69,138,1],[70,13,70,104,1],[71,13,71,120,1],[74,13,74,99,1],[77,13,77,46,1],[78,13,78,51,1],[79,13,79,90,1],[80,9,80,10,1]]);
+    </script>
+  </body>
+</html>

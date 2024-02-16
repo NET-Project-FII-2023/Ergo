@@ -21,7 +21,6 @@ const ProjectOverview = () => {
   useEffect(() => {
     fetchCurrentProject();
   }, [projectId, token, userId]);
-  console.log(currentProject)
   const fetchCurrentProject = async () => {
     try {
       if (!token || !userId) return;

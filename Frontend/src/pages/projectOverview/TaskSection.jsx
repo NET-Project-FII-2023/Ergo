@@ -22,7 +22,6 @@ const TaskSection = ({ project, setProject, token, userId, handleOpenModal, hand
 
   const fetchTaskItems = async () => {
     if (!token || !userId || !project.projectId) return;
-    console.log('fetching tasks:', project.projectId);
 
     try {
       
@@ -34,7 +33,6 @@ const TaskSection = ({ project, setProject, token, userId, handleOpenModal, hand
       
       if (response.status === 200) {
         setTaskItems(response.data.taskItems);
-        console.log(response.data.taskItems);
       } else {
         console.error('Error fetching tasks:', response);
       }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>I:\Facultate\ErgoTestData\Ergo\Backend\Ergo.Application.Tests\Badges\Commands\CreateBadgeCommandHandlerTests.cs</title>
+    <script type="text/javascript" src="../js/dotcover.sourceview.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dotcover.report.css" />
+  </head>
+  <body>
+    <pre id="content" class="source-code">
+using Ergo.Application.Features.Badges.Commands.CreateBadgeCommand;
+using Ergo.Application.Features.Users.Queries;
+using Ergo.Application.Persistence;
+using Ergo.Domain.Common;
+using FluentAssertions;
+using NSubstitute;
+
+namespace Ergo.Application.Tests.Badges.Commands
+{
+    public class CreateBadgeCommandHandlerTests
+    {
+        private readonly IBadgeRepository _badgeRepository;
+        private readonly IUserManager _userManager;
+        private readonly CreateBadgeCommandHandler _handler;
+
+        public CreateBadgeCommandHandlerTests()
+        {
+            _badgeRepository = Substitute.For&lt;IBadgeRepository&gt;();
+            _userManager = Substitute.For&lt;IUserManager&gt;();
+            _handler = new CreateBadgeCommandHandler(_badgeRepository, _userManager);
+        }
+
+        [Fact]
+        public async Task Handle_WhenUserDoesNotExist_ReturnsError()
+        {
+            // Arrange
+            var command = new CreateBadgeCommand
+            {
+                Name = &quot;Test Badge&quot;,
+                Count = 1,
+                UserId = Guid.NewGuid(),
+                Type = &quot;Innovator&quot;
+            };
+
+            _userManager.FindByIdAsync(command.UserId).Returns(Task.FromResult(Result&lt;UserDto&gt;.Failure(&quot;User not found&quot;)));
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.Success.Should().BeFalse();
+            result.ValidationsErrors.Should().ContainSingle().Which.Should().Be(&quot;User not found&quot;);
+        }
+
+        [Fact]
+        public async Task Handle_WithInvalidData_ReturnsValidationErrors()
+        {
+            // Arrange
+            var command = new CreateBadgeCommand { };
+
+            // Act
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.Success.Should().BeFalse();
+            result.ValidationsErrors.Should().NotBeEmpty();
+        }
+
+    }
+}
+
+    </pre>
+    <script type="text/javascript">
+      highlightRanges([[16,9,16,48,1],[17,9,17,10,1],[18,13,18,67,1],[19,13,19,59,1],[20,13,20,86,1],[21,9,21,10,1],[25,9,25,10,1],[27,13,33,15,1],[35,13,35,124,1],[38,13,38,81,1],[41,13,41,47,1],[42,13,42,99,1],[43,9,43,10,1],[47,9,47,10,1],[49,13,49,54,1],[52,13,52,81,1],[55,13,55,47,1],[56,13,56,60,1],[57,9,57,10,1]]);
+    </script>
+  </body>
+</html>
