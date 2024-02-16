@@ -60,7 +60,7 @@ export function UpcomingDeadlines(){
     tasks.forEach((task: any) => {
       if(task.state === 3) return;
       const taskDate = new Date(task.deadline);
-      if(taskDate >= now && taskDate <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)) {
+      if(taskDate >= now && taskDate <= new Date(now.getTime() + 6 * 24 * 60 * 60 * 1000)) {
         const dueDay = taskDate.getDay();
         const daysUntilDue = (dueDay - todayIndex + 7) % 7;
         result[daysUntilDue] += 1;
