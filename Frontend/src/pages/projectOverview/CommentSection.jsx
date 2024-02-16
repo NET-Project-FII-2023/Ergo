@@ -8,7 +8,7 @@ import ErgoInput from "@/widgets/form_utils/ErgoInput";
 import UserAvatar from "@/common/components/UserAvatar";
 import {useNavigate} from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
-
+import { sendNotification } from "@/services/notifications/sendNotification";
 
 const CommentSection = ({ task, token }) => {
     const currentUser = useUser();
@@ -61,7 +61,11 @@ const CommentSection = ({ task, token }) => {
 
             if (response.status === 200) {
                 setNewCommentText('');
-                toast.success("Added comment successfully!")
+                toast.success("Added comment successfully!");
+                // if the task is assigned to someone else, send a notification
+                if(task.assignedUser != null && task.assignedUser?.userId !== currentUser.userId) {
+                  await sendNotification(task.assignedUser?.userId, `There is a new comment on your task, ${task.taskName}.`, token);
+                }
                 fetchComments();
             } else {
                 console.error('Error adding comment:', response);

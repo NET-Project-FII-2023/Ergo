@@ -8,7 +8,7 @@ import { Avatar } from '@material-tailwind/react';
 import badgesData from './badges-data';
 import confetti from 'canvas-confetti';
 import { useNavigate} from "react-router-dom";
-
+import { sendNotification } from "@/services/notifications/sendNotification";
 
 const Badges = ({currentViewedId,isOwnProfile}) => {
   const navigate = useNavigate();
@@ -118,6 +118,8 @@ const Badges = ({currentViewedId,isOwnProfile}) => {
             spread: 100,
             origin: { y: 0.7 }
           });
+          //send notification
+          await sendNotification(currentViewedId, `You have received an endorsment from ${user.username}`, user.token);
         } 
       }catch (error) {
         let errorMessage = "";
