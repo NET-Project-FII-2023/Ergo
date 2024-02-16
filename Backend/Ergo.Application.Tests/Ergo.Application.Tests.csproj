@@ -37,8 +37,6 @@
 
   <ItemGroup>
 
-    <Folder Include="Comments\Queries\" />
-
     <Folder Include="InboxItems\Queries\" />
 
     <Folder Include="ResetCode\Commands\" />

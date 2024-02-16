@@ -183,6 +183,7 @@ const TaskDetailsModal =  ({ modalOpen, handleCloseModal, selectedTask, token, p
                     <AttachmentSection
                       attachedFiles={currentTask?.taskFiles || []}
                       handleFileInputChange={handleFileInputChange}
+                      handleFileDelete={fetchCurrentTask}
                     />
                   </>
                 )}
