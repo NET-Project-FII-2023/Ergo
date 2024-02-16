@@ -4,6 +4,7 @@ import api from '@/services/api';
 import {toast} from "react-toastify";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AssignMemberSearch from "@/pages/projectOverview/AssignMemberSearch";
+import { sendNotification } from "@/services/notifications/sendNotification";
 
 const AssignMember = ({project, token, onMemberAssigned}) => {
   const [showSelect, setShowSelect] = useState(false);
@@ -25,13 +26,17 @@ const AssignMember = ({project, token, onMemberAssigned}) => {
         },
       });
 
-      if (response.status === 200) {
-        setShowSelect(false);
-        toast.success('User assigned successfully');
-        onMemberAssigned();
-      } else {
-        toast.error('Error assigning user:' + response);
+      if (response.status !== 200) {
+        throw new Error(response);
       }
+
+      setShowSelect(false);
+      toast.success('User assigned successfully');
+
+      //send notification to the user
+      await sendNotification(selectedUser.userId, `You have been assigned to project ${project.projectName}`, token);
+
+      onMemberAssigned();
     } catch (error) {
       toast.error('Error assigning user:' + error);
     }

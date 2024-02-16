@@ -1,31 +1,14 @@
 import { useLocation, Link } from "react-router-dom";
-import {
-  Navbar,
-  Typography,
-  Button,
-  IconButton,
-  Breadcrumbs,
-  Menu,
-  MenuHandler,
-  MenuList,
-  ListItem
-} from "@material-tailwind/react";
-import {
-  UserCircleIcon,
-  BellIcon,
-  ClockIcon,
-  Bars3Icon,
-  CheckIcon
-} from "@heroicons/react/24/solid";
-import {
-  useMaterialTailwindController,
-  setOpenSidenav,
-} from "@/context/MaterialTailwind.jsx";
+import { Navbar, Typography, Button, IconButton, Breadcrumbs, Menu, MenuHandler, MenuList, ListItem } from "@material-tailwind/react";
+import { UserCircleIcon, BellIcon, ClockIcon, Bars3Icon, CheckIcon} from "@heroicons/react/24/solid";
+import { useMaterialTailwindController, setOpenSidenav } from "../../../context/MaterialTailwind.jsx";
 import { useEffect, useState } from "react";
-import api from "@/services/api";
+import api from "../../../services/api";
 import { toast } from "react-toastify";
-import { useUser } from "@/context/LoginRequired";
+import { useUser } from "../../../context/LoginRequired";
 import DashboardSearch from "./DashboardSearch"
+import { Checkbox } from '@material-tailwind/react';
+import { readNotification } from "../../../services/notifications/readNotification";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -34,6 +17,7 @@ export function DashboardNavbar() {
   const { pathname } = useLocation();
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
   const [notifications, setNotifications] = useState([]);
+  const [isReadHidden, setIsReadHidden] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -63,24 +47,11 @@ export function DashboardNavbar() {
 
   async function markAsRead(e, notification) {
     e.stopPropagation();
-    try {
-      const response = await api.put(`/api/v1/InboxItem/${notification.inboxItemId}`, {
-        isRead: true,
-        createdDate: notification.createdDate,
-        message: notification.message,
-        userId: notification.userId,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status !== 200) {
-        throw new Error(response);
-      }
+    const readStatus = await readNotification(notification, token);
+    if (readStatus) {
       setNotifications(prev => prev.map(notif => notif.inboxItemId === notification.inboxItemId ? {...notif, isRead: true} : notif));
       toast.success("Notification marked as read!");
-    } catch (error) {
-      console.error(`Error while marking notification as read: ${error.response.data}`);
+    } else {
       toast.error("Couldn't update notification");
     }
   }
@@ -150,35 +121,61 @@ export function DashboardNavbar() {
               </IconButton>
             </MenuHandler>
             <MenuList className="border-0 bg-surface-dark max-w-sm max-h-[80vh] minimal-scrollbar text-surface-light">
+              <div className="px-2 pb-1 flex justify-between items-center focus:outline-0">
+                <Typography variant="h5" className={`${notifications.length === 0 || notifications.some(notification => notification.isRead === true) ? "w-[200px]" : ""}`}>
+                  Notifications
+                </Typography>
+                {notifications.length > 0 && notifications.some(notification => notification.isRead === true) &&
+                  <Checkbox 
+                    label={
+                    <Typography variant="small" className="text-surface-light opacity-80" onClick={(e) => e.stopPropagation()}>
+                      Hide read
+                    </Typography>
+                    }
+                    checked={isReadHidden}
+                    onChange={()=> {setIsReadHidden(!isReadHidden)}}
+                    onClick={(e) => {e.stopPropagation()}}
+                    className="checked:bg-primary"
+                    size="small"
+                    containerProps={{className: "flex-row-reverse"}}
+                  />
+                }
+              </div>
               {notifications.length === 0 ?
-                <ListItem disabled className="text-black opacity-70">
+                <ListItem disabled className="!text-surface-light opacity-70">
                   <strong>No new notifications</strong>
                 </ListItem>
                 :
-                notifications.map((notification, index) =>
-                  <ListItem className="flex flex-col items-start w-full md:w-[20rem]" key={`notif-${index}`}>
-                    <Typography variant="small" className="mb-1 font-normal ">
-                      <strong>{notification.message}</strong>
-                    </Typography>
-
-                    <div className="flex justify-between w-full">
-                      <Typography variant="small" className="flex items-center gap-1 text-xs font-normal opacity-60">
-                        <ClockIcon className="h-3.5 w-3.5 text-secondary"/> {formatDate(notification.createdDate)}
+                notifications.map((notification, index) => {
+                  if (isReadHidden && notification.isRead === true) {
+                    return null;
+                  }
+                  return (
+                    <ListItem key={`notif-${index}`} className="flex flex-col items-start w-full md:w-[20rem] focus:bg-surface-mid-dark focus:text-surface-light active:bg-surface-mid-dark active:text-surface-light" >
+                      <Typography variant="small" className="mb-1 font-normal ">
+                        <strong>{notification.message}</strong>
                       </Typography>
-                      {notification.isRead === false ?
-                        <Button variant="text" color="red" size="sm"
-                                className="text-xs px-2 py-1 opacity-70 font-normal"
-                                onClick={(e) => markAsRead(e, notification)}
-                        >
-                          Mark as read
-                        </Button>
-                        :
+
+                      <div className="flex justify-between w-full">
                         <Typography variant="small" className="flex items-center gap-1 text-xs font-normal opacity-60">
-                          <CheckIcon className="h-3.5 w-3.5"/> Read
+                          <ClockIcon className="h-3.5 w-3.5 text-secondary"/> {formatDate(notification.createdDate)}
                         </Typography>
-                      }
-                    </div>
-                  </ListItem>
+                        {notification.isRead === false ?
+                          <Button variant="text" color="red" size="sm"
+                                  className="text-xs px-2 py-1 opacity-70 font-normal"
+                                  onClick={(e) => markAsRead(e, notification)}
+                          >
+                            Mark as read
+                          </Button>
+                          :
+                          <Typography variant="small" className="flex items-center gap-1 text-xs font-normal opacity-60">
+                            <CheckIcon className="h-3.5 w-3.5"/> Read
+                          </Typography>
+                        }
+                      </div>
+                    </ListItem>
+                  )
+                }
                 )
               }
             </MenuList>
