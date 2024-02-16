@@ -122,7 +122,7 @@ export function DashboardNavbar() {
             </MenuHandler>
             <MenuList className="border-0 bg-surface-dark max-w-sm max-h-[80vh] minimal-scrollbar text-surface-light">
               <div className="px-2 pb-1 flex justify-between items-center focus:outline-0">
-                <Typography variant="h5" className={`${notifications.length === 0 || notifications.some(notification => notification.isRead === true) ? "w-[200px]" : ""}`}>
+                <Typography variant="h5" className="min-w-[150px]">
                   Notifications
                 </Typography>
                 {notifications.length > 0 && notifications.some(notification => notification.isRead === true) &&
