@@ -9,6 +9,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import UserAvatar from "@/common/components/UserAvatar";
 import {useNavigate} from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { sendNotification } from '@/services/notifications/sendNotification';
 
 
 const AssignUserTask = ({ token, task, project }) => {
@@ -66,31 +67,32 @@ const AssignUserTask = ({ token, task, project }) => {
     };
 
     const handleConfirmAssign = async () => {
-        try {
-            const response = await api.post(`/api/v1/TaskItems/AssignUser`, {
-                taskItemId: task.taskItemId,
-                userId: selectedUserId
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+      try {
+        const response = await api.post(`/api/v1/TaskItems/AssignUser`, {
+          taskItemId: task.taskItemId,
+          userId: selectedUserId
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-            if (response.status === 200) {
-                setShowSelect(false);
-                setSelectVisible(false);
-                setShowButtons(false);
-                console.log('User assigned successfully');
-                toast.success('User assigned successfully!');
-                fetchCurrentTask();
-            } else {
-                console.error('Error assigning user:', response);
-                toast.error(response);
-            }
-        } catch (error) {
-            console.error('Error assigning user:', error);
-            toast.error('Error assigning user:' + error);
+        if (response.status !== 200) {
+          throw new Error(response);
         }
+        setShowSelect(false);
+        setSelectVisible(false);
+        setShowButtons(false);
+        toast.success('User assigned successfully!');
+
+        //send notification to the user
+        await sendNotification(selectedUserId, `You have been assigned to task ${task.taskName}`, token);
+
+        fetchCurrentTask();
+      } catch (error) {
+        console.error('Error assigning user:', error);
+        toast.error('Error assigning user:' + error);
+      }
     };
 
     const handleUserChange = (event) => {
