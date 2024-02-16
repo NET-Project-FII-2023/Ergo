@@ -8,7 +8,7 @@ import { DragDropContext,Droppable,Draggable } from "@hello-pangea/dnd";
 import { toast } from "react-toastify";
 
 
-const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal,modalOpen }) => {
+const TaskSection = ({ project, setProject, token, userId, handleOpenModal, handleCloseModal,modalOpen }) => {
   const [taskItems, setTaskItems] = useState([]);
   const todoTasks = taskItems.filter(taskItem => taskItem.state === 1);
   const inProgressTasks = taskItems.filter(taskItem => taskItem.state === 2);
@@ -18,7 +18,7 @@ const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal
 
   useEffect(() => {
     fetchTaskItems();
-  }, [project.projectId,modalOpen]);
+  }, [project.projectId, modalOpen]);
 
   const fetchTaskItems = async () => {
     if (!token || !userId || !project.projectId) return;
@@ -195,6 +195,7 @@ const TaskSection = ({ project, token, userId, handleOpenModal, handleCloseModal
 
             <MembersList
               project={project}
+              setAssignedMembers={(members) => setProject({ ...project, members: members })}
               token={token}
             />
           </div>

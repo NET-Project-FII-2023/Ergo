@@ -8,14 +8,13 @@ import UserAvatar from "@/common/components/UserAvatar";
 import { Tooltip } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 
-const MembersList = ({ project, token }) => {
+const MembersList = ({ project, setAssignedMembers, token }) => {
     const currentUser = useUser();
     const navigate = useNavigate();
-    const [members, setMembers] = useState([]);
 
     useEffect(() => {
         fetchMembers();
-    }, [project.projectId, token]);
+    }, [project.projectId]);
 
     const fetchMembers = async () => {
         if(!project.projectId) return;
@@ -28,7 +27,7 @@ const MembersList = ({ project, token }) => {
             });
 
             if (response.status === 200) {
-                setMembers(response.data.users);
+                setAssignedMembers(response.data.users);
                 console.log("users", response.data.users)
             } else {
                 console.error('Error fetching members:', response);
@@ -43,7 +42,7 @@ const MembersList = ({ project, token }) => {
         <p className='text-surface-light text-lg my-2 px-2'>
           Assigned Members
         </p>
-        {members.map(member => (
+        {project.members?.map(member => (
           <Card
             style={{backgroundColor: "#2f2b3a"}}
             key={member.userId}

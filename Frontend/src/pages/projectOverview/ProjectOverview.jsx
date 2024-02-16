@@ -21,7 +21,7 @@ const ProjectOverview = () => {
   useEffect(() => {
     fetchCurrentProject();
   }, [projectId, token, userId]);
-
+  console.log(currentProject)
   const fetchCurrentProject = async () => {
     try {
       if (!token || !userId) return;
@@ -32,7 +32,7 @@ const ProjectOverview = () => {
       });
 
       if (response.status === 200) {
-        setCurrentProject(response.data);
+        setCurrentProject({...response.data, members: currentProject.members});
       } else {
         console.error('Error fetching tasks:', response);
       }
@@ -41,12 +41,10 @@ const ProjectOverview = () => {
     }
   };
 
-  const handleModalClose = () => {
-    fetchCurrentProject();
-  };
   const handleOpenMLModal = () => {
     setModalMLOpen(true);
   };
+
   const handleCloseMLModal = () => {
     setModalMLOpen(false);
   };
@@ -95,6 +93,7 @@ const ProjectOverview = () => {
       <div className='flex flex-row'>
         <TaskSection
           project={currentProject}
+          setProject={setCurrentProject}
           token={token}
           userId={userId}
           handleOpenModal={handleOpenModal}
